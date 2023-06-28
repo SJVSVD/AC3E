@@ -1,0 +1,69 @@
+{
+  "public/img/AmphoraLogo(Dark).png": {
+    "file": "assets/AmphoraLogo(Dark)-41a35a4a.png",
+    "src": "public/img/AmphoraLogo(Dark).png"
+  },
+  "public/img/ScalpersLogo(Dark).png": {
+    "file": "assets/ScalpersLogo(Dark)-33ffe49e.png",
+    "src": "public/img/ScalpersLogo(Dark).png"
+  },
+  "public/img/TrinusLogo(Dark).png": {
+    "file": "assets/TrinusLogo(Dark)-ce739550.png",
+    "src": "public/img/TrinusLogo(Dark).png"
+  },
+  "public/img/ZiolLogo(Dark).png": {
+    "file": "assets/ZiolLogo(Dark)-e6a8280a.png",
+    "src": "public/img/ZiolLogo(Dark).png"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-6aacd894.css",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/css/datatables.css": {
+    "file": "assets/datatables-9658ac57.css",
+    "isEntry": true,
+    "src": "resources/css/datatables.css"
+  },
+  "resources/js/app.css": {
+    "file": "assets/app-f2d6155b.css",
+    "src": "resources/js/app.css"
+  },
+  "resources/js/app.js": {
+    "assets": [
+      "assets/AmphoraLogo(Dark)-41a35a4a.png",
+      "assets/ZiolLogo(Dark)-e6a8280a.png",
+      "assets/ScalpersLogo(Dark)-33ffe49e.png",
+      "assets/TrinusLogo(Dark)-ce739550.png"
+    ],
+    "css": [
+      "assets/app-f2d6155b.css"
+    ],
+    "file": "assets/app-f46a1db3.js",
+    "imports": [
+      "resources/js/mixins.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  },
+  "resources/js/bootstrap.js": {
+    "file": "assets/bootstrap-31eab023.js",
+    "isEntry": true,
+    "src": "resources/js/bootstrap.js"
+  },
+  "resources/js/custom.js": {
+    "file": "assets/custom-1c1babe3.js",
+    "isEntry": true,
+    "src": "resources/js/custom.js"
+  },
+  "resources/js/mixins.js": {
+    "file": "assets/mixins-c0b9ec59.js",
+    "isEntry": true,
+    "src": "resources/js/mixins.js"
+  },
+  "resources/sass/app.scss": {
+    "file": "assets/app-bbd6a014.css",
+    "isEntry": true,
+    "src": "resources/sass/app.scss"
+  }
+}
