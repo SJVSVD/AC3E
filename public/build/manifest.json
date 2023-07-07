@@ -1,20 +1,6 @@
 {
-  "public/img/AmphoraLogo(Dark).png": {
-    "file": "assets/AmphoraLogo(Dark)-41a35a4a.png",
-    "src": "public/img/AmphoraLogo(Dark).png"
-  },
-  "public/img/ScalpersLogo(Dark).png": {
-    "file": "assets/ScalpersLogo(Dark)-33ffe49e.png",
-    "src": "public/img/ScalpersLogo(Dark).png"
-  },
-  "public/img/TrinusLogo(Dark).png": {
-    "file": "assets/TrinusLogo(Dark)-ce739550.png",
-    "src": "public/img/TrinusLogo(Dark).png"
-  },
-  "public/img/ZiolLogo(Dark).png": {
-    "file": "assets/ZiolLogo(Dark)-e6a8280a.png",
-    "src": "public/img/ZiolLogo(Dark).png"
-  },
+
+
   "resources/css/app.css": {
     "file": "assets/app-6aacd894.css",
     "isEntry": true,
@@ -30,12 +16,6 @@
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
-    "assets": [
-      "assets/AmphoraLogo(Dark)-41a35a4a.png",
-      "assets/ZiolLogo(Dark)-e6a8280a.png",
-      "assets/ScalpersLogo(Dark)-33ffe49e.png",
-      "assets/TrinusLogo(Dark)-ce739550.png"
-    ],
     "css": [
       "assets/app-f2d6155b.css"
     ],

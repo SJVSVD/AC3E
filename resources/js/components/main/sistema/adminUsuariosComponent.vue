@@ -5,8 +5,6 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-wine" @click="createSuperAdmin()">Super-Administrador</a>
-                            &nbsp;
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showCrearUsuario = true">Nuevo</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
@@ -161,6 +159,20 @@ export default {
         },
         cambiarEstado($id){
             axios.get(`api/cambiarEstadoUsuario/${$id}`).then( response =>{
+                this.toast.success("Usuario se ha actualizado con éxito!", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
                 this.recargarTabla('General');
             }).catch(e=> console.log(e))
         },

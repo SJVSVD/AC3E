@@ -397,22 +397,19 @@ class ResetPassword extends Controller
     
             $emailData = json_encode([
             "GeneralData" => [
-            "FromName" => "No Reply - Amphora",
-            "From" => "noreply@amphora.cl",
+            "FromName" => "No Reply - ",
+            "From" => "noreply@.cl",
             "To" => [
             "Email" => [
-                    "bcontreras@amphora.cl",
-                    // $administradores
+
                     ]
                 ],
                 "BCC" => [
                     "Email" => [
-                        "maballay@amphora.cl",
                     ]
                 ],
                 "CC" => [
                     "Email" => [
-                    // informatica_chile@amphora.cl
                 ]
             ],
             "Message" => [

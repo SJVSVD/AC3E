@@ -25,89 +25,6 @@ export const mixin = {
     created() {
         window.addEventListener("keydown", (e) => {
             if (e.key == "Escape") {
-                // Colaboradores
-                this.showCrearColaborados = false;
-                this.showEditarColaborador = false;
-                this.showDetalleColaborador = false;
-
-                // Roles
-                this.showCrearRol = false;
-                this.showEditarRol = false;
-                this.showCrearPermiso = false;
-
-                // Usuarios
-                this.showCrearUsuario = false;
-                this.showEditarUsuario = false;
-
-                // Administración General -> Empresa:
-                this.showEditDepartamento = false;
-                this.showCreateDepartamento = false;
-                this.showEditArea = false;
-                this.showCreateArea = false;
-                // Administración General -> Ubicación:
-                this.showCreateNacionalidad = false;
-                this.showEditNacionalidad = false;
-                this.showEditPais = false;
-                this.showCreatePais = false;
-                this.showCreateRegion = false;
-                this.showEditRegion = false;
-                this.showCreateComuna = false;
-                this.showEditComuna = false;
-                // Administración General -> Tiendas:
-                this.showEditPromotor = false;
-                this.showCreatePromotor = false;
-                this.showEditSupervisor = false;
-                this.showCreateSupervisor = false;
-                this.showEditSucursal = false;
-                this.showCreateSucursal = false;
-                this.showDetallesSucursal = false;
-                // Administración General -> Usuarios:
-                this.showEditSistemaSalud = false;
-                this.showCreateSistemaSalud = false;
-                this.showCreateAFP = false;
-                this.showEditAFP = false;
-                this.showEditEstadoCivil = false;
-                this.showCreateEstadoCivil = false;
-                // Administración General -> Otros:
-
-                // Robos
-                this.showEditarUsuario = false;
-                this.showCrearRobo = false;
-                this.showDetallesRobo = false;
-
-                // Rendiciones
-                this.showCrearRendicion = false;
-                if (this.showFotoRendicion == true) {
-                } else {
-                    this.showDetalleRendicion = false;
-                }
-                this.showRendir = false;
-                this.showAutorizarPago = false;
-                this.showAutorizarRendicion = false;
-
-                // Fofis
-                this.showCrearFofi = false;
-                this.showAutorizarFondosFijos = false;
-                if (this.showFotoFofi == true) {
-                } else {
-                    this.showDetalleFofi = false;
-                }
-
-                // Facturas
-                this.showUploadDataFacturas = false;
-                this.showUploadReferencesFacturas = false;
-                this.showEditarFactura = false;
-                this.showCrearFactura = false;
-                this.showDetallesFactura = false;
-                this.showAutorizarGastosFacturas = false;
-                this.showAutorizarPagosFacturas = false;
-
-                // Menú Gestion Tienda
-                this.showConversionVentas = false;
-                this.showPrecios = false;
-                this.showIngresarCierreCaja = false;
-                this.showIngresarDeposito = false;
-                this.showDetalleCierreCaja = false;
             }
         });
     },
@@ -170,12 +87,6 @@ export const mixin = {
                 100
             );
         },
-        agregarMinutos(date, minutes) {
-            return new Date(date.getTime() + minutes * 60000);
-        },
-        quitarMinutos(date, minutes) {
-            return new Date(date.getTime() - minutes * 60000);
-        },
         validarRut(value) {
             var validado = validateRut(value);
             return validado;
@@ -196,48 +107,6 @@ export const mixin = {
                 currencyDisplay: "narrowSymbol",
                 style: "currency",
             }).format(value);
-        },
-        formatMoneyUSD(value) {
-            return new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "USD",
-            }).format(value);
-        },
-        formatMoneyEUR(value) {
-            return new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-            }).format(value);
-        },
-        formatMoneyGBP(value) {
-            return new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "GBP",
-            }).format(value);
-        },
-        formatMoneyJPY(value) {
-            return new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "JPY",
-            }).format(value);
-        },
-        thisDate($fecha) {
-            if ($fecha == null) {
-                return "Sin ingreso.";
-            } else {
-                return moment($fecha).format("DD-MM-YYYY");
-            }
-        },
-        distanceFromNow($fecha) {
-            var retorno = moment($fecha).fromNow();
-            return retorno;
-        },
-        distanceFromOther($fecha1, $fecha2) {
-            var retorno = moment($fecha2).diff(moment($fecha1), "days");
-            return retorno;
-        },
-        daysInMonth($mes) {
-            return moment().month($mes).daysInMonth();
         },
     },
 };

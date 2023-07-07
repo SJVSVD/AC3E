@@ -9,10 +9,8 @@
         @endif
         {{-- @if (Auth::user() != null):
         @endif --}}
-        <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon.png">
-        <link rel="icon" type="image/png" href="/img/Amphora.png">
         <title>
-            Sistema Grupo Interandina
+            AC3E - Sistema de reportes
         </title>
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/1bd7af15cd.js" crossorigin="anonymous"></script>
@@ -52,7 +50,7 @@
     <div class="sidebar close" id="sidebarMain">
         <div class="logo-details">
             <i class="fa-solid fa-bars"></i>
-            <span class="logo_name"><img src="/img/AmphoraLogo.png" width="130"></span>
+            <span class="logo_name"><img src="/img/AC3E.png" width="65"></span>
         </div>
         <ul class="nav-links">
             <li>
@@ -75,24 +73,8 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Administración</a></li>
-                    @role('Informática')
-                        <li>
-                            <a href="/admin-general">General <i style="font-size: 12px" class="fa-solid fa-angles-right"></i></a>
-                            <ul class="sub-menu" style="margin-left: 20px; border-radius: 0px 6px 6px 6px; background-color: #26243b; padding: 6px 6px 6px 24px;">
-                                <li style="background-color: #26243b"><a href="/admin-general/empresa">Empresa</a></li>
-                                <li style="background-color: #26243b"><a href="/admin-general/ubicacion">Ubicación</a></li>
-                                <li style="background-color: #26243b"><a href="/admin-general/store-related">Relacionados a Tiendas</a></li>
-                                <li style="background-color: #26243b"><a href="/admin-general/user-related">Relacionados a Usuarios</a></li>
-                                <li style="background-color: #26243b"><a href="/admin-general/otros">Otros</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="/admin-colab">de Colaboradores</a></li>
-                        <li><a href="/admin-usuarios">de Usuarios</a></li>
-                        <li><a href="/admin-roles">de Roles y Permisos</a></li>
-                        @role('Super-Administrador')
-                            <li><a href="/query-tests">Tests</a></li>
-                        @endrole
-                    @endrole
+                    <li><a href="/admin-usuarios">de Usuarios</a></li>
+                    <li><a href="/admin-roles">de Roles y Permisos</a></li>
                 </ul>
             </li>
             @endrole
@@ -100,39 +82,15 @@
                 <div class="iocn-link">
                     <a href="#">
                         <i class="fa-solid fa-cubes"></i>
-                        <span class="link_name">Sistemas</span>
+                        <span class="link_name">Modulos</span>
                     </a>
                     <i class="fa-solid fa-sort-down arrow" id="arrow2"></i>
                 </div>
                 <ul class="sub-menu">
-                    <li><a class="link_name" href="#">Sistemas</a></li>
-                    {{-- <li><a href="/gestor-oc">Gestor OC</a></li> --}}
-                    {{-- <li><a href="/gestor-comex">Gestor ComEx</a></li> --}}
-                    {{-- <li><a href="/informatica">Informática</a></li> --}}
-                    {{-- <li><a href="/remuneraciones">Remuneraciones</a></li> --}}
-                    @can('Fondos Fijos_Ver')
-                    <li><a href="/fondos-fijos">Fondos Fijos</a></li>
-                    @endcan
-                    @can('Rendiciones_Ver')
-                    <li><a href="/rendiciones">Rendiciones</a></li>
-                    @endcan
-                    @can('Facturas_Ver')
-                    <li><a href="/facturas">Autorización de Facturas</a></li>
-                    @endcan
-                    @can('Robos_Ver')
-                    <hr size="4" class="separador-sm">
-                    <li><a href="/gestion-robos">Gestión Robos</a></li>
-                    @endcan
-                    @can('Gestión Tienda_Ver')
-                    <li><a href="/menu-gestion-tienda">Gestión Tienda</a></li> 
-                    @endcan
-                    @can('Inventario Concesiones_Ver')
-                    <li><a href="/gestion-inventario-concesiones">Inventario Concesiones</a></li>
-                    @endcan
+                    <li><a class="link_name" href="#">Modulos</a></li>
                 </ul>
             </li>
-
-            @role('Super-Administrador')
+            <!-- @role('Super-Administrador')
             <li>
                 <div class="iocn-link">
                     <a href="#">
@@ -147,7 +105,7 @@
                     <li><a href="/tables">Tablas</a></li>
                 </ul>
             </li>
-            @endrole
+            @endrole -->
             <hr size="4" class="separador">
             <li>
                 <div class="iocn-link">
@@ -157,12 +115,6 @@
                     </a>
                     <i class="fa-solid fa-sort-down arrow" id="arrow3"></i>
                 </div>
-                <ul class="sub-menu">
-                    <li><a class="link_name" href="#">Ayuda</a></li>
-                    @can('Manuales_Ver')
-                    <li><a href="/manuales">Manuales de Sistema</a></li>
-                    @endcan
-                </ul>
             </li>
             <li>
                 <div class="iocn-link">
@@ -186,67 +138,6 @@
                     </li>
                 </ul>
             </li>
-            {{-- Proximamente --}}
-            {{-- ################################################################################################################# --}}
-            @role('Super-Administrador')
-            <li>
-                <div class="iocn-link">
-                    <a href="javascript:;">
-                        <i class="fa-solid fa-gear"></i>
-                        <span class="link_name">Ajustes</span>
-                    </a>
-                    <i class="fa-solid fa-sort-down arrow"></i>
-                </div>
-                <ul class="sub-menu">
-                    <li><a class="link_name" href="#">Ajustes</a></li>
-                </ul>
-            </li>
-            <li class="nav-item dropdown pe-2 d-flex align-items-center">
-                <div class="iocn-link">
-                    <a href="javascript:;" class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-bell cursor-pointer"></i>
-                        <span class="link_name">Notificaciones</span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li><a class="link_name" href="#">Notificaciones</a></li>
-                    </ul>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li class="mb-2">
-                            <a class="dropdown-item border-radius-md" href="javascript:;">
-                                <div class="d-flex py-1">
-                                    <div class="my-auto">
-                                        <img src="./img/small-logos/logo-spotify.svg"
-                                        class="avatar avatar-sm bg-gradient-dark  me-3 ">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="text-sm font-weight-normal mb-1">
-                                            <span class="font-weight-bold">New album</span> by One Høpe
-                                        </h6>
-                                        <p class="text-xs text-secondary mb-0">
-                                            <i class="fa-solid fa-clock" style="color: #1e3050;"></i>
-                                            4 Days Ago
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li style="margin-top:100%;">
-                <div class="iocn-link">
-                    <a href="#">
-                        <i class="fa-solid fa-globe"></i>
-                        <span class="link_name">Intranet</span>
-                    </a>
-                    <i class="fa-solid fa-sort-down arrow"></i>
-                </div>
-                <ul class="sub-menu">
-                    <li><a class="link_name" href="#">Intranet</a></li>
-                </ul>
-            </li>
-            @endrole
-            {{-- ################################################################################################################# --}}
         </ul>
     </div>
     {{-- <div class="home-section home-content"> --}}

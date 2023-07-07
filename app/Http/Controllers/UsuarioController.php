@@ -19,26 +19,10 @@ class UsuarioController extends Controller
 {
     public function index()
     {
-        return User::with('roles')->with('permissions')->with('colaborador')->get();
+        return User::with('roles')->with('permissions')->get();
     }
 
-    public function getUsuariosViaTipo($idTipoUsuario)
-    {
-        return User::with('roles')->with('permissions')->with('colaborador')->where('idTipoUsuario', $idTipoUsuario)->get();
-    }
 
-    public function getUsuariosSinTipo()
-    {
-        return User::with('roles')->with('permissions')->with('colaborador')->whereNull('idTipoUsuario')->get();
-    }
-
-    // public function download()
-    // {
-    //     $usuarios = User::all();
-    //     $pdf = \PDF::loadView('pages.pdf',compact('usuarios'));
-        
-    //     return $pdf->download('mi-archivo.pdf');
-    // }
 
     public function email($email)
     {
@@ -65,52 +49,25 @@ class UsuarioController extends Controller
 
     public function show($id)
     {
-        $user = User::with('roles')->with('permissions')->with('timers')->with('colaborador')->with('colaborador.departamento')->with('colaborador.area')->with('colaborador.pais')->with('colaborador.region')->with('colaborador.comuna')
-        ->with('colaborador.sistemaSalud')->with('colaborador.afpAsociada')->find($id);
+        $user = User::with('roles')->with('permissions')->find($id);
         return $user;
-    }
-
-    public function checkTimer(Request $request)
-    {   
-        $data = $request->all();
-        $timer = Timer::where('identificadorEspecifico', $data['identificadorEspecifico'])->where('timerName', $data['timerName'])->where('sistema', $data['sistema'])->where('idUsuario', $data['userID'])->first();
-        return $timer;
     }
 
     public function store(Request $request)
     {
-        $campos=[
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirmpassword',
-            'roles' => 'required',
-        ];
-        $mensaje = [
-            'name.required' => 'El campo "Nombre" es obligatorio.',
-            'email.required' => 'El campo "Email" es obligatorio.',
-            'rut.unique' => 'El "Rut" ingresado ya esta siendo utilizado.',
-            'password.required' => 'El campo "Contraseña" es obligatorio.',
-            'roles.required' => 'El campo "Roles" es obligatorio.',
-            'email.email' => 'El dato ingresado no es un correo electrónico.',
-            'email.unique' => 'El "Email" ingresado ya esta siendo utilizado.',
-            'password.same' => 'Las contraseñas no coinciden.'
-        ];
-        $profilePicture = $request['profilePicChange'];
-        unset($request['profilePicChange']);
-        $this->validate($request, $campos, $mensaje);
         $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-        $user = User::create($input);
-        // CAMBIAR FOTO DE PERFIL
-        if($profilePicture != null){
-            $contenidoBinario = file_get_contents($profilePicture);
-            $imagen = base64_encode($contenidoBinario);
-            $user->profilePicture = $imagen;
+        $contador = User::where('email',$input['email'])->count();
+
+        if($contador > 0){
+            return response()->json("email existente");
+        }else{
+            $input['password'] = Hash::make($input['password']);
+            $user = User::create($input);
+            $user->save();
+            $user->assignRole($request->input('roles'));
+            $user->givePermissionTo($request->input('permisos'));
+            return response()->json("Usuario Creado!");
         }
-        $user->save();
-        $user->assignRole($request->input('roles'));
-        $user->givePermissionTo($request->input('permisos'));
-        return response()->json("Usuario Creado!");
     }
 
     public function edit($id)
@@ -121,55 +78,29 @@ class UsuarioController extends Controller
         return view('usuarios.editar',compact('user','roles','userRole'));
     }
 
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
     public function updateUser(Request $request, $id)
     {
-        $campos=[
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'password' => 'same:confirmpassword',
-        ];
-        $mensaje = [
-            'name.required' => 'El campo Nombre es obligatorio.',
-            'email.required' => 'El campo Email es obligatorio.',
-            'password.required' => 'El campo Contraseña es obligatorio.',
-            'email.email' => 'El dato ingresado no es de tipo email',
-            'email.unique' => 'El Email ingresado ya esta ocupado',
-            'password.same' => 'Las contraseñas no coinciden'
-        ];
-        
-        $profilePicture = $request['profilePicChange'];
-        unset($request['profilePicChange']);
-        $this->validate($request, $campos, $mensaje);
         $input = $request->all();
-        if(!empty($input['password'])){
-            $input['password'] = Hash::make($input['password']);
+        $contador = User::where('email',$input['email'])->where('id', '!=', $id)->count();
+        if($contador > 0){
+            return response()->json("email existente");
         }else{
-            $input = Arr::except($input, array('password'));
+            if(!empty($input['password'])){
+                $input['password'] = Hash::make($input['password']);
+            }else{
+                $input = Arr::except($input, array('password'));
+            }
+            $user = User::find($id);
+            $mytime = Carbon::now();
+            $user->updated_at = $mytime;
+            $user->save();
+            $user->update($input);
+            DB::table('model_has_roles')->where('model_id',$id)->delete();
+            $user->assignRole($request->input('roles'));
+            $user->givePermissionTo($request->input('permisos'));
+    
+            return response()->json("Usuario Editado");
         }
-        $user = User::find($id);
-        $mytime = Carbon::now();
-        //$ideditor = $request->input('ideditor');
-        $user->updated_at = $mytime;
-        //$user->ultimo_editor = $ideditor;
-
-        // CAMBIAR FOTO DE PERFIL
-        if($profilePicture != null){
-            $contenidoBinario = file_get_contents($profilePicture);
-            $imagen = base64_encode($contenidoBinario);
-            $user->profilePicture = $imagen;
-        }
-        $user->save();
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
-        $user->assignRole($request->input('roles'));
-        $user->givePermissionTo($request->input('permisos'));
-
-        return response()->json("Usuario Editado");
     }
     
     public function destroy($id)
@@ -186,56 +117,4 @@ class UsuarioController extends Controller
             ]);
     }
 
-    public function superadmin()
-    {   
-        // Conseguir roles:
-        $temporal = Role::select('id')->get();
-        $roles = [];
-        foreach ($temporal as $rol){
-            array_push($roles, $rol['id']);
-        }
-        // Conseguir permisos:
-        $temporal = Permission::select('id')->get();
-        $permisos = [];
-        foreach ($temporal as $permiso){
-            array_push($permisos, $permiso['id']);
-        }
-        // Verificar si el usuario existe:
-        $user = User::where('email', '=', 'superadministrador@amphora.cl')->first();
-        if (!$user) {
-            // Si no existe, crearlo:
-            $usuario = ['name' => 'Super-Administrador', 'email' => 'superadministrador@amphora.cl', 'password' => '4mPH0R4.2o2E'];
-            $usuario['password'] = Hash::make($usuario['password']);
-            $user = User::create($usuario);
-        }
-        // Asignar roles:
-        $user->assignRole($roles);
-        // Asignar permisos a "Super Administrador":
-        $role = Role::where('name', '=', 'Super-Administrador')->first();
-        $role->syncPermissions($permisos);
-        return response()->json("Super-Administrador Creado.");
-    }
-
-    public function getProfilePic($id){
-        $user = User::find($id);
-        return $user['profilePicture'];
-    }
-
-    public function changeProfilePic(Request $request){
-        $idUsuario = $request['userID'];
-        $fotoPerfil = $request['profilePicChange'];
-        $user = User::find($idUsuario);
-        $contenidoBinario = file_get_contents($fotoPerfil);
-        $imagen = base64_encode($contenidoBinario);
-        $user->profilePicture = $imagen;
-        $user->save();
-        return "Foto actualizada con éxito.";
-    }
-
-    public function deleteProfilePic($id){
-        $user = User::find($id);
-        $user->profilePicture = null;   
-        $user->save();
-        return "Foto de perfil eliminada con éxito.";
-    }
 }

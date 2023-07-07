@@ -42,7 +42,7 @@
                             <div class="background-size-cover position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
                                 style="background-image: url('https://media.fashionnetwork.com/m/0eab/f139/6957/8f57/71f4/a0e0/115d/14e1/75a2/2073/2073.jpg');">
                                 <span class="mask bg-gradient-primary opacity-6"></span>
-                                <h2 class="mt-5 text-white font-weight-bolder position-relative">Amphora</h2>
+                                <h2 class="mt-5 text-white font-weight-bolder position-relative">AC3E</h2>
                                 <p class="text-white position-relative">Panel de Administración</p>
                             </div>
                         </div>
