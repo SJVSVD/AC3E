@@ -21,6 +21,10 @@ import adminUsuariosComponent from "./components/main/sistema/adminUsuariosCompo
 app.component("admin-usuarios", adminUsuariosComponent);
 app.mount("#admin-usuarios");
 
+import isiPublicationsComponent from "./components/main/sistema/isiPublicationsComponent.vue";
+app.component("isi-publications", isiPublicationsComponent);
+app.mount("#isi-publications");
+
 import adminRolesComponent from "./components/main/sistema/adminRolesComponent.vue";
 app.component("admin-roles", adminRolesComponent);
 app.mount("#admin-roles");

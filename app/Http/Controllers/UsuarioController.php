@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User as User;
-use App\Models\SYS_userRelatedTimers as Timer;
-use App\Models\SYS_sucursales as Sucursales;
 use App\Mail\AvisoPermisos;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;

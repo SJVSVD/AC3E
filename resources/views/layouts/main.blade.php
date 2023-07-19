@@ -14,7 +14,7 @@
         </title>
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/1bd7af15cd.js" crossorigin="anonymous"></script>
-
+        <link rel="icon" href="{{ asset('AC3E.png') }}" type="image/x-icon">
         <!-- CSS Files -->
         @vite('resources/css/app.css')
         @vite('resources/css/datatables.css')
@@ -88,6 +88,8 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Modulos</a></li>
+                    <li><a href="/isi-publications">ISI Publications</a></li>
+                    <li><a href="/admin-roles">Thesis Students</a></li>
                 </ul>
             </li>
             <!-- @role('Super-Administrador')

@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 		});
 		Route::get('/admin-usuarios', [PageController::class, 'adminUsuarios'])->name('admin-usuarios');
+		Route::get('/isi-publications', [PageController::class, 'isiPublications'])->name('isi-publications');
 		// ##################################################################################################################################
 		// Otras:
 		Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
