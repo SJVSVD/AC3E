@@ -1,24 +1,27 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\isiPublication;
+use App\Models\thesisStudent;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class isiPublicationsController extends Controller
+class thesisStudentController extends Controller
 {
     public function store(Request $request)
     {
         $input = $request->all();
-        $isiPublication = isiPublication::create($input);
-        return response()->json("Publicación Creada!");
+        if($request->hasFile('thesisExtract')){
+            $input['thesisExtract'] = $request->file('thesisExtract')->store('thesisExtracts','public');
+        }
+        $thesisStudent = thesisStudent::create($input);
+        return response()->json("Thesis Creada!");
     }
 
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
         $administrador = false;
-        $isiPublications = isiPublication::where('idUsuario', $userID)->with('usuario')->get();
+        $thesisStudents = thesisStudent::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->get();
         // Mantener aquellos que cumplen con los roles del usuario:
@@ -34,23 +37,29 @@ class isiPublicationsController extends Controller
             }
         }
         if($administrador == true){
-            $isiPublications = isiPublication::with('usuario')->get();
+            $thesisStudents = thesisStudent::with('usuario')->get();
         }
-        return $isiPublications;
+        return $thesisStudents;
+    }
+
+    public function thesisDownload($id){
+        $thesis = thesisStudent::find($id);
+        $pathtoFile = public_path().'/defaults/'.$thesis['thesisExtract'];
+        return response()->download($pathtoFile);
     }
 
     public function update(Request $request, $id)
     {
-        $isiPublication = isiPublication::find($id);
+        $thesis = thesisStudent::find($id);
 
         $input = $request->all();
-        $isiPublication->update($input);
-        return response()->json("Publicación Editada");
+        $thesis->update($input);
+        return response()->json("Thesis Editada");
     }
 
     public function destroy($id)
     {
-        isiPublication::find($id)->delete();
-        return response()->json("Publicación Eliminado");
+        thesisStudent::find($id)->delete();
+        return response()->json("Thesis Eliminado");
     }
 }

@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showCrearUsuario = true">Nuevo</a>
+                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showCrearUsuario = true">New</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
@@ -31,12 +31,12 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Estado</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Nombre</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Correo Electrónico </th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Email</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Roles</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Permisos</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Acciones</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Permissions</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
                                     </tr>
                                 </thead>
@@ -47,8 +47,8 @@
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ usuario.id }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="usuario.estado == true" class="text-sm font-weight-bolder mb-0" style="color: #28A745">Activo</p>
-                                            <p v-else class="text-sm font-weight-bolder mb-0" style="color: #B80F0A">Inactivo</p>
+                                            <p v-if="usuario.estado == true" class="text-sm font-weight-bolder mb-0" style="color: #28A745">Active</p>
+                                            <p v-else class="text-sm font-weight-bolder mb-0" style="color: #B80F0A">Inactive</p>
                                         </td>                                            
                                         <td>
                                             <p class="text-sm mb-0">{{ usuario.name }}</p>
@@ -83,10 +83,10 @@
                             </table>
                             <div class="row">
                                 <div class="col-3">
-                                    <label style="font-weight: 500">Estos botones utilizan los elementos seleccionados en la tabla, en caso de no existir ninguno seleccionará todos los registros. </label>
+                                    <label style="font-weight: 500">These buttons use the elements selected in the table, if none exist, it will select all the records. </label>
                                 </div>
                                 <div class="col-auto">
-                                    <label title="Para seleccionar UN solo registro de la tabla basta con hacer &#013; click en el recuadro de la primera columna, para seleccionar &#013; varios consecutivos mantener SHIFT, para seleccionar varios &#013; no consecutivos mantener CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
+                                    <label title="To select a single record from the table, just do &#013; Click on the box in the first column to select &#013; several consecutive hold SHIFT, to select several &#013; non-consecutive hold CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
                                 </div>
                             </div>
                         </div>
@@ -128,25 +128,6 @@ export default {
         this.getUsuarios();
     },
     methods: {
-        createSuperAdmin(){
-            axios.post('api/usuarios/superadmin').then( response =>{
-                this.toast.success("Super Administrador actualizado con éxito!", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-                this.recargarTabla('General');
-            }).catch(e=> console.log(e))
-        },
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;
             if($tipoRecarga == 'General'){
@@ -159,7 +140,7 @@ export default {
         },
         cambiarEstado($id){
             axios.get(`api/cambiarEstadoUsuario/${$id}`).then( response =>{
-                this.toast.success("Usuario se ha actualizado con éxito!", {
+                this.toast.success("User has been successfully updated!", {
                     position: "top-right",
                     timeout: 3000,
                     closeOnClick: true,
@@ -202,14 +183,14 @@ export default {
         },
         async deleteUsuario(id,Nombre) {
             const ok = await this.$refs.confirmation.show({
-                title: 'Borrar Usuario',
-                message: `¿Está seguro/a que desea eliminar al usuario '${Nombre}'? Esta acción no puede ser desecha.`,
-                okButton: 'Eliminar',
-                cancelButton: 'Volver'
+                title: 'Delete User',
+                message: `¿Are you sure you want to delete the user? '${Nombre}'? This action cannot be undone.`,
+                okButton: 'Delete',
+                cancelButton: 'Return'
             })
             if (ok) {
                 axios.delete(`api/usuarios/${id}`).then( response =>{
-                    this.toast.success("Usuario eliminado con éxito!", {
+                    this.toast.success("User deleted successfully!", {
                         position: "top-right",
                         timeout: 3000,
                         closeOnClick: true,

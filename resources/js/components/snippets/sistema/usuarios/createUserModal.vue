@@ -6,7 +6,7 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Nuevo Usuario
+                    New User
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
@@ -14,22 +14,22 @@
                 <slot name="body">
                     <div class="row">
                           <div class="col-3">
-                              <label for="name">Nombre: </label>
+                              <label for="name">Name: </label>
                               <br>
                               <input type="text" class= "form-control" v-model="user.name">
                           </div>
                           <div class="col-3">
-                              <label for="email">Correo Electrónico: </label>
+                              <label for="email">Email: </label>
                               <br>
                               <input type="email" class= "form-control" v-model="user.email">
                           </div>
                           <div class="col-3">
-                              <label for="password">Contraseña: </label>
+                              <label for="password">Password: </label>
                               <br>
                               <input type="password" class= "form-control" v-model="user.password">
                           </div>
                           <div class="col-3">
-                              <label for="confirm-password"> Confirmar contraseña: </label>
+                              <label for="confirm-password"> Confirm Password: </label>
                               <br>
                               <input type="password" class= "form-control" v-model="user.confirmpassword">
                               <br>
@@ -40,10 +40,10 @@
                       <div class="col-6">
                         <label for="">Roles:</label>
                         <div v-if="marcados == false" class="form-check">
-                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos()" class="form-check-input" v-model="selected"> Marcar Todos </label>
+                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos()" class="form-check-input" v-model="selected"> Check all </label>
                         </div>
                         <div v-else class="form-check">
-                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos()" class="form-check-input" v-model="selected"> Desmarcar Todos </label>
+                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos()" class="form-check-input" v-model="selected"> Uncheck all </label>
                         </div>
                         <div v-for="rol in roles" :key="rol.id" class="form-check">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:id="rol.id" v-bind:value="rol.id" v-model="selected"  >
@@ -51,12 +51,12 @@
                         </div>
                       </div>
                       <div class="col-6">
-                        <label for="">Permisos:</label>
+                        <label for="">Permissions:</label>
                         <div v-if="marcados2 == false" class="form-check">
-                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Marcar Todos </label>
+                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Check all </label>
                         </div>
                         <div v-else class="form-check">
-                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Desmarcar Todos </label>
+                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Uncheck all </label>
                         </div>
                         <div v-for="permiso in permisos" :key="permiso.id" class="form-check">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:id="permiso.id" v-bind:value="permiso.id" v-model="selected2"  >
@@ -110,7 +110,7 @@ export default {
       errors:[],
       roles: null,
       permisos: null,
-      buttonText:'Crear Usuario',
+      buttonText:'Create User',
     }),
     created(){
       this.getRoles();
@@ -173,17 +173,17 @@ export default {
         if (this.errors.length != 0){
           this.errors.forEach(item => {
             if(item == 'name'){
-              mensaje =   mensaje + "El campo de Nombre es requerido" + "\n";
+              mensaje =   mensaje + "The name field is required" + "\n";
             }else if(item == 'email'){
-              mensaje =   mensaje + "El campo de Correo Electrónico es requerido" + "\n";
+              mensaje =   mensaje + "The email field is required" + "\n";
             }else if(item == 'contraseñas diferentes'){
-              mensaje =   mensaje + "Las Contraseñas ingresadas no coinciden" + "\n";
+              mensaje =   mensaje + "Passwords do not match" + "\n";
             }else if(item == 'password'){
-              mensaje =   mensaje + "El campo Contraseña es requerido" + "\n";
+              mensaje =   mensaje + "The password field is required" + "\n";
             }else if(item == 'confirmpassword'){
-              mensaje =   mensaje + "El campo Confirmar Contraseña es requerido" + "\n";
+              mensaje =   mensaje + "The confirm password field is required" + "\n";
             }else{
-              mensaje =   mensaje + "El campo " + this.capitalizeFirstLetter(item) + " es requerido" + "\n" 
+              mensaje =   mensaje + "The" + this.capitalizeFirstLetter(item) + "field is required" + "\n" 
             }
           });
           this.toast.warning( mensaje, {
@@ -203,10 +203,10 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Crear Usuario',
-            message: `¿Está seguro/a que desea crear al usuario '${this.user.name}'? Esta acción no puede ser desecha.`,
-            okButton: 'Crear',
-            cancelButton: 'Volver'
+            title: 'Create User',
+            message: `¿Are you sure you want to create the user '${this.user.name}'? This action cannot be undone.`,
+            okButton: 'Create',
+            cancelButton: 'Return'
           })
           if (ok) {
             let usuario = {
@@ -217,11 +217,11 @@ export default {
               roles: this.selected,
               permisos: this.selected2,
             };
-            axios.post("api/usuarios", usuario ).then((result) => {
+            await axios.post("api/usuarios", usuario ).then((result) => {
               this.buttonDisable = true;
-              this.buttonText = 'Creando...';
+              this.buttonText = 'Creating...';
               if(result.data == 'email existente'){
-                this.toast.warning( 'Ya existe un usuario con el Correo Electrónico ingresado', {
+                this.toast.warning( 'There is already a user with the Email entered', {
                   position: "top-right",
                   timeout: 5000,
                   closeOnClick: true,
@@ -236,9 +236,9 @@ export default {
                   rtl: false
                 });
                 this.buttonDisable = false;
-                this.buttonText = 'Crear Usuario';
+                this.buttonText = 'Create User';
               }else{
-                this.toast.success("Usuario creado con éxito!", {
+                this.toast.success("User created successfully!", {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -258,7 +258,7 @@ export default {
             .catch((error)=> {
               if (error.response.status == 422){
                 this.errors = error.response.data.errors;
-                this.toast.warning('Existe un valor inválido.', {
+                this.toast.warning('There is an invalid value.', {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

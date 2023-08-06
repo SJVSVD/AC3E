@@ -41,4 +41,9 @@ class PageController extends Controller
     {
         return view('pages.isiPublications');
     }
+
+    public function thesisStudents()
+    {
+        return view('pages.thesisStudents');
+    }
 }

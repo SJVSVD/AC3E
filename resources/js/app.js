@@ -25,6 +25,10 @@ import isiPublicationsComponent from "./components/main/sistema/isiPublicationsC
 app.component("isi-publications", isiPublicationsComponent);
 app.mount("#isi-publications");
 
+import thesisStudentsComponent from "./components/main/sistema/thesisStudentsComponent.vue";
+app.component("thesis-students", thesisStudentsComponent);
+app.mount("#thesis-students");
+
 import adminRolesComponent from "./components/main/sistema/adminRolesComponent.vue";
 app.component("admin-roles", adminRolesComponent);
 app.mount("#admin-roles");

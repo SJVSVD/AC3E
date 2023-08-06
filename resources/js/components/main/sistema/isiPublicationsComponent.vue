@@ -5,22 +5,11 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewIsiPublication = true">Nueva Publicación</a>
+                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewIsiPublication = true">New Publication</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
-                    <!-- <div class="dropdown col-3">
-                        <a class="btn btn-spacing btn-primary" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            Mostrar/Ocultar Columnas:
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item toggle-vis" data-column="2" href="#">Nombre</a></li>
-                            <li><a class="dropdown-item toggle-vis" data-column="3" href="#">Correo Electrónico</a></li>
-                            <li><a class="dropdown-item toggle-vis" data-column="4" href="#">Rol</a></li>
-                            <li><a class="dropdown-item toggle-vis" data-column="5" href="#">Acciones</a></li>
-                        </ul>
-                    </div> -->
                 </div>
                 <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px">
                     <div class="container">
@@ -31,7 +20,7 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Usuario</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Coauthor(s) </th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
@@ -41,7 +30,7 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">First Page</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Last Page</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Acciones</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
                                     </tr>
                                 </thead>
@@ -84,9 +73,9 @@
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Editar" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Eliminar" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -94,10 +83,11 @@
                             </table>
                             <div class="row">
                                 <div class="col-3">
-                                    <label style="font-weight: 500">Estos botones utilizan los elementos seleccionados en la tabla, en caso de no existir ninguno seleccionará todos los registros. </label>
+                                    <label style="font-weight: 500">
+                                    These buttons use the elements selected in the table, if none exist, it will select all the records. </label>
                                 </div>
                                 <div class="col-auto">
-                                    <label title="Para seleccionar UN solo registro de la tabla basta con hacer &#013; click en el recuadro de la primera columna, para seleccionar &#013; varios consecutivos mantener SHIFT, para seleccionar varios &#013; no consecutivos mantener CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
+                                    <label title="To select a single record from the table, just do &#013; Click on the box in the first column to select &#013; several consecutive hold SHIFT, to select several &#013; non-consecutive hold CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
                                 </div>
                             </div>
                         </div>
@@ -165,14 +155,14 @@ export default {
         },
         async deletePublication(id) {
             const ok = await this.$refs.confirmation.show({
-                title: 'Eliminar Publicación',
-                message: `¿Está seguro/a que desea eliminar esta publicación? Esta acción no puede ser desecha.`,
-                okButton: 'Eliminar',
-                cancelButton: 'Volver'
+                title: 'Delete Publication',
+                message: `¿Are you sure you want to delete this Publication? This action cannot be undone.`,
+                okButton: 'Delete',
+                cancelButton: 'Return'
             })
             if (ok) {
                 axios.delete(`api/isiPublications/${id}`).then( response =>{
-                    this.toast.success("Publicación eliminado con éxito!", {
+                    this.toast.success("Publication successfully removed!", {
                         position: "top-right",
                         timeout: 3000,
                         closeOnClick: true,

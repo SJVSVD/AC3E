@@ -27,7 +27,8 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Los datos ingresados son incorrectos.',
+            'email' => '
+            The data entered is incorrect.',
         ]);
     }
 

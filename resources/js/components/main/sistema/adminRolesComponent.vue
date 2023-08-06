@@ -46,9 +46,9 @@
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Editar" @click="rolEditar(rol)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="rolEditar(rol)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Eliminar" @click="deleteRole(rol.id,rol.name)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteRole(rol.id,rol.name)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -56,10 +56,11 @@
                             </table>
                             <div class="row">
                                 <div class="col-3">
-                                    <label style="font-weight: 500">Estos botones utilizan los elementos seleccionados en la tabla, en caso de no existir ninguno seleccionará todos los registros. </label>
+                                    <label style="font-weight: 500">
+These buttons use the elements selected in the table, if none exist, it will select all the records. </label>
                                 </div>
                                 <div class="col-auto">
-                                    <label title="Para seleccionar UN solo registro de la tabla basta con hacer &#013; click en el recuadro de la primera columna, para seleccionar &#013; varios consecutivos mantener SHIFT, para seleccionar varios &#013; no consecutivos mantener CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
+                                    <label title="To select a single record from the table, just do &#013; Click on the box in the first column to select &#013; several consecutive hold SHIFT, to select several &#013; non-consecutive hold CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
                                 </div>
                             </div>
                         </div>

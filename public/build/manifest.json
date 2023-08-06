@@ -1,6 +1,7 @@
 {
-
-
+  "_main-1bb47543.js": {
+    "file": "assets/main-1bb47543.js"
+  },
   "resources/css/app.css": {
     "file": "assets/app-6aacd894.css",
     "isEntry": true,
@@ -12,16 +13,16 @@
     "src": "resources/css/datatables.css"
   },
   "resources/js/app.css": {
-    "file": "assets/app-f2d6155b.css",
+    "file": "assets/app-68d5c46d.css",
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
     "css": [
-      "assets/app-f2d6155b.css"
+      "assets/app-68d5c46d.css"
     ],
-    "file": "assets/app-f46a1db3.js",
+    "file": "assets/app-c62b4c69.js",
     "imports": [
-      "resources/js/mixins.js"
+      "_main-1bb47543.js"
     ],
     "isEntry": true,
     "src": "resources/js/app.js"
@@ -37,7 +38,10 @@
     "src": "resources/js/custom.js"
   },
   "resources/js/mixins.js": {
-    "file": "assets/mixins-c0b9ec59.js",
+    "file": "assets/mixins-e52b120c.js",
+    "imports": [
+      "_main-1bb47543.js"
+    ],
     "isEntry": true,
     "src": "resources/js/mixins.js"
   },

@@ -11,14 +11,15 @@
                 </div>
                 <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px">
                     <div class="alert text-center">
+                        <br>
+                        <br>
                         <h2>Error!</h2>
-                        <p>Oops! Algo salió mal.</p>
-                        <img src="https://media.tenor.com/x0aVfq95-JYAAAAC/jasorry.gif">
+                        <p>Oops! Something went wrong.</p>
                         <br>
                         <br>
                     </div>
                 </div>
-                <p style="margin: 10px; font-size: 12px">Si esta web debiese estár funcionando, por favor contacte al área de informática de la empresa.</p>
+                <p style="margin: 10px; font-size: 12px">If this website should be working, please contact the company's IT area.</p>
             </div>
         </div>
     </div>

@@ -6,7 +6,7 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Editar Publicación
+                    Edit Publication
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
@@ -23,7 +23,7 @@
                             <div class="form-check pt-2 ">
                               <label class="form-check-label"><input type="checkbox" class="form-check-input"
                                     v-model="coauthor">
-                                    ¿Coautor de AC3E? </label>
+                                    ¿AC3E co-author? </label>
                             </div>
                           </div>
                           <div class="col-4">
@@ -74,11 +74,9 @@
                       <div class="col-3">
                         <label for="">Year Published:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.yearPublished">
+                        <input id="yearInput" type="number" v-model="isiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
                       </div>
                     </div>
-                    <hr size="3" class="separador">
-
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -122,9 +120,10 @@ export default {
       },
       id: null,
       coauthor: false,
+      currentYear: new Date().getFullYear(),
       buttonDisable: false,
       errors:[],
-      buttonText:'Editar Publicación',
+      buttonText:'Edit Publication',
     }),
     props:{
       isiPublication1: Object,
@@ -145,6 +144,11 @@ export default {
       this.isiPublication.yearPublished = this.isiPublication1.yearPublished;
     },
     methods: {
+      onInput(event) {
+        const input = event.target;
+        // Limitar el año a 4 dígitos
+        this.isiPublication.yearPublished = input.value.slice(0, 4);
+      },
       cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
@@ -167,17 +171,17 @@ export default {
         if (this.errors.length != 0){
           this.errors.forEach(item => {
             if(item == 'articleTitle'){
-              mensaje =   mensaje + "El campo Article Title es requerido" + "\n";
+              mensaje =   mensaje + "The field Article Title is required" + "\n";
             }else if(item == 'journalName'){
-              mensaje =   mensaje + "El campo Journal Name es requerido" + "\n";
+              mensaje =   mensaje + "The field Journal Name is required" + "\n";
             }else if(item == 'firstPage'){
-              mensaje =   mensaje + "El campo First Page es requerido" + "\n";
+              mensaje =   mensaje + "The field First Page is required" + "\n";
             }else if(item == 'lastPage'){
-              mensaje =   mensaje + "El campo Last Page es requerido" + "\n";
+              mensaje =   mensaje + "The field Last Page is required" + "\n";
             }else if(item == 'yearPublished'){
-              mensaje =   mensaje + "El campo Year Published es requerido" + "\n";
+              mensaje =   mensaje + "The field Year Published is required" + "\n";
             }else{
-              mensaje =   mensaje + "El campo " + this.capitalizeFirstLetter(item) + " es requerido" + "\n" 
+              mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
           });
           this.toast.warning( mensaje, {
@@ -197,10 +201,10 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Enviar Publicación',
-            message: `¿Está seguro/a que desea enviar esta publicación ? Esta acción no puede ser desecha.`,
-            okButton: 'Enviar',
-            cancelButton: 'Volver'
+            title: 'Edit Publication',
+            message: `¿Are you sure you want to edit this publication? This action cannot be undone.`,
+            okButton: 'Send',
+            cancelButton: 'Return'
           })
           if (ok) {
             let publication = {
@@ -216,8 +220,8 @@ export default {
             };
             axios.put(`api/isiPublications/${this.id}`, publication).then((result) => {
               this.buttonDisable = true;
-              this.buttonText = 'Enviando...';
-              this.toast.success("Publicacion Editada con éxito!", {
+              this.buttonText = 'Sending...';
+              this.toast.success("Publication edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -236,7 +240,7 @@ export default {
             .catch((error)=> {
               if (error.response.status == 422){
                 this.errors = error.response.data.errors;
-                this.toast.warning('Existe un valor inválido.', {
+                this.toast.warning('There is an invalid value.', {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

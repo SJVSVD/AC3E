@@ -1,7 +1,7 @@
 @extends('layouts.main', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-    @include('layouts.navbars.auth.topnav', ['title' => 'Resumen General'])
+    @include('layouts.navbars.auth.topnav', ['title' => 'Main Page'])
     <div class="container-fluid py-4">
         <div id="dashboard">
             <dashboard-component></dashboard-component>

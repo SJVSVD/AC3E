@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="numbers" style="min-height: 80px; text-align: center; margin-top: 40px;">
-                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Bienvenido</p>
+                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Welcome</p>
                                 <h5 style="color: #ffff;" class="fw-bolder">
                                     {{ userName }}
                                 </h5>
@@ -32,7 +32,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="numbers" style="min-height: 80px; text-align: center; margin-top: 40px;">
-                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Fecha y hora actual</p>
+                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Current date and time</p>
                                 <h5 style="color: orange;" class="fw-bolder">
                                     {{ time }}
                                 </h5>
