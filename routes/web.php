@@ -32,9 +32,13 @@ Route::group(['middleware' => 'auth'], function () {
 		});
 		Route::get('/admin-usuarios', [PageController::class, 'adminUsuarios'])->name('admin-usuarios');
 		Route::get('/isi-publications', [PageController::class, 'isiPublications'])->name('isi-publications');
+		Route::get('/non-isi-publications', [PageController::class, 'nonIsiPublications'])->name('non-isi-publications');
+		Route::get('/books', [PageController::class, 'books'])->name('books');
+		Route::get('/awards', [PageController::class, 'awards'])->name('awards');
 		Route::get('/thesis-students', [PageController::class, 'thesisStudents'])->name('thesis-publications');
 		// ##################################################################################################################################
 		// Otras:
+		Route::get('/profile', [PageController::class, 'userProfile'])->name('profile');
 		Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
 		Route::get('/{page}', [PageController::class, 'index'])->name('page');
 	//});

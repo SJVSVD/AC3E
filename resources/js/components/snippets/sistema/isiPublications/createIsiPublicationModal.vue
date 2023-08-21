@@ -51,7 +51,7 @@
                       </div>
                       <div class="col-1 pt-2">
                         <br>
-                        <a class="btn btn-search-blue" @click="filtrarFecha()"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        <a class="btn btn-search-blue" @click="useDOI()"><i class="fa-solid fa-magnifying-glass"></i></a>
                       </div>
                     </div>
                     <br>
@@ -77,14 +77,86 @@
                         <input id="yearInput" type="number" v-model="isiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
                       </div>
                     </div>
+                    <br>
+                    <div class="row">                        
+                      <div class="col-6">
+                          <label for="">Fundings: </label>
+                          <br>
+                          <div>
+                            <Multiselect
+                                placeholder="Select the options"
+                                v-model="isiPublication.fundings"
+                                limit=4
+                                :searchable="true"
+                                :close-on-select="false"
+                                :createTag="true"
+                                :options="options1"
+                                mode="tags"
+                                label="name"
+                                trackBy="name"
+                                :object="true"
+                            />
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <label for="">Comments:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="isiPublication.comments">
+                      </div>
+                    </div>
                     <hr size="3" class="separador">
-
+                    <div class="row">
+                      <div class="text-uppercase pb-2">Participations:</div>
+                      <div class="col-4">
+                          <div class="form-check pt-2 ">
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                  v-model="isiPublication.mainResearchers"> Main researchers</label>
+                          </div>
+                      </div>
+                      <div class="col-4">
+                          <div class="form-check pt-2 ">
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                  v-model="isiPublication.associativeResearchers"> Associative researchers</label>
+                          </div>
+                      </div>
+                      <div class="col-4">
+                          <div class="form-check pt-2 ">
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                  v-model="isiPublication.postDoc"> Post doc</label>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4">
+                          <div class="form-check pt-2 ">
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                  v-model="isiPublication.thesisStudents"> Thesis students </label>
+                          </div>
+                      </div>
+                      <div class="col-4">
+                          <div class="form-check pt-2 ">
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                  v-model="isiPublication.nationalExternalResearchers"> National external researchers </label>
+                          </div>
+                      </div>
+                      <div class="col-4">
+                          <div class="form-check pt-2 ">
+                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                  v-model="isiPublication.internationalExternalResearchers"> Inter. external researchers </label>
+                          </div>
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
                   <slot name="footer">
-                    <a class="btn btn-continue float-end" @click="crearPublicacion()" :disabled="buttonDisable">
+                    <label class="form-check-label"><input type="checkbox" class="form-check-"
+                    v-model="draft"> Save as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="crearPublicacion()" :disabled="buttonDisable">
                       {{ buttonText }}
+                    </a>
+                    <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
+                      Save draft
                     </a>
                   </slot>
                 </div>
@@ -106,7 +178,7 @@ import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
 
 export default {
-    components: { modalconfirmacion, modalalerta },
+    components: { Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       isiPublication:{
@@ -119,14 +191,110 @@ export default {
         firstPage: "",
         lastPage: "",
         yearPublished: "",
+        fundings: null,
+        mainResearchers: false,
+        associativeResearchers: false,
+        postDoc: false,
+        thesisStudents: false,
+        nationalExternalResearchers: false,
+        internationalExternalResearchers: false,
+        comments: "",
       },
+      options1: [
+        'Basal Financing Program Funding',
+        'Other sources (Specify in comments)',
+      ],
       currentYear: new Date().getFullYear(),
       coauthor: false,
+      draft: false,
       buttonDisable: false,
       errors:[],
       buttonText:'Send Publication',
     }),
     methods: {
+      async guardarBorrador(){
+        const ok = await this.$refs.confirmation.show({
+            title: 'Save draft',
+            message: `¿Are you sure you want to save this publication as a draft? this action cannot be undone.`,
+            okButton: 'Save',
+            cancelButton: 'Return'
+          })
+          if (ok) {
+            var fundingsName1 = "";
+            if (this.isiPublication.fundings !== null){
+              if (this.isiPublication.fundings.length !== 0) {
+                this.isiPublication.fundings.forEach((fundings, index) => {
+                  fundingsName1 += fundings.name;
+                  if (index === this.isiPublication.fundings.length - 1) {
+                    fundingsName1 += '.';
+                  } else {
+                    fundingsName1 += ', ';
+                  }
+                });
+              }
+            }
+            let publication = {
+              status: 'Draft',
+              idUsuario: this.userID,
+              authors: this.isiPublication.authors,
+              coauthor: this.isiPublication.coauthor,
+              articleTitle: this.isiPublication.articleTitle,
+              journalName: this.isiPublication.journalName,
+              doi: this.isiPublication.doi,
+              volume: this.isiPublication.volume,
+              firstPage: this.isiPublication.firstPage,
+              lastPage: this.isiPublication.lastPage,
+              yearPublished: this.isiPublication.yearPublished,
+              funding: fundingsName1,
+              mainResearchers: this.isiPublication.mainResearchers,
+              associativeResearchers: this.isiPublication.associativeResearchers,
+              postDoc: this.isiPublication.postDoc,
+              thesisStudents: this.isiPublication.thesisStudents,
+              nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
+              internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
+              comments: this.isiPublication.comments,
+            };
+            axios.post("api/isiPublications", publication ).then((result) => {
+              this.toast.success("Draft saved successfully!", {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+              });
+              setTimeout(() => {this.cerrarModal();}, 1500);
+            })
+            .catch((error)=> {
+              if (error.response.status == 422){
+                this.errors = error.response.data.errors;
+                this.toast.warning('There is an invalid value.', {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              }
+            });
+          }
+      },
+      useDOI(){
+
+      },
       onInput(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
@@ -143,7 +311,7 @@ export default {
       async crearPublicacion() {
         this.errors = [];
         for (const item in this.isiPublication){
-          if(this.isiPublication[item] === "" || this.isiPublication[item] === 0){
+          if(this.isiPublication[item] === "" || this.isiPublication[item] === 0 || this.isiPublication[item] == null){
             if(item == 'coauthor' && this.coauthor == false){
             }else
               this.errors.push(item);
@@ -190,7 +358,17 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
+            var fundingsName1 = "";
+            this.isiPublication.fundings.forEach((fundings, index) => {
+              fundingsName1 += fundings.name;
+              if (index === this.isiPublication.fundings.length - 1) {
+                fundingsName1 += '.';
+              } else {
+                fundingsName1 += ', ';
+              }
+            });
             let publication = {
+              status: 'Finished',
               idUsuario: this.userID,
               authors: this.isiPublication.authors,
               coauthor: this.isiPublication.coauthor,
@@ -201,6 +379,14 @@ export default {
               firstPage: this.isiPublication.firstPage,
               lastPage: this.isiPublication.lastPage,
               yearPublished: this.isiPublication.yearPublished,
+              funding: fundingsName1,
+              mainResearchers: this.isiPublication.mainResearchers,
+              associativeResearchers: this.isiPublication.associativeResearchers,
+              postDoc: this.isiPublication.postDoc,
+              thesisStudents: this.isiPublication.thesisStudents,
+              nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
+              internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
+              comments: this.isiPublication.comments,
             };
             axios.post("api/isiPublications", publication ).then((result) => {
               this.buttonDisable = true;
@@ -246,3 +432,5 @@ export default {
     },
 }
 </script>
+
+<style src="@vueform/multiselect/themes/default.css"></style>

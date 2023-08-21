@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('profilePicture')->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->boolean('estado')->default(1);
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -33,5 +35,8 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('users');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };

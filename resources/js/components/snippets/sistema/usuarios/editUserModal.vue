@@ -311,7 +311,6 @@ export default {
                             });
                             setTimeout(() => {this.cerrarModal();}, 1500);
                         }
-
                     })
                     .catch((error)=> {
                         if (error.response.status == 422){

@@ -9,7 +9,7 @@
         </title>
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-        <link rel="icon" href="{{ asset('AC3E.png') }}" type="image/x-icon">
+        <!-- <link rel="icon" href="{{ asset('AC3E.png') }}" type="image/x-icon"> -->
 
         <!-- CSS Files -->
         @vite('resources/css/app.css')

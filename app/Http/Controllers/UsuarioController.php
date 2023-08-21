@@ -15,12 +15,48 @@ use Illuminate\Support\Facades\Mail;
 
 class UsuarioController extends Controller
 {
+    public function changePassword(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Validar la nueva contraseña aquí si es necesario
+        $newPassword = $request->input('password');
+        
+        // Actualizar la contraseña del usuario
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        return response()->json(['message' => 'Contraseña cambiada exitosamente']);
+    }
+
     public function index()
     {
         return User::with('roles')->with('permissions')->get();
     }
 
+    public function update(Request $request, $id)
+    {
+        $input = $request->all();
+        $user = User::find($id);
 
+        $contador = User::where('email',$input['email'])->where('id', '!=', $id)->count();
+        if($contador > 0){
+            return response()->json("email existente");
+        }else{
+            if(!empty($input['password'])){
+                $input['password'] = Hash::make($input['password']);
+            }else{
+                $input = Arr::except($input, array('password'));
+            }
+            $user = User::find($id);
+            $mytime = Carbon::now();
+            $user->updated_at = $mytime;
+            $user->save();
+            $user->update($input);
+    
+            return response()->json("Usuario Editado");
+        }
+    }
 
     public function email($email)
     {

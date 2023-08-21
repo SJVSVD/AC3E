@@ -16,7 +16,7 @@
                           <div class="col-5">
                               <label for="">Author(s): </label>
                               <br>
-                              <input title="First Name and Last Name." type="text" class= "form-control" v-model="isiPublication.authors">
+                              <input title="First Name and Last Name." type="text" class= "form-control" v-model="nonIsiPublication.authors">
                           </div>
                           <div class="col-3">
                             <br>
@@ -29,29 +29,20 @@
                           <div class="col-4">
                               <label for="">Coauthor(s):</label>
                               <br>
-                              <input type="text" :disabled="coauthor == false" class= "form-control" v-model="isiPublication.coauthor">
+                              <input type="text" :disabled="coauthor == false" class= "form-control" v-model="nonIsiPublication.coauthor">
                           </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-4">
+                      <div class="col-6">
                         <label for="">Article Title:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.articleTitle">
+                        <input type="text" class= "form-control" v-model="nonIsiPublication.articleTitle">
                       </div>
-                      <div class="col-3">
+                      <div class="col-6">
                         <label for="">Journal Name:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.journalName">
-                      </div>
-                      <div class="col-4">
-                        <label for="">Digital Object Identifier (DOI):</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.doi">
-                      </div>
-                      <div class="col-1 pt-2">
-                        <br>
-                        <a class="btn btn-search-blue" @click="filtrarFecha()"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        <input type="text" class= "form-control" v-model="nonIsiPublication.journalName">
                       </div>
                     </div>
                     <br>
@@ -59,22 +50,22 @@
                       <div class="col-3">
                         <label for="">Volume:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.volume">
+                        <input type="text" class= "form-control" v-model="nonIsiPublication.volume">
                       </div>
                       <div class="col-3">
                         <label for="">First Page:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.firstPage">
+                        <input type="text" class= "form-control" v-model="nonIsiPublication.firstPage">
                       </div>
                       <div class="col-3">
                         <label for="">Last Page:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.lastPage">
+                        <input type="text" class= "form-control" v-model="nonIsiPublication.lastPage">
                       </div>
                       <div class="col-3">
                         <label for="">Year Published:</label>
                         <br>
-                        <input id="yearInput" type="number" v-model="isiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
+                        <input id="yearInput" type="number" v-model="nonIsiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
                       </div>
                     </div>
                     <br>
@@ -85,7 +76,7 @@
                           <div>
                             <Multiselect
                                 placeholder="Select the options"
-                                v-model="isiPublication.fundings"
+                                v-model="nonIsiPublication.fundings"
                                 limit=4
                                 :searchable="true"
                                 :close-on-select="false"
@@ -101,7 +92,7 @@
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.comments">
+                        <input type="text" class= "form-control" v-model="nonIsiPublication.comments">
                       </div>
                     </div>
                     <hr size="3" class="separador">
@@ -110,19 +101,19 @@
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="isiPublication.mainResearchers"> Main researchers</label>
+                                  v-model="nonIsiPublication.mainResearchers"> Main researchers</label>
                           </div>
                       </div>
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="isiPublication.associativeResearchers"> Associative researchers</label>
+                                  v-model="nonIsiPublication.associativeResearchers"> Associative researchers</label>
                           </div>
                       </div>
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="isiPublication.postDoc"> Post doc</label>
+                                  v-model="nonIsiPublication.postDoc"> Post doc</label>
                           </div>
                       </div>
                     </div>
@@ -130,19 +121,19 @@
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="isiPublication.thesisStudents"> Thesis students </label>
+                                  v-model="nonIsiPublication.thesisStudents"> Thesis students </label>
                           </div>
                       </div>
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="isiPublication.nationalExternalResearchers"> National external researchers </label>
+                                  v-model="nonIsiPublication.nationalExternalResearchers"> National external researchers </label>
                           </div>
                       </div>
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="isiPublication.internationalExternalResearchers"> Inter. external researchers </label>
+                                  v-model="nonIsiPublication.internationalExternalResearchers"> Inter. external researchers </label>
                           </div>
                       </div>
                     </div>
@@ -176,12 +167,11 @@ export default {
     components: { modalconfirmacion, modalalerta, Multiselect },
     mixins: [mixin],
     data: () => ({
-      isiPublication:{
+      nonIsiPublication:{
         authors: "",
         coauthor: "",
         articleTitle: "",
         journalName: "",
-        doi: "",
         volume: "",
         firstPage: "",
         lastPage: "",
@@ -207,26 +197,26 @@ export default {
       buttonText:'Edit Publication',
     }),
     props:{
-      isiPublication1: Object,
+      nonIsiPublication1: Object,
     },
     created(){
-      this.id = this.isiPublication1.id;
-      this.isiPublication.authors = this.isiPublication1.authors;
-      if (this.isiPublication1.coauthor != null){
+      this.id = this.nonIsiPublication1.id;
+      this.nonIsiPublication.authors = this.nonIsiPublication1.authors;
+      if (this.nonIsiPublication1.coauthor != null){
         this.coauthor = true;
-        this.isiPublication.coauthor = this.isiPublication1.coauthor;
+        this.nonIsiPublication.coauthor = this.nonIsiPublication1.coauthor;
       }
-      this.isiPublication.articleTitle = this.isiPublication1.articleTitle;
-      this.isiPublication.journalName = this.isiPublication1.journalName;
-      this.isiPublication.doi = this.isiPublication1.doi;
-      this.isiPublication.volume = this.isiPublication1.volume;
-      this.isiPublication.firstPage = this.isiPublication1.firstPage;
-      this.isiPublication.lastPage = this.isiPublication1.lastPage;
-      this.isiPublication.yearPublished = this.isiPublication1.yearPublished;
+      this.nonIsiPublication.articleTitle = this.nonIsiPublication1.articleTitle;
+      this.nonIsiPublication.journalName = this.nonIsiPublication1.journalName;
+      this.nonIsiPublication.doi = this.nonIsiPublication1.doi;
+      this.nonIsiPublication.volume = this.nonIsiPublication1.volume;
+      this.nonIsiPublication.firstPage = this.nonIsiPublication1.firstPage;
+      this.nonIsiPublication.lastPage = this.nonIsiPublication1.lastPage;
+      this.nonIsiPublication.yearPublished = this.nonIsiPublication1.yearPublished;
 
-      if (this.isiPublication1.funding != null) {
-          const valoresSeparados1 = this.isiPublication1.funding.split(",");
-          this.isiPublication.fundings = valoresSeparados1.map((valor, index) => {
+      if (this.nonIsiPublication1.funding != null) {
+          const valoresSeparados1 = this.nonIsiPublication1.funding.split(",");
+          this.nonIsiPublication.fundings = valoresSeparados1.map((valor, index) => {
               valor = valor.trim();
               if (valor.endsWith('.')) {
                   valor = valor.slice(0, -1);
@@ -236,19 +226,19 @@ export default {
           });
       }
 
-      this.isiPublication.comments = this.isiPublication1.comments;
-      this.isiPublication.mainResearchers = this.isiPublication1.mainResearchers;
-      this.isiPublication.associativeResearchers = this.isiPublication1.associativeResearchers;
-      this.isiPublication.postDoc = this.isiPublication1.postDoc;
-      this.isiPublication.thesisStudents = this.isiPublication1.thesisStudents;
-      this.isiPublication.nationalExternalResearchers = this.isiPublication1.nationalExternalResearchers;
-      this.isiPublication.internationalExternalResearchers = this.isiPublication1.internationalExternalResearchers;
+      this.nonIsiPublication.comments = this.nonIsiPublication1.comments;
+      this.nonIsiPublication.mainResearchers = this.nonIsiPublication1.mainResearchers;
+      this.nonIsiPublication.associativeResearchers = this.nonIsiPublication1.associativeResearchers;
+      this.nonIsiPublication.postDoc = this.nonIsiPublication1.postDoc;
+      this.nonIsiPublication.thesisStudents = this.nonIsiPublication1.thesisStudents;
+      this.nonIsiPublication.nationalExternalResearchers = this.nonIsiPublication1.nationalExternalResearchers;
+      this.nonIsiPublication.internationalExternalResearchers = this.nonIsiPublication1.internationalExternalResearchers;
     },
     methods: {
       onInput(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
-        this.isiPublication.yearPublished = input.value.slice(0, 4);
+        this.nonIsiPublication.yearPublished = input.value.slice(0, 4);
       },
       cerrarModal(){
         const elem = this.$refs.closeBtn;
@@ -260,8 +250,8 @@ export default {
       },
       async editarPublicacion() {
         this.errors = [];
-        for (const item in this.isiPublication){
-          if(this.isiPublication[item] === "" || this.isiPublication[item] === 0){
+        for (const item in this.nonIsiPublication){
+          if(this.nonIsiPublication[item] === "" || this.nonIsiPublication[item] === 0){
             if(item == 'coauthor' && this.coauthor == false){
             }else
               this.errors.push(item);
@@ -309,11 +299,11 @@ export default {
           })
           if (ok) {
             var fundingsName1 = "";
-            if (this.isiPublication.fundings !== null){
-              if (this.isiPublication.fundings.length !== 0) {
-                this.isiPublication.fundings.forEach((fundings, index) => {
+            if (this.nonIsiPublication.fundings !== null){
+              if (this.nonIsiPublication.fundings.length !== 0) {
+                this.nonIsiPublication.fundings.forEach((fundings, index) => {
                   fundingsName1 += fundings.name;
-                  if (index === this.isiPublication.fundings.length - 1) {
+                  if (index === this.nonIsiPublication.fundings.length - 1) {
                     fundingsName1 += '.';
                   } else {
                     fundingsName1 += ', ';
@@ -323,25 +313,25 @@ export default {
             }
             let publication = {
               status: 'Finished',
-              authors: this.isiPublication.authors,
-              coauthor: this.isiPublication.coauthor,
-              articleTitle: this.isiPublication.articleTitle,
-              journalName: this.isiPublication.journalName,
-              doi: this.isiPublication.doi,
-              volume: this.isiPublication.volume,
-              firstPage: this.isiPublication.firstPage,
-              lastPage: this.isiPublication.lastPage,
-              yearPublished: this.isiPublication.yearPublished,
+              authors: this.nonIsiPublication.authors,
+              coauthor: this.nonIsiPublication.coauthor,
+              articleTitle: this.nonIsiPublication.articleTitle,
+              journalName: this.nonIsiPublication.journalName,
+              doi: this.nonIsiPublication.doi,
+              volume: this.nonIsiPublication.volume,
+              firstPage: this.nonIsiPublication.firstPage,
+              lastPage: this.nonIsiPublication.lastPage,
+              yearPublished: this.nonIsiPublication.yearPublished,
               funding: fundingsName1,
-              mainResearchers: this.isiPublication.mainResearchers,
-              associativeResearchers: this.isiPublication.associativeResearchers,
-              postDoc: this.isiPublication.postDoc,
-              thesisStudents: this.isiPublication.thesisStudents,
-              nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
-              internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
-              comments: this.isiPublication.comments,
+              mainResearchers: this.nonIsiPublication.mainResearchers,
+              associativeResearchers: this.nonIsiPublication.associativeResearchers,
+              postDoc: this.nonIsiPublication.postDoc,
+              thesisStudents: this.nonIsiPublication.thesisStudents,
+              nationalExternalResearchers: this.nonIsiPublication.nationalExternalResearchers,
+              internationalExternalResearchers: this.nonIsiPublication.internationalExternalResearchers,
+              comments: this.nonIsiPublication.comments,
             };
-            axios.put(`api/isiPublications/${this.id}`, publication).then((result) => {
+            axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
               this.buttonDisable = true;
               this.buttonText = 'Sending...';
               this.toast.success("Publication edited successfully!", {

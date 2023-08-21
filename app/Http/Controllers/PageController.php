@@ -42,6 +42,21 @@ class PageController extends Controller
         return view('pages.isiPublications');
     }
 
+    public function nonIsiPublications()
+    {
+        return view('pages.nonIsiPublications');
+    }
+
+    public function books()
+    {
+        return view('pages.books');
+    }
+
+    public function awards()
+    {
+        return view('pages.awards');
+    }
+
     public function thesisStudents()
     {
         return view('pages.thesisStudents');

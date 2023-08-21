@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class isiPublication extends Model
+class nonIsiPublication extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $table = "isiPublications";
+    protected $table = "nonIsiPublications";
 
     protected $fillable = [
         'status',
@@ -19,7 +19,6 @@ class isiPublication extends Model
         'coauthor',
         'articleTitle',
         'journalName',
-        'doi',
         'volume',
         'firstPage',
         'lastPage',

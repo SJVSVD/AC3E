@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('isiPublications', function (Blueprint $table) {
+        Schema::create('nonIsiPublications', function (Blueprint $table) {
             $table->id();
             $table->integer('idUsuario');
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('coauthor')->nullable();
             $table->string('articleTitle')->nullable();
             $table->string('journalName')->nullable();
-            $table->string('doi')->nullable();
             $table->string('volume')->nullable();
             $table->string('firstPage')->nullable();
             $table->string('lastPage')->nullable();
@@ -47,8 +46,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('isiPublications');
-        Schema::table('isiPublications', function (Blueprint $table) {
+        Schema::dropIfExists('nonIsiPublications');
+        Schema::table('nonIsiPublications', function (Blueprint $table) {
             $table->dropSoftDeletes();
         });
     }

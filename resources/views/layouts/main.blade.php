@@ -14,7 +14,6 @@
         </title>
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/1bd7af15cd.js" crossorigin="anonymous"></script>
-        <link rel="icon" href="{{ asset('AC3E.png') }}" type="image/x-icon">
         <!-- CSS Files -->
         @vite('resources/css/app.css')
         @vite('resources/css/datatables.css')
@@ -88,8 +87,21 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Modules</a></li>
-                    <li><a href="/isi-publications">ISI Publications</a></li>
-                    <li><a href="/thesis-students">Thesis Students</a></li>
+                    <li><a href="/isi-publications">Isi publications</a></li>
+                    <li><a href="/non-isi-publications">Non Isi publications</a></li>
+                    <li><a href="/books">Books</a></li>
+                    <li><a href="/awards">Awards</a></li>
+                    <li><a href="/thesis-students">Organization of Sc events</a></li>
+                    <li><a href="/thesis-students">Participation in Sc events</a></li>
+                    <li><a href="/thesis-students">Collaboration</a></li>
+                    <li><a href="/thesis-students">Conjoint projects</a></li>
+                    <li><a href="/thesis-students">Thesis students</a></li>
+                    <li><a href="/thesis-students">Postdoctoral fellows</a></li>
+                    <li><a href="/thesis-students">Outreach</a></li>
+                    <li><a href="/thesis-students">Patents</a></li>
+                    <li><a href="/thesis-students">Public-private conections</a></li>
+                    <li><a href="/thesis-students">Tec. and know. transfer</a></li>
+                    <li><a href="/thesis-students">Funding sources</a></li>
                 </ul>
             </li>
             <!-- @role('Super-Administrador')
@@ -128,10 +140,8 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">My Account</a></li>
-                    @role('Usuario')
-                    <li><a href="/profile">Mi Perfil</a></li>
+                    <li><a href="/profile">My Profile</a></li>
                     <hr size="4" class="separador-sm">
-                    @endrole
                     <li>
                         <form  method="post" action="{{ route('logout') }}" id="logout-form"> @csrf </form>
                         <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

@@ -25,6 +25,18 @@ import isiPublicationsComponent from "./components/main/sistema/isiPublicationsC
 app.component("isi-publications", isiPublicationsComponent);
 app.mount("#isi-publications");
 
+import nonIsiPublicationsComponent from "./components/main/sistema/nonIsiPublicationsComponent.vue";
+app.component("non-isi-publications", nonIsiPublicationsComponent);
+app.mount("#non-isi-publications");
+
+import booksComponent from "./components/main/sistema/booksComponent.vue";
+app.component("books", booksComponent);
+app.mount("#books");
+
+import awardsComponent from "./components/main/sistema/awardsComponent.vue";
+app.component("awards", awardsComponent);
+app.mount("#awards");
+
 import thesisStudentsComponent from "./components/main/sistema/thesisStudentsComponent.vue";
 app.component("thesis-students", thesisStudentsComponent);
 app.mount("#thesis-students");
@@ -32,6 +44,10 @@ app.mount("#thesis-students");
 import adminRolesComponent from "./components/main/sistema/adminRolesComponent.vue";
 app.component("admin-roles", adminRolesComponent);
 app.mount("#admin-roles");
+
+import userProfileComponent from "./components/userProfileComponent.vue";
+app.component("user-profile-component", userProfileComponent);
+app.mount("#userp");
 
 import error from "./components/errorComponent.vue";
 app.component("error-component", error);
