@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Mail;
 
 class UsuarioController extends Controller
 {
+
+    public function getResearchers(){
+        return User::pluck('name');
+    }
+
+
     public function changePassword(Request $request, $id)
     {
         $user = User::findOrFail($id);

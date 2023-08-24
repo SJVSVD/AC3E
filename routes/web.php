@@ -7,7 +7,6 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ResetPassword;
-use App\Http\Controllers\ChangePassword;
 
 // Rutas Base:
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
@@ -15,8 +14,6 @@ Route::get('/login', [LoginController::class, 'show'])->middleware('guest')->nam
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('login.perform');
 Route::get('/reset-password', [ResetPassword::class, 'show'])->middleware('guest')->name('reset-password');
 Route::post('/reset-password', [ResetPassword::class, 'send'])->middleware('guest')->name('reset.perform');
-Route::get('/change-password', [ChangePassword::class, 'show'])->middleware('guest')->name('change-password');
-Route::post('/change-password', [ChangePassword::class, 'update'])->middleware('guest')->name('change.perform');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('email/{email}', [UsuarioController::class, 'email'])->name('email');
 
@@ -35,6 +32,8 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('/non-isi-publications', [PageController::class, 'nonIsiPublications'])->name('non-isi-publications');
 		Route::get('/books', [PageController::class, 'books'])->name('books');
 		Route::get('/awards', [PageController::class, 'awards'])->name('awards');
+		Route::get('/organization-sc-events', [PageController::class, 'organizationScEvents'])->name('organization-sc-events');
+		Route::get('/participation-sc-events', [PageController::class, 'participationScEvents'])->name('participation-sc-events');
 		Route::get('/thesis-students', [PageController::class, 'thesisStudents'])->name('thesis-publications');
 		// ##################################################################################################################################
 		// Otras:

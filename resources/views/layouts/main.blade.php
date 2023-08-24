@@ -91,9 +91,9 @@
                     <li><a href="/non-isi-publications">Non Isi publications</a></li>
                     <li><a href="/books">Books</a></li>
                     <li><a href="/awards">Awards</a></li>
-                    <li><a href="/thesis-students">Organization of Sc events</a></li>
-                    <li><a href="/thesis-students">Participation in Sc events</a></li>
-                    <li><a href="/thesis-students">Collaboration</a></li>
+                    <li><a href="/organization-sc-events">Organization of Sc events</a></li>
+                    <li><a href="/participation-sc-events">Participation in Sc events</a></li>
+                    <li><a href="/thesis-students">Sc Collaborations</a></li>
                     <li><a href="/thesis-students">Conjoint projects</a></li>
                     <li><a href="/thesis-students">Thesis students</a></li>
                     <li><a href="/thesis-students">Postdoctoral fellows</a></li>

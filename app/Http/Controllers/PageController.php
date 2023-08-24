@@ -57,6 +57,16 @@ class PageController extends Controller
         return view('pages.awards');
     }
 
+    public function organizationScEvents()
+    {
+        return view('pages.organizationScEvents');
+    }
+
+    public function participationScEvents()
+    {
+        return view('pages.participationScEvents');
+    }
+
     public function thesisStudents()
     {
         return view('pages.thesisStudents');

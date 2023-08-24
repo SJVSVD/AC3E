@@ -37,6 +37,14 @@ import awardsComponent from "./components/main/sistema/awardsComponent.vue";
 app.component("awards", awardsComponent);
 app.mount("#awards");
 
+import organizationScEventsComponent from "./components/main/sistema/organizationScEventsComponent.vue";
+app.component("organization-sc-events", organizationScEventsComponent);
+app.mount("#organization-sc-events");
+
+import participationScEventsComponent from "./components/main/sistema/participationScEventsComponent.vue";
+app.component("participation-sc-events", participationScEventsComponent);
+app.mount("#participation-sc-events");
+
 import thesisStudentsComponent from "./components/main/sistema/thesisStudentsComponent.vue";
 app.component("thesis-students", thesisStudentsComponent);
 app.mount("#thesis-students");

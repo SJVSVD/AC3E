@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('awards', function (Blueprint $table) {
             $table->id();
             $table->string('status')->nullable();
-            $table->string('awardeeName')->nullable();
+            $table->integer('awardeeName')->nullable();
+            $table->foreign("awardeeName")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('awardName')->nullable();
             $table->year('year')->nullable();
             $table->string('contributionAwardee')->nullable();
