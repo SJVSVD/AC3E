@@ -15,14 +15,14 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="">Password: </label>
+                                        <label for="">New Password: </label>
                                         <br>
                                         <input type="password" class= "form-control" v-model="edits.password">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for=""> Confirm Password: </label>
+                                        <label for=""> Confirm New Password: </label>
                                         <br>
                                         <input type="password" class= "form-control" v-model="edits.confirmPassword">
                                     </div>

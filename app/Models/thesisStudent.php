@@ -14,6 +14,7 @@ class thesisStudent extends Model
 
     protected $fillable = [
         'idUsuario',
+        'status',
         'identification',
         'studentName',
         'runOrPassport',

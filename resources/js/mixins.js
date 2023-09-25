@@ -104,6 +104,17 @@ export const mixin = {
                 getValue.value = "";
             }
         },
+        thisDate($fecha, $tipoOrden) {
+            if ($fecha == null) {
+                return "Sin ingreso.";
+            } else {
+                if ($tipoOrden) {
+                    return moment($fecha).format("YYYY-MM-DD"); // Ordenar por año, mes, día
+                } else {
+                    return moment($fecha).format("DD-MM-YYYY"); // Ordenar por día, mes, año
+                }
+            }
+        },
         formatMoneyCLP(value) {
             return new Intl.NumberFormat("en-EN", {
                 currency: "CLP",

@@ -67,8 +67,48 @@ class PageController extends Controller
         return view('pages.participationScEvents');
     }
 
+    public function scCollaborations()
+    {
+        return view('pages.scCollaborations');
+    }
+
+    public function conjointProjects()
+    {
+        return view('pages.conjointProjects');
+    }
+
     public function thesisStudents()
     {
         return view('pages.thesisStudents');
+    }
+
+    public function outreachActivities()
+    {
+        return view('pages.outreachActivities');
+    }
+
+    public function patents()
+    {
+        return view('pages.patents');
+    }
+
+    public function publicPrivate()
+    {
+        return view('pages.publicPrivate');
+    }
+
+    public function technologyKnowledge()
+    {
+        return view('pages.technologyKnowledge');
+    }
+
+    public function postDoc()
+    {
+        return view('pages.postDoc');
+    }
+
+    public function fundingSources()
+    {
+        return view('pages.fundingSources');
     }
 }

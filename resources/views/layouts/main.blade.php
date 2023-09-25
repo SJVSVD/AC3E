@@ -93,15 +93,21 @@
                     <li><a href="/awards">Awards</a></li>
                     <li><a href="/organization-sc-events">Organization of Sc events</a></li>
                     <li><a href="/participation-sc-events">Participation in Sc events</a></li>
-                    <li><a href="/thesis-students">Sc Collaborations</a></li>
-                    <li><a href="/thesis-students">Conjoint projects</a></li>
+                    <li><a href="/sc-collaborations">Sc Collaborations</a></li>
+
+                    <li><a href="/conjoint-projects">Conjoint projects</a></li>
+
                     <li><a href="/thesis-students">Thesis students</a></li>
-                    <li><a href="/thesis-students">Postdoctoral fellows</a></li>
-                    <li><a href="/thesis-students">Outreach</a></li>
-                    <li><a href="/thesis-students">Patents</a></li>
-                    <li><a href="/thesis-students">Public-private conections</a></li>
-                    <li><a href="/thesis-students">Tec. and know. transfer</a></li>
-                    <li><a href="/thesis-students">Funding sources</a></li>
+
+                    <li><a href="/post-doc">Postdoctoral fellows</a></li>
+
+                    <li><a href="/outreach-activities">Outreach</a></li>
+                    <li><a href="/patents">Patents</a></li>
+                    <li><a href="/public-private">Public-private conections</a></li>
+                    
+                    <li><a href="/technology-knowledge">Tec. and know. transfer</a></li>
+                    
+                    <li><a href="/funding-sources">Funding sources</a></li>
                 </ul>
             </li>
             <!-- @role('Super-Administrador')

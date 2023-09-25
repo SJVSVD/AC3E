@@ -6,7 +6,7 @@
             <div class="modal-container-xs">
               <div class="modal-header pb-2" style="font-weight: bold; color: #444444;">
                 <slot name="header">
-                    Foto de Perfil
+                    Profile pic
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
@@ -37,8 +37,8 @@
               </div>
               <div class="modal-footer">
                 <slot name="footer">
-                  <button class="btn btn-closed float-start" @click="deleteProfilePic();" :disabled="buttonDisable">Eliminar</button>
-                  <button class="btn btn-alert float-end" @click="changeProfilePic()" :disabled="buttonDisable">Guardar</button>
+                  <button class="btn btn-closed float-start" @click="deleteProfilePic();" :disabled="buttonDisable">Delete</button>
+                  <button class="btn btn-alert float-end" @click="changeProfilePic()" :disabled="buttonDisable">Save</button>
                 </slot>
               </div>
               <modalconfirmacion ref="confirmation"></modalconfirmacion>

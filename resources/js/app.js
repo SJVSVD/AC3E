@@ -45,9 +45,41 @@ import participationScEventsComponent from "./components/main/sistema/participat
 app.component("participation-sc-events", participationScEventsComponent);
 app.mount("#participation-sc-events");
 
+import scCollaborationsComponent from "./components/main/sistema/scCollaborationsComponent.vue";
+app.component("sc-collaborations", scCollaborationsComponent);
+app.mount("#sc-collaborations");
+
+import conjointProjectsComponent from "./components/main/sistema/conjointProjectsComponent.vue";
+app.component("conjoint-projects", conjointProjectsComponent);
+app.mount("#conjoint-projects");
+
 import thesisStudentsComponent from "./components/main/sistema/thesisStudentsComponent.vue";
 app.component("thesis-students", thesisStudentsComponent);
 app.mount("#thesis-students");
+
+import outreachActivitiesComponent from "./components/main/sistema/outreachActivitiesComponent.vue";
+app.component("outreach-activities", outreachActivitiesComponent);
+app.mount("#outreach-activities");
+
+import patentsComponent from "./components/main/sistema/patentsComponent.vue";
+app.component("patents", patentsComponent);
+app.mount("#patents");
+
+import publicPrivateComponent from "./components/main/sistema/publicPrivateComponent.vue";
+app.component("public-private", publicPrivateComponent);
+app.mount("#public-private");
+
+import technologyKnowledgeComponent from "./components/main/sistema/technologyKnowledgeComponent.vue";
+app.component("technology-knowledge", technologyKnowledgeComponent);
+app.mount("#technology-knowledge");
+
+import postDocComponent from "./components/main/sistema/postDocComponent.vue";
+app.component("post-doc", postDocComponent);
+app.mount("#post-doc");
+
+import fundingSourcesComponent from "./components/main/sistema/fundingSourcesComponent.vue";
+app.component("funding-sources", fundingSourcesComponent);
+app.mount("#funding-sources");
 
 import adminRolesComponent from "./components/main/sistema/adminRolesComponent.vue";
 app.component("admin-roles", adminRolesComponent);

@@ -233,7 +233,7 @@
             </div> -->
             <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
-            <modalEditPassword v-bind:password1="passwordEdit" v-if="showEditPassword" @close="showEditPassword = false" @recarga="recargarTabla('Vendedores')"></modalEditPassword>
+            <modalEditPassword v-bind:password1="passwordEdit" v-if="showEditPassword" @close="showEditPassword = false"></modalEditPassword>
             <modalalerta ref="alert"></modalalerta>
         </div>
     </div>

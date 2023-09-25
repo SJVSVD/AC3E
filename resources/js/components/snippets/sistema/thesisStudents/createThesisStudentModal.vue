@@ -19,12 +19,13 @@
                             <input type="text" class= "form-control" v-model="thesisStudent.studentName">
                         </div>
                         <div class="col-3">
-                            <label for="">Gender(M/F): </label>
+                            <label for="">Gender: </label>
                             <br>
                             <select class="form-select" v-model="thesisStudent.gender">
                               <option disabled value="">Select a Gender</option>
-                              <option value="M">Male</option>
-                              <option value="F">Female</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="No binary">No binary</option>
                               </select>
                         </div>
                         <div class="col-3">
@@ -474,6 +475,7 @@ export default {
 
             let thesisStudent = {
               idUsuario: this.userID,
+              status: 'Finished',
               identification: this.thesisStudent.identification,
               studentName: this.thesisStudent.studentName,
               runOrPassport: runOrPassport1,

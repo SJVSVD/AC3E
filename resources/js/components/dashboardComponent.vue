@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-6 col-sm-6 mb-xl-0 mb-4">
             <div class="card overflow-hidden" style="height: 160px;">
                 <!-- <div class="card-body p-3 text-white text-shadow-black background-size" style="background-image:linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://wallpaperaccess.com/full/5816762.jpg');">
                     <div class="row">
@@ -25,8 +25,7 @@
                 </div>
             </div>
         </div>
-
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-6 col-sm-6 mb-xl-0 mb-4">
             <div class="card overflow-hidden" style="height: 160px;">
                 <div class="card-body p-3 text-white text-shadow-black background-size" style="background-image:linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://fondosmil.com/fondo/10790.jpg'); min-height: 160px;">
                     <div class="row">
@@ -38,6 +37,45 @@
                                 </h5>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
+                <div class="table-responsive p-4">
+                    <div v-show="mostrarCarga" class="loader-sm"></div>
+                    <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableRegistros">
+                        <thead>
+                            <tr style="color: black">
+                                <th style="min-width: 16px;"></th>
+                                <th class="text-uppercase text-xs font-weight-bolder">Fecha de Creación</th>
+                                <th class="text-uppercase text-xs font-weight-bolder">Módulo</th>
+                                <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(registro, index) in registros" :key="index">
+                                <td></td>
+                                <td>{{ thisDate(registro.created_at,true) }}</td>
+                                <td>{{ registro.modulo }}</td>
+                                <td>{{ registro.usuario.name }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
+                <div class="row p-3">
+                    <div class="col-6">
+                        <a class="btn btn-primary" v-if="is('Administrador')" @click="exportConsolidado()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Consolidado</a>
+                    </div>
+                    <div class="col-6">
+                        <a class="btn btn-primary" @click="exportIndividual()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Planilla Individual</a>
                     </div>
                 </div>
             </div>
@@ -56,12 +94,16 @@ export default {
     mixins: [mixin],
     data() {
         return {
+            cantidadRegistros: 10,
+            registros: [],
             CLPRates: null,
             interval: null,
             time: null,
             weather: null,
             coords: null,
             usuariosActivos: [],
+            mostrarTabla: false,
+            mostrarCarga: true,
         }
     },
     beforeDestroy() {
@@ -79,9 +121,56 @@ export default {
         }, 1000);
     },
     mounted(){
-        this.carouselInterval();
+        this.getRegistros(this.cantidadRegistros);
     },
     methods: {
+        getRegistros(cantidad){
+            axios.get(`api/getRegistros/${cantidad}`).then( response =>{
+                this.registros = response.data;
+                if (this.table != null){
+                    this.table.clear();
+                    this.table.destroy();
+                }
+                this.crearTabla('#myTableRegistros');
+                this.table.buttons().remove();
+            }).catch(e=> console.log(e))
+        },
+        exportConsolidado(){
+            var data = {
+                userID: this.userID,
+            };
+            axios({
+                url: `api/exportConsolidado`, data,
+                method: 'POST',
+                responseType: 'arraybuffer',
+            }).then((response) => {
+                let blob = new Blob([response.data], {
+                    type: 'application/xlsx'
+                })
+                let link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob)
+                link.download = 'Consolidado.xlsx'
+                link.click()
+            })
+        },
+        exportIndividual(){
+            var data = {
+                userID: this.userID,
+            };
+            axios({
+                url: `api/exportIndividual`, data,
+                method: 'POST',
+                responseType: 'arraybuffer',
+            }).then((response) => {
+                let blob = new Blob([response.data], {
+                    type: 'application/xlsx'
+                })
+                let link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob)
+                link.download = 'PlanillaIndividual.xlsx'
+                link.click()
+            })
+        },
         carouselInterval(){
             $('.carousel').carousel({
                 interval: 3000

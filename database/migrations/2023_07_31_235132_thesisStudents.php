@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('idUsuario');
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
+            $table->string('status');
             $table->string('identification');
             $table->string('studentName');
             $table->string('runOrPassport');

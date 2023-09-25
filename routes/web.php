@@ -34,7 +34,15 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('/awards', [PageController::class, 'awards'])->name('awards');
 		Route::get('/organization-sc-events', [PageController::class, 'organizationScEvents'])->name('organization-sc-events');
 		Route::get('/participation-sc-events', [PageController::class, 'participationScEvents'])->name('participation-sc-events');
+		Route::get('/sc-collaborations', [PageController::class, 'scCollaborations'])->name('sc-collaborations');
+		Route::get('/conjoint-projects', [PageController::class, 'conjointProjects'])->name('conjoint-projects');
 		Route::get('/thesis-students', [PageController::class, 'thesisStudents'])->name('thesis-publications');
+		Route::get('/outreach-activities', [PageController::class, 'outreachActivities'])->name('outreach-activities');
+		Route::get('/patents', [PageController::class, 'patents'])->name('patents');
+		Route::get('/public-private', [PageController::class, 'publicPrivate'])->name('public-private');
+		Route::get('/technology-knowledge', [PageController::class, 'technologyKnowledge'])->name('technology-knowledge');
+		Route::get('/post-doc', [PageController::class, 'postDoc'])->name('post-doc');
+		Route::get('/funding-sources', [PageController::class, 'fundingSources'])->name('funding-sources');
 		// ##################################################################################################################################
 		// Otras:
 		Route::get('/profile', [PageController::class, 'userProfile'])->name('profile');
