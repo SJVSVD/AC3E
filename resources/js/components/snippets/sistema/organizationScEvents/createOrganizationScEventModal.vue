@@ -187,11 +187,11 @@ export default {
             }
 
             var typeEvent = '';
-            var other = false;
+            var other = 0;
 
             if(this.organizationSc.typeEvent == 'Other'){
               typeEvent = this.other;
-              other = true;
+              other = 1;
             }else{
               typeEvent = this.organizationSc.typeEvent;
             }
@@ -329,11 +329,11 @@ export default {
               }
             }
             var typeEvent = '';
-            var other = false;
+            var other = 0;
 
             if(this.organizationSc.typeEvent == 'Other'){
               typeEvent = this.other;
-              other = true;
+              other = 1;
             }else{
               typeEvent = this.organizationSc.typeEvent;
             }
