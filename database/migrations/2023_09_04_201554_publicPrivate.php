@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('publicPrivate', function (Blueprint $table) {
-            $table->id();
-            $table->integer('idUsuario');
+            $table->bigIncrements('id');
+            $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
             $table->string('nameOfActivity')->nullable();

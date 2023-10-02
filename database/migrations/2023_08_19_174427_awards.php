@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('awards', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('status')->nullable();
-            $table->integer('awardeeName')->nullable();
+            $table->bigInteger('awardeeName')->unsigned();
             $table->foreign("awardeeName")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('awardName')->nullable();
             $table->year('year')->nullable();

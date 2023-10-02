@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('books', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('status')->nullable();
             $table->string('workType')->nullable();
-            $table->integer('centerResearcher');
+            $table->bigInteger('centerResearcher')->unsigned();
             $table->foreign("centerResearcher")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('bookAuthors')->nullable();
             $table->string('chapterAuthors')->nullable();

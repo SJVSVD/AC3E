@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('scCollaborations', function (Blueprint $table) {
-            $table->id();
-            $table->integer('idUsuario');
+            $table->bigIncrements('id');
+            $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->integer('moduleType');
             $table->string('status');
