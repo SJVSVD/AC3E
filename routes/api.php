@@ -12,6 +12,7 @@ use App\Http\Controllers\booksController;
 use App\Http\Controllers\awardsController;
 use App\Http\Controllers\conjointProjectController;
 use App\Http\Controllers\dashboardController;
+use App\Http\Controllers\extraTablesController;
 use App\Http\Controllers\fundingSourcesController;
 use App\Http\Controllers\organizationsScEventsController;
 use App\Http\Controllers\participationsScEventsController;
@@ -96,6 +97,11 @@ Route::apiResource('permisos', PermisosController::class);
 Route::post('exportConsolidado', [exportsController::class, 'exportConsolidado']);
 
 Route::post('exportIndividual', [exportsController::class, 'exportIndividual']);
+
+//Extra tables
+
+Route::post('editProgressReport', [extraTablesController::class, 'editProgressReport']);
+Route::get('showProgressReport' , [extraTablesController::class, 'showProgressReport']);
 
 //Dashboard
 

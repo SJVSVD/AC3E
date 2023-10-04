@@ -405,11 +405,11 @@ export default {
             }
 
             var typeCollaboration = '';
-            var other1 = false;
+            var other1 = 0;
 
             if(this.conjointProject.collaborationType == 'Other'){
               typeCollaboration = this.other;
-              other1 = true;
+              other1 = 1;
             }else{
               typeCollaboration = this.conjointProject.collaborationType;
             }

@@ -196,14 +196,14 @@ export default {
         country: '',
         placeRegion: '',
         city: '',
-        undergraduateStudents: false,
-        primaryEducationStudents: false,
-        secondaryEducationStudents: false,
-        generalCommunity: false,
-        companiesIndustriesServices: false,
-        schoolTeachers: false,
-        governmentOfficial: false,
-        other: false,
+        undergraduateStudents: 0,
+        primaryEducationStudents: 0,
+        secondaryEducationStudents: 0,
+        generalCommunity: 0,
+        companiesIndustriesServices: 0,
+        schoolTeachers: 0,
+        governmentOfficial: 0,
+        other: 0,
         nameOfTheMainResponsible: null,
         progressReport: 9,
       },
@@ -416,11 +416,11 @@ export default {
             }
 
             var type = '';
-            var other1 = false;
+            var other1 = 0;
 
             if(this.outreachActivity.activityType == 'Other'){
               type = this.other;
-              other1 = true;
+              other1 = 1;
             }else{
               type = this.outreachActivity.activityType;
             }

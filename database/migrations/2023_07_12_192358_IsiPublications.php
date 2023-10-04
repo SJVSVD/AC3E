@@ -35,6 +35,7 @@ return new class extends Migration
             $table->boolean('nationalExternalResearchers')->nullable();
             $table->boolean('internationalExternalResearchers')->nullable();
             $table->string('comments')->nullable();
+            $table->integer('progressReport')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

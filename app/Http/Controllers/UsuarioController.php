@@ -72,10 +72,10 @@ class UsuarioController extends Controller
 
     public function cambiarEstadoUsuario($id){
         $user = User::find($id);
-        if($user['estado'] == 'true'){
-            $user['estado'] = false;
+        if($user['estado'] == 1){
+            $user['estado'] = 0;
         }else{
-            $user['estado'] = true;
+            $user['estado'] = 1;
         }
         $user -> save();
         return response()->json($user);

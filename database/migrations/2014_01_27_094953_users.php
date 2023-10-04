@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('idRole')->unsigned();
+            $table->foreign("idRole")->references("id")->on("rolesUsers")->onDelete("cascade")->onUpdate("cascade");
+            $table->bigInteger('idResearchLine')->unsigned();
+            $table->foreign("idResearchLine")->references("id")->on("researchLines")->onDelete("cascade")->onUpdate("cascade");
             $table->string('profilePicture')->nullable();
             $table->string('name');
             $table->string('email')->unique();

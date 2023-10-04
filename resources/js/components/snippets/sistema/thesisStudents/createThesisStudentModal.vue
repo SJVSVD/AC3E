@@ -60,9 +60,9 @@
                           <br>
                           <select class="form-select" v-model="thesisStudent.academicDegree">
                             <option disabled value="">Select a degree</option>
-                            <option value="1">Undergraduate degree or profesional title</option>
-                            <option value="2">Master o equivalent</option>
-                            <option value="3">PhD degree</option>
+                            <option value="Undergraduate degree or profesional title">Undergraduate degree or profesional title</option>
+                            <option value="Master o equivalent">Master o equivalent</option>
+                            <option value="PhD degree">PhD degree</option>
                           </select>
                       </div>
                       <div class="col-4">
@@ -160,14 +160,14 @@
                           <br>
                           <select class="form-select" v-model="thesisStudent.posteriorArea">
                             <option disabled value="">Select an area</option>
-                            <option value="1">Private Education</option>
-                            <option value="2">Business</option>
-                            <option value="3">Own entrepreneurship</option>
-                            <option value="4">Government</option>
-                            <option value="5">Public Education</option>
-                            <option value="6">Social-ONG</option>
-                            <option value="7">In the Center</option>
-                            <option value="8">None of the above</option>
+                            <option value="Private Education">Private Education</option>
+                            <option value="Business">Business</option>
+                            <option value="Own entrepreneurship">Own entrepreneurship</option>
+                            <option value="Government">Government</option>
+                            <option value="Public Education">Public Education</option>
+                            <option value="Social-ONG">Social-ONG</option>
+                            <option value="In the Center">In the Center</option>
+                            <option value="None of the above">None of the above</option>
                           </select>
                       </div>
                       <div class="col-4">

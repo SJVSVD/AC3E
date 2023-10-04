@@ -6,8 +6,9 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Publication
+                    New Publication {{ coauthor }}
                 </slot>
+                <label for="">Progress year: {{ isiPublication.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -22,14 +23,14 @@
                             <br>
                             <div class="form-check pt-2 ">
                               <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                    v-model="coauthor">
+                                    v-model="coauthor" @change="isiPublication.coauthor = ''">
                                     ¿AC3E co-author? </label>
                             </div>
                           </div>
                           <div class="col-4">
                               <label for="">Coauthor(s):</label>
                               <br>
-                              <input type="text" :disabled="coauthor == false" class= "form-control" v-model="isiPublication.coauthors">
+                              <input type="text" :disabled="coauthor == false" class= "form-control" v-model="isiPublication.coauthor">
                           </div>
                     </div>
                     <br>
@@ -199,6 +200,7 @@ export default {
         nationalExternalResearchers: false,
         internationalExternalResearchers: false,
         comments: "",
+        progressReport: "",
       },
       options1: [
         'Basal Financing Program Funding',
@@ -211,7 +213,15 @@ export default {
       errors:[],
       buttonText:'Send Publication',
     }),
+    created(){
+      this.getProgressReport();
+    },
     methods: {
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.isiPublication.progressReport = response.data;
+        }).catch(e=> console.log(e))
+      },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Save draft',

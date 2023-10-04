@@ -5,6 +5,8 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
+                            <a class="btn btn-spacing btn-purple" id="show-modal1" @click="showEditarProgress = true">Update year</a>
+                            &nbsp;
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showCrearUsuario = true">New</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
@@ -97,6 +99,7 @@
             <modalalerta ref="alert"></modalalerta>
             <modaleditar v-bind:usuario="usuarioeditar" v-if="showEditarUsuario" @close="showEditarUsuario = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showCrearUsuario" @close="showCrearUsuario = false" @recarga="recargarTabla('General')"></modalcrear>
+            <modalprogress v-if="showEditarProgress" @close="showEditarProgress = false"></modalprogress>
         </div>
     </div>
 </template>
@@ -107,16 +110,18 @@ import modalcrear from '../../snippets/sistema/usuarios/createUserModal.vue'
 import modaleditar from '../../snippets/sistema/usuarios/editUserModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
+import modalprogress from '../../snippets/sistema/usuarios/editProgressModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta,modalprogress },
     mixins: [mixin],
     data(){
         return{
             usuarios: null,
             showCrearUsuario: false,
             showEditarUsuario: false,
+            showEditarProgress: false,
             usuarioeditar: null,
             mostrarTabla: false,
             mostrarCarga: true,

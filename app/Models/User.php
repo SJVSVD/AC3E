@@ -17,6 +17,8 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, HasRoles, LaravelPermissionToVueJS;
 
     protected $fillable = [
+        'idResearchLine',
+        'idRole',
         'name',
         'email',
         'password',
@@ -33,4 +35,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function roleUser(){
+        return $this->belongsTo(rolesUsers::class, 'idRole', 'id');
+    }
+
+    public function researchLine(){
+        return $this->belongsTo(researchLines::class, 'idResearchLine', 'id');
+    }
 }
