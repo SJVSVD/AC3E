@@ -6,7 +6,7 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Publication {{ coauthor }}
+                    New Publication
                 </slot>
                 <label for="">Progress year: {{ isiPublication.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
