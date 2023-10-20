@@ -34,6 +34,8 @@ return new class extends Migration
             $table->boolean('thesisStudents')->nullable();
             $table->boolean('nationalExternalResearchers')->nullable();
             $table->boolean('internationalExternalResearchers')->nullable();
+            $table->date('sendingDate')->nullable();
+            $table->date('acceptanceDate')->nullable();
             $table->string('comments')->nullable();
             $table->integer('progressReport')->nullable();
             $table->timestamps();

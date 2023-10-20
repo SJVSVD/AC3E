@@ -30,7 +30,8 @@ class nonIsiPublication extends Model
         'thesisStudents',
         'nationalExternalResearchers',
         'internationalExternalResearchers',
-        'comments'
+        'comments',
+        'progressReport'
     ];
 
     public function usuario(){

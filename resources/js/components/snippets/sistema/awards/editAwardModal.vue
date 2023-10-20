@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Award
                 </slot>
+                <label for="">Progress year: {{ award.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,21 +16,25 @@
                     <div class="row">
                           <div class="col-4">
                             <label for="">Award Name:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="award.awardName">
                           </div>
                           <div class="col-2">
                             <label for="">Year:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input id="yearInput" type="number" v-model="award.year" :max="currentYear" @input="onInput" class= "form-control" />
                           </div>
                           <div class="col-3">
                             <label for="">Institution:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="award.institution">
                           </div>
                           <div class="col-3">
                             <label for="">Country:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="award.country">
                           </div>
@@ -38,24 +43,14 @@
                     <div class="row">
                       <div class="col-6">
                           <label for="">Contribution of the awardee:</label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <textarea class= "form-control" v-model="award.contributionAwardee" style="resize: none;" cols="30" rows="5"></textarea>
                       </div>
                       <div class="col-6">
-                        <label for="">Progress Report: </label>
-                        <br>
-                        <select class="form-select" v-model="award.progressReport">
-                          <option disabled value="">Select an option</option>
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-                          <option value="8">8</option>
-                          <option value="9">9</option>
-                          </select>
+                          <label for="">Comments:</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="award.comments">
                       </div>
                     </div>
                     <br>
@@ -64,12 +59,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createAward()" :disabled="buttonDisable">
+                    v-model="draft"> Edit as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editAward()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -124,13 +119,14 @@ export default {
       this.award.institution = this.award1.institution;
       this.award.country = this.award1.country;
       this.award.progressReport = this.award1.progressReport;
+      this.award.comments = this.award1.comments;
     },
     methods: {
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
-            title: 'Save draft',
-            message: `¿Are you sure you want to save this award as a draft? this action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit draft',
+            message: `¿Are you sure you want to edit this award as a draft? this action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
@@ -142,10 +138,10 @@ export default {
               contributionAwardee: this.award.contributionAwardee,
               institution: this.award.institution,
               country: this.award.country,
-              progressReport: this.award.progressReport,
+              comments: this.award.comments,
             };
             axios.put(`api/awards/${this.id}`, award).then((result) => {
-              this.toast.success("Draft saved successfully!", {
+              this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -185,7 +181,7 @@ export default {
       onInput(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
-        this.isiPublication.yearPublished = input.value.slice(0, 4);
+        this.award.year = input.value.slice(0, 4);
       },
       cerrarModal(){
         const elem = this.$refs.closeBtn;
@@ -195,13 +191,16 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createAward() {
+      async editAward() {
         this.errors = [];
-        for (const item in this.award){
-          if(this.award[item] === "" || this.award[item] === 0 || this.award[item] == null){
-              if(item != 'awardeeName'){
+        const itemsToSkip = [
+          'awardeeName',
+          'comments'
+        ];
+        for (const item in this.award) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.award[item] === "" || this.award[item] === 0 || this.award[item] == null)) {
                 this.errors.push(item);
-              }
             }
         }
 
@@ -252,7 +251,7 @@ export default {
               contributionAwardee: this.award.contributionAwardee,
               institution: this.award.institution,
               country: this.award.country,
-              progressReport: this.award.progressReport,
+              comments: this.award.comments
             };
             this.buttonDisable = true;
             this.buttonText = 'Editing...';

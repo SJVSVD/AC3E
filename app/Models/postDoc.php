@@ -39,6 +39,9 @@ class postDoc extends Model
         'nameOfResearch',
         'comments',
         'progressReport',
+        'personalEmail',
+        'posteriorWorkingArea',
+        'institutionWorkingArea',
     ];
 
     public function usuario(){

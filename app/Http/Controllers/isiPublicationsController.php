@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\isiPublication;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class isiPublicationsController extends Controller
 {
@@ -52,5 +53,21 @@ class isiPublicationsController extends Controller
     {
         isiPublication::find($id)->delete();
         return response()->json("Publicación Eliminado");
+    }
+
+    public function useDoi(Request $request)
+    {
+        $doi = $request->input('doi');
+        $url = "https://wos-api.clarivate.com/api/woslite/?databaseId=WOS&usrQuery=DO=".$doi."&count=10&firstRecord=1";
+        $headers = [
+            "accept" => "application/json",
+            "X-ApiKey" => "cc369e7fe729a62bbb01048470df4ed604027c45"
+        ];
+
+        $response = Http::withHeaders($headers)->get($url);
+
+        $data = $response->json();
+
+        return response()->json($data);
     }
 }

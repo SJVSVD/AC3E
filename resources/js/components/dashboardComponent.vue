@@ -51,9 +51,10 @@
                         <thead>
                             <tr style="color: black">
                                 <th style="min-width: 16px;"></th>
-                                <th class="text-uppercase text-xs font-weight-bolder">Fecha de Creación</th>
-                                <th class="text-uppercase text-xs font-weight-bolder">Módulo</th>
+                                <th class="text-uppercase text-xs font-weight-bolder">Creation Date</th>
+                                <th class="text-uppercase text-xs font-weight-bolder">Module</th>
                                 <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,6 +63,8 @@
                                 <td>{{ thisDate(registro.created_at,true) }}</td>
                                 <td>{{ registro.modulo }}</td>
                                 <td>{{ registro.usuario.name }}</td>
+                                <td v-if="registro.modulo == 'isiPublication'"><a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(registro)"><i class="fa-regular fa-eye"></i></a></td>
+                                <td v-else>---</td>
                             </tr>
                         </tbody>
                     </table>
@@ -80,17 +83,19 @@
                 </div>
             </div>
         </div>
+        <modalver v-bind:isiPublication1="isiPublication" v-if="showDetailsIsi" @close="showDetailsIsi = false"></modalver>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
 import modalconfirmacion from './snippets/sistema/alerts/confirmationModal.vue'
+import modalver from './snippets/sistema/isiPublications/detailsIsiPublicationModal.vue'
 import modalalerta from './snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../mixins.js'
 
 export default {
-    components: { modalconfirmacion, modalalerta },
+    components: { modalconfirmacion, modalalerta,modalver },
     mixins: [mixin],
     data() {
         return {
@@ -104,6 +109,8 @@ export default {
             usuariosActivos: [],
             mostrarTabla: false,
             mostrarCarga: true,
+            isiPublication: '',
+            showDetailsIsi: false,
         }
     },
     beforeDestroy() {
@@ -124,6 +131,10 @@ export default {
         this.getRegistros(this.cantidadRegistros);
     },
     methods: {
+        verIsiPublication(isiPublication){
+            this.isiPublication = isiPublication;
+            this.showDetailsIsi = true;
+        },
         getRegistros(cantidad){
             axios.get(`api/getRegistros/${cantidad}`).then( response =>{
                 this.registros = response.data;

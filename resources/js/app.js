@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, defineAsyncComponent } from 'vue';
 import LaravelPermissionToVueJS from "laravel-permission-to-vuejs";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import Toast from "vue-toastification";
@@ -12,83 +12,83 @@ app.use(Toast, {
     newestOnTop: true,
 });
 
+const dashboardComponent = defineAsyncComponent(() => import('@/components/dashboardComponent.vue'));
+const adminUsuariosComponent = defineAsyncComponent(() => import('@/components/main/sistema/adminUsuariosComponent.vue'));
+const isiPublicationsComponent = defineAsyncComponent(() => import('@/components/main/sistema/isiPublicationsComponent.vue'));
+const nonIsiPublicationsComponent = defineAsyncComponent(() => import('@/components/main/sistema/nonIsiPublicationsComponent.vue'));
+const booksComponent = defineAsyncComponent(() => import('@/components/main/sistema/booksComponent.vue'));
+const awardsComponent = defineAsyncComponent(() => import('@/components/main/sistema/awardsComponent.vue'));
+const organizationScEventsComponent = defineAsyncComponent(() => import('@/components/main/sistema/organizationScEventsComponent.vue'));
+const participationScEventsComponent = defineAsyncComponent(() => import('@/components/main/sistema/participationScEventsComponent.vue'));
+const scCollaborationsComponent = defineAsyncComponent(() => import('@/components/main/sistema/scCollaborationsComponent.vue'));
+const conjointProjectsComponent = defineAsyncComponent(() => import('@/components/main/sistema/conjointProjectsComponent.vue'));
+const thesisStudentsComponent = defineAsyncComponent(() => import('@/components/main/sistema/thesisStudentsComponent.vue'));
+const outreachActivitiesComponent = defineAsyncComponent(() => import('@/components/main/sistema/outreachActivitiesComponent.vue'));
+const patentsComponent = defineAsyncComponent(() => import('@/components/main/sistema/patentsComponent.vue'));
+const publicPrivateComponent = defineAsyncComponent(() => import('@/components/main/sistema/publicPrivateComponent.vue'));
+const technologyKnowledgeComponent = defineAsyncComponent(() => import('@/components/main/sistema/technologyKnowledgeComponent.vue'));
+const postDocComponent = defineAsyncComponent(() => import('@/components/main/sistema/postDocComponent.vue'));
+const fundingSourcesComponent = defineAsyncComponent(() => import('@/components/main/sistema/fundingSourcesComponent.vue'));
+const adminRolesComponent = defineAsyncComponent(() => import('@/components/main/sistema/adminRolesComponent.vue'));
+const userProfileComponent = defineAsyncComponent(() => import('@/components/userProfileComponent.vue'));
+const error = defineAsyncComponent(() => import('@/components/errorComponent.vue'));
 
-import dashboardComponent from "./components/dashboardComponent.vue";
 app.component("dashboard-component", dashboardComponent);
 app.mount("#dashboard");
 
-import adminUsuariosComponent from "./components/main/sistema/adminUsuariosComponent.vue";
 app.component("admin-usuarios", adminUsuariosComponent);
 app.mount("#admin-usuarios");
 
-import isiPublicationsComponent from "./components/main/sistema/isiPublicationsComponent.vue";
 app.component("isi-publications", isiPublicationsComponent);
 app.mount("#isi-publications");
 
-import nonIsiPublicationsComponent from "./components/main/sistema/nonIsiPublicationsComponent.vue";
 app.component("non-isi-publications", nonIsiPublicationsComponent);
 app.mount("#non-isi-publications");
 
-import booksComponent from "./components/main/sistema/booksComponent.vue";
 app.component("books", booksComponent);
 app.mount("#books");
 
-import awardsComponent from "./components/main/sistema/awardsComponent.vue";
 app.component("awards", awardsComponent);
 app.mount("#awards");
 
-import organizationScEventsComponent from "./components/main/sistema/organizationScEventsComponent.vue";
 app.component("organization-sc-events", organizationScEventsComponent);
 app.mount("#organization-sc-events");
 
-import participationScEventsComponent from "./components/main/sistema/participationScEventsComponent.vue";
 app.component("participation-sc-events", participationScEventsComponent);
 app.mount("#participation-sc-events");
 
-import scCollaborationsComponent from "./components/main/sistema/scCollaborationsComponent.vue";
 app.component("sc-collaborations", scCollaborationsComponent);
 app.mount("#sc-collaborations");
 
-import conjointProjectsComponent from "./components/main/sistema/conjointProjectsComponent.vue";
 app.component("conjoint-projects", conjointProjectsComponent);
 app.mount("#conjoint-projects");
 
-import thesisStudentsComponent from "./components/main/sistema/thesisStudentsComponent.vue";
 app.component("thesis-students", thesisStudentsComponent);
 app.mount("#thesis-students");
 
-import outreachActivitiesComponent from "./components/main/sistema/outreachActivitiesComponent.vue";
 app.component("outreach-activities", outreachActivitiesComponent);
 app.mount("#outreach-activities");
 
-import patentsComponent from "./components/main/sistema/patentsComponent.vue";
 app.component("patents", patentsComponent);
 app.mount("#patents");
 
-import publicPrivateComponent from "./components/main/sistema/publicPrivateComponent.vue";
 app.component("public-private", publicPrivateComponent);
 app.mount("#public-private");
 
-import technologyKnowledgeComponent from "./components/main/sistema/technologyKnowledgeComponent.vue";
 app.component("technology-knowledge", technologyKnowledgeComponent);
 app.mount("#technology-knowledge");
 
-import postDocComponent from "./components/main/sistema/postDocComponent.vue";
 app.component("post-doc", postDocComponent);
 app.mount("#post-doc");
 
-import fundingSourcesComponent from "./components/main/sistema/fundingSourcesComponent.vue";
 app.component("funding-sources", fundingSourcesComponent);
 app.mount("#funding-sources");
 
-import adminRolesComponent from "./components/main/sistema/adminRolesComponent.vue";
 app.component("admin-roles", adminRolesComponent);
 app.mount("#admin-roles");
 
-import userProfileComponent from "./components/userProfileComponent.vue";
 app.component("user-profile-component", userProfileComponent);
 app.mount("#userp");
 
-import error from "./components/errorComponent.vue";
 app.component("error-component", error);
 app.mount("#error");

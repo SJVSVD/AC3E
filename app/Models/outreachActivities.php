@@ -35,6 +35,9 @@ class outreachActivities extends Model
         'other',
         'nameOfTheMainResponsible',
         'progressReport',
+        'researcherInvolved',
+        'externalResearcher',
+        'responsability',
     ];
 
     public function usuario(){

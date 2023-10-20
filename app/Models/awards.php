@@ -21,6 +21,7 @@ class awards extends Model
         'institution',
         'country',
         'progressReport',
+        'comments'
     ];
 
     public function usuario(){

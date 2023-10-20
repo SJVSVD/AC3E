@@ -8,6 +8,7 @@
                 <slot name="header">
                     New Book
                 </slot>
+                <label for="">Progress year: {{ book.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,6 +16,7 @@
                     <div class="row">
                           <div class="col-4">
                             <label for="">Work Type: </label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <select class="form-select" v-model="book.workType">
                               <option disabled value="">Select an option</option>
@@ -24,11 +26,13 @@
                           </div>
                           <div class="col-4">
                             <label for="">Book Title:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="book.bookTitle">
                           </div>
                           <div class="col-4">
                             <label for="">Chapter Title:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="book.chapterTitle">
                           </div>
@@ -37,21 +41,25 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">First Page:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.firstPage">
                       </div>
                       <div class="col-3">
                         <label for="">Last Page:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.lastPage">
                       </div>
                       <div class="col-3">
                         <label for="">Editorial/City/Country:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.editorialCityCountry">
                       </div>
                       <div class="col-3">
                         <label for="">Year:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input id="yearInput" type="number" v-model="book.year" :max="currentYear" @input="onInput" class= "form-control" />
                       </div>
@@ -61,6 +69,7 @@
                       <div class="col-6">
                         <div>
                           <label for="">Name of Research Line: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <Multiselect
                               placeholder="Select the options"
@@ -78,37 +87,39 @@
                         </div>
                       </div>
                       <div class="col-6">
-                        <label for="">Progress Report: </label>
+                        <label for="">ISBN:</label>
                         <br>
-                        <select class="form-select" v-model="book.progressReport">
-                          <option disabled value="">Select an option</option>
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-                          <option value="8">8</option>
-                          <option value="9">9</option>
-                          </select>
+                        <input type="text" class= "form-control" v-model="book.ISBN">
                       </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6 d-flex justify-content-center">
-                        <a v-if="bookAuthors1.length > 0" class="btn btn-continue">{{ bookAuthors1.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalBookAutor = true"><i class="fa-solid fa-plus"></i> Add Book Author </a>
+                      <div class="col-4">
+                        <label for="">Editors:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.editors">
                       </div>
-                      <div class="col-6 d-flex justify-content-center">
-                        <a v-if="chapterAuthors1.length > 0" class="btn btn-continue">{{ chapterAuthors1.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalChapterAutor = true"><i class="fa-solid fa-plus"></i> Add Chapter Author </a>
+                      <div class="col-4">
+                        <label for="">Book Authors:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.bookAuthors">
+                      </div>
+                      <div class="col-4">
+                        <label for="">Chapter Authors:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.chapterAuthors">
                       </div>
                     </div>
                     <br>
-
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Comments:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.comments">
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -124,8 +135,6 @@
                   </slot>
                 </div>
                 <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
-                <modalBookAutor v-if="showModalBookAutor" @close="showModalBookAutor = false" @submit="handleFormSubmit1" ></modalBookAutor>
-                <modalChapterAutor v-if="showModalChapterAutor" @close="showModalChapterAutor = false" @submit="handleFormSubmit2"></modalChapterAutor>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
           </div>
@@ -139,13 +148,11 @@
 import axios from 'axios'
 import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
-import modalBookAutor from './extraModals/createBookAutor.vue';
-import modalChapterAutor from './extraModals/createChapterAutor.vue';
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta, modalBookAutor, modalChapterAutor },
+    components: { Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       book:{
@@ -158,8 +165,11 @@ export default {
         lastPage: '',
         editorialCityCountry: '',
         year: '',
+        ISBN: '',
+        editors: '',
         nameOfResearchLine: null,
         progressReport: '',
+        comments: '',
       },
       options1: [
         'Biomedical Systems',
@@ -180,12 +190,14 @@ export default {
       errors:[],
       buttonText:'Save Book',
     }),
+    created(){
+      this.getProgressReport();
+    },
     methods: {
-      handleFormSubmit2(formData) {
-        this.chapterAuthors1.push(formData);
-      },
-      handleFormSubmit1(formData) {
-        this.bookAuthors1.push(formData);
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.book.progressReport = response.data;
+        }).catch(e=> console.log(e))
       },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
@@ -209,37 +221,14 @@ export default {
               }
             }
 
-            var bookAuthors = '';
-            var chapterAuthors = '';
-
-            if(this.bookAuthors1.length != 0){
-              this.bookAuthors1.forEach((autor, index) => {
-                bookAuthors += autor.name;
-                  if (index === this.bookAuthors1.length - 1) {
-                    bookAuthors += '.';
-                  } else {
-                    bookAuthors += ', ';
-                  }
-              });
-            }
-
-            if(this.chapterAuthors1.length != 0){
-              this.bookAuthors1.forEach((autor, index) => {
-                chapterAuthors += autor.name;
-                  if (index === this.chapterAuthors1.length - 1) {
-                    chapterAuthors += '.';
-                  } else {
-                    chapterAuthors += ', ';
-                  }
-              });
-            }
-
             let book = {
               status: 'Draft',
               workType: this.book.workType,
               centerResearcher: this.userID,
-              bookAuthors: bookAuthors,
-              chapterAuthors: chapterAuthors,
+              bookAuthors: this.book.bookAuthors,
+              chapterAuthors: this.book.chapterAuthors,
+              editors: this.book.editors,
+              ISBN: this.book.ISBN,
               bookTitle: this.book.bookTitle,
               chapterTitle: this.book.chapterTitle,
               firstPage: this.book.firstPage,
@@ -248,6 +237,7 @@ export default {
               year: this.book.year,
               nameOfResearchLine: nameOfResearchLine1,
               progressReport: this.book.progressReport,
+              comments: this.book.comments,
             };
             axios.post("api/books", book ).then((result) => {
               this.toast.success("Draft saved successfully!", {
@@ -287,13 +277,10 @@ export default {
             });
           }
       },
-      useDOI(){
-
-      },
       onInput(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
-        this.isiPublication.yearPublished = input.value.slice(0, 4);
+        this.book.year = input.value.slice(0, 4);
       },
       cerrarModal(){
         const elem = this.$refs.closeBtn;
@@ -306,15 +293,24 @@ export default {
       async createBook() {
         this.errors = [];
         var noAutor = false;
-        for (const item in this.book){
-          if(this.book[item] === "" || this.book[item] === 0 || this.book[item] == null){
-            if(item == 'chapterAuthors'||item == 'bookAuthors'){
-                if((this.bookAuthors1.length == 0 && this.chapterAuthors1.length == 0) && noAutor == false){
-                  this.errors.push('noAutor');
-                  noAutor = true
+
+        const itemsToSkip = [
+          'ISBN',
+          'editors',
+          'comments'
+        ];
+
+        for (const item in this.book) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.book[item] === "" || this.book[item] === 0 || this.book[item] == null)) {
+                if (item === 'chapterAuthors' || item === 'bookAuthors') {
+                    if (this.book.bookAuthors === '' && this.book.chapterAuthors === '' && noAutor === false) {
+                        this.errors.push('noAutor');
+                        noAutor = true;
+                    }
+                } else {
+                    this.errors.push(item);
                 }
-            }else
-              this.errors.push(item);
             }
         }
 
@@ -380,37 +376,15 @@ export default {
               }
             }
 
-            var bookAuthors = '';
-            var chapterAuthors = '';
-
-            if(this.bookAuthors1.length != 0){
-              this.bookAuthors1.forEach((autor, index) => {
-                bookAuthors += autor.name;
-                  if (index === this.bookAuthors1.length - 1) {
-                    bookAuthors += '.';
-                  } else {
-                    bookAuthors += ', ';
-                  }
-              });
-            }
-
-            if(this.chapterAuthors1.length != 0){
-              this.bookAuthors1.forEach((autor, index) => {
-                chapterAuthors += autor.name;
-                  if (index === this.chapterAuthors1.length - 1) {
-                    chapterAuthors += '.';
-                  } else {
-                    chapterAuthors += ', ';
-                  }
-              });
-            }
 
             let book = {
               status: 'Finished',
               workType: this.book.workType,
               centerResearcher: this.userID,
-              bookAuthors: bookAuthors,
-              chapterAuthors: chapterAuthors,
+              bookAuthors: this.book.bookAuthors,
+              chapterAuthors: this.book.chapterAuthors,
+              editors: this.book.editors,
+              ISBN: this.book.ISBN,
               bookTitle: this.book.bookTitle,
               chapterTitle: this.book.chapterTitle,
               firstPage: this.book.firstPage,
@@ -419,6 +393,7 @@ export default {
               year: this.book.year,
               nameOfResearchLine: nameOfResearchLine1,
               progressReport: this.book.progressReport,
+              comments: this.book.comments,
             };
             axios.post("api/books", book ).then((result) => {
               this.buttonDisable = true;

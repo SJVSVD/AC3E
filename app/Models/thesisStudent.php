@@ -37,6 +37,7 @@ class thesisStudent extends Model
         'posteriorArea',
         'institutionPosteriorArea',
         'comments',
+        'progressReport',
         'thesisExtract',
     ];
 

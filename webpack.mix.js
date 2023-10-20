@@ -18,3 +18,11 @@ mix
 .sass('resources/scss/argon-dashboard.scss', 'public/assets/css/argon-dashboard.css', [
     //
 ]);
+
+mix.webpackConfig({
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'resources/js'),
+        },
+    },
+});

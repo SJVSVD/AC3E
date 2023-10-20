@@ -15,6 +15,7 @@
                     <div class="row">
                           <div class="col-3">
                             <label for="">Activity Type:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="scCollaboration.activityType">
                               <option disabled value="">Select a type</option>
                               <option value="International congress">National</option>
@@ -23,6 +24,7 @@
                           </div>
                           <div class="col-3">
                             <label for="">Collaboration Type:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="scCollaboration.collaborationType">
                               <option disabled value="">Select a type</option>
                               <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
@@ -32,11 +34,13 @@
                           </div>
                           <div v-if="scCollaboration.collaborationType == 'Other'" class="col-3">
                             <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
                           <div class="col-3">
                             <label for="">Activity Name:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="scCollaboration.activityName">
                           </div>
@@ -45,6 +49,7 @@
                     <div class="row">
                       <div class="col-6">
                         <label for="">Name of people involved:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="scCollaboration.peopleInvolved"
@@ -61,6 +66,7 @@
                       </div>
                       <div class="col-6">
                         <label for="">Institution which the center collaborates:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.institutionCollaborates">
                       </div>
@@ -69,21 +75,25 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Country Origin:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.countryOrigin">
                       </div>
                       <div class="col-3">
                         <label for="">City Origin:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.cityOrigin">
                       </div>
                       <div class="col-3">
                         <label for="">Country Destination:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.countryDestination">
                       </div>
                       <div class="col-3">
                         <label for="">City Destination:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.cityDestination">
                       </div>
@@ -92,16 +102,19 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Beginning Date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="scCollaboration.beginningDate">
                       </div>
                       <div class="col-3">
                         <label for="">Ending Date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="scCollaboration.endingDate">
                       </div>
                       <div class="col-6">
                         <label for="">Name of research line:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="scCollaboration.nameOfResearch"
@@ -123,12 +136,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
+                    v-model="draft"> Edit as a draft</label>
                     <a v-if="draft == false" class="btn btn-continue float-end" @click="createCollaboration()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>

@@ -28,6 +28,7 @@ class patents extends Model
         'researcherInvolved',
         'comments',
         'progressReport',
+        'nameOfPatent'
     ];
 
     public function usuario(){

@@ -8,6 +8,7 @@
                 <slot name="header">
                     New Organization Sc Event
                 </slot>
+                <label for="">Progress year: {{ organizationSc.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,6 +16,7 @@
                     <div class="row">
                           <div class="col-3">
                             <label for="">Type of Event:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="organizationSc.typeEvent">
                               <option disabled value="">Select a type</option>
                               <option value="International congress">International congress</option>
@@ -29,16 +31,19 @@
                           </div>
                           <div v-if="organizationSc.typeEvent == 'Other'" class="col-3">
                             <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
                           <div class="col-3">
                             <label for="">Event Name:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.eventName">
                           </div>
                           <div class="col-3">
                             <label for="">Country:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.country">
                           </div>
@@ -47,22 +52,26 @@
                     <div class="row">
                       <div class="col-3">
                             <label for="">City:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.city">
                           </div>
                           <div class="col-3">
                             <label for="">Start Date:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="date" class= "form-control" v-model="organizationSc.startDate">
                           </div>
                           <div class="col-3">
                             <label for="">Ending Date:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="date" class= "form-control" v-model="organizationSc.endingDate">
                           </div>
 
                           <div class="col-3">
                             <label for="">Number of participants:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="number" class= "form-control" v-model="organizationSc.numberParticipants">
                           </div>
@@ -71,6 +80,7 @@
                     <div class="row">
                       <div class="col-6">
                         <label for="">Name of research line:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="organizationSc.nameOfResearch"
@@ -88,12 +98,19 @@
                       <div class="col-5">
                         <div class="form-group">
                         <label for="archivo">File: </label>
+                        <label for="" style="color: orange;">*</label>
                         <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
                         </div>
                       </div>
                       <div class="col-1 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Comments:</label>
+                        <input type="text" class= "form-control" v-model="organizationSc.comments">
                       </div>
                     </div>
                   </slot>
@@ -140,6 +157,8 @@ export default {
         numberParticipants: '',
         nameOfResearch: null,
         file: '',
+        progressReport: '',
+        comments: '',
       },
       options1: [
         'Biomedical Systems',
@@ -157,7 +176,15 @@ export default {
       errors:[],
       buttonText:'Save Organization',
     }),
+    created(){
+      this.getProgressReport();
+    },
     methods: {
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.organizationSc.progressReport = response.data;
+        }).catch(e=> console.log(e))
+      },
       clearFileInput() {
         this.$refs.fileInput.value = '';
       },
@@ -209,6 +236,8 @@ export default {
               numberParticipants: this.organizationSc.numberParticipants,
               nameOfResearch: nameOfResearchLine1,
               file: this.organizationSc.file,
+              comments: this.organizationSc.comments,
+              progressReport: this.organizationSc.progressReport,
             };
             axios.post("api/organizationScEvents", organizationSc, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.toast.success("Draft saved successfully!", {
@@ -248,11 +277,6 @@ export default {
             });
           }
       },
-      onInput(event) {
-        const input = event.target;
-        // Limitar el año a 4 dígitos
-        this.isiPublication.yearPublished = input.value.slice(0, 4);
-      },
       cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
@@ -263,8 +287,13 @@ export default {
       },
       async createOrganization() {
         this.errors = [];
-        for (const item in this.organizationSc){
-          if(this.organizationSc[item] === "" || this.organizationSc[item] === 0 || this.organizationSc[item] == null){
+        const itemsToSkip = [
+        'comments'
+        ];
+
+        for (const item in this.organizationSc) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.organizationSc[item] === "" || this.organizationSc[item] === 0 || this.organizationSc[item] == null)) {
               this.errors.push(item);
             }
         }
@@ -351,6 +380,8 @@ export default {
               numberParticipants: this.organizationSc.numberParticipants,
               nameOfResearch: nameOfResearchLine1,
               file: this.organizationSc.file,
+              comments: this.organizationSc.comments,
+              progressReport: this.organizationSc.progressReport,
             };
             axios.post("api/organizationScEvents", organizationSc, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.toast.success("Organization saved successfully!", {

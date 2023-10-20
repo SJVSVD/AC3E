@@ -25,6 +25,8 @@ class organizationsScEvents extends Model
         'numberParticipants',
         'nameOfResearch',
         'file',
+        'comments',
+        'progressReport',
     ];
 
     public function usuario(){

@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('institutionPosteriorArea');
             $table->string('comments');
             $table->string('thesisExtract')->nullable();
+            $table->integer('progressReport')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

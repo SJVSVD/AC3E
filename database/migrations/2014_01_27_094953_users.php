@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreign("idResearchLine")->references("id")->on("researchLines")->onDelete("cascade")->onUpdate("cascade");
             $table->string('profilePicture')->nullable();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->nullable();
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('estado')->default(1);

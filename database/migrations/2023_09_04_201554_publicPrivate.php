@@ -19,6 +19,13 @@ return new class extends Migration
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
             $table->string('nameOfActivity')->nullable();
+            $table->string('agentType')->nullable();
+            $table->string('typeOfConnection')->nullable();
+            $table->string('placeWhereWasExecuted')->nullable();
+            $table->string('internationalNational')->nullable();
+            $table->boolean('participationPublicPolicies')->nullable();
+            $table->string('researcherInvolved')->nullable();
+            $table->boolean('externalResearcher')->nullable();
             $table->boolean('developmentalStudies')->nullable();
             $table->boolean('projectImplementation')->nullable();
             $table->boolean('training')->nullable();

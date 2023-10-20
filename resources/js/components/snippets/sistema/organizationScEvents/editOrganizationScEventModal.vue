@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Organization Sc Event
                 </slot>
+                <label for="">Progress year: {{ organizationSc.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,6 +16,7 @@
                     <div class="row">
                           <div class="col-3">
                             <label for="">Type of Event:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="organizationSc.typeEvent">
                               <option disabled :value=null>Select a type</option>
                               <option value="International congress">International congress</option>
@@ -29,16 +31,19 @@
                           </div>
                           <div v-if="organizationSc.typeEvent == 'Other'" class="col-3">
                             <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
                           <div class="col-3">
                             <label for="">Event Name:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.eventName">
                           </div>
                           <div class="col-3">
                             <label for="">Country:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.country">
                           </div>
@@ -47,22 +52,25 @@
                     <div class="row">
                       <div class="col-3">
                             <label for="">City:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.city">
                           </div>
                           <div class="col-3">
                             <label for="">Start Date:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="date" class= "form-control" v-model="organizationSc.startDate">
                           </div>
                           <div class="col-3">
                             <label for="">Ending Date:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="date" class= "form-control" v-model="organizationSc.endingDate">
                           </div>
-
                           <div class="col-3">
                             <label for="">Number of participants:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="number" class= "form-control" v-model="organizationSc.numberParticipants">
                           </div>
@@ -71,6 +79,7 @@
                     <div class="row">
                       <div class="col-6">
                         <label for="">Name of research line:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="organizationSc.nameOfResearch"
@@ -85,15 +94,24 @@
                           :object="true"
                         />
                       </div>
-                      <div v-if="organization1.file == null" class="col-5">
+                      <div class="col-4">
                         <div class="form-group">
-                        <label for="archivo">File: </label>
+                        <label for="archivo">File:</label>
+                        <label v-if="organization1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
                         </div>
                       </div>
-                      <div v-if="organization1.file == null" class="col-1 pt-2">
+                      <div class="col-2 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                        &nbsp;
+                        <a v-if="organization1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Comments:</label>
+                        <input type="text" class= "form-control" v-model="organizationSc.comments">
                       </div>
                     </div>
                   </slot>
@@ -101,12 +119,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
+                    v-model="draft"> Edit as a draft</label>
                     <a v-if="draft == false" class="btn btn-continue float-end" @click="editOrganization()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -143,6 +161,8 @@ export default {
         numberParticipants: '',
         nameOfResearch: null,
         file: '',
+        comments: '',
+        progressReport: '',
       },
       options1: [
         'Biomedical Systems',
@@ -157,6 +177,7 @@ export default {
       coauthor: false,
       draft: false,
       id: '',
+      user: '',
       buttonDisable: false,
       errors:[],
       buttonText:'Save Organization',
@@ -166,6 +187,7 @@ export default {
     },
     created(){
       this.id = this.organization1.id;
+      this.user = this.organization1.usuario.name;
       this.organizationSc.typeEvent = this.organization1.typeEvent;
       this.organizationSc.eventName = this.organization1.eventName;
       this.organizationSc.country = this.organization1.country;
@@ -174,6 +196,9 @@ export default {
       this.organizationSc.endingDate = this.organization1.endingDate;
       this.organizationSc.numberParticipants = this.organization1.numberParticipants;
       this.organizationSc.endingDate = this.organization1.endingDate;
+      this.organizationSc.file = this.organization1.file;
+      this.organizationSc.comments = this.organization1.comments;
+      this.organizationSc.progressReport = this.organization1.progressReport;
       if (this.organization1.nameOfResearch != null) {
           const valoresSeparados1 = this.organization1.nameOfResearch.split(",");
           this.organizationSc.nameOfResearch = valoresSeparados1.map((valor, index) => {
@@ -191,6 +216,21 @@ export default {
       }
     },
     methods: {
+      descargarExtracto(id,nombre){
+          axios({
+              url: `api/organizationDownload/${id}`,
+              method: 'GET',
+              responseType: 'arraybuffer',
+          }).then((response) => {
+              let blob = new Blob([response.data], {
+                      type: 'application/pdf'
+                  })
+                  let link = document.createElement('a')
+                  link.href = window.URL.createObjectURL(blob)
+                  link.download = `Organization-${nombre}.pdf`
+                  link.click()
+          });
+      },
       clearFileInput() {
         this.$refs.fileInput.value = '';
       },
@@ -220,11 +260,11 @@ export default {
             }
 
             var typeEvent = '';
-            var other = false;
+            var other = 0;
 
             if(this.organizationSc.typeEvent == 'Other'){
               typeEvent = this.other;
-              other = true;
+              other = 1;
             }else{
               typeEvent = this.organizationSc.typeEvent;
             }
@@ -240,9 +280,10 @@ export default {
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
               nameOfResearch: nameOfResearchLine1,
+              comments: this.organizationSc.comments,
             };
             axios.put(`api/organizationScEvents/${this.id}`, organizationSc ).then((result) => {
-              this.toast.success("Draft saved successfully!", {
+              this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -324,11 +365,6 @@ export default {
              }
           }
       },
-      onInput(event) {
-        const input = event.target;
-        // Limitar el año a 4 dígitos
-        this.isiPublication.yearPublished = input.value.slice(0, 4);
-      },
       cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
@@ -339,11 +375,15 @@ export default {
       },
       async editOrganization() {
         this.errors = [];
-        for (const item in this.organizationSc){
-          if(this.organizationSc[item] === "" || this.organizationSc[item] === 0 || this.organizationSc[item] == null){
-              if(item != 'file'){
-                this.errors.push(item);
-              }
+        const itemsToSkip = [
+          'comments',
+          'file'
+        ];
+
+        for (const item in this.organizationSc) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.organizationSc[item] === "" || this.organizationSc[item] === 0 || this.organizationSc[item] == null)) {
+              this.errors.push(item);
             }
         }
 
@@ -408,11 +448,11 @@ export default {
             }
 
             var typeEvent = '';
-            var other = false;
+            var other = 0;
 
             if(this.organizationSc.typeEvent == 'Other'){
               typeEvent = this.other;
-              other = true;
+              other = 1;
             }else{
               typeEvent = this.organizationSc.typeEvent;
             }
@@ -428,6 +468,7 @@ export default {
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
               nameOfResearch: nameOfResearchLine1,
+              comments: this.organizationSc.comments,
             };
 
             axios.put(`api/organizationScEvents/${this.id}`, organizationSc ).then((result) => {

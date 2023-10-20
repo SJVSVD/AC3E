@@ -18,6 +18,9 @@ return new class extends Migration
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
+            $table->string('presentationTitle')->nullable();
+            $table->string('typeOfParticipation')->nullable();
+            $table->boolean('otherParticipation')->nullable();
             $table->string('typeEvent')->nullable();
             $table->boolean('other')->nullable();
             $table->string('eventName')->nullable();
@@ -29,6 +32,7 @@ return new class extends Migration
             $table->string('nameOfParticipants')->nullable();
             $table->integer('progressReport')->nullable();
             $table->string('file')->nullable();
+            $table->string('comments')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

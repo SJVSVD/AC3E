@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('identification')->nullable();
             $table->string('runOrPassport')->nullable();
             $table->string('gender')->nullable();
+            $table->string('personalEmail')->nullable();
+            $table->string('posteriorWorkingArea')->nullable();
+            $table->string('institutionWorkingArea')->nullable();
             $table->string('researchTopic')->nullable();
             $table->string('supervisorName')->nullable();
             $table->string('resourcesProvided')->nullable();

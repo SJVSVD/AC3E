@@ -30,6 +30,10 @@ class scCollaborations extends Model
         'endingDate',
         'nameOfResearch',
         'progressReport',
+        'nameOfAC3EMember',
+        'nameOfExternalResearcher',
+        'collaborationStay',
+        'otherStay',
     ];
 
     public function usuario(){

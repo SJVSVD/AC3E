@@ -41,6 +41,13 @@ class publicPrivate extends Model
         'education',
         'comments',
         'progressReport',
+        'agentType',
+        'typeOfConnection',
+        'placeWhereWasExecuted',
+        'internationalNational',
+        'participationPublicPolicies',
+        'researcherInvolved',
+        'externalResearcher',
     ];
 
     public function usuario(){

@@ -26,6 +26,10 @@ class technologyKnowledge extends Model
         'nameOfResearch',
         'comments',
         'progressReport',
+        'description',
+        'nameOfInstitutionInvolved',
+        'researcherInvolved',
+        'externalResearcher',
     ];
 
     public function usuario(){

@@ -8,6 +8,7 @@
                 <slot name="header">
                     New Award
                 </slot>
+                <label for="">Progress year: {{ award.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,21 +16,25 @@
                     <div class="row">
                           <div class="col-4">
                             <label for="">Award Name:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="award.awardName">
                           </div>
                           <div class="col-2">
                             <label for="">Year:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input id="yearInput" type="number" v-model="award.year" :max="currentYear" @input="onInput" class= "form-control" />
                           </div>
                           <div class="col-3">
                             <label for="">Institution:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="award.institution">
                           </div>
                           <div class="col-3">
                             <label for="">Country:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="award.country">
                           </div>
@@ -38,24 +43,14 @@
                     <div class="row">
                       <div class="col-6">
                           <label for="">Contribution of the awardee:</label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <textarea class= "form-control" v-model="award.contributionAwardee" style="resize: none;" cols="30" rows="5"></textarea>
                       </div>
                       <div class="col-6">
-                        <label for="">Progress Report: </label>
-                        <br>
-                        <select class="form-select" v-model="award.progressReport">
-                          <option disabled value="">Select an option</option>
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-                          <option value="8">8</option>
-                          <option value="9">9</option>
-                          </select>
+                          <label for="">Comments:</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="award.comments">
                       </div>
                     </div>
                     <br>
@@ -104,6 +99,7 @@ export default {
         institution: '',
         country: '',
         progressReport: '',
+        comments: '',
       },
       currentYear: new Date().getFullYear(),
       coauthor: false,
@@ -112,7 +108,15 @@ export default {
       errors:[],
       buttonText:'Save Award',
     }),
+    created(){
+      this.getProgressReport();
+    },
     methods: {
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.award.progressReport = response.data;
+        }).catch(e=> console.log(e))
+      },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Save draft',
@@ -130,6 +134,7 @@ export default {
               institution: this.award.institution,
               country: this.award.country,
               progressReport: this.award.progressReport,
+              comments: this.award.comments,
             };
             axios.post("api/awards", award ).then((result) => {
               this.toast.success("Draft saved successfully!", {
@@ -172,7 +177,7 @@ export default {
       onInput(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
-        this.isiPublication.yearPublished = input.value.slice(0, 4);
+        this.award.year = input.value.slice(0, 4);
       },
       cerrarModal(){
         const elem = this.$refs.closeBtn;
@@ -184,11 +189,14 @@ export default {
       },
       async createAward() {
         this.errors = [];
-        for (const item in this.award){
-          if(this.award[item] === "" || this.award[item] === 0 || this.award[item] == null){
-              if(item != 'awardeeName'){
+        const itemsToSkip = [
+          'awardeeName',
+          'comments'
+        ];
+        for (const item in this.award) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.award[item] === "" || this.award[item] === 0 || this.award[item] == null)) {
                 this.errors.push(item);
-              }
             }
         }
 
@@ -240,6 +248,7 @@ export default {
               institution: this.award.institution,
               country: this.award.country,
               progressReport: this.award.progressReport,
+              comments: this.award.comments,
             };
             this.buttonDisable = true;
             this.buttonText = 'Saving...';

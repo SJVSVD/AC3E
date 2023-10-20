@@ -23,12 +23,15 @@ return new class extends Migration
             $table->string('chapterAuthors')->nullable();
             $table->string('bookTitle')->nullable();
             $table->string('chapterTitle')->nullable();
+            $table->string('editors')->nullable();
+            $table->string('ISBN')->nullable();
             $table->string('firstPage')->nullable();
             $table->string('lastPage')->nullable();
             $table->string('editorialCityCountry')->nullable();
             $table->year('year')->nullable();
             $table->string('nameOfResearchLine')->nullable();
             $table->integer('progressReport')->nullable();
+            $table->string('comments')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -88,6 +88,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(isiPublication)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -109,6 +111,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:isiPublication1="isiPublication" v-if="showDetailsIsi" @close="showDetailsIsi = false"></modalver>
             <modaleditar v-bind:isiPublication1="isiPublicationEdit" v-if="showEditIsiPublication" @close="showEditIsiPublication = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewIsiPublication" @close="showNewIsiPublication = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -117,6 +120,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/isiPublications/detailsIsiPublicationModal.vue'
 import modalcrear from '../../snippets/sistema/isiPublications/createIsiPublicationModal.vue'
 import modaleditar from '../../snippets/sistema/isiPublications/editIsiPublicationModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -124,13 +128,15 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalcrear, modaleditar,modalver, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             isiPublications: null,
+            isiPublication: null,
             showNewIsiPublication: false,
             showEditIsiPublication: false,
+            showDetailsIsi: false,
             isiPublicationEdit: null,
             mostrarTabla: false,
             mostrarCarga: true,
@@ -141,6 +147,10 @@ export default {
         this.getIsiPublications(this.userID);
     },
     methods: {
+        verIsiPublication(isiPublication){
+            this.isiPublication = isiPublication;
+            this.showDetailsIsi = true;
+        },
         getIsiPublications(id){
             axios.get(`api/isiPublications/${id}`).then( response =>{
                 this.isiPublications = response.data;

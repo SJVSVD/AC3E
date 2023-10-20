@@ -55,6 +55,25 @@ class usersSeeder extends Seeder
             ['idResearchLine' => '7','idRole'=> '1','name' => 'Cristian García', 'email' => 'cristian.garcia@utalca.cl','password' => bcrypt('cgarcia123')],
             ['idResearchLine' => '1','idRole'=> '4','name' => 'Osvaldo Campos', 'email' => 'osvaldo.camposf@usm.cl','password' => bcrypt('ocampos456')],
             ['idResearchLine' => '1','idRole'=> '4','name' => 'Renata Faúndez', 'email' => 'renata.faundez@usm.cl','password' => bcrypt('rfaundez789')],
+            // Inactivos
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Ahmed Elmesiry', 'password' => bcrypt('aelmesi392')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Ana Maria LLOR CARRASCO', 'password' => bcrypt('allor567')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Andres Eduardo Alonso Rivas', 'password' => bcrypt('aalonso815')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Cristian Andrés Acevedo Gutiérrez', 'password' => bcrypt('aacevedo724')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Eduardo Esteban Cerpa Jeria', 'password' => bcrypt('ecerpa990')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Francisco David Muñoz Espinoza', 'password' => bcrypt('fmunoz487')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Francisco Javier Vargas Parra', 'password' => bcrypt('fvargas962')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Gonzalo Carvajal Barrera', 'password' => bcrypt('gcarvajal374')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Héctor Mario Carrasco Espinosa', 'password' => bcrypt('hcarrasco899')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'John Anthony Atkinson Abutridy', 'password' => bcrypt('jatkinson531')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'José Rubén Espinoza Castro', 'password' => bcrypt('jespinoza890')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Juan Ignacio Yuz Eissmann', 'password' => bcrypt('jyuz211')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Luciano Sebastian Ahumada Fierro', 'password' => bcrypt('lahumada773')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Luis Carlos Pérez Pozo', 'password' => bcrypt('lperez488')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Milan Stefan Derpich Musa', 'password' => bcrypt('mderpich654')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Pablo Andrés Prieto Cabrera', 'password' => bcrypt('pprieto731')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Pedro Antonio Escárate Monetta', 'password' => bcrypt('pescarate488')],
+            ['idResearchLine' => '1', 'idRole'=> '5', 'name' => 'Victor Hugo Hugo Hinojosa Mateus', 'password' => bcrypt('vhinojosa628')],
         ];
 
         foreach($users as $user){

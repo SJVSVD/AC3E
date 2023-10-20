@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Participation Sc Event
                 </slot>
+                <label for="">Progress year: {{ participationSc.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,10 +16,30 @@
                     <div class="row">
                           <div class="col-3">
                             <label for="">Type of Event:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="participationSc.typeEvent">
-                              <option disabled :value="null">Select a type</option>
+                              <option disabled value="">Select a type</option>
                               <option value="International congress">International congress</option>
                               <option value="National congress">National congress</option>
+                              <option value="Session chair">Session chair</option>
+                              <option value="Keynote">Keynote</option>
+                              <option value="Just assistance">Just assistance</option>
+                              <option value="Other">Other</option>
+                              </select>
+                          </div>
+                          <div v-if="participationSc.typeEvent == 'Other'" class="col-3">
+                            <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="other">
+                          </div>
+                          <div class="col-3">
+                            <label for="">Type of Participation:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <select class="form-select" v-model="participationSc.typeOfParticipation">
+                              <option disabled value="">Select a type</option>
+                              <option value="Paper presentation">International congress</option>
+                              <option value="Talk">Talk</option>
                               <option value="Workshop">Workshop</option>
                               <option value="Course">Course</option>
                               <option value="Conference">Conference</option>
@@ -27,60 +48,60 @@
                               <option value="Other">Other</option>
                               </select>
                           </div>
-                          <div v-if="participationSc.typeEvent == 'Other'" class="col-3">
+                          <div v-if="participationSc.typeOfParticipation == 'Other'" class="col-3">
                             <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
-                            <input type="text" class= "form-control" v-model="other">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Event Name:</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="participationSc.eventName">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Country:</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="participationSc.country">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-3">
-                            <label for="">City:</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="participationSc.city">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Start Date:</label>
-                            <br>
-                            <input type="date" class= "form-control" v-model="participationSc.startDate">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Ending Date:</label>
-                            <br>
-                            <input type="date" class= "form-control" v-model="participationSc.endingDate">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Progress Report: </label>
-                            <br>
-                            <select class="form-select" v-model="participationSc.progressReport">
-                              <option disabled :value="null">Select an option</option>
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>
-                              <option value="6">6</option>
-                              <option value="7">7</option>
-                              <option value="8">8</option>
-                              <option value="9">9</option>
-                              </select>
+                            <input type="text" class= "form-control" v-model="other2">
                           </div>
                     </div>
                     <br>
                     <div class="row">
                       <div class="col-6">
+                          <label for="">Event Name:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="participationSc.eventName">
+                        </div>
+                        <div class="col-6">
+                          <label for="">Presentation Title:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="participationSc.presentationTitle">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-3">
+                        <label for="">Country:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="participationSc.country">
+                      </div>
+                      <div class="col-3">
+                        <label for="">City:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="participationSc.city">
+                      </div>
+                      <div class="col-3">
+                        <label for="">Start Date:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="date" class= "form-control" v-model="participationSc.startDate">
+                      </div>
+                      <div class="col-3">
+                        <label for="">Ending Date:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="date" class= "form-control" v-model="participationSc.endingDate">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
                         <label for="">Name of research line:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="participationSc.nameOfResearch"
@@ -95,21 +116,25 @@
                           :object="true"
                         />
                       </div>
-                      <div v-if="participation1.file == null" class="col-5">
+                      <div class="col-4">
                         <div class="form-group">
-                        <label for="archivo">File: </label>
+                        <label for="archivo">File:</label>
+                        <label v-if="participation1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
                         </div>
                       </div>
-                      <div v-if="participation1.file == null" class="col-1 pt-2">
+                      <div class="col-2 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                        &nbsp;
+                        <a v-if="participation1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
                       </div>
                     </div>
                     <br>
                     <div class="row">
                       <div class="col-6">
                         <label for="">Name of participants:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="participationSc.nameOfParticipants"
@@ -124,18 +149,23 @@
                           :object="true"
                         />
                       </div>
+                      <div class="col-6">
+                          <label for="">Comments:</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="participationSc.comments">
+                      </div>
                     </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createParticipation()" :disabled="buttonDisable">
+                    v-model="draft"> Edit as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editParticipation()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -162,6 +192,8 @@ export default {
       participationSc:{
         typeEvent: '',
         eventName: '',
+        presentationTitle: '',
+        typeOfParticipation: '',
         country: '',
         city: '',
         startDate: '',
@@ -170,6 +202,7 @@ export default {
         nameOfParticipants: null,
         progressReport: '',
         file: '',
+        comments: '',
       },
       options1: [
         'Biomedical Systems',
@@ -180,6 +213,7 @@ export default {
         'Instrumentation',
       ],
       other: '',
+      other2: '',
       draft: false,
       researchers: '',
       id: '',
@@ -196,13 +230,16 @@ export default {
     created(){
       this.id = this.participation1.id;
       this.participationSc.typeEvent = this.participation1.typeEvent;
+      this.participationSc.typeOfParticipation = this.participation1.typeOfParticipation;
       this.participationSc.eventName = this.participation1.eventName;
+      this.participationSc.presentationTitle = this.participation1.presentationTitle;
       this.participationSc.country = this.participation1.country;
       this.participationSc.city = this.participation1.city;
       this.participationSc.startDate = this.participation1.startDate;
       this.participationSc.endingDate = this.participation1.endingDate;
       this.participationSc.progressReport = this.participation1.progressReport;
       this.participationSc.endingDate = this.participation1.endingDate;
+      this.participationSc.comments = this.participation1.comments;
       if (this.participation1.nameOfResearch != null) {
           const valoresSeparados1 = this.participation1.nameOfResearch.split(",");
           this.participationSc.nameOfResearch = valoresSeparados1.map((valor, index) => {
@@ -231,6 +268,11 @@ export default {
         this.participationSc.typeEvent = 'Other';
         this.other = this.participation1.typeEvent;
       }
+
+      if(this.participation1.otherParticipation == true){
+        this.participationSc.typeOfParticipation = 'Other';
+        this.other2 = this.participation1.typeOfParticipation;
+      }
     },
     methods: {
       getUsuarios(){
@@ -246,9 +288,9 @@ export default {
       },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
-            title: 'Save draft',
-            message: `¿Are you sure you want to save this Participation as a draft? this action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit draft',
+            message: `¿Are you sure you want to edit this Participation as a draft? this action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
@@ -279,10 +321,33 @@ export default {
                 });
               }
             }
+            var typeEvent = '';
+            var other = 0;
+
+            if(this.participationSc.typeEvent == 'Other'){
+              typeEvent = this.other;
+              other = 1;
+            }else{
+              typeEvent = this.participationSc.typeEvent;
+            }
+
+            var typeOfParticipation = '';
+            var other2 = 0;
+
+            if(this.participationSc.typeOfParticipation == 'Other'){
+              typeOfParticipation = this.other2;
+              other2 = 1;
+            }else{
+              typeOfParticipation = this.participationSc.typeOfParticipation;
+            }
 
             let participationSc = {
               status: 'Draft',
-              typeEvent: this.participationSc.typeEvent,
+              typeEvent: typeEvent,
+              other: other,
+              presentationTitle: this.participationSc.presentationTitle,
+              typeOfParticipation: typeOfParticipation,
+              otherParticipation: other2,
               eventName: this.participationSc.eventName,
               country: this.participationSc.country,
               city: this.participationSc.city,
@@ -291,10 +356,12 @@ export default {
               progressReport: this.participationSc.progressReport,
               nameOfParticipants: nameOfParticipants1,
               nameOfResearch: nameOfResearchLine1,
+              file: this.participationSc.file,
+              comments: this.participationSc.comments,
             };
 
             axios.put(`api/participationScEvents/${this.id}`, participationSc ).then((result) => {
-              this.toast.success("Draft saved successfully!", {
+              this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -384,14 +451,22 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createParticipation() {
+      async editParticipation() {
         this.errors = [];
-        for (const item in this.participationSc){
-          if(this.participationSc[item] === "" || this.participationSc[item] === 0 || this.participationSc[item] == null || this.participationSc == []){
-              if(item != 'file'){
-                this.errors.push(item);
-              }
+        const itemsToSkip = [
+        'comments',
+        'file'
+        ];
+
+        for (const item in this.participationSc) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.participationSc[item] === "" || this.participationSc[item] === 0 || this.participationSc[item] == null)) {
+              this.errors.push(item);
             }
+        }
+
+        if(this.participationSc.typeEvent == 'Other' && this.other == ''){
+          this.errors.push('other');
         }
 
         var mensaje = ""
@@ -408,9 +483,9 @@ export default {
             }else if(item == 'nameOfParticipants'){
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
             }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of Research line is required" + "\n";
+              mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report line is required" + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -432,9 +507,9 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Save Participation',
-            message: `¿Are you sure you want to save this Participation of sc event? This action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit Participation',
+            message: `¿Are you sure you want to edit this Participation of sc event? This action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
@@ -466,9 +541,33 @@ export default {
               }
             }
 
+            var typeEvent = '';
+            var other = 0;
+
+            if(this.participationSc.typeEvent == 'Other'){
+              typeEvent = this.other;
+              other = 1;
+            }else{
+              typeEvent = this.participationSc.typeEvent;
+            }
+
+            var typeOfParticipation = '';
+            var other2 = 0;
+
+            if(this.participationSc.typeOfParticipation == 'Other'){
+              typeOfParticipation = this.other2;
+              other2 = 1;
+            }else{
+              typeOfParticipation = this.participationSc.typeOfParticipation;
+            }
+
             let participationSc = {
               status: 'Finished',
-              typeEvent: this.participationSc.typeEvent,
+              typeEvent: typeEvent,
+              other: other,
+              presentationTitle: this.participationSc.presentationTitle,
+              typeOfParticipation: typeOfParticipation,
+              otherParticipation: other2,
               eventName: this.participationSc.eventName,
               country: this.participationSc.country,
               city: this.participationSc.city,
@@ -477,9 +576,10 @@ export default {
               progressReport: this.participationSc.progressReport,
               nameOfParticipants: nameOfParticipants1,
               nameOfResearch: nameOfResearchLine1,
+              comments: this.participationSc.comments,
             };
             axios.put(`api/participationScEvents/${this.id}`, participationSc ).then((result) => {
-              this.toast.success("Participation saved successfully!", {
+              this.toast.success("Participation edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,

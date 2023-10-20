@@ -34,6 +34,8 @@
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">User Role</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Research Line</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Email</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Roles</th>
@@ -51,12 +53,19 @@
                                         <td>
                                             <p v-if="usuario.estado == true" class="text-sm font-weight-bolder mb-0" style="color: #28A745">Active</p>
                                             <p v-else class="text-sm font-weight-bolder mb-0" style="color: #B80F0A">Inactive</p>
-                                        </td>                                            
+                                        </td>      
+                                        <td>
+                                            <p class="text-sm mb-0">{{ usuario.role_user.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-sm mb-0">{{ usuario.research_line.name }}</p>
+                                        </td>                                      
                                         <td>
                                             <p class="text-sm mb-0">{{ usuario.name }}</p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ usuario.email }}</p>
+                                            <p v-if="usuario.email != null" class="text-sm mb-0">{{ usuario.email }}</p>
+                                            <p v-else class="text-sm mb-0">---</p>
                                         </td>
                                         <td>
                                             <div v-if="usuario.roles == ''">---</div>

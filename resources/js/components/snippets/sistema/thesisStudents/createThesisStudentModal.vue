@@ -284,6 +284,7 @@ export default {
         this.thesisStudent.yearThesisEnd = input.value.slice(0, 4);
       },
       clearFileInput() {
+        this.thesisExtract = null;
         this.$refs.fileInput.value = '';
       },
       async getFile(e){

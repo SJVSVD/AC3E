@@ -15,6 +15,9 @@ class participationScEvents extends Model
     protected $fillable = [
         'idUsuario',
         'status',
+        'presentationTitle',
+        'typeOfParticipation',
+        'otherParticipation',
         'typeEvent',
         'other',
         'eventName',
@@ -26,6 +29,7 @@ class participationScEvents extends Model
         'progressReport',
         'nameOfResearch',
         'file',
+        'comments',
     ];
 
     public function usuario(){

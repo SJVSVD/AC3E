@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Publication
                 </slot>
+                <label for="">Progress year: {{ nonIsiPublication.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,6 +16,7 @@
                     <div class="row">
                           <div class="col-5">
                               <label for="">Author(s): </label>
+                              <label for="" style="color: orange;">*</label>
                               <br>
                               <input title="First Name and Last Name." type="text" class= "form-control" v-model="nonIsiPublication.authors">
                           </div>
@@ -36,11 +38,13 @@
                     <div class="row">
                       <div class="col-6">
                         <label for="">Article Title:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.articleTitle">
                       </div>
                       <div class="col-6">
                         <label for="">Journal Name:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.journalName">
                       </div>
@@ -49,21 +53,25 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Volume:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.volume">
                       </div>
                       <div class="col-3">
                         <label for="">First Page:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.firstPage">
                       </div>
                       <div class="col-3">
                         <label for="">Last Page:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.lastPage">
                       </div>
                       <div class="col-3">
                         <label for="">Year Published:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input id="yearInput" type="number" v-model="nonIsiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
                       </div>
@@ -72,6 +80,7 @@
                     <div class="row">                        
                       <div class="col-6">
                           <label for="">Fundings: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <div>
                             <Multiselect
@@ -141,8 +150,13 @@
                 </div>
                 <div class="modal-footer">
                   <slot name="footer">
-                    <a class="btn btn-continue float-end" @click="editarPublicacion()" :disabled="buttonDisable">
+                    <label class="form-check-label"><input type="checkbox" class="form-check-"
+                    v-model="draft"> Save as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editarPublicacion()" :disabled="buttonDisable">
                       {{ buttonText }}
+                    </a>
+                    <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
+                      Save draft
                     </a>
                   </slot>
                 </div>
@@ -184,6 +198,7 @@ export default {
         internationalExternalResearchers: false,
         yearPublished: "",
         comments: "",
+        progressReport: "",
       },
       options1: [
         'Basal Financing Program Funding',
@@ -191,6 +206,7 @@ export default {
       ],
       id: null,
       coauthor: false,
+      draft: false,
       currentYear: new Date().getFullYear(),
       buttonDisable: false,
       errors:[],
@@ -208,7 +224,6 @@ export default {
       }
       this.nonIsiPublication.articleTitle = this.nonIsiPublication1.articleTitle;
       this.nonIsiPublication.journalName = this.nonIsiPublication1.journalName;
-      this.nonIsiPublication.doi = this.nonIsiPublication1.doi;
       this.nonIsiPublication.volume = this.nonIsiPublication1.volume;
       this.nonIsiPublication.firstPage = this.nonIsiPublication1.firstPage;
       this.nonIsiPublication.lastPage = this.nonIsiPublication1.lastPage;
@@ -233,8 +248,89 @@ export default {
       this.nonIsiPublication.thesisStudents = this.nonIsiPublication1.thesisStudents;
       this.nonIsiPublication.nationalExternalResearchers = this.nonIsiPublication1.nationalExternalResearchers;
       this.nonIsiPublication.internationalExternalResearchers = this.nonIsiPublication1.internationalExternalResearchers;
+      this.nonIsiPublication.progressReport = this.nonIsiPublication1.progressReport;    
     },
     methods: {
+      async guardarBorrador(){
+        const ok = await this.$refs.confirmation.show({
+            title: 'Edit draft',
+            message: `¿Are you sure you want to edit this publication as a draft? this action cannot be undone.`,
+            okButton: 'Edit',
+            cancelButton: 'Return'
+          })
+          if (ok) {
+            var fundingsName1 = "";
+            if (this.nonIsiPublication.fundings !== null){
+              if (this.nonIsiPublication.fundings.length !== 0) {
+                this.nonIsiPublication.fundings.forEach((fundings, index) => {
+                  fundingsName1 += fundings.name;
+                  if (index === this.nonIsiPublication.fundings.length - 1) {
+                    fundingsName1 += '.';
+                  } else {
+                    fundingsName1 += ', ';
+                  }
+                });
+              }
+            }
+            let publication = {
+              status: 'Draft',
+              authors: this.nonIsiPublication.authors,
+              coauthor: this.nonIsiPublication.coauthor,
+              articleTitle: this.nonIsiPublication.articleTitle,
+              journalName: this.nonIsiPublication.journalName,
+              volume: this.nonIsiPublication.volume,
+              firstPage: this.nonIsiPublication.firstPage,
+              lastPage: this.nonIsiPublication.lastPage,
+              yearPublished: this.nonIsiPublication.yearPublished,
+              funding: fundingsName1,
+              mainResearchers: this.nonIsiPublication.mainResearchers,
+              associativeResearchers: this.nonIsiPublication.associativeResearchers,
+              postDoc: this.nonIsiPublication.postDoc,
+              thesisStudents: this.nonIsiPublication.thesisStudents,
+              nationalExternalResearchers: this.nonIsiPublication.nationalExternalResearchers,
+              internationalExternalResearchers: this.nonIsiPublication.internationalExternalResearchers,
+              comments: this.nonIsiPublication.comments,
+            };
+            axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
+              this.buttonDisable = true;
+              this.buttonText = 'Sending...';
+              this.toast.success("Draft edited successfully!", {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+              });
+              setTimeout(() => {this.cerrarModal();}, 1500);
+            })
+            .catch((error)=> {
+              if (error.response.status == 422){
+                this.errors = error.response.data.errors;
+                this.toast.warning('There is an invalid value.', {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              }
+            });
+          }
+      },
       onInput(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
@@ -250,11 +346,24 @@ export default {
       },
       async editarPublicacion() {
         this.errors = [];
-        for (const item in this.nonIsiPublication){
-          if(this.nonIsiPublication[item] === "" || this.nonIsiPublication[item] === 0){
-            if(item == 'coauthor' && this.coauthor == false){
-            }else
-              this.errors.push(item);
+        const itemsToSkip = [
+          'mainResearchers',
+          'associativeResearchers',
+          'postDoc',
+          'thesisStudents',
+          'nationalExternalResearchers',
+          'internationalExternalResearchers',
+          'progressReport',
+          'comments'
+        ];
+
+        for (const item in this.nonIsiPublication) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.nonIsiPublication[item] === "" || this.nonIsiPublication[item] === 0 || this.nonIsiPublication[item] == null)) {
+                if (item === 'coauthor' && this.coauthor === false) {
+                } else {
+                    this.errors.push(item);
+                }
             }
         }
 
@@ -317,7 +426,6 @@ export default {
               coauthor: this.nonIsiPublication.coauthor,
               articleTitle: this.nonIsiPublication.articleTitle,
               journalName: this.nonIsiPublication.journalName,
-              doi: this.nonIsiPublication.doi,
               volume: this.nonIsiPublication.volume,
               firstPage: this.nonIsiPublication.firstPage,
               lastPage: this.nonIsiPublication.lastPage,

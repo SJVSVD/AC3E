@@ -28,6 +28,10 @@ return new class extends Migration
             $table->year('year')->nullable();
             $table->string('nameOfResearch')->nullable();
             $table->string('comments')->nullable();
+            $table->string('description')->nullable();
+            $table->string('nameOfInstitutionInvolved')->nullable();
+            $table->string('researcherInvolved')->nullable();
+            $table->boolean('externalResearcher')->nullable();
             $table->integer('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();

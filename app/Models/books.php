@@ -26,6 +26,9 @@ class books extends Model
         'year',
         'nameOfResearchLine',
         'progressReport',
+        'editors',
+        'ISBN',
+        'comments'
     ];
 
     public function usuario(){

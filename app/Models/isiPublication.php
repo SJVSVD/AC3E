@@ -32,7 +32,9 @@ class isiPublication extends Model
         'nationalExternalResearchers',
         'internationalExternalResearchers',
         'comments',
-        'progressReport'
+        'progressReport',
+        'sendingDate',
+        'acceptanceDate',
     ];
 
     public function usuario(){

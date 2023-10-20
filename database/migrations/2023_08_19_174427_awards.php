@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('contributionAwardee')->nullable();
             $table->string('institution')->nullable();
             $table->string('country')->nullable();
+            $table->string('comments')->nullable();
             $table->integer('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();

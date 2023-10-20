@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //IsiPublications
 Route::apiResource('isiPublications', isiPublicationsController::class);
+Route::post('useDoi', [isiPublicationsController::class, 'useDoi']);
 
 //nonIsiPublications
 Route::apiResource('nonIsiPublications', nonIsiPublicationsController::class);

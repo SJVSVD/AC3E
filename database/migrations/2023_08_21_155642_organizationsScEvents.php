@@ -28,6 +28,8 @@ return new class extends Migration
             $table->integer('numberParticipants')->nullable();
             $table->string('nameOfResearch')->nullable();
             $table->string('file')->nullable();
+            $table->string('comments')->nullable();
+            $table->integer('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

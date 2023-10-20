@@ -31,6 +31,10 @@ return new class extends Migration
             $table->string('cityDestination')->nullable();
             $table->date('beginningDate')->nullable();
             $table->date('endingDate')->nullable();
+            $table->string('nameOfAC3EMember')->nullable();
+            $table->string('nameOfExternalResearcher')->nullable();
+            $table->string('collaborationStay')->nullable();
+            $table->boolean('otherStay')->nullable();
             $table->string('nameOfResearch')->nullable();
             $table->integer('progressReport')->nullable();
             $table->softDeletes();

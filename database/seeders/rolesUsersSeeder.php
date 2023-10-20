@@ -15,6 +15,7 @@ class rolesUsersSeeder extends Seeder
             ['name' => 'Investigadora Postdoctoral'],
             ['name' => 'Investigador Titular'],
             ['name' => 'Administrador'],
+            ['name' => 'Inactivo'],
         ];
 
         foreach($roles as $role){

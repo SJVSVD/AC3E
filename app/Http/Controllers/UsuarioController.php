@@ -37,7 +37,7 @@ class UsuarioController extends Controller
 
     public function index()
     {
-        return User::with('roles')->with('permissions')->get();
+        return User::with('roles')->with('permissions')->with('roleUser')->with('researchLine')->get();
     }
 
     public function update(Request $request, $id)
