@@ -355,7 +355,7 @@
     left: 0;
     height: 100%;
     width: 260px;
-    background: #11101d;
+    background: #666666;
     z-index: 100;
     transition: all 0.5s ease;
 }
@@ -405,7 +405,7 @@
     transition: all 0.4s ease;
 }
 .sidebar .nav-links li:hover {
-    background: #1d1b31;
+    background: #595959;
 }
 .sidebar .nav-links li .iocn-link {
     display: flex;
@@ -449,7 +449,7 @@
 .sidebar .nav-links li .sub-menu {
     padding: 6px 6px 14px 80px;
     margin-top: -10px;
-    background: #1d1b31;
+    background: #595959;
     display: none;
 }
 .sidebar .nav-links li.showMenu .sub-menu {

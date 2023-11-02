@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit conjoint project
                 </slot>
+                <label for="">Progress year: {{ conjointProject.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,6 +16,7 @@
                     <div class="row">
                           <div class="col-3">
                             <label for="">Activity Type:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="conjointProject.activityType">
                               <option disabled :value="null">Select a type</option>
                               <option value="International congress">National</option>
@@ -23,6 +25,7 @@
                           </div>
                           <div class="col-3">
                             <label for="">Collaboration Type:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="conjointProject.collaborationType">
                               <option disabled :value="null">Select a type</option>
                               <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
@@ -32,11 +35,13 @@
                           </div>
                           <div v-if="conjointProject.collaborationType == 'Other'" class="col-3">
                             <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
                           <div class="col-3">
                             <label for="">Activity Name:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="conjointProject.activityName">
                           </div>
@@ -45,6 +50,7 @@
                     <div class="row">
                       <div class="col-6">
                         <label for="">Name of people involved:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="conjointProject.peopleInvolved"
@@ -61,6 +67,7 @@
                       </div>
                       <div class="col-6">
                         <label for="">Institution which the center collaborates:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.institutionCollaborates">
                       </div>
@@ -69,21 +76,25 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Country Origin:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.countryOrigin">
                       </div>
                       <div class="col-3">
                         <label for="">City Origin:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.cityOrigin">
                       </div>
                       <div class="col-3">
                         <label for="">Country Destination:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.countryDestination">
                       </div>
                       <div class="col-3">
                         <label for="">City Destination:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.cityDestination">
                       </div>
@@ -92,16 +103,19 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Beginning Date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="conjointProject.beginningDate">
                       </div>
                       <div class="col-3">
                         <label for="">Ending Date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="conjointProject.endingDate">
                       </div>
                       <div class="col-6">
                         <label for="">Name of research line:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="conjointProject.nameOfResearch"
@@ -118,17 +132,24 @@
                       </div>
                     </div>
                     <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Comments:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="conjointProject.comments">
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createCollaboration()" :disabled="buttonDisable">
+                    v-model="draft"> Edit as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editConjoint()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -201,6 +222,7 @@ export default {
       this.conjointProject.cityDestination = this.collaboration1.cityDestination;
       this.conjointProject.beginningDate = this.collaboration1.beginningDate;
       this.conjointProject.endingDate = this.collaboration1.endingDate;
+      this.conjointProject.comments = this.collaboration1.comments;
 
       if (this.collaboration1.nameOfResearch != null) {
           const valoresSeparados1 = this.collaboration1.nameOfResearch.split(",");
@@ -282,11 +304,11 @@ export default {
             }
 
             var type = '';
-            var other1 = false;
+            var other1 = 0;
 
             if(this.conjointProject.collaborationType == 'Other'){
               type = this.other;
-              other1 = true;
+              other1 = 1;
             }else{
               type = this.conjointProject.collaborationType;
             }
@@ -306,10 +328,11 @@ export default {
               beginningDate: this.conjointProject.beginningDate,
               endingDate: this.conjointProject.endingDate,
               nameOfResearch: nameOfResearchLine1,
+              comments: this.conjointProject.comments,
               progressReport: this.conjointProject.progressReport,
             };
             axios.put(`api/conjointProjects/${this.id}`, conjointProject ).then((result) => {
-              this.toast.success("Draft saved successfully!", {
+              this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -354,10 +377,15 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createCollaboration() {
+      async editConjoint() {
         this.errors = [];
-        for (const item in this.conjointProject){
-          if(this.conjointProject[item] === "" || this.conjointProject[item] === 0 || this.conjointProject[item] == null || this.conjointProject[item] == []){
+        const itemsToSkip = [
+          'comments'
+        ];
+
+        for (const item in this.conjointProject) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.conjointProject[item] === "" || this.conjointProject[item] === 0 || this.conjointProject[item] == null)) {
                 this.errors.push(item);
             }
         }
@@ -416,9 +444,9 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Edit Project',
-            message: `¿Are you sure you want to edit this conjoint project? This action cannot be undone.`,
-            okButton: 'Edit',
+            title: 'Save Project',
+            message: `¿Are you sure you want to save this conjoint project? This action cannot be undone.`,
+            okButton: 'Save',
             cancelButton: 'Return'
           })
           if (ok) {
@@ -451,19 +479,19 @@ export default {
             }
 
             var typeCollaboration = '';
-            var other1 = false;
+            var other1 = 0;
 
             if(this.conjointProject.collaborationType == 'Other'){
               typeCollaboration = this.other;
-              other1 = true;
+              other1 = 1;
             }else{
               typeCollaboration = this.conjointProject.collaborationType;
             }
 
             let conjointProject = {
               status: 'Finished',
-              idUsuario: this.userID,
               activityType: this.conjointProject.activityType,
+              moduleType: 1,
               collaborationType: typeCollaboration,
               otherCollaboration: other1,
               institutionCollaborates: this.conjointProject.institutionCollaborates,
@@ -476,6 +504,7 @@ export default {
               beginningDate: this.conjointProject.beginningDate,
               endingDate: this.conjointProject.endingDate,
               nameOfResearch: nameOfResearchLine1,
+              comments: this.conjointProject.comments,
               progressReport: this.conjointProject.progressReport,
             };
             console.log(conjointProject);

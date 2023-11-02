@@ -38,6 +38,7 @@ class outreachActivities extends Model
         'researcherInvolved',
         'externalResearcher',
         'responsability',
+        'comments',
     ];
 
     public function usuario(){

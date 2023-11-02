@@ -6,7 +6,7 @@
               <div class="modal-container-xs">
                 <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                   <slot name="header">
-                      New Autor
+                      New Tutor
                   </slot>
                   <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
                 </div>
@@ -55,6 +55,7 @@
           autor:{
             name: '',
             institution: '',
+            editing: false,
           },
           errors:[],
       }),

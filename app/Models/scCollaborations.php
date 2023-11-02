@@ -34,6 +34,7 @@ class scCollaborations extends Model
         'nameOfExternalResearcher',
         'collaborationStay',
         'otherStay',
+        'comments'
     ];
 
     public function usuario(){

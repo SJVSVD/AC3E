@@ -6,8 +6,9 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Postdoctoral fellow
+                    New Postdoctoral fellow {{ postDoc }}
                 </slot>
+                <label for="">Progress year: {{ postDoc.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,44 +16,68 @@
                   <div class="row">
                       <div class="col-3">
                         <label for="">Name of postdoc fellow:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.nameOfPostdoc">
                       </div>
                       <div class="col-3">
                           <label for="">Gender: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" v-model="postDoc.gender">
-                            <option disabled value="">Select a Gender</option>
+                            <option disabled :value="null">Select a Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
-                            <option value="No binary">No binary</option>
+                            <option value="Non binary">Non binary</option>
                             </select>
                       </div>
                       <div class="col-3">
                           <label for="">Identification: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" @change="postDoc.run = ''; postDoc.passport = '';" v-model="postDoc.identification">
-                            <option disabled value="">Select One</option>
+                            <option disabled :value="null">Select One</option>
                             <option value="run">Run</option>
                             <option value="passport">Passport</option>
                           </select>
                       </div>                        
                       <div v-if="postDoc.identification == 'run'" class="col-3">
                           <label for="">Run: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="postDoc.run">
                       </div>
                       <div v-if="postDoc.identification == 'passport'" class="col-3">
                           <label for="">Passport: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="postDoc.passport">
                       </div>
                     </div>
                     <br>
                     <div class="row">
-
+                      <div class="col-4">
+                        <label for="">Personal email:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.personalEmail">
+                      </div>
+                      <div class="col-4">
+                        <label for="">Posterior working area:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.posteriorWorkingArea">
+                      </div>
+                      <div class="col-4">
+                        <label for="">Institution posterior working area:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.institutionWorkingArea">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
                       <div class="col-6">
                         <label for="">Supervisor name:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="postDoc.supervisorName"
@@ -69,6 +94,7 @@
                       </div>
                       <div class="col-6">
                         <label for="">Resources provided by the center:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="postDoc.resourcesProvided"
@@ -86,9 +112,9 @@
                     </div>
                     <br>
                     <div class="row">
-
                       <div class="col-6">
                         <label for="">Funding source:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="postDoc.fundingSource"
@@ -105,11 +131,13 @@
                       </div>
                       <div class="col-3">
                           <label for="">Start year: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input id="yearInput1" type="number" v-model="postDoc.startYear" :max="currentYear" @input="onInput1" class= "form-control" />
                       </div>
                       <div class="col-3">
                           <label for="">Ending year: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input id="yearInput1" type="number" v-model="postDoc.endingYear" :max="currentYear" @input="onInput2" class= "form-control" />
                       </div>
@@ -186,11 +214,13 @@
                     <div class="row">
                       <div class="col-4">
                         <label for="">Research topic:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.researchTopic">
                       </div>
                       <div class="col-4">
                         <label for="">Institution where it was inserted:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.institutionName">
                       </div>
@@ -224,12 +254,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
+                    v-model="draft"> Edit as a draft</label>
                     <a v-if="draft == false" class="btn btn-continue float-end" @click="createPatent()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -260,29 +290,32 @@ export default {
         run: "",
         gender: '',
         researchTopic: '',
+        personalEmail: '',
+        posteriorWorkingArea: '',
+        institutionWorkingArea: '',
         supervisorName: null,
         resourcesProvided: null,
         fundingSource: null,
         startYear: '',
         endingYear: '',
-        privateSector: false,
-        academy1: false,
-        business: false,
-        ownEntrepreneurship: false,
-        publicSector: false,
-        government: false,
-        academy2: false,
-        socialOng: false,
-        inTheCenter: false,
-        noneOfTheAbove: false,
+        privateSector: 0,
+        academy1: 0,
+        business: 0,
+        ownEntrepreneurship: 0,
+        publicSector: 0,
+        government: 0,
+        academy2: 0,
+        socialOng: 0,
+        inTheCenter: 0,
+        noneOfTheAbove: 0,
         institutionName: '',
         nameOfResearch: null,
         comments: '',
-        progressReport: 9,
+        progressReport: '',
       },
       options3: [
         'Basal Financing Program Funding',
-        'Other sources (Specify in comments)',
+        'Other sources',
       ],
       options2: [
         'Equipment',
@@ -303,7 +336,7 @@ export default {
       researchers: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Edit postdoc',
+      buttonText:'Edit fellow',
     }),
     mounted(){
       this.getUsuarios();
@@ -321,21 +354,25 @@ export default {
       }else{
         this.postDoc.passport = this.postDoc1.runOrPassport;
       }
-
+      this.postDoc.personalEmail = this.postDoc1.personalEmail;
+      this.postDoc.posteriorWorkingArea = this.postDoc1.posteriorWorkingArea;
+      this.postDoc.institutionWorkingArea = this.postDoc1.institutionWorkingArea;
       this.postDoc.gender = this.postDoc1.gender;
       this.postDoc.researchTopic = this.postDoc1.researchTopic;
       this.postDoc.startYear = this.postDoc1.startYear;
       this.postDoc.endingYear = this.postDoc1.endingYear;
-      this.postDoc.privateSector = this.postDoc1.privateSector;
-      this.postDoc.academy1 = this.postDoc1.academy1;
-      this.postDoc.business = this.postDoc1.business;
-      this.postDoc.ownEntrepreneurship = this.postDoc1.ownEntrepreneurship;
-      this.postDoc.publicSector = this.postDoc1.publicSector;
-      this.postDoc.government = this.postDoc1.government;
-      this.postDoc.academy2 = this.postDoc1.academy2;
-      this.postDoc.socialOng = this.postDoc1.socialOng;
-      this.postDoc.inTheCenter = this.postDoc1.inTheCenter;
-      this.postDoc.noneOfTheAbove = this.postDoc1.noneOfTheAbove;
+
+      this.postDoc.privateSector = this.postDoc1.privateSector === 1;
+      this.postDoc.academy1 = this.postDoc1.academy1 === 1;
+      this.postDoc.business = this.postDoc1.business === 1;
+      this.postDoc.ownEntrepreneurship = this.postDoc1.ownEntrepreneurship === 1;
+      this.postDoc.publicSector = this.postDoc1.publicSector === 1;
+      this.postDoc.government = this.postDoc1.government === 1;
+      this.postDoc.academy2 = this.postDoc1.academy2 === 1;
+      this.postDoc.socialOng = this.postDoc1.socialOng === 1;
+      this.postDoc.inTheCenter = this.postDoc1.inTheCenter === 1;
+      this.postDoc.noneOfTheAbove = this.postDoc1.noneOfTheAbove === 1;
+
       this.postDoc.institutionName = this.postDoc1.institutionName;
       this.postDoc.comments = this.postDoc1.comments;
       this.postDoc.progressReport = this.postDoc1.progressReport;
@@ -559,6 +596,9 @@ export default {
               runOrPassport: runOrPassport1,
               gender: this.postDoc.gender,
               researchTopic: this.postDoc.researchTopic,
+              personalEmail: this.postDoc.personalEmail,
+              posteriorWorkingArea: this.postDoc.posteriorWorkingArea,
+              institutionWorkingArea: this.postDoc.institutionWorkingArea,
               supervisorName: supervisorName1,
               resourcesProvided: resourcesProvided1,
               fundingSource: fundingSource1,
@@ -580,7 +620,7 @@ export default {
               progressReport: this.postDoc.progressReport,
             };
             axios.put(`api/postDoc/${this.id}`, postDoc).then((result) => {
-              this.toast.success("Draft saved successfully!", {
+              this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -639,6 +679,9 @@ export default {
           'socialOng',
           'inTheCenter',
           'noneOfTheAbove',
+          'posteriorWorkingArea',
+          'institutionWorkingArea',
+          'comments',
         ];
 
 
@@ -779,6 +822,9 @@ export default {
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
               gender: this.postDoc.gender,
+              personalEmail: this.postDoc.personalEmail,
+              posteriorWorkingArea: this.postDoc.posteriorWorkingArea,
+              institutionWorkingArea: this.postDoc.institutionWorkingArea,
               researchTopic: this.postDoc.researchTopic,
               supervisorName: supervisorName1,
               resourcesProvided: resourcesProvided1,
@@ -801,7 +847,7 @@ export default {
               progressReport: this.postDoc.progressReport,
             };
             axios.put(`api/postDoc/${this.id}`, postDoc).then((result) => {
-              this.toast.success("Postdoctoral fellow saved successfully!", {
+              this.toast.success("Postdoctoral fellow edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,

@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Thesis
                 </slot>
+                <label for="">Progress year: {{ thesisStudent.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -19,19 +20,20 @@
                             <input type="text" class= "form-control" v-model="thesisStudent.studentName">
                         </div>
                         <div class="col-3">
-                            <label for="">Gender(M/F): </label>
+                            <label for="">Gender: </label>
                             <br>
                             <select class="form-select" v-model="thesisStudent.gender">
-                              <option disabled value="">Select a Gender</option>
-                              <option value="M">Male</option>
-                              <option value="F">Female</option>
+                              <option disabled :value="null">Select a Gender</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Non binary">Non binary</option>
                               </select>
                         </div>
                         <div class="col-3">
                             <label for="">Identification: </label>
                             <br>
                             <select class="form-select" @change="thesisStudent.run = ''; thesisStudent.passport = '';" v-model="thesisStudent.identification">
-                              <option disabled value="">Select One</option>
+                              <option disabled :value="null">Select One</option>
                               <option value="run">Run</option>
                               <option value="passport">Passport</option>
                             </select>
@@ -58,10 +60,10 @@
                           <label for="">Academic Degree: </label>
                           <br>
                           <select class="form-select" v-model="thesisStudent.academicDegree">
-                            <option disabled value="">Select a degree</option>
-                            <option value="1">Undergraduate degree or profesional title</option>
-                            <option value="2">Master o equivalent</option>
-                            <option value="3">PhD degree</option>
+                            <option disabled :value="null">Select a degree</option>
+                            <option value="Undergraduate degree or profesional title">Undergraduate degree or profesional title</option>
+                            <option value="Master o equivalent">Master o equivalent</option>
+                            <option value="PhD degree">PhD degree</option>
                           </select>
                       </div>
                       <div class="col-4">
@@ -77,21 +79,40 @@
                         <br>
                         <input type="text" class= "form-control" v-model="thesisStudent.thesisTitle">
                       </div>
+                      <div class="col-3">
+                          <label for="">Thesis Status: </label>
+                          <br>
+                          <select class="form-select" v-model="thesisStudent.thesisStatus">
+                            <option disabled value="">Select One</option>
+                            <option value="1">Finished</option>
+                            <option value="2">In progress</option>
+                          </select>
+                      </div>
+                      <div v-if="thesisStudent.thesisStatus == '1'" class="col-4">
+                        <div class="form-group">
+                          <label for="archivo">Thesis Extract: </label>
+                          <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
+                        </div>
+                      </div>
+                      <div v-if="thesisStudent.thesisStatus == '1'" class="col-1 pt-2">
+                        <br>
+                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                      </div>
                     </div>
                     <hr size="3" class="separador">
                     <div class="row">
                       <div class="col-4 d-flex justify-content-center">
-                        <a v-if="tutors.length != 0" class="btn btn-continue">{{ tutors.length }}</a>
+                        <a v-if="tutors.length != 0" class="btn btn-continue" @click="showModalEditTutor = true">{{ tutors.length }}</a>
                         &nbsp;
                         <a class="btn btn-search-blue" @click="showModalAutor = true"><i class="fa-solid fa-plus"></i> Add Tutor </a>
                       </div>
                       <div class="col-4 d-flex justify-content-center">
-                        <a v-if="cotutors.length != 0" class="btn btn-continue">{{ cotutors.length }}</a>
+                        <a v-if="cotutors.length != 0" class="btn btn-continue" @click="showModalEditCotutor = true">{{ cotutors.length }}</a>
                         &nbsp;
                         <a class="btn btn-search-blue" @click="showModalCoautor = true"><i class="fa-solid fa-plus"></i> Add Cotutor </a>
                       </div>
                       <div class="col-4 d-flex justify-content-centerd-flex justify-content-center">
-                        <a v-if="others.length != 0" class="btn btn-continue">{{ others.length }}</a>
+                        <a v-if="others.length != 0" class="btn btn-continue" @click="showModalEditOther = true">{{ others.length }}</a>
                         &nbsp;
                         <a class="btn btn-search-blue" @click="showModalOther = true"><i class="fa-solid fa-plus"></i> Add Other </a>
                       </div>
@@ -139,15 +160,15 @@
                           <label for="">Posterior working area: </label>
                           <br>
                           <select class="form-select" v-model="thesisStudent.posteriorArea">
-                            <option disabled value="">Select an area</option>
-                            <option value="1">Private Education</option>
-                            <option value="2">Business</option>
-                            <option value="3">Own entrepreneurship</option>
-                            <option value="4">Government</option>
-                            <option value="5">Public Education</option>
-                            <option value="6">Social-ONG</option>
-                            <option value="7">In the Center</option>
-                            <option value="8">None of the above</option>
+                            <option disabled :value="null">Select an area</option>
+                            <option value="Private Education">Private Education</option>
+                            <option value="Business">Business</option>
+                            <option value="Own entrepreneurship">Own entrepreneurship</option>
+                            <option value="Government">Government</option>
+                            <option value="Public Education">Public Education</option>
+                            <option value="Social-ONG">Social-ONG</option>
+                            <option value="In the Center">In the Center</option>
+                            <option value="None of the above">None of the above</option>
                           </select>
                       </div>
                       <div class="col-4">
@@ -165,14 +186,22 @@
                 </div>
                 <div class="modal-footer">
                   <slot name="footer">
-                    <a class="btn btn-continue float-end" @click="crearTesis()" :disabled="buttonDisable">
+                    <label class="form-check-label"><input type="checkbox" class="form-check-"
+                    v-model="draft"> Edit as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createCollaboration()" :disabled="buttonDisable">
                       {{ buttonText }}
+                    </a>
+                    <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
+                      Edit draft
                     </a>
                   </slot>
                 </div>
                 <modalOther v-if="showModalOther" @close="showModalOther = false" @submit="handleFormSubmit3"></modalOther>
                 <modalCoautor v-if="showModalCoautor" @close="showModalCoautor = false" @submit="handleFormSubmit2"></modalCoautor>
                 <modalAutor v-if="showModalAutor" @close="showModalAutor = false" @submit="handleFormSubmit1"></modalAutor>
+                <modalEditarTutor v-bind:tutors1="tutors" v-if="showModalEditTutor" @close="showModalEditTutor = false"></modalEditarTutor>
+                <modalEditarCotutor v-bind:cotutors1="cotutors" v-if="showModalEditCotutor" @close="showModalEditCotutor = false"></modalEditarCotutor>
+                <modalEditarOther v-bind:others1="others" v-if="showModalEditOther" @close="showModalEditOther = false"></modalEditarOther>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
           </div>
@@ -189,11 +218,14 @@ import modalalerta from '../../sistema/alerts/alertModal.vue';
 import modalAutor from './extraModals/createAutor.vue';
 import modalCoautor from './extraModals/createCoautor.vue';
 import modalOther from './extraModals/createOther.vue';
+import modalEditarTutor from './extraModals/editTutor.vue';
+import modalEditarCotutor from './extraModals/editCotutor.vue';
+import modalEditarOther from './extraModals/editOther.vue';
 import {mixin} from '../../../../mixins.js';
 import Multiselect from '@vueform/multiselect';
 
 export default {
-    components: { Multiselect,modalconfirmacion, modalalerta, modalAutor, modalCoautor , modalOther },
+    components: { Multiselect,modalconfirmacion, modalalerta, modalAutor, modalCoautor , modalOther, modalEditarTutor, modalEditarCotutor, modalEditarOther },
     mixins: [mixin],
     data: () => ({
       thesisStudent:{
@@ -203,6 +235,7 @@ export default {
         run: "",
         gender: "",
         studentMail: "",
+        thesisStatus: "",
         thesisTitle: "",
         academicDegree: "",
         degreeDenomination: "",
@@ -218,6 +251,7 @@ export default {
         resourcesCenter: null,
         posteriorArea: "",
         institutionPosteriorArea: "",
+        progressReport: "",
         comments: "",
       },
       options1: [
@@ -230,24 +264,30 @@ export default {
       showModalAutor: false,
       showModalCoautor: false,
       showModalOther: false,
+      showModalEditTutor: false,
+      showModalEditCotutor: false,
+      showModalEditOther: false,
       buttonDisable: false,
+      thesisExtract: null,
+      draft: false,
       tutors:[],
       cotutors:[],
       others:[],
       errors:[],
-      id:null,
+      id: '',
       buttonText:'Edit Thesis',
       years: [],
     }),
-    props:{
-        thesisStudent1: Object,
-    },
     mounted() {
       this.calculateYears();
+    },
+    props:{
+      thesisStudent1: Object,
     },
     created(){
       this.id = this.thesisStudent1.id;
       this.thesisStudent.studentName = this.thesisStudent1.studentName;
+      this.thesisStudent.progressReport = this.thesisStudent1.progressReport;
       this.thesisStudent.identification = this.thesisStudent1.identification;
       if(this.thesisStudent1.identification == 'run'){
         this.thesisStudent.run = this.thesisStudent1.runOrPassport;
@@ -255,11 +295,12 @@ export default {
         this.thesisStudent.passport = this.thesisStudent1.runOrPassport;
       }
 
-      const separatedValues = this.thesisStudent1.resourcesCenter.split(",");
-      this.thesisStudent.resourcesCenter = separatedValues.slice(0, -1).map(valor => {
-        return { value: valor, name: valor };
-      });
-
+      if(this.thesisStudent1.resourcesCenter != null && this.thesisStudent1.resourcesCenter != []){
+        const separatedValues = this.thesisStudent1.resourcesCenter.split(",");
+        this.thesisStudent.resourcesCenter = separatedValues.slice(0, -1).map(valor => {
+          return { value: valor, name: valor };
+        });
+      }
       if(this.thesisStudent1.tutorName != null){
         const valoresSeparados1 = this.thesisStudent1.tutorName.split(",");
         const nombresSeparados1 = this.thesisStudent1.tutorInstitution.split(",");
@@ -325,6 +366,7 @@ export default {
         this.thesisStudent.yearThesisEnd = input.value.slice(0, 4);
       },
       clearFileInput() {
+        this.thesisExtract = null;
         this.$refs.fileInput.value = '';
       },
       async getFile(e){
@@ -371,6 +413,126 @@ export default {
       },
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
+      },
+      async guardarBorrador(){
+        const ok = await this.$refs.confirmation.show({
+          title: 'Edit draft',
+            message: `¿Are you sure you want to edit this Thesis Student as a draft? this action cannot be undone.`,
+            okButton: 'Edit',
+            cancelButton: 'Return'
+        })
+        if (ok) {
+          var runOrPassport1 = '';
+          if(this.thesisStudent.identification == 'run'){
+            runOrPassport1 = this.formatoRut(this.thesisStudent.run);
+          }else{
+            runOrPassport1 = this.thesisStudent.passport;
+          }
+
+          var tutorName1 = '';
+          var tutorInstitution1 = '';
+          var cotutorName1 = '';
+          var cotutorInstitution1 = '';
+          var otherName1 = '';
+          var otherInstitution1 = '';
+          var resources1 = '';
+
+          if(this.tutors.length != 0){
+            this.tutors.forEach(tutor => {
+              tutorName1 += tutor.name + ',';
+            });
+            this.tutors.forEach(tutor => {
+              tutorInstitution1 += tutor.institution + ',';
+            });
+          }
+
+          if(this.cotutors.length != 0){
+            this.cotutors.forEach(cotutor => {
+              cotutorName1 += cotutor.name + ',';
+            });
+            this.cotutors.forEach(cotutor => {
+              cotutorInstitution1 += cotutor.institution + ',';
+            });
+          }
+
+          if(this.others.length != 0){
+            this.others.forEach(other => {
+              otherName1 += other.name + ',';
+            });
+            this.others.forEach(other => {
+              otherInstitution1 += other.institution + ',';
+            });
+          }
+          if(this.thesisStudent.resourcesCenter != null && this.thesisStudent.resourcesCenter != []){
+            this.thesisStudent.resourcesCenter.forEach(resource => {
+              resources1 += resource.value + ',';
+            }); 
+          }
+          let thesisStudent = {
+            status: 'Draft',
+            identification: this.thesisStudent.identification,
+            studentName: this.thesisStudent.studentName,
+            runOrPassport: runOrPassport1,
+            gender: this.thesisStudent.gender,
+            studentMail: this.thesisStudent.studentMail,
+            thesisStatus: this.thesisStudent.thesisStatus,
+            thesisTitle: this.thesisStudent.thesisTitle,
+            academicDegree: this.thesisStudent.academicDegree,
+            degreeDenomination: this.thesisStudent.degreeDenomination,
+            tutorName: tutorName1,
+            tutorInstitution: tutorInstitution1,
+            cotutorName: cotutorName1,
+            cotutorInstitution: cotutorInstitution1,
+            otherName: otherName1,
+            otherInstitution: otherInstitution1,
+            university: this.thesisStudent.university,
+            yearStart: this.thesisStudent.yearStart,
+            yearThesisEnd: this.thesisStudent.yearThesisEnd,
+            resourcesCenter: resources1,
+            posteriorArea: this.thesisStudent.posteriorArea,
+            institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
+            comments: this.thesisStudent.comments,
+            progressReport: this.thesisStudent.progressReport,
+          };
+          axios.put(`api/thesisStudents/${this.id}`, thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
+            this.buttonDisable = true;
+            this.buttonText = 'Sending...';
+            this.toast.success("Draft edited successfully!", {
+              position: "top-right",
+              timeout: 3000,
+              closeOnClick: true,
+              pauseOnFocusLoss: true,
+              pauseOnHover: true,
+              draggable: true,
+              draggablePercent: 0.6,
+              showCloseButtonOnHover: false,
+              hideProgressBar: true,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
+            setTimeout(() => {this.cerrarModal();}, 1500);
+          })
+          .catch((error)=> {
+            if (error.response.status == 422){
+              this.errors = error.response.data.errors;
+              this.toast.warning('There is an invalid value.', {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+              });
+            }
+          });
+        }
       },
       async crearTesis() {
         this.errors = [];
@@ -516,11 +678,13 @@ export default {
 
             let thesisStudent = {
               idUsuario: this.userID,
+              status: 'Finished',
               identification: this.thesisStudent.identification,
               studentName: this.thesisStudent.studentName,
               runOrPassport: runOrPassport1,
               gender: this.thesisStudent.gender,
               studentMail: this.thesisStudent.studentMail,
+              thesisStatus: this.thesisStudent.thesisStatus,
               thesisTitle: this.thesisStudent.thesisTitle,
               academicDegree: this.thesisStudent.academicDegree,
               degreeDenomination: this.thesisStudent.degreeDenomination,
@@ -537,11 +701,13 @@ export default {
               posteriorArea: this.thesisStudent.posteriorArea,
               institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
               comments: this.thesisStudent.comments,
+              progressReport: this.thesisStudent.progressReport,
+              thesisExtract: this.thesisExtract,
             };
-            axios.put(`api/thesisStudents/${this.id}`, thesisStudent ).then((result) => {
+            axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.buttonDisable = true;
-              this.buttonText = 'Editing...';
-              this.toast.success("Thesis edited successfully!", {
+              this.buttonText = 'Sending...';
+              this.toast.success("Thesis send successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,

@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Outreach Activity 
                 </slot>
+                <label for="">Progress year: {{ outreachActivity.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,6 +16,7 @@
                     <div class="row">
                           <div class="col-3">
                             <label for="">Activity Type:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="outreachActivity.activityType">
                               <option disabled value="">Select a type</option>
                               <option value="Conference">Conference</option>
@@ -30,16 +32,19 @@
                           </div>
                           <div v-if="outreachActivity.activityType == 'Other'" class="col-3">
                             <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
                           <div class="col-3">
                             <label for="">Activity Name:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="outreachActivity.activityName">
                           </div>
                           <div class="col-3">
                             <label for="">Activity Description:</label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="outreachActivity.activityDescription">
                           </div>
@@ -48,21 +53,25 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="outreachActivity.date">
                       </div>
                       <div class="col-3">
                         <label for="">Attendants Amount:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="number" class= "form-control" v-model="outreachActivity.attendantsAmount">
                       </div>
                       <div class="col-3">
                         <label for="">Duration (Days):</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="number" class= "form-control" v-model="outreachActivity.duration">
                       </div>
                       <div class="col-3">
                         <label for="">Country:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="outreachActivity.country">
                       </div>
@@ -71,16 +80,19 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Place/Region:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="outreachActivity.placeRegion">
                       </div>
                       <div class="col-3">
                         <label for="">City:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="outreachActivity.city">
                       </div>
                       <div class="col-6">
                         <label for="">Name of the main responsible:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the researchers"
                           v-model="outreachActivity.nameOfTheMainResponsible"
@@ -94,6 +106,40 @@
                           trackBy="id"
                           :object="true"
                         />
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher Involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the researchers"
+                          v-model="outreachActivity.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label for="">Responsability:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="outreachActivity.responsability">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Comments:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="outreachActivity.comments">
                       </div>
                     </div>
                     <hr size="3" class="separador">
@@ -157,12 +203,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
+                    v-model="draft"> Edit as a draft</label>
                     <a v-if="draft == false" class="btn btn-continue float-end" @click="createActivity()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -205,7 +251,7 @@ export default {
         governmentOfficial: false,
         other: false,
         nameOfTheMainResponsible: null,
-        progressReport: 9,
+        progressReport: '',
       },
       id: '',
       other: '',
@@ -240,6 +286,9 @@ export default {
       this.outreachActivity.schoolTeachers = this.activity1.schoolTeachers;
       this.outreachActivity.governmentOfficial = this.activity1.governmentOfficial;
       this.outreachActivity.other = this.activity1.other;
+      this.outreachActivity.progressReport = this.activity1.progressReport;
+      this.outreachActivity.responsability = this.activity1.responsability;
+      this.outreachActivity.comments = this.activity1.comments;
 
       if (this.activity1.nameOfTheMainResponsible != null) {
           const valoresSeparados1 = this.activity1.nameOfTheMainResponsible.split(",");
@@ -253,6 +302,17 @@ export default {
           });
       }
 
+      if (this.activity1.researcherInvolved != null) {
+          const valoresSeparados1 = this.activity1.researcherInvolved.split(",");
+          this.outreachActivity.researcherInvolved = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
 
       if(this.activity1.otherType == true){
         this.outreachActivity.activityType = 'Other';
@@ -295,12 +355,26 @@ export default {
               }
             }
 
+            var researcherInvolved1 = "";
+            if (this.outreachActivity.researcherInvolved !== null){
+              if (this.outreachActivity.researcherInvolved.length !== 0) {
+                this.outreachActivity.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.outreachActivity.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
+                  } else {
+                    researcherInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             var type = '';
-            var other1 = false;
+            var other1 = 0;
 
             if(this.outreachActivity.activityType == 'Other'){
               type = this.other;
-              other1 = true;
+              other1 = 1;
             }else{
               type = this.outreachActivity.activityType;
             }
@@ -327,6 +401,9 @@ export default {
               governmentOfficial: this.outreachActivity.governmentOfficial,
               other: this.outreachActivity.other,
               nameOfTheMainResponsible: namesResponsibles1,
+              researcherInvolved: researcherInvolved1,
+              responsability: this.outreachActivity.responsability,
+              comments: this.outreachActivity.comments,
               progressReport: this.outreachActivity.progressReport,
             };
             axios.put(`api/outreachActivities/${this.id}`, outreachActivity ).then((result) => {
@@ -387,6 +464,7 @@ export default {
           'schoolTeachers',
           'governmentOfficial',
           'other',
+          'comments'
         ];
 
 
@@ -459,19 +537,32 @@ export default {
               }
             }
 
+            var researcherInvolved1 = "";
+            if (this.outreachActivity.researcherInvolved !== null){
+              if (this.outreachActivity.researcherInvolved.length !== 0) {
+                this.outreachActivity.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.outreachActivity.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
+                  } else {
+                    researcherInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             var type = '';
-            var other1 = false;
+            var other1 = 0;
 
             if(this.outreachActivity.activityType == 'Other'){
               type = this.other;
-              other1 = true;
+              other1 = 1;
             }else{
               type = this.outreachActivity.activityType;
             }
 
             let outreachActivity = {
               status: 'Finished',
-              idUsuario: this.userID,
               activityType: type,
               otherType: other1,
               activityName: this.outreachActivity.activityName,
@@ -491,6 +582,9 @@ export default {
               governmentOfficial: this.outreachActivity.governmentOfficial,
               other: this.outreachActivity.other,
               nameOfTheMainResponsible: namesResponsibles1,
+              researcherInvolved: researcherInvolved1,
+              responsability: this.outreachActivity.responsability,
+              comments: this.outreachActivity.comments,
               progressReport: this.outreachActivity.progressReport,
             };
             axios.put(`api/outreachActivities/${this.id}`, outreachActivity ).then((result) => {

@@ -228,7 +228,7 @@ export default {
       },
       options1: [
         'Basal Financing Program Funding',
-        'Other sources (Specify in comments)',
+        'Other sources',
       ],
       id: null,
       coauthor: false,

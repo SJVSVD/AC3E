@@ -55,6 +55,7 @@
           coautor:{
             name: '',
             institution: '',
+            editing: false,
           },
           errors:[],
       }),

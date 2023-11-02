@@ -42,12 +42,6 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                                <p class="mb-1 text-sm mx-auto">
-                                        Forgot your password? Request the change 
-                                        <a href="{{ route('reset-password') }}" class="text-primary text-gradient font-weight-bold">here</a>
-                                    </p>
-                                </div>
                             </div>
                         </div>
                         <div class="row" style="margin-top: 10px">

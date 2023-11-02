@@ -8,6 +8,7 @@
                 <slot name="header">
                     New Postdoctoral fellow
                 </slot>
+                <label for="">Progress year: {{ postDoc.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,21 +16,24 @@
                   <div class="row">
                       <div class="col-3">
                         <label for="">Name of postdoc fellow:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.nameOfPostdoc">
                       </div>
                       <div class="col-3">
                           <label for="">Gender: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" v-model="postDoc.gender">
                             <option disabled value="">Select a Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
-                            <option value="No binary">No binary</option>
+                            <option value="Non binary">Non binary</option>
                             </select>
                       </div>
                       <div class="col-3">
                           <label for="">Identification: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" @change="postDoc.run = ''; postDoc.passport = '';" v-model="postDoc.identification">
                             <option disabled value="">Select One</option>
@@ -39,20 +43,41 @@
                       </div>                        
                       <div v-if="postDoc.identification == 'run'" class="col-3">
                           <label for="">Run: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="postDoc.run">
                       </div>
                       <div v-if="postDoc.identification == 'passport'" class="col-3">
                           <label for="">Passport: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="postDoc.passport">
                       </div>
                     </div>
                     <br>
                     <div class="row">
-
+                      <div class="col-4">
+                        <label for="">Personal email:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.personalEmail">
+                      </div>
+                      <div class="col-4">
+                        <label for="">Posterior working area:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.posteriorWorkingArea">
+                      </div>
+                      <div class="col-4">
+                        <label for="">Institution posterior working area:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.institutionWorkingArea">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
                       <div class="col-6">
                         <label for="">Supervisor name:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="postDoc.supervisorName"
@@ -69,6 +94,7 @@
                       </div>
                       <div class="col-6">
                         <label for="">Resources provided by the center:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="postDoc.resourcesProvided"
@@ -86,9 +112,9 @@
                     </div>
                     <br>
                     <div class="row">
-
                       <div class="col-6">
                         <label for="">Funding source:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="postDoc.fundingSource"
@@ -105,11 +131,13 @@
                       </div>
                       <div class="col-3">
                           <label for="">Start year: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input id="yearInput1" type="number" v-model="postDoc.startYear" :max="currentYear" @input="onInput1" class= "form-control" />
                       </div>
                       <div class="col-3">
                           <label for="">Ending year: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input id="yearInput1" type="number" v-model="postDoc.endingYear" :max="currentYear" @input="onInput2" class= "form-control" />
                       </div>
@@ -186,11 +214,13 @@
                     <div class="row">
                       <div class="col-4">
                         <label for="">Research topic:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.researchTopic">
                       </div>
                       <div class="col-4">
                         <label for="">Institution where it was inserted:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.institutionName">
                       </div>
@@ -260,29 +290,32 @@ export default {
         run: "",
         gender: '',
         researchTopic: '',
+        personalEmail: '',
+        posteriorWorkingArea: '',
+        institutionWorkingArea: '',
         supervisorName: null,
         resourcesProvided: null,
         fundingSource: null,
         startYear: '',
         endingYear: '',
-        privateSector: false,
-        academy1: false,
-        business: false,
-        ownEntrepreneurship: false,
-        publicSector: false,
-        government: false,
-        academy2: false,
-        socialOng: false,
-        inTheCenter: false,
-        noneOfTheAbove: false,
+        privateSector: 0,
+        academy1: 0,
+        business: 0,
+        ownEntrepreneurship: 0,
+        publicSector: 0,
+        government: 0,
+        academy2: 0,
+        socialOng: 0,
+        inTheCenter: 0,
+        noneOfTheAbove: 0,
         institutionName: '',
         nameOfResearch: null,
         comments: '',
-        progressReport: 9,
+        progressReport: '',
       },
       options3: [
         'Basal Financing Program Funding',
-        'Other sources (Specify in comments)',
+        'Other sources',
       ],
       options2: [
         'Equipment',
@@ -302,49 +335,55 @@ export default {
       researchers: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Save transfer',
+      buttonText:'Save fellow',
     }),
     mounted(){
       this.getUsuarios();
+      this.getProgressReport();
     },
     methods: {
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.postDoc.progressReport = response.data;
+        }).catch(e=> console.log(e))
+      },
       checkInputs(input) {
         if (input === 'private') {
           if (this.postDoc.academy1 || this.postDoc.business || this.postDoc.ownEntrepreneurship) {
-            this.postDoc.privateSector = true;
+            this.postDoc.privateSector = 1;
           } else {
-            this.postDoc.privateSector = false;
+            this.postDoc.privateSector = 0;
           }
         }
 
         if (input === 'public') {
           if (this.postDoc.government || this.postDoc.academy2) {
-            this.postDoc.publicSector = true;
+            this.postDoc.publicSector = 1;
           } else {
-            this.postDoc.publicSector = false;
+            this.postDoc.publicSector = 0;
           }
         }
 
         if (input === 'privateSector') {
           if (this.postDoc.privateSector) {
-            this.postDoc.academy1 = true;
-            this.postDoc.business = true;
-            this.postDoc.ownEntrepreneurship = true;
+            this.postDoc.academy1 = 1;
+            this.postDoc.business = 1;
+            this.postDoc.ownEntrepreneurship = 1;
           } else {
-            this.postDoc.academy1 = false;
-            this.postDoc.business = false;
-            this.postDoc.ownEntrepreneurship = false;
+            this.postDoc.academy1 = 0;
+            this.postDoc.business = 0;
+            this.postDoc.ownEntrepreneurship = 0;
           }
         }
 
         if (input === 'publicSector') {
           if (this.postDoc.publicSector) {
-            this.postDoc.government = true;
-            this.postDoc.academy2 = true;
-            this.postDoc.education = true;
+            this.postDoc.government = 1;
+            this.postDoc.academy2 = 1;
+            this.postDoc.education = 1;
           } else {
-            this.postDoc.government = false;
-            this.postDoc.academy2 = false;
+            this.postDoc.government = 0;
+            this.postDoc.academy2 = 0;
           }
         }
       },
@@ -476,6 +515,9 @@ export default {
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
               gender: this.postDoc.gender,
+              personalEmail: this.postDoc.personalEmail,
+              posteriorWorkingArea: this.postDoc.posteriorWorkingArea,
+              institutionWorkingArea: this.postDoc.institutionWorkingArea,
               researchTopic: this.postDoc.researchTopic,
               supervisorName: supervisorName1,
               resourcesProvided: resourcesProvided1,
@@ -557,6 +599,9 @@ export default {
           'socialOng',
           'inTheCenter',
           'noneOfTheAbove',
+          'comments',
+          'posteriorWorkingArea',
+          'institutionWorkingArea'
         ];
 
 
@@ -698,6 +743,9 @@ export default {
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
               gender: this.postDoc.gender,
+              personalEmail: this.postDoc.personalEmail,
+              posteriorWorkingArea: this.postDoc.posteriorWorkingArea,
+              institutionWorkingArea: this.postDoc.institutionWorkingArea,
               researchTopic: this.postDoc.researchTopic,
               supervisorName: supervisorName1,
               resourcesProvided: resourcesProvided1,

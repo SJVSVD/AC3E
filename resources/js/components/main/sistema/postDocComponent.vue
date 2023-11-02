@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPostDoc = true">New Transfer</a>
+                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPostDoc = true">New Fellow</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>

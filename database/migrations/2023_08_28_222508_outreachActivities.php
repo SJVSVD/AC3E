@@ -40,6 +40,7 @@ return new class extends Migration
             $table->boolean('governmentOfficial')->nullable();
             $table->boolean('other')->nullable();
             $table->string('nameOfTheMainResponsible')->nullable();
+            $table->string('comments')->nullable();
             $table->integer('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -169,7 +169,7 @@
             @yield('content')
         @else
             @if (!in_array(request()->route()->getName(), ['profile']))
-                <div class="min-height-300 bg-primary position-absolute" style="width: -webkit-fill-available"></div>
+                <div class="min-height-300 position-absolute" style="width: -webkit-fill-available; background-color:#ED8D1D;"></div>
             @elseif (in_array(request()->route()->getName(), ['profile']))
                 <div class="position-absolute w-100 min-height-300 top-0" style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/profile-layout-header.jpg'); background-position-y: 50%;">
                     <span class="mask bg-primary opacity-6"></span>

@@ -202,7 +202,7 @@ export default {
       },
       options1: [
         'Basal Financing Program Funding',
-        'Other sources (Specify in comments)',
+        'Other sources',
       ],
       currentYear: new Date().getFullYear(),
       coauthor: false,

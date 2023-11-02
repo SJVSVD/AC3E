@@ -8,6 +8,7 @@
                 <slot name="header">
                     New Thesis
                 </slot>
+                <label for="">Progress year: {{ thesisStudent.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,21 +16,24 @@
                     <div class="row">
                         <div class="col-3">
                             <label for="">Student Name: </label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="thesisStudent.studentName">
                         </div>
                         <div class="col-3">
                             <label for="">Gender: </label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <select class="form-select" v-model="thesisStudent.gender">
                               <option disabled value="">Select a Gender</option>
                               <option value="Male">Male</option>
                               <option value="Female">Female</option>
-                              <option value="No binary">No binary</option>
+                              <option value="Non binary">Non binary</option>
                               </select>
                         </div>
                         <div class="col-3">
                             <label for="">Identification: </label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <select class="form-select" @change="thesisStudent.run = ''; thesisStudent.passport = '';" v-model="thesisStudent.identification">
                               <option disabled value="">Select One</option>
@@ -39,11 +43,13 @@
                         </div>                        
                         <div v-if="thesisStudent.identification == 'run'" class="col-3">
                             <label for="">Run: </label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="thesisStudent.run">
                         </div>
                         <div v-if="thesisStudent.identification == 'passport'" class="col-3">
                             <label for="">Passport: </label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="thesisStudent.passport">
                         </div>
@@ -52,11 +58,13 @@
                     <div class="row">
                       <div class="col-3">
                             <label for="">Student Mail: </label>
+                            <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="email" class= "form-control" v-model="thesisStudent.studentMail">
                       </div>
                       <div class="col-5">
                           <label for="">Academic Degree: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" v-model="thesisStudent.academicDegree">
                             <option disabled value="">Select a degree</option>
@@ -67,6 +75,7 @@
                       </div>
                       <div class="col-4">
                           <label for="">Degree Denomination: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="thesisStudent.degreeDenomination">
                       </div>
@@ -75,11 +84,13 @@
                     <div class="row">
                       <div class="col-4">
                         <label for="">Thesis Title: </label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="thesisStudent.thesisTitle">
                       </div>
                       <div class="col-3">
                           <label for="">Thesis Status: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" v-model="thesisStudent.thesisStatus">
                             <option disabled value="">Select One</option>
@@ -90,6 +101,7 @@
                       <div v-if="thesisStudent.thesisStatus == '1'" class="col-4">
                         <div class="form-group">
                           <label for="archivo">Thesis Extract: </label>
+                          <label for="" style="color: orange;">*</label>
                           <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
                         </div>
                       </div>
@@ -101,17 +113,17 @@
                     <hr size="3" class="separador">
                     <div class="row">
                       <div class="col-4 d-flex justify-content-center">
-                        <a v-if="tutors.length != 0" class="btn btn-continue">{{ tutors.length }}</a>
+                        <a v-if="tutors.length != 0" class="btn btn-continue" @click="showModalEditTutor = true">{{ tutors.length }}</a>
                         &nbsp;
                         <a class="btn btn-search-blue" @click="showModalAutor = true"><i class="fa-solid fa-plus"></i> Add Tutor </a>
                       </div>
                       <div class="col-4 d-flex justify-content-center">
-                        <a v-if="cotutors.length != 0" class="btn btn-continue">{{ cotutors.length }}</a>
+                        <a v-if="cotutors.length != 0" class="btn btn-continue" @click="showModalEditCotutor = true">{{ cotutors.length }}</a>
                         &nbsp;
                         <a class="btn btn-search-blue" @click="showModalCoautor = true"><i class="fa-solid fa-plus"></i> Add Cotutor </a>
                       </div>
                       <div class="col-4 d-flex justify-content-centerd-flex justify-content-center">
-                        <a v-if="others.length != 0" class="btn btn-continue">{{ others.length }}</a>
+                        <a v-if="others.length != 0" class="btn btn-continue" @click="showModalEditOther = true">{{ others.length }}</a>
                         &nbsp;
                         <a class="btn btn-search-blue" @click="showModalOther = true"><i class="fa-solid fa-plus"></i> Add Other </a>
                       </div>
@@ -120,21 +132,25 @@
                     <div class="row">
                       <div class="col-3">
                           <label for="">University that gives the Degree: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="thesisStudent.university">
                       </div>
                       <div class="col-3">
                           <label for="">Year in which student starts: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input id="yearInput1" type="number" v-model="thesisStudent.yearStart" :max="currentYear" @input="onInput1" class= "form-control" />
                       </div>
                       <div class="col-3">
                           <label for="">Year in which the thesis ends: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input id="yearInput2" type="number" v-model="thesisStudent.yearThesisEnd" :max="currentYear" @input="onInput2" class= "form-control" />
                       </div>
                       <div class="col-3">
                           <label for="">Resources provided by the Center: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <div>
                             <Multiselect
@@ -157,6 +173,7 @@
                     <div class="row">
                       <div class="col-3">
                           <label for="">Posterior working area: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" v-model="thesisStudent.posteriorArea">
                             <option disabled value="">Select an area</option>
@@ -172,6 +189,7 @@
                       </div>
                       <div class="col-4">
                           <label for="">Institution of Posterior working area: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="thesisStudent.institutionPosteriorArea">
                       </div>
@@ -185,14 +203,22 @@
                 </div>
                 <div class="modal-footer">
                   <slot name="footer">
-                    <a class="btn btn-continue float-end" @click="crearTesis()" :disabled="buttonDisable">
+                    <label class="form-check-label"><input type="checkbox" class="form-check-"
+                    v-model="draft"> Save as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createCollaboration()" :disabled="buttonDisable">
                       {{ buttonText }}
+                    </a>
+                    <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
+                      Save draft
                     </a>
                   </slot>
                 </div>
                 <modalOther v-if="showModalOther" @close="showModalOther = false" @submit="handleFormSubmit3"></modalOther>
                 <modalCoautor v-if="showModalCoautor" @close="showModalCoautor = false" @submit="handleFormSubmit2"></modalCoautor>
                 <modalAutor v-if="showModalAutor" @close="showModalAutor = false" @submit="handleFormSubmit1"></modalAutor>
+                <modalEditarTutor v-bind:tutors1="tutors" v-if="showModalEditTutor" @close="showModalEditTutor = false"></modalEditarTutor>
+                <modalEditarCotutor v-bind:cotutors1="cotutors" v-if="showModalEditCotutor" @close="showModalEditCotutor = false"></modalEditarCotutor>
+                <modalEditarOther v-bind:others1="others" v-if="showModalEditOther" @close="showModalEditOther = false"></modalEditarOther>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
           </div>
@@ -209,11 +235,14 @@ import modalalerta from '../../sistema/alerts/alertModal.vue';
 import modalAutor from './extraModals/createAutor.vue';
 import modalCoautor from './extraModals/createCoautor.vue';
 import modalOther from './extraModals/createOther.vue';
+import modalEditarTutor from './extraModals/editTutor.vue';
+import modalEditarCotutor from './extraModals/editCotutor.vue';
+import modalEditarOther from './extraModals/editOther.vue';
 import {mixin} from '../../../../mixins.js';
 import Multiselect from '@vueform/multiselect';
 
 export default {
-    components: { Multiselect,modalconfirmacion, modalalerta, modalAutor, modalCoautor , modalOther },
+    components: { Multiselect,modalconfirmacion, modalalerta, modalAutor, modalCoautor , modalOther, modalEditarTutor, modalEditarCotutor, modalEditarOther },
     mixins: [mixin],
     data: () => ({
       thesisStudent:{
@@ -239,6 +268,7 @@ export default {
         resourcesCenter: null,
         posteriorArea: "",
         institutionPosteriorArea: "",
+        progressReport: "",
         comments: "",
       },
       options1: [
@@ -251,8 +281,12 @@ export default {
       showModalAutor: false,
       showModalCoautor: false,
       showModalOther: false,
+      showModalEditTutor: false,
+      showModalEditCotutor: false,
+      showModalEditOther: false,
       buttonDisable: false,
       thesisExtract: null,
+      draft: false,
       tutors:[],
       cotutors:[],
       others:[],
@@ -262,8 +296,14 @@ export default {
     }),
     mounted() {
       this.calculateYears();
+      this.getProgressReport();
     },
     methods: {
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.thesisStudent.progressReport = response.data;
+        }).catch(e=> console.log(e))
+      },
       handleFormSubmit1(formData) {
         this.tutors.push(formData);
       },
@@ -331,6 +371,128 @@ export default {
       },
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
+      },
+      async guardarBorrador(){
+        const ok = await this.$refs.confirmation.show({
+          title: 'Save draft',
+            message: `¿Are you sure you want to save this Thesis Student as a draft? this action cannot be undone.`,
+            okButton: 'Save',
+            cancelButton: 'Return'
+        })
+        if (ok) {
+          var runOrPassport1 = '';
+          if(this.thesisStudent.identification == 'run'){
+            runOrPassport1 = this.formatoRut(this.thesisStudent.run);
+          }else{
+            runOrPassport1 = this.thesisStudent.passport;
+          }
+
+          var tutorName1 = '';
+          var tutorInstitution1 = '';
+          var cotutorName1 = '';
+          var cotutorInstitution1 = '';
+          var otherName1 = '';
+          var otherInstitution1 = '';
+          var resources1 = '';
+
+          if(this.tutors.length != 0){
+            this.tutors.forEach(tutor => {
+              tutorName1 += tutor.name + ',';
+            });
+            this.tutors.forEach(tutor => {
+              tutorInstitution1 += tutor.institution + ',';
+            });
+          }
+
+          if(this.cotutors.length != 0){
+            this.cotutors.forEach(cotutor => {
+              cotutorName1 += cotutor.name + ',';
+            });
+            this.cotutors.forEach(cotutor => {
+              cotutorInstitution1 += cotutor.institution + ',';
+            });
+          }
+
+          if(this.others.length != 0){
+            this.others.forEach(other => {
+              otherName1 += other.name + ',';
+            });
+            this.others.forEach(other => {
+              otherInstitution1 += other.institution + ',';
+            });
+          }
+          if(this.thesisStudent.resourcesCenter != null && this.thesisStudent.resourcesCenter != []){
+            this.thesisStudent.resourcesCenter.forEach(resource => {
+              resources1 += resource.value + ',';
+            }); 
+          }
+          let thesisStudent = {
+            idUsuario: this.userID,
+            status: 'Draft',
+            identification: this.thesisStudent.identification,
+            studentName: this.thesisStudent.studentName,
+            runOrPassport: runOrPassport1,
+            gender: this.thesisStudent.gender,
+            studentMail: this.thesisStudent.studentMail,
+            thesisStatus: this.thesisStudent.thesisStatus,
+            thesisTitle: this.thesisStudent.thesisTitle,
+            academicDegree: this.thesisStudent.academicDegree,
+            degreeDenomination: this.thesisStudent.degreeDenomination,
+            tutorName: tutorName1,
+            tutorInstitution: tutorInstitution1,
+            cotutorName: cotutorName1,
+            cotutorInstitution: cotutorInstitution1,
+            otherName: otherName1,
+            otherInstitution: otherInstitution1,
+            university: this.thesisStudent.university,
+            yearStart: this.thesisStudent.yearStart,
+            yearThesisEnd: this.thesisStudent.yearThesisEnd,
+            resourcesCenter: resources1,
+            posteriorArea: this.thesisStudent.posteriorArea,
+            institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
+            comments: this.thesisStudent.comments,
+            progressReport: this.thesisStudent.progressReport,
+            thesisExtract: this.thesisExtract,
+          };
+          axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
+            this.buttonDisable = true;
+            this.buttonText = 'Sending...';
+            this.toast.success("Draft saved successfully!", {
+              position: "top-right",
+              timeout: 3000,
+              closeOnClick: true,
+              pauseOnFocusLoss: true,
+              pauseOnHover: true,
+              draggable: true,
+              draggablePercent: 0.6,
+              showCloseButtonOnHover: false,
+              hideProgressBar: true,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
+            setTimeout(() => {this.cerrarModal();}, 1500);
+          })
+          .catch((error)=> {
+            if (error.response.status == 422){
+              this.errors = error.response.data.errors;
+              this.toast.warning('There is an invalid value.', {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+              });
+            }
+          });
+        }
       },
       async crearTesis() {
         this.errors = [];
@@ -499,6 +661,7 @@ export default {
               posteriorArea: this.thesisStudent.posteriorArea,
               institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
               comments: this.thesisStudent.comments,
+              progressReport: this.thesisStudent.progressReport,
               thesisExtract: this.thesisExtract,
             };
             axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {

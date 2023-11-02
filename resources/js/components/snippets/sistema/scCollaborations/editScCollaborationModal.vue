@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Sc Collaboration
                 </slot>
+                <label for="">Progress year: {{ scCollaboration.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -33,16 +34,27 @@
                               </select>
                           </div>
                           <div v-if="scCollaboration.collaborationType == 'Other'" class="col-3">
-                            <label for="">Other:</label>
+                            <label for="">Other Collaboration:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
+
                           <div class="col-3">
-                            <label for="">Activity Name:</label>
+                            <label for="">Collaboration Stay:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <select class="form-select" v-model="scCollaboration.collaborationStay">
+                              <option disabled value="">Select a type</option>
+                              <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
+                              <option value="Long Visit (More than two weeks)">Long Visit (More than two weeks)</option>
+                              <option value="Other">Other</option>
+                              </select>
+                          </div>
+                          <div v-if="scCollaboration.collaborationStay == 'Other'" class="col-3">
+                            <label for="">Other Stay:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
-                            <input type="text" class= "form-control" v-model="scCollaboration.activityName">
+                            <input type="text" class= "form-control" v-model="other2">
                           </div>
                     </div>
                     <br>
@@ -69,6 +81,31 @@
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.institutionCollaborates">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-4">
+                        <label for="">Name of AC3E member:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <select class="form-select" v-model="scCollaboration.nameOfAC3EMember">
+                        <option disabled value="">Select a member</option>
+                        <option v-for="researcher in researchers2" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                          {{ researcher.name }}
+                        </option>
+                        </select>
+                      </div>
+                      <div class="col-4">
+                        <label for="">Name of external researcher:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="scCollaboration.nameOfExternalResearcher">
+                      </div>
+                      <div class="col-4">
+                        <label for="">Activity Name:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="scCollaboration.activityName">
                       </div>
                     </div>
                     <br>
@@ -131,6 +168,13 @@
                       </div>
                     </div>
                     <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Comments:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="scCollaboration.comments">
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -178,7 +222,7 @@ export default {
         beginningDate: '',
         endingDate: '',
         nameOfResearch: null,
-        progressReport: 9,
+        progressReport: '',
       },
       options1: [
         'Biomedical Systems',
@@ -214,6 +258,10 @@ export default {
       this.scCollaboration.cityDestination = this.collaboration1.cityDestination;
       this.scCollaboration.beginningDate = this.collaboration1.beginningDate;
       this.scCollaboration.endingDate = this.collaboration1.endingDate;
+      this.scCollaboration.nameOfAC3EMember = this.collaboration1.nameOfAC3EMember;
+      this.scCollaboration.nameOfExternalResearcher = this.collaboration1.nameOfExternalResearcher;
+      this.scCollaboration.comments = this.collaboration1.comments;
+      this.scCollaboration.progressReport = this.collaboration1.progressReport;
 
       if (this.collaboration1.nameOfResearch != null) {
           const valoresSeparados1 = this.collaboration1.nameOfResearch.split(",");
@@ -244,6 +292,13 @@ export default {
         this.other = this.collaboration1.collaborationType;
       }else{
         this.scCollaboration.collaborationType = this.collaboration1.collaborationType;
+      }
+
+      if(this.collaboration1.otherStay == true){
+        this.scCollaboration.collaborationStay = 'Other';
+        this.other2 = this.collaboration1.collaborationStay;
+      }else{
+        this.scCollaboration.collaborationStay = this.collaboration1.collaborationStay;
       }
     },
     methods: {
@@ -295,17 +350,27 @@ export default {
             }
 
             var type = '';
-            var other1 = false;
+            var other1 = 0;
+            var type2 = '';
+            var other2 = 0;
 
             if(this.scCollaboration.collaborationType == 'Other'){
               type = this.other;
-              other1 = true;
+              other1 = 1;
             }else{
               type = this.scCollaboration.collaborationType;
             }
 
+            if(this.scCollaboration.collaborationStay == 'Other'){
+              type2 = this.other2;
+              other2 = 1;
+            }else{
+              type2 = this.scCollaboration.collaborationStay;
+            }
+
             let scCollaboration = {
               status: 'Draft',
+              moduleType: 0,
               activityType: this.scCollaboration.activityType,
               collaborationType: type,
               otherCollaboration: other1,
@@ -319,10 +384,15 @@ export default {
               beginningDate: this.scCollaboration.beginningDate,
               endingDate: this.scCollaboration.endingDate,
               nameOfResearch: nameOfResearchLine1,
+              nameOfAC3EMember: this.scCollaboration.nameOfAC3EMember,
+              nameOfExternalResearcher: this.scCollaboration.nameOfExternalResearcher,
+              collaborationStay: type2,
+              otherStay: other1,
+              comments: this.scCollaboration.comments,
               progressReport: this.scCollaboration.progressReport,
             };
             axios.put(`api/scCollaborations/${this.id}`, scCollaboration ).then((result) => {
-              this.toast.success("Draft saved successfully!", {
+              this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -369,14 +439,23 @@ export default {
       },
       async createCollaboration() {
         this.errors = [];
-        for (const item in this.scCollaboration){
-          if(this.scCollaboration[item] === "" || this.scCollaboration[item] === 0 || this.scCollaboration[item] == null || this.scCollaboration[item] == []){
+        const itemsToSkip = [
+          'comments'
+        ];
+
+        for (const item in this.scCollaboration) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.scCollaboration[item] === "" || this.scCollaboration[item] === 0 || this.scCollaboration[item] == null)) {
                 this.errors.push(item);
             }
         }
 
         if(this.scCollaboration.collaborationType == 'Other' && this.other == ''){
           this.errors.push('other');
+        }
+
+        if(this.scCollaboration.collaborationStay == 'Other' && this.other2 == ''){
+          this.errors.push('other2');
         }
 
         var mensaje = ""
@@ -408,6 +487,8 @@ export default {
               mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else if(item == 'progressReport'){
               mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+            }else if(item == 'other2'){
+              mensaje =   mensaje + "The field Other Stay is required" + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -429,9 +510,9 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Edit Collaboration',
-            message: `¿Are you sure you want to edit this Sc Collaboration? This action cannot be undone.`,
-            okButton: 'Edit',
+            title: 'Save Collaboration',
+            message: `¿Are you sure you want to save this Sc Collaboration? This action cannot be undone.`,
+            okButton: 'Save',
             cancelButton: 'Return'
           })
           if (ok) {
@@ -463,21 +544,30 @@ export default {
               }
             }
 
-            var typeCollaboration = '';
-            var other1 = false;
+            var type = '';
+            var other1 = 0;
+            var type2 = '';
+            var other2 = 0;
 
             if(this.scCollaboration.collaborationType == 'Other'){
-              typeCollaboration = this.other;
-              other1 = true;
+              type = this.other;
+              other1 = 1;
             }else{
-              typeCollaboration = this.scCollaboration.collaborationType;
+              type = this.scCollaboration.collaborationType;
+            }
+
+            if(this.scCollaboration.collaborationStay == 'Other'){
+              type2 = this.other2;
+              other2 = 1;
+            }else{
+              type2 = this.scCollaboration.collaborationStay;
             }
 
             let scCollaboration = {
               status: 'Finished',
-              idUsuario: this.userID,
+              moduleType: 0,
               activityType: this.scCollaboration.activityType,
-              collaborationType: typeCollaboration,
+              collaborationType: type,
               otherCollaboration: other1,
               institutionCollaborates: this.scCollaboration.institutionCollaborates,
               peopleInvolved: peopleInvolved1,
@@ -489,6 +579,11 @@ export default {
               beginningDate: this.scCollaboration.beginningDate,
               endingDate: this.scCollaboration.endingDate,
               nameOfResearch: nameOfResearchLine1,
+              nameOfAC3EMember: this.scCollaboration.nameOfAC3EMember,
+              nameOfExternalResearcher: this.scCollaboration.nameOfExternalResearcher,
+              collaborationStay: type2,
+              otherStay: other1,
+              comments: this.scCollaboration.comments,
               progressReport: this.scCollaboration.progressReport,
             };
             console.log(scCollaboration);

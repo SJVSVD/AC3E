@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-xl-6 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
             <div class="card overflow-hidden" style="height: 160px;">
                 <!-- <div class="card-body p-3 text-white text-shadow-black background-size" style="background-image:linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://wallpaperaccess.com/full/5816762.jpg');">
                     <div class="row">
@@ -11,7 +11,7 @@
                         </div>
                     </div>
                 </div> -->
-                <div class="card-body p-3 text-white text-shadow-black background-size" style="background-image:linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://fondosmil.com/fondo/10790.jpg'); min-height: 160px;">
+                <div class="card-body p-3 text-white  background-size" style="background-color: #4d4d4d ; min-height: 160px;">
                     <div class="row">
                         <div class="col-12">
                             <div class="numbers" style="min-height: 80px; text-align: center; margin-top: 40px;">
@@ -25,9 +25,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-6 col-sm-6 mb-xl-0 mb-4">
+        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
             <div class="card overflow-hidden" style="height: 160px;">
-                <div class="card-body p-3 text-white text-shadow-black background-size" style="background-image:linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://fondosmil.com/fondo/10790.jpg'); min-height: 160px;">
+                <div class="card-body p-3 text-white  background-size" style="background-color: #4d4d4d; min-height: 160px;">
                     <div class="row">
                         <div class="col-12">
                             <div class="numbers" style="min-height: 80px; text-align: center; margin-top: 40px;">
@@ -38,6 +38,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+            <div class="card overflow-hidden" style="height: 160px;">
+                <div class="card-body p-3 text-white background-size" style="background-image: url('/img/AC3EGif (2).gif'); transform: scale(3); background-size: contain; background-position: center; min-height: 160px;">
                 </div>
             </div>
         </div>
