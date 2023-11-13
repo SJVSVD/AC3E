@@ -9,6 +9,15 @@
                     New Organization Sc Event
                 </slot>
                 <label for="">Progress year: {{ organizationSc.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -78,36 +87,17 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Name of research line:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="organizationSc.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-5">
                         <div class="form-group">
-                        <label for="archivo">File: </label>
-                        <label for="" style="color: orange;">*</label>
-                        <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
+                          <label for="archivo">File: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
                         </div>
                       </div>
                       <div class="col-1 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                       </div>
-                    </div>
-                    <div class="row">
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <input type="text" class= "form-control" v-model="organizationSc.comments">
@@ -155,31 +145,30 @@ export default {
         startDate: '',
         endingDate: '',
         numberParticipants: '',
-        nameOfResearch: null,
         file: '',
         progressReport: '',
         comments: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       other: '',
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
       buttonDisable: false,
+      idResearcher: '',
+      usuarios: [],
       errors:[],
       buttonText:'Save Organization',
     }),
     created(){
       this.getProgressReport();
+      this.getUsuarios2();
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
+      },
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.organizationSc.progressReport = response.data;
@@ -199,20 +188,6 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.organizationSc.nameOfResearch !== null){
-              if (this.organizationSc.nameOfResearch.length !== 0) {
-                this.organizationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.organizationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
-
             var typeEvent = '';
             var other = 0;
 
@@ -223,9 +198,16 @@ export default {
               typeEvent = this.organizationSc.typeEvent;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let organizationSc = {
               status: 'Draft',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               typeEvent: typeEvent,
               other: other,
               eventName: this.organizationSc.eventName,
@@ -234,7 +216,6 @@ export default {
               startDate: this.organizationSc.startDate,
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
-              nameOfResearch: nameOfResearchLine1,
               file: this.organizationSc.file,
               comments: this.organizationSc.comments,
               progressReport: this.organizationSc.progressReport,
@@ -315,8 +296,6 @@ export default {
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
             }else if(item == 'numberParticipants'){
               mensaje =   mensaje + "The field Number of Participants is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -344,19 +323,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.organizationSc.nameOfResearch !== null){
-              if (this.organizationSc.nameOfResearch.length !== 0) {
-                this.organizationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.organizationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
+
             var typeEvent = '';
             var other = 0;
 
@@ -367,9 +334,16 @@ export default {
               typeEvent = this.organizationSc.typeEvent;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let organizationSc = {
               status: 'Finished',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               typeEvent: typeEvent,
               other: other,
               eventName: this.organizationSc.eventName,
@@ -378,7 +352,6 @@ export default {
               startDate: this.organizationSc.startDate,
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
-              nameOfResearch: nameOfResearchLine1,
               file: this.organizationSc.file,
               comments: this.organizationSc.comments,
               progressReport: this.organizationSc.progressReport,

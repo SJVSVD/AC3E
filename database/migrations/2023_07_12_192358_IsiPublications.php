@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
-            $table->string('authors')->nullable();
+            $table->string('authors', 255)->nullable();
             $table->string('coauthor')->nullable();
             $table->string('articleTitle')->nullable();
             $table->string('journalName')->nullable();

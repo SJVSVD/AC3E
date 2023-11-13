@@ -14,6 +14,19 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
+                      <div class="col-4">
+                        <label for="">Digital Object Identifier (DOI):</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="isiPublication.doi">
+                      </div>
+                      <div class="col-1 pt-2">
+                        <br>
+                        <a class="btn btn-search-blue" @click="useDOI()"><i class="fa-solid fa-magnifying-glass"></i></a>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
                           <div class="col-5">
                               <label for="">Author(s): </label>
                               <label for="" style="color: orange;">*</label>
@@ -36,27 +49,17 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-4">
+                      <div class="col-6">
                         <label for="">Article Title:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.articleTitle">
                       </div>
-                      <div class="col-3">
+                      <div class="col-6">
                         <label for="">Journal Name:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.journalName">
-                      </div>
-                      <div class="col-4">
-                        <label for="">Digital Object Identifier (DOI):</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="isiPublication.doi">
-                      </div>
-                      <div class="col-1 pt-2">
-                        <br>
-                        <a class="btn btn-search-blue" @click="useDOI()"><i class="fa-solid fa-magnifying-glass"></i></a>
                       </div>
                     </div>
                     <br>
@@ -83,7 +86,10 @@
                         <label for="">Year Published:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input id="yearInput" type="number" v-model="isiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
+                        <select class="form-select" id="selectYear" v-model="isiPublication.yearPublished">
+                          <option disabled :value="null">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
                       </div>
                     </div>
                     <br>
@@ -108,19 +114,6 @@
                             />
                           </div>
                       </div>
-                      <div class="col-3">
-                        <label for="">Sending Date:</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="isiPublication.sendingDate">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Acceptance Date:</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="isiPublication.acceptanceDate">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <br>
@@ -220,8 +213,6 @@ export default {
         thesisStudents: false,
         nationalExternalResearchers: false,
         internationalExternalResearchers: false,
-        sendingDate: "",
-        acceptanceDate: "",
         yearPublished: "",
         comments: "",
         progressReport: "",
@@ -240,6 +231,14 @@ export default {
     }),
     props:{
       isiPublication1: Object,
+    },
+    mounted(){
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a);
     },
     created(){
       this.id = this.isiPublication1.id;
@@ -269,14 +268,30 @@ export default {
       }
 
       this.isiPublication.comments = this.isiPublication1.comments;
-      this.isiPublication.mainResearchers = this.isiPublication1.mainResearchers;
-      this.isiPublication.associativeResearchers = this.isiPublication1.associativeResearchers;
-      this.isiPublication.postDoc = this.isiPublication1.postDoc;
-      this.isiPublication.thesisStudents = this.isiPublication1.thesisStudents;
-      this.isiPublication.nationalExternalResearchers = this.isiPublication1.nationalExternalResearchers;
-      this.isiPublication.internationalExternalResearchers = this.isiPublication1.internationalExternalResearchers;
-      this.isiPublication.sendingDate = this.isiPublication1.sendingDate;
-      this.isiPublication.acceptanceDate = this.isiPublication1.acceptanceDate;
+      if(this.isiPublication1.mainResearchers == 1){
+        this.isiPublication.mainResearchers = true;
+      }
+
+      if(this.isiPublication1.associativeResearchers == 1){
+        this.isiPublication.associativeResearchers = true;
+      }
+
+      if(this.isiPublication1.postDoc == 1){
+        this.isiPublication.postDoc = true;
+      }
+
+      if(this.isiPublication1.thesisStudents == 1){
+        this.isiPublication.thesisStudents = true;
+      }
+
+      if(this.isiPublication1.nationalExternalResearchers == 1){
+        this.isiPublication.nationalExternalResearchers = true;
+      }
+
+      if(this.isiPublication1.internationalExternalResearchers == 1){
+        this.isiPublication.internationalExternalResearchers = true;
+      }
+
       this.isiPublication.progressReport = this.isiPublication1.progressReport;
     },
     methods: {
@@ -319,11 +334,9 @@ export default {
               thesisStudents: this.isiPublication.thesisStudents,
               nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
-              sendingDate: this.isiPublication.sendingDate,
-              acceptanceDate: this.isiPublication.acceptanceDate,
               comments: this.isiPublication.comments,
             };
-            axios.post("api/isiPublications", publication ).then((result) => {
+            axios.put(`api/isiPublications/${this.id}`, publication ).then((result) => {
               this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -428,7 +441,10 @@ export default {
           'sendingDate',
           'acceptanceDate',
           'progressReport',
-          'comments'
+          'comments',
+          'volume',
+          'firstPage',
+          'lastPage'
         ];
 
         for (const item in this.isiPublication) {
@@ -513,8 +529,6 @@ export default {
               nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
               comments: this.isiPublication.comments,
-              sendingDate: this.isiPublication.sendingDate,
-              acceptanceDate: this.isiPublication.acceptanceDate,
             };
             axios.put(`api/isiPublications/${this.id}`, publication).then((result) => {
               this.buttonDisable = true;

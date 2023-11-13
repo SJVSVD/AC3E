@@ -18,13 +18,15 @@ return new class extends Migration
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
+            $table->string('indexedBy')->nullable();
             $table->string('authors')->nullable();
-            $table->string('coauthor')->nullable();
             $table->string('articleTitle')->nullable();
             $table->string('journalName')->nullable();
             $table->string('volume')->nullable();
             $table->string('firstPage')->nullable();
             $table->string('lastPage')->nullable();
+            $table->string('researcherInvolved')->nullable();
+            $table->string('file')->nullable();
             $table->year('yearPublished')->nullable();
             $table->string('funding')->nullable();
             $table->boolean('mainResearchers')->nullable();

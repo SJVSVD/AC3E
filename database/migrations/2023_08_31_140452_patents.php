@@ -21,13 +21,13 @@ return new class extends Migration
             $table->string('nameOfPatent')->nullable();
             $table->string('ipType')->nullable();
             $table->string('authors')->nullable();
-            $table->string('nameOfResearch')->nullable();
             $table->string('institutionOwner')->nullable();
             $table->string('countryOfRegistration')->nullable();
             $table->date('applicationDate')->nullable();
             $table->date('grantDate')->nullable();
             $table->string('applicationStatus')->nullable();
             $table->string('registrationNumber')->nullable();
+            $table->string('applicationGranted')->nullable();
             $table->string('state')->nullable();
             $table->string('researcherInvolved')->nullable();
             $table->string('comments')->nullable();

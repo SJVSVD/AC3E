@@ -77,23 +77,6 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Name of research line:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="organizationSc.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-4">
                         <div class="form-group">
                         <label for="archivo">File:</label>
@@ -107,8 +90,6 @@
                         &nbsp;
                         <a v-if="organization1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
                       </div>
-                    </div>
-                    <div class="row">
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <input type="text" class= "form-control" v-model="organizationSc.comments">
@@ -159,19 +140,10 @@ export default {
         startDate: '',
         endingDate: '',
         numberParticipants: '',
-        nameOfResearch: null,
         file: '',
         comments: '',
         progressReport: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       other: '',
       currentYear: new Date().getFullYear(),
       coauthor: false,
@@ -199,17 +171,6 @@ export default {
       this.organizationSc.file = this.organization1.file;
       this.organizationSc.comments = this.organization1.comments;
       this.organizationSc.progressReport = this.organization1.progressReport;
-      if (this.organization1.nameOfResearch != null) {
-          const valoresSeparados1 = this.organization1.nameOfResearch.split(",");
-          this.organizationSc.nameOfResearch = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
-
-              return { value: valor, name: valor };
-          });
-      }
       if(this.organization1.other == true){
         this.organizationSc.typeEvent = 'Other';
         this.other = this.organization1.typeEvent;
@@ -239,25 +200,12 @@ export default {
       },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
-            title: 'Save draft',
-            message: `¿Are you sure you want to save this Organization as a draft? this action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit draft',
+            message: `¿Are you sure you want to edit this Organization as a draft? this action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.organizationSc.nameOfResearch !== null){
-              if (this.organizationSc.nameOfResearch.length !== 0) {
-                this.organizationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.organizationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
 
             var typeEvent = '';
             var other = 0;
@@ -279,10 +227,9 @@ export default {
               startDate: this.organizationSc.startDate,
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
-              nameOfResearch: nameOfResearchLine1,
               comments: this.organizationSc.comments,
             };
-            axios.put(`api/organizationScEvents/${this.id}`, organizationSc ).then((result) => {
+            await axios.put(`api/organizationScEvents/${this.id}`, organizationSc ).then((result) => {
               this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -296,6 +243,48 @@ export default {
                 closeButton: "button",
                 icon: true,
                 rtl: false
+              });
+              const formData = new FormData();
+              formData.append('id', this.id);
+              formData.append('file', this.organizationSc.file);
+              axios.post('api/organizationScEvents/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then( response => {
+                  console.log(response.data);
+                this.toast.success("File added successfully!", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              })
+              .catch((error)=> {
+                if (error.response.status == 422){
+                  this.errors = error.response.data.errors;
+                  this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                  });
+                }
               });
             })
             .catch((error)=> {
@@ -317,52 +306,6 @@ export default {
                 });
               }
             });
-            if(this.organization1.file == null){
-                let salida = {
-                  id: this.id,
-                  file: this.organizationSc.file,
-                }
-                axios.post('api/organizationScEvents/addFile', salida, {
-                    headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then( response => {
-                  this.toast.success("File added successfully!", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                  setTimeout(() => {this.cerrarModal();}, 1500);
-                })
-                .catch((error)=> {
-                  if (error.response.status == 422){
-                    this.errors = error.response.data.errors;
-                    this.toast.warning('There is an invalid value.', {
-                        position: "top-right",
-                        timeout: 3000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                    });
-                  }
-                });
-             }else{
-              setTimeout(() => {this.cerrarModal();}, 1500);
-             }
           }
       },
       cerrarModal(){
@@ -433,19 +376,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.organizationSc.nameOfResearch !== null){
-              if (this.organizationSc.nameOfResearch.length !== 0) {
-                this.organizationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.organizationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
+
 
             var typeEvent = '';
             var other = 0;
@@ -467,11 +398,10 @@ export default {
               startDate: this.organizationSc.startDate,
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
-              nameOfResearch: nameOfResearchLine1,
               comments: this.organizationSc.comments,
             };
 
-            axios.put(`api/organizationScEvents/${this.id}`, organizationSc ).then((result) => {
+            await axios.put(`api/organizationScEvents/${this.id}`, organizationSc ).then((result) => {
               this.toast.success("Organization saved successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -485,6 +415,48 @@ export default {
                 closeButton: "button",
                 icon: true,
                 rtl: false
+              });
+              const formData = new FormData();
+              formData.append('id', this.id);
+              formData.append('file', this.organizationSc.file);
+              axios.post('api/organizationScEvents/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then( response => {
+                  console.log(response.data);
+                this.toast.success("File added successfully!", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              })
+              .catch((error)=> {
+                if (error.response.status == 422){
+                  this.errors = error.response.data.errors;
+                  this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                  });
+                }
               });
             })
             .catch((error)=> {
@@ -506,52 +478,6 @@ export default {
                 });
               }
             });
-            if(this.organization1.file == null){
-                let salida = {
-                  id: this.id,
-                  file: this.organizationSc.file,
-                }
-                axios.post('api/organizationScEvents/addFile', salida, {
-                    headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then( response => {
-                  this.toast.success("File added successfully!", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                  setTimeout(() => {this.cerrarModal();}, 1500);
-                })
-                .catch((error)=> {
-                  if (error.response.status == 422){
-                    this.errors = error.response.data.errors;
-                    this.toast.warning('There is an invalid value.', {
-                        position: "top-right",
-                        timeout: 3000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                    });
-                  }
-                });
-             }else{
-              setTimeout(() => {this.cerrarModal();}, 1500);
-             }
            }
         }
       },

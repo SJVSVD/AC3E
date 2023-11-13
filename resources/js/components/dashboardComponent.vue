@@ -50,7 +50,7 @@
     </div>
     <div class="row mt-4">
         <div class="col-lg-8">
-            <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
+            <div v-if="is('Administrator')" class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="table-responsive p-4">
                     <div v-show="mostrarCarga" class="loader-sm"></div>
                     <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableRegistros">
@@ -81,10 +81,10 @@
             <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="row p-3">
                     <div class="col-6">
-                        <a class="btn btn-primary" v-if="is('Administrador')" @click="exportConsolidado()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Consolidado</a>
+                        <a class="btn btn-primary" v-if="is('Administrator')" @click="exportConsolidado()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Consolidated</a>
                     </div>
                     <div class="col-6">
-                        <a class="btn btn-primary" @click="exportIndividual()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Planilla Individual</a>
+                        <a class="btn btn-primary" @click="exportIndividual()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Individual Return</a>
                     </div>
                 </div>
             </div>

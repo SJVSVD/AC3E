@@ -8,6 +8,15 @@
                 <slot name="header">
                     New Funding source
                 </slot>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -181,13 +190,21 @@ export default {
       draft: false,
       researchers: '',
       buttonDisable: false,
+      usuarios: [],
+      idResearcher: '',
       errors:[],
       buttonText:'Save source',
     }),
     mounted(){
       this.getUsuarios();
+      this.getUsuarios2();
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
+      },
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
@@ -231,9 +248,16 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let fundingSources = {
               status: 'Draft',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               nameOfResearch: nameOfResearch1,
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,
@@ -384,9 +408,16 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let fundingSources = {
               status: 'Finished',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               nameOfResearch: nameOfResearch1,
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,

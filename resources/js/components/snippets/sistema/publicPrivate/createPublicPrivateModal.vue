@@ -8,6 +8,16 @@
                 <slot name="header">
                     New connection 
                 </slot>
+                <label for="">Progress year: {{ publicPrivate.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,81 +25,81 @@
                     <div class="row">
                       <div class="col-4">
                         <label for="">Name of activity:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.nameOfActivity">
                       </div>
                       <div class="col-4">
                         <label for="">Name of organization:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.nameOfOrganization">
                       </div>
                       <div class="col-4">
                         <label for="">Country of origin:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.countryOrigin">
                       </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="text-uppercase pb-2">Types of activity:</div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.developmentalStudies"> Developmental studies</label>
-                          </div>
+                      <div class="col-6">
+                        <label for="">Agent type:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the types"
+                          v-model="publicPrivate.agentType"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="options1"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
                       </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.projectImplementation"> Project implementation</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.training"> Training</label>
-                          </div>
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.prospectiveActivity"> Prospective activity</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.installationOfScientist">  Installation of scientist</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.temporaryInstallation"> Temporary installation</label>
-                          </div>
+                      <div class="col-6">
+                        <label for="">Type of connection:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the types"
+                          v-model="publicPrivate.typeOfConnection"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="options2"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
                       </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.internationalAgreements"> International agreements of exchange</label>
-                          </div>
+                      <div class="col-5">
+                        <label for="">Place where activity was executed:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="publicPrivate.placeWhereWasExecuted">
                       </div>
-                      <div class="col-4">
+                      <div class="col-3">
+                          <label for="">International/National:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <select class="form-select" v-model="publicPrivate.internationalNational">
+                            <option disabled value="">Select a type</option>
+                            <option value="International congress">National</option>
+                            <option value="National congress">International</option>
+                            </select>
+                        </div>
+                        <div class="col-3 ">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.participationsInInstances"> Participations in instances of public policity</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.internationalExchange"> International exchange networks</label>
+                                  v-model="publicPrivate.participationPublicPolicies"> Participation in definition of public policies </label>
                           </div>
                       </div>
                     </div>
@@ -97,83 +107,43 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Start date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="publicPrivate.startDate">
                       </div>
                       <div class="col-3">
                         <label for="">Ending date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="publicPrivate.endingDate">
                       </div>
                       <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the researchers"
+                          v-model="publicPrivate.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers2"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
                           <label for="">Results/Goals:</label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
                           <textarea class= "form-control" v-model="publicPrivate.resultsGoals" style="resize: none;" cols="30" rows="5"></textarea>
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="text-uppercase pb-2">Agent type:</div>
-                      <div class="col-3">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.privateSector" @change="checkInputs('privateSector')"> Private sector</label>
-                          </div>
-                      </div>
-                      <div class="col-3">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.academy1" @change="checkInputs('private')"> Academy</label>
-                          </div>
-                      </div>
-                      <div class="col-2">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.business" @change="checkInputs('private')"> Business </label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.ownEntrepreneurship" @change="checkInputs('private')"> Own entrepreneurship </label>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-3">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.publicSector"  @change="checkInputs('publicSector')"> Public sector</label>
-                          </div>
-                      </div>
-                      <div class="col-2">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.government" @change="checkInputs('public')"> Government</label>
-                          </div>
-                      </div>
-                      <div class="col-2">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.academy2" @change="checkInputs('public')"> Academy </label>
-                          </div>
-                      </div>
-                      <div class="col-2">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.socialOng" @change="checkInputs('public')"> Social-ONG </label>
-                          </div>
-                      </div>
-                      <div class="col-2">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="publicPrivate.education" @change="checkInputs('public')"> Education </label>
-                          </div>
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-12">
+                      <div class="col-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.comments">
@@ -215,82 +185,68 @@ export default {
     data: () => ({
       publicPrivate:{
         nameOfActivity: '',
-        developmentalStudies: false,
-        projectImplementation: false,
-        training: false,
-        prospectiveActivity: false,
-        installationOfScientist: false,
-        temporaryInstallation: false,
-        internationalAgreements: false,
-        participationsInInstances: false,
-        internationalExchange: false,
+        agentType: null,
+        typeOfConnection: null,
+        researcherInvolved: null,
+        placeWhereWasExecuted: '',
+        internationalNational: '',
+        participationPublicPolicies: '',
         startDate: '',
         endingDate: '',
         resultsGoals: '',
         nameOfOrganization: '',
         countryOrigin: '',
-        privateSector: false,
-        academy1: false,
-        business: false,
-        ownEntrepreneurship: false,
-        publicSector: false,
-        government: false,
-        academy2: false,
-        socialOng: false,
-        education: false,
         comments: '',
-        progressReport: 9,
+        progressReport: '',
       },
       other: '',
       draft: false,
-      researchers: '',
+      researchers2: '',
+      externalResearcher: '',
       buttonDisable: false,
+      options1: [
+        'Private Industry (product or service)',
+        'Public Services',
+        'Educational Sector',
+        'Social - ONG',
+        'Entrepreneurship',
+        'Private Education',
+        'Education (Schools, Education Ministry)',
+      ],
+      options2: [
+        'Developmental Studies',
+        'Project Implementation',
+        'Training',
+        'Prospective Activity',
+        'Scientific Training',
+        'Installation of Scientist',
+        'Participation in Consulting Commitees',
+      ],
       errors:[],
+      idResearcher: '',
+      usuarios:[],
       buttonText:'Save connection',
     }),
+    created(){
+      this.getProgressReport();
+      this.getUsuarios2();
+      this.getUsuarios();
+    },
     methods: {
-      checkInputs(input) {
-        if (input === 'private') {
-          if (this.publicPrivate.academy1 || this.publicPrivate.business || this.publicPrivate.ownEntrepreneurship) {
-            this.publicPrivate.privateSector = true;
-          } else {
-            this.publicPrivate.privateSector = false;
-          }
-        }
-
-        if (input === 'public') {
-          if (this.publicPrivate.government || this.publicPrivate.academy2 || this.publicPrivate.socialOng || this.publicPrivate.education) {
-            this.publicPrivate.publicSector = true;
-          } else {
-            this.publicPrivate.publicSector = false;
-          }
-        }
-
-        if (input === 'privateSector') {
-          if (this.publicPrivate.privateSector) {
-            this.publicPrivate.academy1 = true;
-            this.publicPrivate.business = true;
-            this.publicPrivate.ownEntrepreneurship = true;
-          } else {
-            this.publicPrivate.academy1 = false;
-            this.publicPrivate.business = false;
-            this.publicPrivate.ownEntrepreneurship = false;
-          }
-        }
-
-        if (input === 'publicSector') {
-          if (this.publicPrivate.publicSector) {
-            this.publicPrivate.government = true;
-            this.publicPrivate.academy2 = true;
-            this.publicPrivate.socialOng = true;
-            this.publicPrivate.education = true;
-          } else {
-            this.publicPrivate.government = false;
-            this.publicPrivate.academy2 = false;
-            this.publicPrivate.socialOng = false;
-            this.publicPrivate.education = false;
-          }
-        }
+      getUsuarios(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
+      },
+      getUsuarios2(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers2 = response.data;
+        }).catch(e=> console.log(e))
+      },
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.publicPrivate.progressReport = response.data;
+        }).catch(e=> console.log(e))
       },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
@@ -300,33 +256,71 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
+
+            var agentType1 = "";
+            if (this.publicPrivate.agentType !== null){
+              if (this.publicPrivate.agentType.length !== 0) {
+                this.publicPrivate.agentType.forEach((agentType, index) => {
+                  agentType1 += agentType.name;
+                  if (index === this.publicPrivate.agentType.length - 1) {
+                    agentType1 += '.';
+                  } else {
+                    agentType1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var typeOfConnection1 = "";
+            if (this.publicPrivate.typeOfConnection !== null){
+              if (this.publicPrivate.typeOfConnection.length !== 0) {
+                this.publicPrivate.typeOfConnection.forEach((typeOfConnection, index) => {
+                  typeOfConnection1 += typeOfConnection.name;
+                  if (index === this.publicPrivate.typeOfConnection.length - 1) {
+                    typeOfConnection1 += '.';
+                  } else {
+                    typeOfConnection1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var researcherInvolved1 = "";
+            if (this.publicPrivate.researcherInvolved !== null){
+              if (this.publicPrivate.researcherInvolved.length !== 0) {
+                this.publicPrivate.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.publicPrivate.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
+                  } else {
+                    researcherInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let publicPrivate = {
               status: 'Draft',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
+              agentType: agentType1,
+              typeOfConnection: typeOfConnection1,
+              researcherInvolved: researcherInvolved1,
+              placeWhereWasExecuted: this.publicPrivate.placeWhereWasExecuted,
+              internationalNational: this.publicPrivate.internationalNational,
+              participationPublicPolicies: this.publicPrivate.participationPublicPolicies,
               nameOfActivity: this.publicPrivate.nameOfActivity,
-              developmentalStudies: this.publicPrivate.developmentalStudies,
-              projectImplementation: this.publicPrivate.projectImplementation,
-              training: this.publicPrivate.training,
-              prospectiveActivity: this.publicPrivate.prospectiveActivity,
-              installationOfScientist: this.publicPrivate.installationOfScientist,
-              temporaryInstallation: this.publicPrivate.temporaryInstallation,
-              internationalAgreements: this.publicPrivate.internationalAgreements,
-              participationsInInstances: this.publicPrivate.participationsInInstances,
-              internationalExchange: this.publicPrivate.internationalExchange,
               startDate: this.publicPrivate.startDate,
               endingDate: this.publicPrivate.endingDate,
               resultsGoals: this.publicPrivate.resultsGoals,
               nameOfOrganization: this.publicPrivate.nameOfOrganization,
               countryOrigin: this.publicPrivate.countryOrigin,
-              privateSector: this.publicPrivate.privateSector,
-              academy1: this.publicPrivate.academy1,
-              business: this.publicPrivate.business,
-              ownEntrepreneurship: this.publicPrivate.ownEntrepreneurship,
-              publicSector: this.publicPrivate.publicSector,
-              government: this.publicPrivate.government,
-              academy2: this.publicPrivate.academy2,
-              socialOng: this.publicPrivate.socialOng,
-              education: this.publicPrivate.education,
               comments: this.publicPrivate.comments,
               progressReport: this.publicPrivate.progressReport,
             };
@@ -380,24 +374,8 @@ export default {
         this.errors = [];
 
         const itemsToCheck = [
-          'developmentalStudies',
-          'projectImplementation',
-          'training',
-          'prospectiveActivity',
-          'installationOfScientist',
-          'temporaryInstallation',
-          'internationalAgreements',
-          'participationsInInstances',
-          'internationalExchange',
-          'privateSector',
-          'academy1',
-          'business',
-          'ownEntrepreneurship',
-          'publicSector',
-          'government',
-          'academy2',
-          'socialOng',
-          'education',
+          'comments',
+          'participationPublicPolicies'
         ];
 
 
@@ -425,6 +403,16 @@ export default {
               mensaje =   mensaje + "The field Name of organization is required" + "\n";
             }else if(item == 'countryOrigin'){
               mensaje =   mensaje + "The field Country origin is required" + "\n";
+            }else if(item == 'typeOfConnection'){
+              mensaje =   mensaje + "The field Type of connection is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researcher involved is required" + "\n";
+            }else if(item == 'placeWhereWasExecuted'){
+              mensaje =   mensaje + "The field Place where was executed is required" + "\n";
+            }else if(item == 'internationalNational'){
+              mensaje =   mensaje + "The field International/national is required" + "\n";
+            }else if(item == 'agentType'){
+              mensaje =   mensaje + "The field Agent type is required" + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -453,33 +441,70 @@ export default {
           })
           if (ok) {
 
+            var agentType1 = "";
+            if (this.publicPrivate.agentType !== null){
+              if (this.publicPrivate.agentType.length !== 0) {
+                this.publicPrivate.agentType.forEach((agentType, index) => {
+                  agentType1 += agentType.name;
+                  if (index === this.publicPrivate.agentType.length - 1) {
+                    agentType1 += '.';
+                  } else {
+                    agentType1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var typeOfConnection1 = "";
+            if (this.publicPrivate.typeOfConnection !== null){
+              if (this.publicPrivate.typeOfConnection.length !== 0) {
+                this.publicPrivate.typeOfConnection.forEach((typeOfConnection, index) => {
+                  typeOfConnection1 += typeOfConnection.name;
+                  if (index === this.publicPrivate.typeOfConnection.length - 1) {
+                    typeOfConnection1 += '.';
+                  } else {
+                    typeOfConnection1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var researcherInvolved1 = "";
+            if (this.publicPrivate.researcherInvolved !== null){
+              if (this.publicPrivate.researcherInvolved.length !== 0) {
+                this.publicPrivate.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.publicPrivate.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
+                  } else {
+                    researcherInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let publicPrivate = {
               status: 'Finished',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
+              agentType: agentType1,
+              typeOfConnection: typeOfConnection1,
+              researcherInvolved: researcherInvolved1,
+              placeWhereWasExecuted: this.publicPrivate.placeWhereWasExecuted,
+              internationalNational: this.publicPrivate.internationalNational,
+              participationPublicPolicies: this.publicPrivate.participationPublicPolicies,
               nameOfActivity: this.publicPrivate.nameOfActivity,
-              developmentalStudies: this.publicPrivate.developmentalStudies,
-              projectImplementation: this.publicPrivate.projectImplementation,
-              training: this.publicPrivate.training,
-              prospectiveActivity: this.publicPrivate.prospectiveActivity,
-              installationOfScientist: this.publicPrivate.installationOfScientist,
-              temporaryInstallation: this.publicPrivate.temporaryInstallation,
-              internationalAgreements: this.publicPrivate.internationalAgreements,
-              participationsInInstances: this.publicPrivate.participationsInInstances,
-              internationalExchange: this.publicPrivate.internationalExchange,
               startDate: this.publicPrivate.startDate,
               endingDate: this.publicPrivate.endingDate,
               resultsGoals: this.publicPrivate.resultsGoals,
               nameOfOrganization: this.publicPrivate.nameOfOrganization,
               countryOrigin: this.publicPrivate.countryOrigin,
-              privateSector: this.publicPrivate.privateSector,
-              academy1: this.publicPrivate.academy1,
-              business: this.publicPrivate.business,
-              ownEntrepreneurship: this.publicPrivate.ownEntrepreneurship,
-              publicSector: this.publicPrivate.publicSector,
-              government: this.publicPrivate.government,
-              academy2: this.publicPrivate.academy2,
-              socialOng: this.publicPrivate.socialOng,
-              education: this.publicPrivate.education,
               comments: this.publicPrivate.comments,
               progressReport: this.publicPrivate.progressReport,
             };

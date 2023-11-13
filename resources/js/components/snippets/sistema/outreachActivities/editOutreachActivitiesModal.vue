@@ -144,7 +144,7 @@
                     </div>
                     <hr size="3" class="separador">
                     <div class="row">
-                      <div class="text-uppercase pb-2">Target Audiences:</div>
+                      <div class="text-uppercase pb-2">Target Audiences:<label for="" style="color: orange;">*</label></div>
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
@@ -475,6 +475,24 @@ export default {
                 this.errors.push(item);
               }
             }
+        }
+
+        const checkboxFields = [
+          'undergraduateStudents',
+          'primaryEducationStudents',
+          'secondaryEducationStudents',
+          'generalCommunity',
+          'companiesIndustriesServices',
+          'schoolTeachers',
+          'governmentOfficial',
+          'other',
+        ];
+
+        const isChecked = checkboxFields.some(field => this.outreachActivity[field]);
+
+        // Si ninguno está marcado, agrega el mensaje al arreglo de errores
+        if (!isChecked) {
+          this.errors.push('target audiencies');
         }
 
         if(this.outreachActivity.activityType == 'Other' && this.other == ''){

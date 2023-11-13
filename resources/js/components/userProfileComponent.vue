@@ -3,19 +3,10 @@
         <div class="card-body p-3">
             <div class="row gx-4">
                 <div class="col-auto">
-                    <div v-if="profilePic != null" style="position: relative; left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);">
-                        <a class="btn" @click="showFotoPerfil = true">
-                            <div style="width: 150px; height: 150px; display: flex; justify-content: center; align-items: center;">
-                                <img class="img-not-draggable w-100 h-100 border-radius-100 shadow-sm" style="object-fit: cover;" v-bind:src="'data:image/jpeg;base64,'+profilePic">
-                            </div>
-                        </a>
-                    </div>
-                    <div v-else style="position: relative; left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);">
-                        <a class="btn" @click="showFotoPerfil = true">
-                            <div style="width: 150px; height: 150px; display: flex; justify-content: center; align-items: center;">
-                                <img class="img-not-draggable w-100 h-100 border-radius-100 shadow-sm" style="object-fit: cover;" src="https://icon-library.com/images/default-user-icon/default-user-icon-13.jpg">
-                            </div>
-                        </a>
+                    <div style="position: relative; left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);">
+                        <div style="width: 150px; height: 150px; display: flex; justify-content: center; align-items: center;">
+                            <img class="img-not-draggable w-100 h-100 border-radius-100 shadow-sm" style="object-fit: cover;" src="https://icon-library.com/images/default-user-icon/default-user-icon-13.jpg">
+                        </div>
                     </div>
                 </div>
                 <div class="col-auto my-auto">
@@ -24,9 +15,6 @@
                     </h5>
                     <div class="d-flex">
                         <a @click="mostrarRoles()" class="btn btn-dark">Roles</a>
-                        &nbsp;
-                        <a @click="mostrarPermisos()" class="btn btn-dark">Permissions</a>
-                        &nbsp;
                     </div>
                 </div>
                 <div class="col-md-2 me-sm-0 mx-auto mt-3">
@@ -55,52 +43,6 @@
                             <p v-for="rol in roles" :key="rol" class="mb-0 font-weight-bold text-sm">
                                 {{ rol.name }} &nbsp;
                             </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div v-if="showPermisos" class="container-fluid py-3">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header pb-0">
-                        <a class="btn btn-closed" style="float: right" @click="mostrarPermisos()">X</a>
-                        <div class="d-flex align-items-center">
-                            <h5>Permissions</h5>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div v-if="isEmpty(permisos)">
-                            <div class="fs-7">No permissions.</div>
-                        </div>
-                        <div v-else v-for="(items, group) in groupedPermissionsProfile" :key="group">
-                            <div v-if="group != 'null'">
-                                <div class="d-flex align-items-center">
-                                    <h6>{{group}}</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="displayRolesPermisos">
-                                        <p v-for="item in items" :key="item.name" class="mb-0 font-weight-bold text-sm">
-                                            {{ item.name }} &nbsp;
-                                        </p>
-                                    </div>
-                                </div>
-                                <hr size="4" class="separador">
-                            </div>
-                            <div v-else>
-                                <div class="d-flex align-items-center">
-                                    <h6>Otros:</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="displayRolesPermisos">
-                                        <p v-for="item in items" :key="item.name" class="mb-0 font-weight-bold text-sm">
-                                            {{ item.name }} &nbsp;
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,7 +171,6 @@ export default {
             showFotoPerfil: false,
             isEditing: false,
             usuario: null,
-            profilePic: null,
             roles: null,
             permisos: null,
             editables:{
@@ -241,14 +182,11 @@ export default {
             id: null,
             errors: [],
             showRoles: false,
-            showPermisos: false,
-            groupedPermissionsProfile: {},
         }
     },
     created(){
         this.getUsuarios(this.userID);
         this.getRolesUsuario(this.userID);
-        this.getPermisosUsuario(this.userID);
     },
     methods: {
         editPassword(password){
@@ -263,29 +201,9 @@ export default {
                 this.showRoles = false;
             }
         },
-        mostrarPermisos(){
-            if(this.showPermisos == false){
-                this.showPermisos = true;
-            }
-            else{
-                this.showPermisos = false;
-            }
-        },
         getRolesUsuario($id){
             axios.get(`api/roles/${$id}`).then( response =>{
                 this.roles = response.data;
-            }).catch(e=> console.log(e))
-        },
-        getPermisosUsuario($id){
-            axios.get(`api/permisos/${$id}`).then( response =>{
-                this.permisos = response.data;
-                this.permisos.forEach(permiso => {
-                var grupoActual = permiso.group;
-                if (!this.groupedPermissionsProfile[grupoActual]) {
-                    this.groupedPermissionsProfile[grupoActual] = [];
-                }
-                this.groupedPermissionsProfile[grupoActual].push(permiso);
-            });
             }).catch(e=> console.log(e))
         },
         getUsuarios(id){

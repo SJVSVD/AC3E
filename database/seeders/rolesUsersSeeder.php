@@ -11,11 +11,11 @@ class rolesUsersSeeder extends Seeder
     public function run()
     {    
         $roles = [
-            ['name' => 'Investigador Asociado'],
-            ['name' => 'Investigadora Postdoctoral'],
-            ['name' => 'Investigador Titular'],
-            ['name' => 'Administrador'],
-            ['name' => 'Inactivo'],
+            ['name' => 'Associative researcher'],
+            ['name' => 'Postdoctoral researcher'],
+            ['name' => 'Main researcher'],
+            ['name' => 'Administrator'],
+            ['name' => 'Inactive'],
         ];
 
         foreach($roles as $role){

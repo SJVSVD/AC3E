@@ -9,6 +9,15 @@
                     New Outreach Activity 
                 </slot>
                 <label for="">Progress year: {{ outreachActivity.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -144,7 +153,7 @@
                     </div>
                     <hr size="3" class="separador">
                     <div class="row">
-                      <div class="text-uppercase pb-2">Target Audiences:</div>
+                      <div class="text-uppercase pb-2">Target Audiences:<label for="" style="color: orange;">*</label></div>
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
@@ -260,17 +269,25 @@ export default {
       draft: false,
       researchers: '',
       buttonDisable: false,
+      usuarios:[],
+      idResearcher: '',
       errors:[],
       buttonText:'Save Activity',
     }),
     mounted(){
       this.getUsuarios();
+      this.getUsuarios2();
       this.getProgressReport();
     },
     methods: {
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.outreachActivity.progressReport = response.data;
+        }).catch(e=> console.log(e))
+      },
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
         }).catch(e=> console.log(e))
       },
       getUsuarios(){
@@ -330,9 +347,16 @@ export default {
               type = this.outreachActivity.activityType;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let outreachActivity = {
               status: 'Draft',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               activityType: type,
               otherType: other1,
               activityName: this.outreachActivity.activityName,
@@ -432,6 +456,24 @@ export default {
           this.errors.push('other');
         }
 
+        const checkboxFields = [
+          'undergraduateStudents',
+          'primaryEducationStudents',
+          'secondaryEducationStudents',
+          'generalCommunity',
+          'companiesIndustriesServices',
+          'schoolTeachers',
+          'governmentOfficial',
+          'other',
+        ];
+
+        const isChecked = checkboxFields.some(field => this.outreachActivity[field]);
+
+        // Si ninguno está marcado, agrega el mensaje al arreglo de errores
+        if (!isChecked) {
+          this.errors.push('target audiencies');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -514,9 +556,16 @@ export default {
               type = this.outreachActivity.activityType;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let outreachActivity = {
               status: 'Finished',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               activityType: type,
               otherType: other1,
               activityName: this.outreachActivity.activityName,

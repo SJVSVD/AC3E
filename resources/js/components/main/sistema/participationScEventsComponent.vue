@@ -22,6 +22,9 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Event Name</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Start Date</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
@@ -38,9 +41,21 @@
                                         <td>
                                             <p class="text-sm mb-0">{{ participationScEvent.usuario.name }}</p>
                                         </td>
+                                        <td>
+                                            <p v-if="participationScEvent.eventName == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ participationScEvent.eventName }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="participationScEvent.startDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ participationScEvent.startDate }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="participationScEvent.endingDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ participationScEvent.endingDate }}</p>
+                                        </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="participationScEvent.file != null" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(participationScEvent.id, participationScEvent.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-if="participationScEvent.file != null" class="btn btn-search-blue btn-xs" title="Download File" @click="descargarExtracto(participationScEvent.id, participationScEvent.usuario.name)"><i class="fa-solid fa-download"></i></a>
                                                 <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editParticipation(participationScEvent)"><i class="fa fa-fw fa-edit"></i></a>

@@ -23,9 +23,9 @@ Route::get('email/{email}', [UsuarioController::class, 'email'])->name('email');
 Route::group(['middleware' => 'auth'], function () {
 	//Route::group(['middleware' => ['role:Colaborador']], function () {
 		// Sistemas:
-		Route::group(['middleware' => ['role:Administrador']], function () {
+		Route::group(['middleware' => ['role:Administrator']], function () {
 			Route::get('/admin-roles', [PageController::class, 'adminRoles'])->name('admin-roles');
-
+			
 		});
 		Route::get('/admin-usuarios', [PageController::class, 'adminUsuarios'])->name('admin-usuarios');
 		Route::get('/isi-publications', [PageController::class, 'isiPublications'])->name('isi-publications');

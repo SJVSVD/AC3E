@@ -9,6 +9,15 @@
                     New Award
                 </slot>
                 <label for="">Progress year: {{ award.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -24,7 +33,10 @@
                             <label for="">Year:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
-                            <input id="yearInput" type="number" v-model="award.year" :max="currentYear" @input="onInput" class= "form-control" />
+                            <select class="form-select" id="selectYear" v-model="award.year">
+                            <option disabled value="">Select a year</option>
+                            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
                           </div>
                           <div class="col-3">
                             <label for="">Institution:</label>
@@ -105,13 +117,27 @@ export default {
       coauthor: false,
       draft: false,
       buttonDisable: false,
+      idResearcher: '',
+      usuarios: [],
       errors:[],
       buttonText:'Save Award',
     }),
     created(){
       this.getProgressReport();
+      this.getUsuarios2();
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a); 
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
+      },
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.award.progressReport = response.data;
@@ -125,9 +151,16 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let award = {
               status: 'Draft',
-              awardeeName: this.userID,
+              awardeeName: idUser1,
               awardName: this.award.awardName,
               year: this.award.year,
               contributionAwardee: this.award.contributionAwardee,
@@ -238,10 +271,16 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
 
             let award = {
               status: 'Finished',
-              awardeeName: this.userID,
+              awardeeName: idUser1,
               awardName: this.award.awardName,
               year: this.award.year,
               contributionAwardee: this.award.contributionAwardee,

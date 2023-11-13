@@ -23,8 +23,6 @@ return new class extends Migration
             $table->string('runOrPassport')->nullable();
             $table->string('gender')->nullable();
             $table->string('personalEmail')->nullable();
-            $table->string('posteriorWorkingArea')->nullable();
-            $table->string('institutionWorkingArea')->nullable();
             $table->string('researchTopic')->nullable();
             $table->string('supervisorName')->nullable();
             $table->string('resourcesProvided')->nullable();
@@ -42,7 +40,6 @@ return new class extends Migration
             $table->boolean('inTheCenter')->nullable();
             $table->boolean('noneOfTheAbove')->nullable();
             $table->string('institutionName')->nullable();
-            $table->string('nameOfResearch')->nullable();
             $table->string('comments')->nullable();
             $table->integer('progressReport')->nullable();
             $table->softDeletes();

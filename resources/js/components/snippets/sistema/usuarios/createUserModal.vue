@@ -13,31 +13,52 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-3">
-                              <label for="name">Name: </label>
-                              <br>
-                              <input type="text" class= "form-control" v-model="user.name">
-                          </div>
-                          <div class="col-3">
-                              <label for="email">Email: </label>
-                              <br>
-                              <input type="email" class= "form-control" v-model="user.email">
-                          </div>
-                          <div class="col-3">
-                              <label for="password">Password: </label>
-                              <br>
-                              <input type="password" class= "form-control" v-model="user.password">
-                          </div>
-                          <div class="col-3">
-                              <label for="confirm-password"> Confirm Password: </label>
-                              <br>
-                              <input type="password" class= "form-control" v-model="user.confirmpassword">
-                              <br>
-                          </div>
+                        <div class="col-3">
+                            <label for="name">Name: </label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="user.name">
+                        </div>
+                        <div class="col-3">
+                            <label for="email">Email: </label>
+                            <br>
+                            <input type="email" class= "form-control" v-model="user.email">
+                        </div>
+                        <div class="col-3">
+                            <label for="password">Password: </label>
+                            <br>
+                            <input type="password" class= "form-control" v-model="user.password">
+                        </div>
+                        <div class="col-3">
+                            <label for="confirm-password"> Confirm Password: </label>
+                            <br>
+                            <input type="password" class= "form-control" v-model="user.confirmpassword">
+                            <br>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Role User:</label>
+                        <select class="form-select" v-model="user.idRole">
+                        <option disabled value="">Select a role</option>
+                        <option v-for="roleUser in rolesUser" v-bind:key="roleUser.id" v-bind:value="roleUser.id">
+                          {{ roleUser.name }}
+                        </option>
+                        </select>
+                      </div>
+                      <div class="col-6">
+                        <label for="">Research Line:</label>
+                        <select class="form-select" v-model="user.idResearchLine">
+                        <option disabled value="">Select a research line</option>
+                        <option v-for="researchLine in researchLines" v-bind:key="researchLine.id" v-bind:value="researchLine.id">
+                          {{ researchLine.name }}
+                        </option>
+                        </select>
+                      </div>
                     </div>
                     <hr size="3" class="separador">
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-12">
                         <label for="">Roles:</label>
                         <div v-if="marcados == false" class="form-check">
                           <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos()" class="form-check-input" v-model="selected"> Check all </label>
@@ -48,19 +69,6 @@
                         <div v-for="rol in roles" :key="rol.id" class="form-check">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:id="rol.id" v-bind:value="rol.id" v-model="selected"  >
                             {{rol.name}} </label>
-                        </div>
-                      </div>
-                      <div class="col-6">
-                        <label for="">Permissions:</label>
-                        <div v-if="marcados2 == false" class="form-check">
-                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Check all </label>
-                        </div>
-                        <div v-else class="form-check">
-                          <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Uncheck all </label>
-                        </div>
-                        <div v-for="permiso in permisos" :key="permiso.id" class="form-check">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:id="permiso.id" v-bind:value="permiso.id" v-model="selected2"  >
-                            {{permiso.name}} </label>
                         </div>
                       </div>
                     </div>
@@ -88,7 +96,6 @@ import axios from 'axios'
 import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
-import Multiselect from '@vueform/multiselect';
 
 export default {
     components: { modalconfirmacion, modalalerta, },
@@ -99,9 +106,10 @@ export default {
         email: "",
         password: "",
         confirmpassword: "",
+        idRole:"",
+        idResearchLine:"",
       },
       selectedRoles: [],
-      selectedPermissions: [],
       buttonDisable: false,
       selected: [],
       selected2: [],
@@ -109,18 +117,31 @@ export default {
       marcados2: false,
       errors:[],
       roles: null,
+      rolesUser: null,
+      researchLines: null,
       permisos: null,
       buttonText:'Create User',
     }),
     created(){
       this.getRoles();
-      this.getPermisos();
+      this.getResearchLines();
+      this.getUserRoles();
     },
     methods: {
       cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();
+      },
+      getResearchLines(){
+        axios.get('api/researchLines').then( response =>{
+          this.researchLines = response.data;
+        }).catch(e=> console.log(e))
+      },
+      getUserRoles(){
+        axios.get('api/rolesUser').then( response =>{
+          this.rolesUser = response.data;
+        }).catch(e=> console.log(e))
       },
       getRoles(){
         axios.get('api/roles').then( response =>{
@@ -136,22 +157,6 @@ export default {
         }else{
           this.selected = [];
           this.marcados = false;
-        }
-      },
-      getPermisos(){
-        axios.get('api/permisos').then( response =>{
-        this.permisos = response.data;
-        }).catch(e=> console.log(e))
-      },
-      marcarTodos2(){
-        if (this.marcados2 == false){
-          this.permisos.forEach(permiso => {
-            this.selected2.push(permiso.id);
-          });
-          this.marcados2 = true;
-        }else{
-          this.selected2 = [];
-          this.marcados2 = false;
         }
       },
       capitalizeFirstLetter(string) {
@@ -173,15 +178,17 @@ export default {
         if (this.errors.length != 0){
           this.errors.forEach(item => {
             if(item == 'name'){
-              mensaje =   mensaje + "The name field is required" + "\n";
+              mensaje =   mensaje + "The Name field is required" + "\n";
             }else if(item == 'email'){
-              mensaje =   mensaje + "The email field is required" + "\n";
+              mensaje =   mensaje + "The Email field is required" + "\n";
             }else if(item == 'contraseñas diferentes'){
               mensaje =   mensaje + "Passwords do not match" + "\n";
             }else if(item == 'password'){
-              mensaje =   mensaje + "The password field is required" + "\n";
+              mensaje =   mensaje + "The Password field is required" + "\n";
             }else if(item == 'confirmpassword'){
-              mensaje =   mensaje + "The confirm password field is required" + "\n";
+              mensaje =   mensaje + "The Confirm password field is required" + "\n";
+            }else if(item == 'idRole'){
+              mensaje =   mensaje + "The Role user field is required" + "\n";
             }else{
               mensaje =   mensaje + "The" + this.capitalizeFirstLetter(item) + "field is required" + "\n" 
             }
@@ -215,7 +222,8 @@ export default {
               password: this.user.password,
               confirmpassword: this.user.confirmpassword,
               roles: this.selected,
-              permisos: this.selected2,
+              idRole: this.user.idRole,
+              idResearchLine: this.user.idResearchLine,
             };
             await axios.post("api/usuarios", usuario ).then((result) => {
               this.buttonDisable = true;

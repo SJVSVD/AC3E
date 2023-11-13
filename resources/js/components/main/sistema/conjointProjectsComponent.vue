@@ -22,6 +22,11 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of AC3E Member</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of External Person</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Beggining Date</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
@@ -37,6 +42,26 @@
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ conjointProject.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="conjointProject.activityName == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ conjointProject.activityName }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="conjointProject.nameOfAC3EMember == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ conjointProject.nameOfAC3EMember }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="conjointProject.nameOfExternalResearcher == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ conjointProject.nameOfExternalResearcher }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="conjointProject.begginingDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ conjointProject.begginingDate }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="conjointProject.endingDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ conjointProject.endingDate }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
@@ -63,7 +88,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
-            <modaleditar v-bind:collaboration1="projectEdit" v-if="showEditProject" @close="showEditProject = false" @recarga="recargarTabla('General')"></modaleditar>
+            <modaleditar v-bind:project1="projectEdit" v-if="showEditProject" @close="showEditProject = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewProject" @close="showNewProject = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
     </div>

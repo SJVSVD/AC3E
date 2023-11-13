@@ -21,7 +21,7 @@
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Center Researcher</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Book Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Book Authors</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year</th>

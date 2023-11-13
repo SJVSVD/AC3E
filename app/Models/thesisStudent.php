@@ -38,7 +38,7 @@ class thesisStudent extends Model
         'institutionPosteriorArea',
         'comments',
         'progressReport',
-        'thesisExtract',
+        'file',
     ];
 
     public function usuario(){

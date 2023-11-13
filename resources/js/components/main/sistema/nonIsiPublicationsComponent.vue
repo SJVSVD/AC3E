@@ -23,12 +23,8 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Coauthor(s) </th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Volume</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">First Page</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Last Page</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
@@ -52,28 +48,12 @@
                                             <p v-else class="text-sm mb-0">{{ nonIsiPublication.authors }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="nonIsiPublication.coauthor == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ nonIsiPublication.coauthor }}</p>
-                                        </td>
-                                        <td>
                                             <p v-if="nonIsiPublication.articleTitle == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ nonIsiPublication.articleTitle }}</p>
                                         </td>
                                         <td>
                                             <p v-if="nonIsiPublication.journalName == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ nonIsiPublication.journalName }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="nonIsiPublication.volume == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ nonIsiPublication.volume }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="nonIsiPublication.firstPage == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ nonIsiPublication.firstPage }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="nonIsiPublication.lastPage == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ nonIsiPublication.lastPage }}</p>
                                         </td>
                                         <td>
                                             <p v-if="nonIsiPublication.yearPublished == null" class="text-sm mb-0">---</p>

@@ -9,6 +9,15 @@
                     New Book
                 </slot>
                 <label for="">Progress year: {{ book.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -32,7 +41,7 @@
                           </div>
                           <div class="col-4">
                             <label for="">Chapter Title:</label>
-                            <label for="" style="color: orange;">*</label>
+                            <label v-if="book.workType == 'Book Chapter'" for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="book.chapterTitle">
                           </div>
@@ -41,13 +50,11 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">First Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.firstPage">
                       </div>
                       <div class="col-3">
                         <label for="">Last Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.lastPage">
                       </div>
@@ -61,35 +68,10 @@
                         <label for="">Year:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input id="yearInput" type="number" v-model="book.year" :max="currentYear" @input="onInput" class= "form-control" />
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <div>
-                          <label for="">Name of Research Line: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <Multiselect
-                              placeholder="Select the options"
-                              v-model="book.nameOfResearchLine"
-                              limit=4
-                              :searchable="true"
-                              :close-on-select="false"
-                              :createTag="true"
-                              :options="options1"
-                              mode="tags"
-                              label="name"
-                              trackBy="name"
-                              :object="true"
-                          />
-                        </div>
-                      </div>
-                      <div class="col-6">
-                        <label for="">ISBN:</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.ISBN">
+                        <select class="form-select" id="selectYear" v-model="book.year">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
                       </div>
                     </div>
                     <br>
@@ -107,13 +89,18 @@
                       </div>
                       <div class="col-4">
                         <label for="">Chapter Authors:</label>
-                        <label for="" style="color: orange;">*</label>
+                        <label v-if="book.workType == 'Book Chapter'" for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.chapterAuthors">
                       </div>
                     </div>
                     <br>
                     <div class="row">
+                      <div class="col-6">
+                        <label for="">ISBN:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.ISBN">
+                      </div>
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <br>
@@ -167,33 +154,34 @@ export default {
         year: '',
         ISBN: '',
         editors: '',
-        nameOfResearchLine: null,
         progressReport: '',
         comments: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
-      showModalBookAutor: false,
-      showModalChapterAutor: false,
-      bookAuthors1:[],
-      chapterAuthors1:[],
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
       buttonDisable: false,
+      usuarios: [],
+      idResearcher: '',
       errors:[],
       buttonText:'Save Book',
     }),
     created(){
       this.getProgressReport();
+      this.getUsuarios2();      
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a); 
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
+      },
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.book.progressReport = response.data;
@@ -207,24 +195,17 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.book.nameOfResearchLine !== null){
-              if (this.book.nameOfResearchLine.length !== 0) {
-                this.book.nameOfResearchLine.forEach((nameOfResearchLine, index) => {
-                  nameOfResearchLine1 += nameOfResearchLine.name;
-                  if (index === this.book.nameOfResearchLine.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
             }
 
             let book = {
               status: 'Draft',
               workType: this.book.workType,
-              centerResearcher: this.userID,
+              centerResearcher: idUser1,
               bookAuthors: this.book.bookAuthors,
               chapterAuthors: this.book.chapterAuthors,
               editors: this.book.editors,
@@ -235,7 +216,6 @@ export default {
               lastPage: this.book.lastPage,
               editorialCityCountry: this.book.editorialCityCountry,
               year: this.book.year,
-              nameOfResearchLine: nameOfResearchLine1,
               progressReport: this.book.progressReport,
               comments: this.book.comments,
             };
@@ -292,26 +272,30 @@ export default {
       },
       async createBook() {
         this.errors = [];
-        var noAutor = false;
 
         const itemsToSkip = [
           'ISBN',
           'editors',
-          'comments'
+          'comments',
+          'chapterTitle',
+          'chapterAuthors',
+          'firstPage',
+          'lastPage'
         ];
 
         for (const item in this.book) {
             const skipItem = itemsToSkip.includes(item);
             if (!skipItem && (this.book[item] === "" || this.book[item] === 0 || this.book[item] == null)) {
-                if (item === 'chapterAuthors' || item === 'bookAuthors') {
-                    if (this.book.bookAuthors === '' && this.book.chapterAuthors === '' && noAutor === false) {
-                        this.errors.push('noAutor');
-                        noAutor = true;
-                    }
-                } else {
-                    this.errors.push(item);
-                }
+              this.errors.push(item);
             }
+        }
+
+        if(this.book.workType == 'Book Chapter' && this.book.chapterTitle == ''){
+          this.errors.push('chapterTitle');
+        }
+
+        if(this.book.workType == 'Book Chapter' && this.book.chapterAuthors == ''){
+          this.errors.push('chapterAuthors');
         }
 
         var mensaje = ""
@@ -319,12 +303,14 @@ export default {
           this.errors.forEach(item => {
             if(item == 'workType'){
               mensaje =   mensaje + "The field Work Type is required" + "\n";
-            }else if(item == 'noAutor'){
-              mensaje =   mensaje + "Must enter at least one author" + "\n";
+            }else if(item == 'bookAuthors'){
+              mensaje =   mensaje + "The field Book Authors is required" + "\n";
             }else if(item == 'bookTitle'){
               mensaje =   mensaje + "The field Book Title is required" + "\n";
             }else if(item == 'chapterTitle'){
               mensaje =   mensaje + "The field Chapter Title is required" + "\n";
+            }else if(item == 'chapterAuthors'){
+              mensaje =   mensaje + "The field Chapter Authors is required" + "\n";
             }else if(item == 'editorialCityCountry'){
               mensaje =   mensaje + "The field Editorial/City/Country is required" + "\n";
             }else if(item == 'nameOfResearchLine'){
@@ -362,25 +348,17 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.book.nameOfResearchLine !== null){
-              if (this.book.nameOfResearchLine.length !== 0) {
-                this.book.nameOfResearchLine.forEach((nameOfResearchLine, index) => {
-                  nameOfResearchLine1 += nameOfResearchLine.name;
-                  if (index === this.book.nameOfResearchLine.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
             }
-
 
             let book = {
               status: 'Finished',
               workType: this.book.workType,
-              centerResearcher: this.userID,
+              centerResearcher: idUser1,
               bookAuthors: this.book.bookAuthors,
               chapterAuthors: this.book.chapterAuthors,
               editors: this.book.editors,
@@ -391,7 +369,6 @@ export default {
               lastPage: this.book.lastPage,
               editorialCityCountry: this.book.editorialCityCountry,
               year: this.book.year,
-              nameOfResearchLine: nameOfResearchLine1,
               progressReport: this.book.progressReport,
               comments: this.book.comments,
             };

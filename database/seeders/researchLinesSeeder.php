@@ -11,13 +11,13 @@ class researchLinesSeeder extends Seeder
     public function run()
     {    
         $researchLines = [
-            ['name' => 'Indefinida'],
-            ['name' => 'Control'],
-            ['name' => 'Energia'],
-            ['name' => 'Int. Artificial'],
-            ['name' => 'Robotica'],
-            ['name' => 'Sist. Biomedicos'],
-            ['name' => 'Sist. Electricos'],
+            ['name' => 'Undefined'],
+            ['name' => 'Control and Automation'],
+            ['name' => 'Energy Conversion and Power Systems'],
+            ['name' => 'Data Analytics and Artificial Intelligence'],
+            ['name' => 'Robotics'],
+            ['name' => 'Biomedical Systems'],
+            ['name' => 'Electrical Systems'],
         ];
 
         foreach($researchLines as $researchLine){

@@ -22,6 +22,11 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Postdoc</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Supervisor Name</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Research Topic</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Start Year</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Ending Year</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
@@ -37,6 +42,26 @@
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ postDoc.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="postDoc.nameOfPostdoc == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ postDoc.nameOfPostdoc }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="postDoc.supervisorName == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ postDoc.supervisorName }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="postDoc.researchTopic == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ postDoc.researchTopic }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="postDoc.startYear == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ postDoc.startYear }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="postDoc.endingYear == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ postDoc.endingYear }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">

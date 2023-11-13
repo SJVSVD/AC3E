@@ -30,7 +30,7 @@ class organizationsScEventsController extends Controller
         }
         else{
             foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrador'){
+                if ($rol['name'] == 'Administrator'){
                     array_push($roles, $rol['name']);
                     $administrador = true;
                 }
@@ -46,10 +46,14 @@ class organizationsScEventsController extends Controller
         $input = $request->all();
         
         $organization = organizationsScEvents::where('id', $input['id'])->first();
-        
-        $input['file'] = $request->file('file')->store('organizationsScEvents','public');
-        $organization->file = $input['file'];
-        $organization->save();
+        if(gettype($input['file']) == 'object'){
+            if($request->hasFile('file')){
+                $input['file'] = $request->file('file')->store('organizationsScEvents','public');
+            }
+        }else if($input['file'] == 'null'){
+            unset($input['file']);
+        }
+        $organization = organizationsScEvents::find($request['id'])->update($input);
         return response()->json($organization);
     }
 

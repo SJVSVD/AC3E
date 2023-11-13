@@ -30,7 +30,7 @@ class participationsScEventsController extends Controller
         }
         else{
             foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrador'){
+                if ($rol['name'] == 'Administrator'){
                     array_push($roles, $rol['name']);
                     $administrador = true;
                 }
@@ -45,12 +45,16 @@ class participationsScEventsController extends Controller
     public function addFile(Request $request){
         $input = $request->all();
         
-        $organization = participationScEvents::where('id', $input['id'])->first();
-        
-        $input['file'] = $request->file('file')->store('participationScEvents','public');
-        $organization->file = $input['file'];
-        $organization->save();
-        return response()->json($organization);
+        $participation = participationScEvents::where('id', $input['id'])->first();
+        if(gettype($input['file']) == 'object'){
+            if($request->hasFile('file')){
+                $input['file'] = $request->file('file')->store('participationScEvents','public');
+            }
+        }else if($input['file'] == 'null'){
+            unset($input['file']);
+        }
+        $participation = participationScEvents::find($request['id'])->update($input);
+        return response()->json($participation);
     }
 
     public function update(Request $request, $id)

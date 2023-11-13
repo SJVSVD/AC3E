@@ -20,11 +20,11 @@ return new class extends Migration
             $table->integer('moduleType');
             $table->string('status');
             $table->string('institutionCollaborates')->nullable();
-            $table->string('peopleInvolved')->nullable();
+            $table->string('researcherInvolved')->nullable();
+            $table->string('studentOrResearcher')->nullable();
             $table->string('activityType')->nullable();
-            $table->string('collaborationType')->nullable();
-            $table->boolean('otherCollaboration')->nullable();
             $table->string('activityName')->nullable();
+            $table->boolean('otherActivity')->nullable();
             $table->string('countryOrigin')->nullable();
             $table->string('cityOrigin')->nullable();
             $table->string('countryDestination')->nullable();
@@ -35,7 +35,6 @@ return new class extends Migration
             $table->string('nameOfExternalResearcher')->nullable();
             $table->string('collaborationStay')->nullable();
             $table->boolean('otherStay')->nullable();
-            $table->string('nameOfResearch')->nullable();
             $table->integer('progressReport')->nullable();
             $table->string('comments')->nullable();
             $table->softDeletes();

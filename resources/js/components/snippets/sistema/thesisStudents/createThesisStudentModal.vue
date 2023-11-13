@@ -9,6 +9,15 @@
                     New Thesis
                 </slot>
                 <label for="">Progress year: {{ thesisStudent.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -29,6 +38,7 @@
                               <option value="Male">Male</option>
                               <option value="Female">Female</option>
                               <option value="Non binary">Non binary</option>
+                              <option value="Other">Other</option>
                               </select>
                         </div>
                         <div class="col-3">
@@ -140,13 +150,19 @@
                           <label for="">Year in which student starts: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
-                          <input id="yearInput1" type="number" v-model="thesisStudent.yearStart" :max="currentYear" @input="onInput1" class= "form-control" />
+                          <select class="form-select" id="selectYear" v-model="thesisStudent.yearStart">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
                       </div>
                       <div class="col-3">
                           <label for="">Year in which the thesis ends: </label>
-                          <label for="" style="color: orange;">*</label>
+                          <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
                           <br>
-                          <input id="yearInput2" type="number" v-model="thesisStudent.yearThesisEnd" :max="currentYear" @input="onInput2" class= "form-control" />
+                          <select class="form-select" id="selectYear" v-model="thesisStudent.yearThesisEnd">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
                       </div>
                       <div class="col-3">
                           <label for="">Resources provided by the Center: </label>
@@ -173,7 +189,7 @@
                     <div class="row">
                       <div class="col-3">
                           <label for="">Posterior working area: </label>
-                          <label for="" style="color: orange;">*</label>
+                          <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" v-model="thesisStudent.posteriorArea">
                             <option disabled value="">Select an area</option>
@@ -189,7 +205,7 @@
                       </div>
                       <div class="col-4">
                           <label for="">Institution of Posterior working area: </label>
-                          <label for="" style="color: orange;">*</label>
+                          <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="thesisStudent.institutionPosteriorArea">
                       </div>
@@ -205,7 +221,7 @@
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
                     v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createCollaboration()" :disabled="buttonDisable">
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="crearTesis()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
@@ -285,20 +301,34 @@ export default {
       showModalEditCotutor: false,
       showModalEditOther: false,
       buttonDisable: false,
-      thesisExtract: null,
+      file: null,
       draft: false,
       tutors:[],
       cotutors:[],
       others:[],
       errors:[],
+      usuarios: [],
+      idResearcher: '',
       buttonText:'Send Thesis',
       years: [],
     }),
     mounted() {
       this.calculateYears();
       this.getProgressReport();
+      this.getUsuarios2();
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a);
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
+      },
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.thesisStudent.progressReport = response.data;
@@ -324,11 +354,11 @@ export default {
         this.thesisStudent.yearThesisEnd = input.value.slice(0, 4);
       },
       clearFileInput() {
-        this.thesisExtract = null;
+        this.file = null;
         this.$refs.fileInput.value = '';
       },
       async getFile(e){
-        this.thesisExtract = e.target.files[0];
+        this.file = e.target.files[0];
       },
       calculateYears() {
         const currentYear = new Date().getFullYear();
@@ -426,8 +456,16 @@ export default {
               resources1 += resource.value + ',';
             }); 
           }
+          
+          var idUser1 = ''
+          if(this.idResearcher != ''){
+            idUser1 = this.idResearcher;
+          }else{
+            idUser1 = this.userID;
+          }
+            
           let thesisStudent = {
-            idUsuario: this.userID,
+            idUsuario: idUser1,
             status: 'Draft',
             identification: this.thesisStudent.identification,
             studentName: this.thesisStudent.studentName,
@@ -452,7 +490,7 @@ export default {
             institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
             comments: this.thesisStudent.comments,
             progressReport: this.thesisStudent.progressReport,
-            thesisExtract: this.thesisExtract,
+            file: this.file,
           };
           axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
             this.buttonDisable = true;
@@ -499,7 +537,8 @@ export default {
         var noTutor = false;
         for (const item in this.thesisStudent){
           if(this.thesisStudent[item] === "" || this.thesisStudent[item] === 0 || this.thesisStudent[item] === null){
-              if(this.thesisStudent.identification == '' && item == 'run' || this.thesisStudent.identification == '' && item == 'passport'){
+              if(item == 'yearThesisEnd' || item == 'posteriorArea' || item == 'institutionPosteriorArea'){
+              }else if(this.thesisStudent.identification == '' && item == 'run' || this.thesisStudent.identification == '' && item == 'passport'){
               }else if(this.thesisStudent.identification == 'run' && item == 'passport'){
               }else if(this.thesisStudent.identification == 'passport' && item == 'run'){
               }else if(item == 'tutorName'||item == 'tutorInstitution'||item == 'cotutorName'||item == 'cotutorInstitution'||item == 'otherName'||item == 'otherInstitution'){
@@ -518,6 +557,18 @@ export default {
           if(validacion == false){
             this.errors.push('invalidRut');
             }
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
+            this.errors.push('yearThesisEnd');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
+            this.errors.push('posteriorArea');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
+            this.errors.push('institutionPosteriorArea');
         }
 
         var mensaje = ""
@@ -636,8 +687,15 @@ export default {
               resources1 += resource.value + ',';
             });
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let thesisStudent = {
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               status: 'Finished',
               identification: this.thesisStudent.identification,
               studentName: this.thesisStudent.studentName,
@@ -662,7 +720,7 @@ export default {
               institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
               comments: this.thesisStudent.comments,
               progressReport: this.thesisStudent.progressReport,
-              thesisExtract: this.thesisExtract,
+              file: this.file,
             };
             axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.buttonDisable = true;

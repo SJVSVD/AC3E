@@ -22,6 +22,10 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Activity Type</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Date</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Main Responsible</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
@@ -37,6 +41,22 @@
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ outreachActivity.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="outreachActivity.activityType == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ outreachActivity.activityType }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="outreachActivity.activityName == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ outreachActivity.activityName }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="outreachActivity.date == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ outreachActivity.date }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="outreachActivity.nameOfTheMainResponsible == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ outreachActivity.nameOfTheMainResponsible }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">

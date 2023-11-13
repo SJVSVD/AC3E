@@ -39,7 +39,6 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Email</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Roles</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Permissions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
                                     </tr>
@@ -71,12 +70,6 @@
                                             <div v-if="usuario.roles == ''">---</div>
                                             <div v-else>
                                                 <p v-for="rol in usuario.roles" :key="rol.id" class="text-sm mb-0">{{ rol.name }}</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div v-if="usuario.permissions == ''">---</div>
-                                            <div v-else>
-                                                <p v-for="permiso in usuario.permissions" :key="permiso.id" class="text-sm mb-0">{{ permiso.name }}</p>
                                             </div>
                                         </td>
                                         <td class="align-middle text-end">

@@ -22,6 +22,11 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of AC3E Member</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of External Person</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Beggining Date</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
@@ -37,6 +42,26 @@
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ scCollaboration.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="scCollaboration.activityName == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ scCollaboration.activityName }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="scCollaboration.nameOfAC3EMember == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ scCollaboration.nameOfAC3EMember }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="scCollaboration.nameOfExternalResearcher == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ scCollaboration.nameOfExternalResearcher }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="scCollaboration.begginingDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ scCollaboration.begginingDate }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="scCollaboration.endingDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ scCollaboration.endingDate }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">

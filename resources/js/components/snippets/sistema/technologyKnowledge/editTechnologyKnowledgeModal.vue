@@ -6,14 +6,15 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Technology and knowledge transfer 
+                    Edit Technology and knowledge transfer
                 </slot>
+                <label for="">Progress year: {{ technologyKnowledge.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
                   <div class="row">
-                      <div class="text-uppercase pb-2">Category of transfer:</div>
+                      <div class="text-uppercase pb-2">Category of transfer:<label for="" style="color: orange;">*</label></div>
                       <div class="col-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
@@ -28,8 +29,9 @@
                       </div>
                       <div class="col-4">
                             <label for="">Type of transfer:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="technologyKnowledge.typeOfTransfer">
-                              <option disabled value="">Select a type</option>
+                              <option disabled :value="null">Select a type</option>
                               <option value="Spin-off">Spin-off</option>
                               <option value="Licenses">Licenses</option>
                               <option value="Technology transfer agreement">Technology transfer agreement</option>
@@ -45,23 +47,42 @@
                     </div>
                     <br>
                     <div class="row">
+                      <div class="col-6">
+                        <label for="">Description:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.description">
+                      </div>
+                      <div class="col-6">
+                        <label for="">Name of the institution involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.nameOfInstitutionInvolved">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
                       <div class="col-3">
                         <label for="">Beneficiary institution:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="technologyKnowledge.nameOfBeneficiary">
                       </div>
                       <div class="col-3">
                         <label for="">Country:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="technologyKnowledge.country">
                       </div>
                       <div class="col-3">
                         <label for="">City:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="technologyKnowledge.city">
                       </div>
                       <div class="col-3">
                         <label for="">Place/region:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="technologyKnowledge.placeRegion">
                       </div>
@@ -70,19 +91,24 @@
                     <div class="row">
                       <div class="col-2">
                           <label for="">Year: </label>
+                          <label for="" style="color: orange;">*</label>
                           <br>
-                          <input id="yearInput1" type="number" v-model="technologyKnowledge.year" :max="currentYear" @input="onInput1" class= "form-control" />
+                          <select class="form-select" id="selectYear" v-model="technologyKnowledge.year">
+                          <option disabled :value="null">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
                       </div>
                       <div class="col-6">
-                        <label for="">Name of research line:</label>
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
-                          v-model="technologyKnowledge.nameOfResearch"
+                          v-model="technologyKnowledge.researcherInvolved"
                           limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
-                          :options="options1"
+                          :options="researchers2"
                           mode="tags"
                           label="name"
                           trackBy="name"
@@ -100,12 +126,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createPatent()" :disabled="buttonDisable">
+                    v-model="draft"> Edit as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editTechnology()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -132,27 +158,20 @@ export default {
       technologyKnowledge:{
         technologyTransfer: false,
         knowledgeTransfer: false,
+        researcherInvolved: null,
         typeOfTransfer: '',
         nameOfBeneficiary: '',
         country: '',
         city: '',
         placeRegion: '',
         year: '',
-        nameOfResearch: null,
         comments: '',
-        progressReport: 9,
+        progressReport: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       id: '',
       draft: false,
       buttonDisable: false,
+      researchers2: '',
       errors:[],
       buttonText:'Edit transfer',
     }),
@@ -160,6 +179,7 @@ export default {
       technology1: Object,
     },
     created(){
+      this.getUsuarios2();
       this.id = this.technology1.id;
       this.technologyKnowledge.technologyTransfer = this.technology1.technologyTransfer;
       this.technologyKnowledge.knowledgeTransfer = this.technology1.knowledgeTransfer;
@@ -170,10 +190,13 @@ export default {
       this.technologyKnowledge.placeRegion = this.technology1.placeRegion;
       this.technologyKnowledge.year = this.technology1.year;
       this.technologyKnowledge.comments = this.technology1.comments;
+      this.technologyKnowledge.description = this.technology1.description;
+      this.technologyKnowledge.nameOfInstitutionInvolved = this.technology1.nameOfInstitutionInvolved;
+      this.technologyKnowledge.progressReport = this.technology1.progressReport;
 
-      if (this.technology1.nameOfResearch != null) {
-          const valoresSeparados1 = this.technology1.nameOfResearch.split(",");
-          this.technologyKnowledge.nameOfResearch = valoresSeparados1.map((valor, index) => {
+      if (this.technology1.researcherInvolved != null) {
+          const valoresSeparados1 = this.technology1.researcherInvolved.split(",");
+          this.technologyKnowledge.researcherInvolved = valoresSeparados1.map((valor, index) => {
               valor = valor.trim();
               if (valor.endsWith('.')) {
                   valor = valor.slice(0, -1);
@@ -182,8 +205,20 @@ export default {
               return { value: valor, name: valor };
           });
       }
+
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a);
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers2 = response.data;
+        }).catch(e=> console.log(e))
+      },
       onInput1(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
@@ -202,15 +237,16 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearch1 = "";
-            if (this.technologyKnowledge.nameOfResearch !== null){
-              if (this.technologyKnowledge.nameOfResearch.length !== 0) {
-                this.technologyKnowledge.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.technologyKnowledge.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
+
+            var researcherInvolved1 = "";
+            if (this.technologyKnowledge.researcherInvolved !== null){
+              if (this.technologyKnowledge.researcherInvolved.length !== 0) {
+                this.technologyKnowledge.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.technologyKnowledge.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
                   } else {
-                    nameOfResearch1 += ', ';
+                    researcherInvolved1 += ', ';
                   }
                 });
               }
@@ -218,6 +254,9 @@ export default {
 
             let technologyKnowledge = {
               status: 'Draft',
+              description: this.technologyKnowledge.description,
+              nameOfInstitutionInvolved: this.technologyKnowledge.nameOfInstitutionInvolved,
+              researcherInvolved: researcherInvolved1,
               technologyTransfer: this.technologyKnowledge.technologyTransfer,
               knowledgeTransfer: this.technologyKnowledge.knowledgeTransfer,
               typeOfTransfer: this.technologyKnowledge.typeOfTransfer,
@@ -226,7 +265,6 @@ export default {
               city: this.technologyKnowledge.city,
               placeRegion: this.technologyKnowledge.placeRegion,
               year: this.technologyKnowledge.year,
-              nameOfResearch: nameOfResearch1,
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };
@@ -276,7 +314,7 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createPatent() {
+      async editTechnology() {
         this.errors = [];
 
         let categoryTransferErrorAdded = false;
@@ -344,15 +382,16 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearch1 = "";
-            if (this.technologyKnowledge.nameOfResearch !== null){
-              if (this.technologyKnowledge.nameOfResearch.length !== 0) {
-                this.technologyKnowledge.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.technologyKnowledge.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
+
+            var researcherInvolved1 = "";
+            if (this.technologyKnowledge.researcherInvolved !== null){
+              if (this.technologyKnowledge.researcherInvolved.length !== 0) {
+                this.technologyKnowledge.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.technologyKnowledge.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
                   } else {
-                    nameOfResearch1 += ', ';
+                    researcherInvolved1 += ', ';
                   }
                 });
               }
@@ -360,6 +399,9 @@ export default {
 
             let technologyKnowledge = {
               status: 'Finished',
+              description: this.technologyKnowledge.description,
+              nameOfInstitutionInvolved: this.technologyKnowledge.nameOfInstitutionInvolved,
+              researcherInvolved: researcherInvolved1,
               technologyTransfer: this.technologyKnowledge.technologyTransfer,
               knowledgeTransfer: this.technologyKnowledge.knowledgeTransfer,
               typeOfTransfer: this.technologyKnowledge.typeOfTransfer,
@@ -368,7 +410,6 @@ export default {
               city: this.technologyKnowledge.city,
               placeRegion: this.technologyKnowledge.placeRegion,
               year: this.technologyKnowledge.year,
-              nameOfResearch: nameOfResearch1,
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };

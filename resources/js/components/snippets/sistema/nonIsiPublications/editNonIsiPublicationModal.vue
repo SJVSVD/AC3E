@@ -6,7 +6,7 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Publication
+                    Edit Publication 
                 </slot>
                 <label for="">Progress year: {{ nonIsiPublication.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
@@ -14,25 +14,32 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-5">
+                          <div class="col-6">
                               <label for="">Author(s): </label>
                               <label for="" style="color: orange;">*</label>
                               <br>
                               <input title="First Name and Last Name." type="text" class= "form-control" v-model="nonIsiPublication.authors">
                           </div>
-                          <div class="col-3">
-                            <br>
-                            <div class="form-check pt-2 ">
-                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                    v-model="coauthor">
-                                    ¿AC3E co-author? </label>
-                            </div>
-                          </div>
-                          <div class="col-4">
-                              <label for="">Coauthor(s):</label>
-                              <br>
-                              <input type="text" :disabled="coauthor == false" class= "form-control" v-model="nonIsiPublication.coauthor">
-                          </div>
+                          <div class="col-6">
+                          <label for="">Indexed by: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <div>
+                            <Multiselect
+                                placeholder="Select the options"
+                                v-model="nonIsiPublication.indexedBy"
+                                limit=4
+                                :searchable="true"
+                                :close-on-select="false"
+                                :createTag="true"
+                                :options="options2"
+                                mode="tags"
+                                label="name"
+                                trackBy="name"
+                                :object="true"
+                            />
+                        </div>
+                      </div>
                     </div>
                     <br>
                     <div class="row">
@@ -53,19 +60,16 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Volume:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.volume">
                       </div>
                       <div class="col-3">
                         <label for="">First Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.firstPage">
                       </div>
                       <div class="col-3">
                         <label for="">Last Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.lastPage">
                       </div>
@@ -73,7 +77,10 @@
                         <label for="">Year Published:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input id="yearInput" type="number" v-model="nonIsiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
+                        <select class="form-select" id="selectYear" v-model="nonIsiPublication.yearPublished">
+                          <option disabled :value="null">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
                       </div>
                     </div>
                     <br>
@@ -96,12 +103,48 @@
                                 trackBy="name"
                                 :object="true"
                             />
-                          </div>
+                        </div>
                       </div>
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.comments">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                          <label for="">Researcher involved: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <div>
+                            <Multiselect
+                                placeholder="Select the options"
+                                v-model="nonIsiPublication.researcherInvolved"
+                                limit=4
+                                :searchable="true"
+                                :close-on-select="false"
+                                :createTag="true"
+                                :options="researchers"
+                                mode="tags"
+                                label="name"
+                                trackBy="name"
+                                :object="true"
+                            />
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="form-group">
+                        <label for="archivo">File:</label>
+                        <label v-if="nonIsiPublication1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                        <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
+                        </div>
+                      </div>
+                      <div class="col-2 pt-2">
+                        <br>
+                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                        &nbsp;
+                        <a v-if="nonIsiPublication1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,nonIsiPublication1.usuario.name)"><i class="fa-solid fa-download"></i></a>
                       </div>
                     </div>
                     <hr size="3" class="separador">
@@ -151,12 +194,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
+                    v-model="draft"> Edit as a draft</label>
                     <a v-if="draft == false" class="btn btn-continue float-end" @click="editarPublicacion()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -183,20 +226,22 @@ export default {
     data: () => ({
       nonIsiPublication:{
         authors: "",
-        coauthor: "",
         articleTitle: "",
+        indexedBy: null,
         journalName: "",
         volume: "",
         firstPage: "",
         lastPage: "",
-        fundings: null,
-        mainResearchers: false,
-        associativeResearchers: false,
-        postDoc: false,
-        thesisStudents: false,
-        nationalExternalResearchers: false,
-        internationalExternalResearchers: false,
         yearPublished: "",
+        fundings: null,
+        mainResearchers: 0,
+        associativeResearchers: 0,
+        postDoc: 0,
+        thesisStudents: 0,
+        nationalExternalResearchers: 0,
+        internationalExternalResearchers: 0,
+        file: "",
+        researcherInvolved: null,
         comments: "",
         progressReport: "",
       },
@@ -204,8 +249,13 @@ export default {
         'Basal Financing Program Funding',
         'Other sources',
       ],
+      options2: [
+        'Scielo',
+        'Scopus',
+        'Conference',
+        'Other',
+      ],
       id: null,
-      coauthor: false,
       draft: false,
       currentYear: new Date().getFullYear(),
       buttonDisable: false,
@@ -216,6 +266,7 @@ export default {
       nonIsiPublication1: Object,
     },
     created(){
+      this.getUsuarios();
       this.id = this.nonIsiPublication1.id;
       this.nonIsiPublication.authors = this.nonIsiPublication1.authors;
       if (this.nonIsiPublication1.coauthor != null){
@@ -241,6 +292,31 @@ export default {
           });
       }
 
+      if (this.nonIsiPublication1.indexedBy != null) {
+          const valoresSeparados1 = this.nonIsiPublication1.indexedBy.split(",");
+          this.nonIsiPublication.indexedBy = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
+
+      if (this.nonIsiPublication1.researcherInvolved != null) {
+          const valoresSeparados1 = this.nonIsiPublication1.researcherInvolved.split(",");
+          this.nonIsiPublication.researcherInvolved = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
+
+      this.nonIsiPublication.file = this.nonIsiPublication1.file;
       this.nonIsiPublication.comments = this.nonIsiPublication1.comments;
       this.nonIsiPublication.mainResearchers = this.nonIsiPublication1.mainResearchers;
       this.nonIsiPublication.associativeResearchers = this.nonIsiPublication1.associativeResearchers;
@@ -249,8 +325,40 @@ export default {
       this.nonIsiPublication.nationalExternalResearchers = this.nonIsiPublication1.nationalExternalResearchers;
       this.nonIsiPublication.internationalExternalResearchers = this.nonIsiPublication1.internationalExternalResearchers;
       this.nonIsiPublication.progressReport = this.nonIsiPublication1.progressReport;    
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a); 
     },
     methods: {
+      descargarExtracto(id,nombre){
+          axios({
+              url: `api/nonIsiDownload/${id}`,
+              method: 'GET',
+              responseType: 'arraybuffer',
+          }).then((response) => {
+              let blob = new Blob([response.data], {
+                      type: 'application/pdf'
+                  })
+                  let link = document.createElement('a')
+                  link.href = window.URL.createObjectURL(blob)
+                  link.download = `nonIsiPublication-${nombre}.pdf`
+                  link.click()
+          });
+      },
+      clearFileInput() {
+        this.$refs.fileInput.value = '';
+      },
+      async getFile(e){
+        this.nonIsiPublication.file = e.target.files[0];
+      },
+      getUsuarios(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Edit draft',
@@ -272,10 +380,40 @@ export default {
                 });
               }
             }
+
+            var indexedBy1 = "";
+            if (this.nonIsiPublication.indexedBy !== null){
+              if (this.nonIsiPublication.indexedBy.length !== 0) {
+                this.nonIsiPublication.indexedBy.forEach((indexedBy, index) => {
+                  indexedBy1 += indexedBy.name;
+                  if (index === this.nonIsiPublication.indexedBy.length - 1) {
+                    indexedBy1 += '.';
+                  } else {
+                    indexedBy1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var researcherInvolved1 = "";
+            if (this.nonIsiPublication.researcherInvolved !== null){
+              if (this.nonIsiPublication.researcherInvolved.length !== 0) {
+                this.nonIsiPublication.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.nonIsiPublication.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
+                  } else {
+                    researcherInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let publication = {
               status: 'Draft',
               authors: this.nonIsiPublication.authors,
-              coauthor: this.nonIsiPublication.coauthor,
+              indexedBy: indexedBy1,
+              researcherInvolved: researcherInvolved1,
               articleTitle: this.nonIsiPublication.articleTitle,
               journalName: this.nonIsiPublication.journalName,
               volume: this.nonIsiPublication.volume,
@@ -290,8 +428,9 @@ export default {
               nationalExternalResearchers: this.nonIsiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.nonIsiPublication.internationalExternalResearchers,
               comments: this.nonIsiPublication.comments,
+              progressReport: this.nonIsiPublication.progressReport,
             };
-            axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
+            await axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
               this.buttonDisable = true;
               this.buttonText = 'Sending...';
               this.toast.success("Draft edited successfully!", {
@@ -308,7 +447,48 @@ export default {
                 icon: true,
                 rtl: false
               });
-              setTimeout(() => {this.cerrarModal();}, 1500);
+                const formData = new FormData();
+                formData.append('id', this.id);
+                formData.append('file', this.nonIsiPublication.file);
+                axios.post('api/nonIsi/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then( response => {
+                    console.log(response.data);
+                  this.toast.success("File added successfully!", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                  setTimeout(() => {this.cerrarModal();}, 1500);
+                })
+                .catch((error)=> {
+                  if (error.response.status == 422){
+                    this.errors = error.response.data.errors;
+                    this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                    });
+                  }
+                });
             })
             .catch((error)=> {
               if (error.response.status == 422){
@@ -347,23 +527,22 @@ export default {
       async editarPublicacion() {
         this.errors = [];
         const itemsToSkip = [
-          'mainResearchers',
-          'associativeResearchers',
-          'postDoc',
-          'thesisStudents',
-          'nationalExternalResearchers',
-          'internationalExternalResearchers',
-          'progressReport',
-          'comments'
+        'comments',
+        'volume',
+        'firstPage',
+        'lastPage',
+        'mainResearchers',
+        'associativeResearchers',
+        'postDoc',
+        'thesisStudents',
+        'nationalExternalResearchers',
+        'internationalExternalResearchers',
         ];
 
         for (const item in this.nonIsiPublication) {
             const skipItem = itemsToSkip.includes(item);
             if (!skipItem && (this.nonIsiPublication[item] === "" || this.nonIsiPublication[item] === 0 || this.nonIsiPublication[item] == null)) {
-                if (item === 'coauthor' && this.coauthor === false) {
-                } else {
-                    this.errors.push(item);
-                }
+                this.errors.push(item);
             }
         }
 
@@ -380,6 +559,10 @@ export default {
               mensaje =   mensaje + "The field Last Page is required" + "\n";
             }else if(item == 'yearPublished'){
               mensaje =   mensaje + "The field Year Published is required" + "\n";
+            }else if(item == 'indexedBy'){
+              mensaje =   mensaje + "The field Indexed By is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researcher Involved is required" + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -401,8 +584,8 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Edit Publication',
-            message: `¿Are you sure you want to edit this publication? This action cannot be undone.`,
+            title: 'Send Publication',
+            message: `¿Are you sure you want to send this publication? This action cannot be undone.`,
             okButton: 'Send',
             cancelButton: 'Return'
           })
@@ -420,10 +603,40 @@ export default {
                 });
               }
             }
+
+            var indexedBy1 = "";
+            if (this.nonIsiPublication.indexedBy !== null){
+              if (this.nonIsiPublication.indexedBy.length !== 0) {
+                this.nonIsiPublication.indexedBy.forEach((indexedBy, index) => {
+                  indexedBy1 += indexedBy.name;
+                  if (index === this.nonIsiPublication.indexedBy.length - 1) {
+                    indexedBy1 += '.';
+                  } else {
+                    indexedBy1 += ', ';
+                  }
+                });
+              }
+            }
+
+            var researcherInvolved1 = "";
+            if (this.nonIsiPublication.researcherInvolved !== null){
+              if (this.nonIsiPublication.researcherInvolved.length !== 0) {
+                this.nonIsiPublication.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.nonIsiPublication.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
+                  } else {
+                    researcherInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let publication = {
               status: 'Finished',
               authors: this.nonIsiPublication.authors,
-              coauthor: this.nonIsiPublication.coauthor,
+              indexedBy: indexedBy1,
+              researcherInvolved: researcherInvolved1,
               articleTitle: this.nonIsiPublication.articleTitle,
               journalName: this.nonIsiPublication.journalName,
               volume: this.nonIsiPublication.volume,
@@ -438,8 +651,10 @@ export default {
               nationalExternalResearchers: this.nonIsiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.nonIsiPublication.internationalExternalResearchers,
               comments: this.nonIsiPublication.comments,
+              file: this.nonIsiPublication.file,
+              progressReport: this.nonIsiPublication.progressReport,
             };
-            axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
+            await axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
               this.buttonDisable = true;
               this.buttonText = 'Sending...';
               this.toast.success("Publication edited successfully!", {
@@ -456,7 +671,48 @@ export default {
                 icon: true,
                 rtl: false
               });
-              setTimeout(() => {this.cerrarModal();}, 1500);
+              const formData = new FormData();
+              formData.append('id', this.id);
+              formData.append('file', this.nonIsiPublication.file);
+              axios.post('api/nonIsi/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then( response => {
+                  console.log(response.data);
+                this.toast.success("File added successfully!", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              })
+              .catch((error)=> {
+                if (error.response.status == 422){
+                  this.errors = error.response.data.errors;
+                  this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                  });
+                }
+              });
             })
             .catch((error)=> {
               if (error.response.status == 422){

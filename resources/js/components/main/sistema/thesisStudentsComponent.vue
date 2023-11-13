@@ -20,11 +20,12 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Thesis Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Student Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Tutor Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Academic Degree</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">University</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
                                     </tr>
@@ -34,25 +35,33 @@
                                         <td></td>
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ thesisStudent.id }}</p>
-                                        </td>                                          
+                                        </td>
+                                        <td>
+                                            <p v-if="thesisStudent.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ thesisStudent.status }}</p>
+                                            <p v-if="thesisStudent.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ thesisStudent.status }}</p>
+                                        </td>                                             
                                         <td>
                                             <p class="text-sm mb-0">{{ thesisStudent.usuario.name }}</p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ thesisStudent.studentName }}</p>
+                                            <p v-if="thesisStudent.thesisTitle == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ thesisStudent.thesisTitle }}</p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ thesisStudent.tutorName }}</p>
+                                            <p v-if="thesisStudent.studentName == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ thesisStudent.studentName }}</p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ thesisStudent.academicDegree }}</p>
+                                            <p v-if="thesisStudent.tutorName == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ thesisStudent.tutorName }}</p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ thesisStudent.university }}</p>
+                                            <p v-if="thesisStudent.academicDegree == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ thesisStudent.academicDegree }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="thesisStudent.thesisExtract != null" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(thesisStudent.id, thesisStudent.thesisTitle)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-if="thesisStudent.file != null" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(thesisStudent.id, thesisStudent.usuario.name)"><i class="fa-solid fa-download"></i></a>
                                                 <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verThesis(thesisStudent)"><i class="fa-regular fa-eye"></i></a>
@@ -68,7 +77,7 @@
                             <div class="row">
                                 <div class="col-3">
                                     <label style="font-weight: 500">
-These buttons use the elements selected in the table, if none exist, it will select all the records. </label>
+                                    These buttons use the elements selected in the table, if none exist, it will select all the records. </label>
                                 </div>
                                 <div class="col-auto">
                                     <label title="To select a single record from the table, just do &#013; Click on the box in the first column to select &#013; several consecutive hold SHIFT, to select several &#013; non-consecutive hold CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>

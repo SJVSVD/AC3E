@@ -15,36 +15,30 @@
                 <slot name="body">
                     <div class="row">
                           <div class="col-3">
-                            <label for="">Activity Type:</label>
+                            <label for="">Activity Name:</label>
                             <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="scCollaboration.activityType">
-                              <option disabled value="">Select a type</option>
-                              <option value="International congress">National</option>
-                              <option value="National congress">International</option>
-                              </select>
-                          </div>
-                          <div class="col-3">
-                            <label for="">Collaboration Type:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="scCollaboration.collaborationType">
-                              <option disabled value="">Select a type</option>
-                              <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
-                              <option value="Long Visit (More than two weeks)">Long Visit (More than two weeks)</option>
+                            <br>
+                            <select class="form-select" v-model="scCollaboration.activityName">
+                              <option disabled :value="null">Select a type</option>
+                              <option value="Visit in Chile (include students)">Visit in Chile (include students)</option>
+                              <option value="Visit abroad (include students)">Visit abroad (include students)</option>
+                              <option value="Research Stay (Pasantia de investigacion) (include students)">Research Stay (Pasantia de investigacion) (include students)</option>
+                              <option value="Participation in R&D Projects directed by other Researcher (external)">Participation in R&D Projects directed by other Researcher (external)</option>
+                              <option value="Participation in R&D Projects directed by an AC3E Researcher">Participation in R&D Projects directed by an AC3E Researcher</option>
                               <option value="Other">Other</option>
                               </select>
                           </div>
-                          <div v-if="scCollaboration.collaborationType == 'Other'" class="col-3">
-                            <label for="">Other Collaboration:</label>
+                          <div v-if="scCollaboration.activityName == 'Other'" class="col-3">
+                            <label for="">Other Activity:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
-
                           <div class="col-3">
                             <label for="">Collaboration Stay:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="scCollaboration.collaborationStay">
-                              <option disabled value="">Select a type</option>
+                              <option disabled :value="null">Select a type</option>
                               <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
                               <option value="Long Visit (More than two weeks)">Long Visit (More than two weeks)</option>
                               <option value="Other">Other</option>
@@ -60,11 +54,11 @@
                     <br>
                     <div class="row">
                       <div class="col-6">
-                        <label for="">Name of people involved:</label>
+                        <label for="">Researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
-                          v-model="scCollaboration.peopleInvolved"
+                          v-model="scCollaboration.researcherInvolved"
                           limit=4
                           :searchable="true"
                           :close-on-select="false"
@@ -85,28 +79,33 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-4">
+                      <div class="col-5">
                         <label for="">Name of AC3E member:</label>
                         <label for="" style="color: orange;">*</label>
                         <select class="form-select" v-model="scCollaboration.nameOfAC3EMember">
-                        <option disabled value="">Select a member</option>
+                        <option disabled :value="null">Select a member</option>
                         <option v-for="researcher in researchers2" v-bind:key="researcher.id" v-bind:value="researcher.id">
                           {{ researcher.name }}
                         </option>
                         </select>
                       </div>
                       <div class="col-4">
-                        <label for="">Name of external researcher:</label>
+                        <label v-if="scCollaboration.studentOrResearcher == 'Researcher'" for="">Name of external researcher:</label>
+                        <label v-else for="">Name of external person:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.nameOfExternalResearcher">
                       </div>
-                      <div class="col-4">
-                        <label for="">Activity Name:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="scCollaboration.activityName">
-                      </div>
+                      <div class="col-3">
+                            <label for="">Student or Researcher:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <select class="form-select" v-model="scCollaboration.studentOrResearcher">
+                              <option disabled :value="null">Select a type</option>
+                              <option value="Student">Student</option>
+                              <option value="Researcher">Researcher</option>
+                              </select>
+                          </div>
                     </div>
                     <br>
                     <div class="row">
@@ -149,27 +148,16 @@
                         <br>
                         <input type="date" class= "form-control" v-model="scCollaboration.endingDate">
                       </div>
-                      <div class="col-6">
-                        <label for="">Name of research line:</label>
+                      <div class="col-3">
+                        <label for="">Activity Type:</label>
                         <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="scCollaboration.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
+                        <select class="form-select" v-model="scCollaboration.activityType">
+                          <option disabled :value="null">Select a type</option>
+                          <option value="International congress">National</option>
+                          <option value="National congress">International</option>
+                          </select>
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
+                      <div class="col-3">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.comments">
@@ -180,12 +168,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Edit as a draft</label>
+                    v-model="draft"> Save as a draft</label>
                     <a v-if="draft == false" class="btn btn-continue float-end" @click="createCollaboration()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Edit draft
+                      Save draft
                     </a>
                   </slot>
                 </div>
@@ -211,9 +199,8 @@ export default {
     data: () => ({
       scCollaboration:{
         activityType: '',
-        collaborationType: '',
         activityName: '',
-        peopleInvolved: null,
+        researcherInvolved: null,
         institutionCollaborates: '',
         countryOrigin: '',
         cityOrigin: '',
@@ -221,17 +208,9 @@ export default {
         cityDestination: '',
         beginningDate: '',
         endingDate: '',
-        nameOfResearch: null,
         progressReport: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
+
       id: '',
       other: '',
       draft: false,
@@ -262,10 +241,11 @@ export default {
       this.scCollaboration.nameOfExternalResearcher = this.collaboration1.nameOfExternalResearcher;
       this.scCollaboration.comments = this.collaboration1.comments;
       this.scCollaboration.progressReport = this.collaboration1.progressReport;
+      this.scCollaboration.studentOrResearcher = this.collaboration1.studentOrResearcher;
 
-      if (this.collaboration1.nameOfResearch != null) {
-          const valoresSeparados1 = this.collaboration1.nameOfResearch.split(",");
-          this.scCollaboration.nameOfResearch = valoresSeparados1.map((valor, index) => {
+      if (this.collaboration1.researcherInvolved != null) {
+          const valoresSeparados1 = this.collaboration1.researcherInvolved.split(",");
+          this.scCollaboration.researcherInvolved = valoresSeparados1.map((valor, index) => {
               valor = valor.trim();
               if (valor.endsWith('.')) {
                   valor = valor.slice(0, -1);
@@ -275,23 +255,11 @@ export default {
           });
       }
 
-      if (this.collaboration1.peopleInvolved != null) {
-          const valoresSeparados1 = this.collaboration1.peopleInvolved.split(",");
-          this.scCollaboration.peopleInvolved = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
-
-              return { value: valor, name: valor };
-          });
-      }
-
-      if(this.collaboration1.otherCollaboration == true){
-        this.scCollaboration.collaborationType = 'Other';
-        this.other = this.collaboration1.collaborationType;
+      if(this.collaboration1.otherActivity == true){
+        this.scCollaboration.activityName = 'Other';
+        this.other = this.collaboration1.activityName;
       }else{
-        this.scCollaboration.collaborationType = this.collaboration1.collaborationType;
+        this.scCollaboration.activityName = this.collaboration1.activityName;
       }
 
       if(this.collaboration1.otherStay == true){
@@ -310,37 +278,20 @@ export default {
       clearFileInput() {
         this.$refs.fileInput.value = '';
       },
-      async getFile(e){
-        this.participationSc.file = e.target.files[0];
-      },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
-            title: 'Save draft',
+            title: 'Edit draft',
             message: `¿Are you sure you want to edit this Sc Collaboration as a draft? this action cannot be undone.`,
-            okButton: 'Save',
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.scCollaboration.nameOfResearch !== null){
-              if (this.scCollaboration.nameOfResearch.length !== 0) {
-                this.scCollaboration.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.scCollaboration.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
-
             var peopleInvolved1 = "";
-            if (this.scCollaboration.peopleInvolved !== null){
-              if (this.scCollaboration.peopleInvolved.length !== 0) {
-                this.scCollaboration.peopleInvolved.forEach((peopleInvolved, index) => {
-                  peopleInvolved1 += peopleInvolved.name;
-                  if (index === this.scCollaboration.peopleInvolved.length - 1) {
+            if (this.scCollaboration.researcherInvolved !== null){
+              if (this.scCollaboration.researcherInvolved.length !== 0) {
+                this.scCollaboration.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.scCollaboration.researcherInvolved.length - 1) {
                     peopleInvolved1 += '.';
                   } else {
                     peopleInvolved1 += ', ';
@@ -354,11 +305,11 @@ export default {
             var type2 = '';
             var other2 = 0;
 
-            if(this.scCollaboration.collaborationType == 'Other'){
+            if(this.scCollaboration.activityName == 'Other'){
               type = this.other;
               other1 = 1;
             }else{
-              type = this.scCollaboration.collaborationType;
+              type = this.scCollaboration.activityName;
             }
 
             if(this.scCollaboration.collaborationStay == 'Other'){
@@ -372,18 +323,17 @@ export default {
               status: 'Draft',
               moduleType: 0,
               activityType: this.scCollaboration.activityType,
-              collaborationType: type,
-              otherCollaboration: other1,
               institutionCollaborates: this.scCollaboration.institutionCollaborates,
-              peopleInvolved: peopleInvolved1,
-              activityName: this.scCollaboration.activityName,
+              researcherInvolved: peopleInvolved1,
+              studentOrResearcher: this.scCollaboration.studentOrResearcher,
+              activityName: type,
+              otherActivity: other1,
               countryOrigin: this.scCollaboration.countryOrigin,
               cityOrigin: this.scCollaboration.cityOrigin,
               countryDestination: this.scCollaboration.countryDestination,
               cityDestination: this.scCollaboration.cityDestination,
               beginningDate: this.scCollaboration.beginningDate,
               endingDate: this.scCollaboration.endingDate,
-              nameOfResearch: nameOfResearchLine1,
               nameOfAC3EMember: this.scCollaboration.nameOfAC3EMember,
               nameOfExternalResearcher: this.scCollaboration.nameOfExternalResearcher,
               collaborationStay: type2,
@@ -450,7 +400,7 @@ export default {
             }
         }
 
-        if(this.scCollaboration.collaborationType == 'Other' && this.other == ''){
+        if(this.scCollaboration.activityName == 'Other' && this.other == ''){
           this.errors.push('other');
         }
 
@@ -463,12 +413,10 @@ export default {
           this.errors.forEach(item => {
             if(item == 'activityType'){
               mensaje =   mensaje + "The field Activity Type is required" + "\n";
-            }else if(item == 'collaborationType'){
-              mensaje =   mensaje + "The field Collaboration Type is required" + "\n";
             }else if(item == 'activityName'){
               mensaje =   mensaje + "The field Activity Name is required" + "\n";
-            }else if(item == 'peopleInvolved'){
-              mensaje =   mensaje + "The field People Involved is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researcher Involved is required" + "\n";
             }else if(item == 'institutionCollaborates'){
               mensaje =   mensaje + "The field Institution which collaborates is required" + "\n";
             }else if(item == 'countryOrigin'){
@@ -483,10 +431,10 @@ export default {
               mensaje =   mensaje + "The field Beginning Date is required" + "\n";
             }else if(item == 'endingDate'){
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else if(item == 'progressReport'){
               mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+            }else if(item == 'other'){
+              mensaje =   mensaje + "The field Other Activity is required" + "\n";
             }else if(item == 'other2'){
               mensaje =   mensaje + "The field Other Stay is required" + "\n";
             }else{
@@ -510,32 +458,19 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Save Collaboration',
-            message: `¿Are you sure you want to save this Sc Collaboration? This action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit Collaboration',
+            message: `¿Are you sure you want to edit this Sc Collaboration? This action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.scCollaboration.nameOfResearch !== null){
-              if (this.scCollaboration.nameOfResearch.length !== 0) {
-                this.scCollaboration.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.scCollaboration.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
 
             var peopleInvolved1 = "";
-            if (this.scCollaboration.peopleInvolved !== null){
-              if (this.scCollaboration.peopleInvolved.length !== 0) {
-                this.scCollaboration.peopleInvolved.forEach((peopleInvolved, index) => {
-                  peopleInvolved1 += peopleInvolved.name;
-                  if (index === this.scCollaboration.peopleInvolved.length - 1) {
+            if (this.scCollaboration.researcherInvolved !== null){
+              if (this.scCollaboration.researcherInvolved.length !== 0) {
+                this.scCollaboration.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.scCollaboration.researcherInvolved.length - 1) {
                     peopleInvolved1 += '.';
                   } else {
                     peopleInvolved1 += ', ';
@@ -549,11 +484,11 @@ export default {
             var type2 = '';
             var other2 = 0;
 
-            if(this.scCollaboration.collaborationType == 'Other'){
+            if(this.scCollaboration.activityName == 'Other'){
               type = this.other;
               other1 = 1;
             }else{
-              type = this.scCollaboration.collaborationType;
+              type = this.scCollaboration.activityName;
             }
 
             if(this.scCollaboration.collaborationStay == 'Other'){
@@ -567,18 +502,17 @@ export default {
               status: 'Finished',
               moduleType: 0,
               activityType: this.scCollaboration.activityType,
-              collaborationType: type,
-              otherCollaboration: other1,
               institutionCollaborates: this.scCollaboration.institutionCollaborates,
-              peopleInvolved: peopleInvolved1,
-              activityName: this.scCollaboration.activityName,
+              researcherInvolved: peopleInvolved1,
+              studentOrResearcher: this.scCollaboration.studentOrResearcher,
+              activityName: type,
+              otherActivity: other1,
               countryOrigin: this.scCollaboration.countryOrigin,
               cityOrigin: this.scCollaboration.cityOrigin,
               countryDestination: this.scCollaboration.countryDestination,
               cityDestination: this.scCollaboration.cityDestination,
               beginningDate: this.scCollaboration.beginningDate,
               endingDate: this.scCollaboration.endingDate,
-              nameOfResearch: nameOfResearchLine1,
               nameOfAC3EMember: this.scCollaboration.nameOfAC3EMember,
               nameOfExternalResearcher: this.scCollaboration.nameOfExternalResearcher,
               collaborationStay: type2,

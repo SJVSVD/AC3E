@@ -9,6 +9,15 @@
                     New Participation Sc Event
                 </slot>
                 <label for="">Progress year: {{ participationSc.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -100,21 +109,9 @@
                     <br>
                     <div class="row">
                       <div class="col-6">
-                        <label for="">Name of research line:</label>
+                        <label for="">Name of participants:</label>
                         <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="participationSc.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
+                        <input type="text" class= "form-control" v-model="participationSc.nameOfParticipants">
                       </div>
                       <div class="col-5">
                         <div class="form-group">
@@ -130,23 +127,6 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Name of participants:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the participants"
-                          v-model="participationSc.nameOfParticipants"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-6">
                           <label for="">Comments:</label>
                           <br>
@@ -196,35 +176,34 @@ export default {
         city: '',
         startDate: '',
         endingDate: '',
-        nameOfResearch: null,
-        nameOfParticipants: null,
+        nameOfParticipants: '',
         progressReport: '',
         file: '',
         comments: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       other: '',
       other2: '',
       draft: false,
       researchers: '',
+      usuarios: [],
+      idResearcher: '',
       buttonDisable: false,
       errors:[],
       buttonText:'Save Participation',
     }),
     mounted(){
       this.getUsuarios();
+      this.getUsuarios2();
     },
     created(){
       this.getProgressReport();
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
+      },
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.participationSc.progressReport = response.data;
@@ -249,33 +228,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.participationSc.nameOfResearch !== null){
-              if (this.participationSc.nameOfResearch.length !== 0) {
-                this.participationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.participationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
 
-            var nameOfParticipants1 = "";
-            if (this.participationSc.nameOfParticipants !== null){
-              if (this.participationSc.nameOfParticipants.length !== 0) {
-                this.participationSc.nameOfParticipants.forEach((nameOfParticipants, index) => {
-                  nameOfParticipants1 += nameOfParticipants.name;
-                  if (index === this.participationSc.nameOfParticipants.length - 1) {
-                    nameOfParticipants1 += '.';
-                  } else {
-                    nameOfParticipants1 += ', ';
-                  }
-                });
-              }
-            }
 
             var typeEvent = '';
             var other = 0;
@@ -297,9 +250,16 @@ export default {
               typeOfParticipation = this.participationSc.typeOfParticipation;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let participationSc = {
               status: 'Draft',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               typeEvent: typeEvent,
               other: other,
               presentationTitle: this.participationSc.presentationTitle,
@@ -311,8 +271,7 @@ export default {
               startDate: this.participationSc.startDate,
               endingDate: this.participationSc.endingDate,
               progressReport: this.participationSc.progressReport,
-              nameOfParticipants: nameOfParticipants1,
-              nameOfResearch: nameOfResearchLine1,
+              nameOfParticipants: this.participationSc.nameOfParticipants,
               file: this.participationSc.file,
               comments: this.participationSc.comments,
             };
@@ -392,8 +351,6 @@ export default {
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
             }else if(item == 'nameOfParticipants'){
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else if(item == 'progressReport'){
               mensaje =   mensaje + "The field Progress Report line is required" + "\n";
             }else{
@@ -423,33 +380,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.participationSc.nameOfResearch !== null){
-              if (this.participationSc.nameOfResearch.length !== 0) {
-                this.participationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.participationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
 
-            var nameOfParticipants1 = "";
-            if (this.participationSc.nameOfParticipants !== null){
-              if (this.participationSc.nameOfParticipants.length !== 0) {
-                this.participationSc.nameOfParticipants.forEach((nameOfParticipants, index) => {
-                  nameOfParticipants1 += nameOfParticipants.name;
-                  if (index === this.participationSc.nameOfParticipants.length - 1) {
-                    nameOfParticipants1 += '.';
-                  } else {
-                    nameOfParticipants1 += ', ';
-                  }
-                });
-              }
-            }
 
             var typeEvent = '';
             var other = 0;
@@ -471,9 +402,16 @@ export default {
               typeOfParticipation = this.participationSc.typeOfParticipation;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let participationSc = {
               status: 'Finished',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               typeEvent: typeEvent,
               other: other,
               presentationTitle: this.participationSc.presentationTitle,
@@ -485,8 +423,7 @@ export default {
               startDate: this.participationSc.startDate,
               endingDate: this.participationSc.endingDate,
               progressReport: this.participationSc.progressReport,
-              nameOfParticipants: nameOfParticipants1,
-              nameOfResearch: nameOfResearchLine1,
+              nameOfParticipants: this.participationSc.nameOfParticipants,
               file: this.participationSc.file,
               comments: this.participationSc.comments,
             };

@@ -22,6 +22,10 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Type of Transfer</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Description</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Institution Involved</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Researcher Involved</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
@@ -37,6 +41,22 @@
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ technology.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="technology.typeOfTransfer == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ technology.typeOfTransfer }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="technology.description == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ technology.description }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="technology.institutionInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ technology.institutionInvolved }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="technology.researcherInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ technology.researcherInvolved }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">

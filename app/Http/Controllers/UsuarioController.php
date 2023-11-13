@@ -105,7 +105,6 @@ class UsuarioController extends Controller
             $user = User::create($input);
             $user->save();
             $user->assignRole($request->input('roles'));
-            $user->givePermissionTo($request->input('permisos'));
             return response()->json("Usuario Creado!");
         }
     }

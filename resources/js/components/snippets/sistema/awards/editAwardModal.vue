@@ -24,7 +24,10 @@
                             <label for="">Year:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
-                            <input id="yearInput" type="number" v-model="award.year" :max="currentYear" @input="onInput" class= "form-control" />
+                            <select class="form-select" id="selectYear" v-model="award.year">
+                            <option disabled :value="null">Select a year</option>
+                            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                            </select>
                           </div>
                           <div class="col-3">
                             <label for="">Institution:</label>
@@ -120,6 +123,12 @@ export default {
       this.award.country = this.award1.country;
       this.award.progressReport = this.award1.progressReport;
       this.award.comments = this.award1.comments;
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a); 
     },
     methods: {
       async guardarBorrador(){

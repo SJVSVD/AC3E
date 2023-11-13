@@ -22,6 +22,11 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Authors</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Patent</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Status Application</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Registration Number</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Researcher Involved</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
@@ -37,6 +42,26 @@
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ patent.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="patent.authors == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ patent.authors }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="patent.nameOfPatent == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ patent.nameOfPatent }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="patent.statusApplication == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ patent.statusApplication }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="patent.registrationNumber == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ patent.registrationNumber }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="patent.researcherInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ patent.researcherInvolved }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">

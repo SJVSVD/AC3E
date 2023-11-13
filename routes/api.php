@@ -24,6 +24,8 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\postDocController;
 use App\Http\Controllers\publicPrivateController;
+use App\Http\Controllers\researchLineController;
+use App\Http\Controllers\roleUserController;
 use App\Http\Controllers\technologyKnowledgeController;
 
 // Rutas Generales (SYS_)
@@ -45,6 +47,8 @@ Route::post('useDoi', [isiPublicationsController::class, 'useDoi']);
 
 //nonIsiPublications
 Route::apiResource('nonIsiPublications', nonIsiPublicationsController::class);
+Route::get('nonIsiDownload/{id}' , [nonIsiPublicationsController::class, 'nonIsiDownload']);
+Route::post('nonIsi/addFile', [nonIsiPublicationsController::class, 'addFile']);
 
 //Books
 Route::apiResource('books', booksController::class);
@@ -71,6 +75,7 @@ Route::apiResource('conjointProjects', conjointProjectController::class);
 //thesisStudents
 Route::apiResource('thesisStudents', thesisStudentController::class);
 Route::get('thesisDownload/{id}' , [thesisStudentController::class, 'thesisDownload']);
+Route::post('thesisStudents/addFile', [thesisStudentController::class, 'addFile']);
 
 //outreachActivities
 Route::apiResource('outreachActivities', outreachActivitiesController::class);
@@ -107,3 +112,11 @@ Route::get('showProgressReport' , [extraTablesController::class, 'showProgressRe
 //Dashboard
 
 Route::get('getRegistros/{cantidad}' , [dashboardController::class, 'getRegistros']);
+
+//Role User
+
+Route::apiResource('rolesUser', roleUserController::class);
+
+//Role User
+
+Route::apiResource('researchLines', researchLineController::class);

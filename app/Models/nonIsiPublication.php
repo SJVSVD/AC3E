@@ -16,7 +16,7 @@ class nonIsiPublication extends Model
         'status',
         'idUsuario',
         'authors',
-        'coauthor',
+        'indexedBy',
         'articleTitle',
         'journalName',
         'volume',
@@ -30,6 +30,8 @@ class nonIsiPublication extends Model
         'thesisStudents',
         'nationalExternalResearchers',
         'internationalExternalResearchers',
+        'researcherInvolved',
+        'file',
         'comments',
         'progressReport'
     ];

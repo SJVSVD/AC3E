@@ -61,7 +61,7 @@
                     <li><a class="link_name" href="/dashboard">Main Page</a></li>
                 </ul>
             </li>
-            @role('Administrador')
+            @role('Administrator')
             <li>
                 <div class="iocn-link">
                     <a href="#">

@@ -6,10 +6,10 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Publication
+                    New Publication 
                 </slot>
                 <label for="">Progress year: {{ isiPublication.progressReport }}</label>
-                <label v-if="is('Administrador')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
                     <option v-for="researcher in researchers" v-bind:key="researcher.id" v-bind:value="researcher.id">
@@ -75,19 +75,16 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="">Volume:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.volume">
                       </div>
                       <div class="col-3">
                         <label for="">First Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.firstPage">
                       </div>
                       <div class="col-3">
                         <label for="">Last Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.lastPage">
                       </div>
@@ -95,7 +92,10 @@
                         <label for="">Year Published:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input id="yearInput" type="number" v-model="isiPublication.yearPublished" :max="currentYear" @input="onInput" class= "form-control" />
+                        <select class="form-select" id="selectYear" v-model="isiPublication.yearPublished">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
                       </div>
                     </div>
                     <br>
@@ -120,19 +120,6 @@
                             />
                         </div>
                       </div>
-                      <div class="col-3">
-                        <label for="">Sending Date:</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="isiPublication.sendingDate">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Acceptance Date:</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="isiPublication.acceptanceDate">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <br>
@@ -211,7 +198,7 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
-
+let user = document.head.querySelector('meta[name="user"]');
 export default {
     components: { Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
@@ -233,8 +220,6 @@ export default {
         thesisStudents: false,
         nationalExternalResearchers: false,
         internationalExternalResearchers: false,
-        sendingDate: "",
-        acceptanceDate: "",
         comments: "",
         progressReport: "",
       },
@@ -249,13 +234,28 @@ export default {
       idResearcher: '',
       researchers: [],
       errors:[],
+      years: [],
       buttonText:'Send Publication',
     }),
     mounted(){
       this.getUsuarios();
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a);
     },
     created(){
       this.getProgressReport();
+      var role = JSON.parse(user.content).idRole;
+      if(role == '1'){
+        this.isiPublication.associativeResearchers = true;
+      }else if(role == '2'){
+        this.isiPublication.postDoc = true;
+      }else if(role == '3'){
+        this.isiPublication.mainResearchers = true;
+      }
     },
     methods: {
       getUsuarios(){
@@ -317,8 +317,6 @@ export default {
               nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
               progressReport: this.isiPublication.progressReport,
-              sendingDate: this.isiPublication.sendingDate,
-              acceptanceDate: this.isiPublication.acceptanceDate,
               comments: this.isiPublication.comments,
             };
             axios.post("api/isiPublications", publication ).then((result) => {
@@ -440,7 +438,10 @@ export default {
         'sendingDate',
         'acceptanceDate',
         'progressReport',
-        'comments'
+        'comments',
+        'volume',
+        'firstPage',
+        'lastPage'
         ];
 
         for (const item in this.isiPublication) {

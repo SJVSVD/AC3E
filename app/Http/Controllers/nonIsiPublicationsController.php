@@ -10,8 +10,32 @@ class nonIsiPublicationsController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
+        if($request->hasFile('file')){
+            $input['file'] = $request->file('file')->store('nonIsiPublication','public');
+        }
         $nonIsiPublication = nonIsiPublication::create($input);
         return response()->json("Publicación Creada!");
+    }
+
+    public function nonIsiDownload($id){
+        $nonIsi = nonIsiPublication::find($id);
+        $pathtoFile = public_path().'/defaults/'.$nonIsi['file'];
+        return response()->download($pathtoFile);
+    }
+
+    public function addFile(Request $request){
+        $input = $request->all();
+        
+        $nonIsi = nonIsiPublication::where('id', $input['id'])->first();
+        if(gettype($input['file']) == 'object'){
+            if($request->hasFile('file')){
+                $input['file'] = $request->file('file')->store('nonIsiPublication','public');
+            }
+        }else if($input['file'] == 'null'){
+            unset($input['file']);
+        }
+        $nonIsi = nonIsiPublication::find($request['id'])->update($input);
+        return response()->json($nonIsi);
     }
 
     public function show($userID){
@@ -27,7 +51,7 @@ class nonIsiPublicationsController extends Controller
         }
         else{
             foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrador'){
+                if ($rol['name'] == 'Administrator'){
                     array_push($roles, $rol['name']);
                     $administrador = true;
                 }

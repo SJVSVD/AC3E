@@ -18,7 +18,7 @@
                             <label for="">Type of Event:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="participationSc.typeEvent">
-                              <option disabled value="">Select a type</option>
+                              <option disabled :value="null">Select a type</option>
                               <option value="International congress">International congress</option>
                               <option value="National congress">National congress</option>
                               <option value="Session chair">Session chair</option>
@@ -37,7 +37,7 @@
                             <label for="">Type of Participation:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="participationSc.typeOfParticipation">
-                              <option disabled value="">Select a type</option>
+                              <option disabled :value="null">Select a type</option>
                               <option value="Paper presentation">International congress</option>
                               <option value="Talk">Talk</option>
                               <option value="Workshop">Workshop</option>
@@ -100,21 +100,9 @@
                     <br>
                     <div class="row">
                       <div class="col-6">
-                        <label for="">Name of research line:</label>
+                        <label for="">Name of participants:</label>
                         <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="participationSc.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
+                        <input type="text" class= "form-control" v-model="participationSc.nameOfParticipants">
                       </div>
                       <div class="col-4">
                         <div class="form-group">
@@ -132,23 +120,6 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Name of participants:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the participants"
-                          v-model="participationSc.nameOfParticipants"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-6">
                           <label for="">Comments:</label>
                           <br>
@@ -198,24 +169,16 @@ export default {
         city: '',
         startDate: '',
         endingDate: '',
-        nameOfResearch: null,
-        nameOfParticipants: null,
+        nameOfParticipants: '',
         progressReport: '',
         file: '',
         comments: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       other: '',
       other2: '',
       draft: false,
       researchers: '',
+      user: '',
       id: '',
       buttonDisable: false,
       errors:[],
@@ -229,6 +192,7 @@ export default {
     },
     created(){
       this.id = this.participation1.id;
+      this.user = this.participation1.usuario.name;
       this.participationSc.typeEvent = this.participation1.typeEvent;
       this.participationSc.typeOfParticipation = this.participation1.typeOfParticipation;
       this.participationSc.eventName = this.participation1.eventName;
@@ -240,29 +204,8 @@ export default {
       this.participationSc.progressReport = this.participation1.progressReport;
       this.participationSc.endingDate = this.participation1.endingDate;
       this.participationSc.comments = this.participation1.comments;
-      if (this.participation1.nameOfResearch != null) {
-          const valoresSeparados1 = this.participation1.nameOfResearch.split(",");
-          this.participationSc.nameOfResearch = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
+      this.participationSc.nameOfParticipants = this.participation1.nameOfParticipants;
 
-              return { value: valor, name: valor };
-          });
-      }
-
-      if (this.participation1.nameOfParticipants != null) {
-          const valoresSeparados1 = this.participation1.nameOfParticipants.split(",");
-          this.participationSc.nameOfParticipants = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
-
-              return { value: valor, name: valor };
-          });
-      }
 
       if(this.participation1.other == true){
         this.participationSc.typeEvent = 'Other';
@@ -275,6 +218,21 @@ export default {
       }
     },
     methods: {
+      descargarExtracto(id,nombre){
+          axios({
+              url: `api/participationDownload/${id}`,
+              method: 'GET',
+              responseType: 'arraybuffer',
+          }).then((response) => {
+              let blob = new Blob([response.data], {
+                      type: 'application/pdf'
+                  })
+                  let link = document.createElement('a')
+                  link.href = window.URL.createObjectURL(blob)
+                  link.download = `Participation-${nombre}.pdf`
+                  link.click()
+          });
+      },
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
@@ -294,33 +252,6 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.participationSc.nameOfResearch !== null){
-              if (this.participationSc.nameOfResearch.length !== 0) {
-                this.participationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.participationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
-
-            var nameOfParticipants1 = "";
-            if (this.participationSc.nameOfParticipants !== null){
-              if (this.participationSc.nameOfParticipants.length !== 0) {
-                this.participationSc.nameOfParticipants.forEach((nameOfParticipants, index) => {
-                  nameOfParticipants1 += nameOfParticipants.name;
-                  if (index === this.participationSc.nameOfParticipants.length - 1) {
-                    nameOfParticipants1 += '.';
-                  } else {
-                    nameOfParticipants1 += ', ';
-                  }
-                });
-              }
-            }
             var typeEvent = '';
             var other = 0;
 
@@ -354,13 +285,12 @@ export default {
               startDate: this.participationSc.startDate,
               endingDate: this.participationSc.endingDate,
               progressReport: this.participationSc.progressReport,
-              nameOfParticipants: nameOfParticipants1,
-              nameOfResearch: nameOfResearchLine1,
+              nameOfParticipants: this.participationSc.nameOfParticipants,
               file: this.participationSc.file,
               comments: this.participationSc.comments,
             };
 
-            axios.put(`api/participationScEvents/${this.id}`, participationSc ).then((result) => {
+            await axios.put(`api/participationScEvents/${this.id}`, participationSc ).then((result) => {
               this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -375,6 +305,29 @@ export default {
                 icon: true,
                 rtl: false
               });
+              const formData = new FormData();
+              formData.append('id', this.id);
+              formData.append('file', this.participationSc.file);
+              axios.post('api/participationScEvents/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then( response => {
+                  console.log(response.data);
+                this.toast.success("File added successfully!", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              })
             })
             .catch((error)=> {
               if (error.response.status == 422){
@@ -395,52 +348,6 @@ export default {
                 });
               }
             });
-            if(this.participation1.file == null){
-                let salida = {
-                  id: this.id,
-                  file: this.participationSc.file,
-                }
-                axios.post('api/participationScEvents/addFile', salida, {
-                    headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then( response => {
-                  this.toast.success("File added successfully!", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                  setTimeout(() => {this.cerrarModal();}, 1500);
-                })
-                .catch((error)=> {
-                  if (error.response.status == 422){
-                    this.errors = error.response.data.errors;
-                    this.toast.warning('There is an invalid value.', {
-                        position: "top-right",
-                        timeout: 3000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                    });
-                  }
-                });
-             }else{
-              setTimeout(() => {this.cerrarModal();}, 1500);
-             }
           }
       },
       cerrarModal(){
@@ -513,33 +420,6 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameOfResearchLine1 = "";
-            if (this.participationSc.nameOfResearch !== null){
-              if (this.participationSc.nameOfResearch.length !== 0) {
-                this.participationSc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearchLine1 += nameOfResearch.name;
-                  if (index === this.participationSc.nameOfResearch.length - 1) {
-                    nameOfResearchLine1 += '.';
-                  } else {
-                    nameOfResearchLine1 += ', ';
-                  }
-                });
-              }
-            }
-
-            var nameOfParticipants1 = "";
-            if (this.participationSc.nameOfParticipants !== null){
-              if (this.participationSc.nameOfParticipants.length !== 0) {
-                this.participationSc.nameOfParticipants.forEach((nameOfParticipants, index) => {
-                  nameOfParticipants1 += nameOfParticipants.name;
-                  if (index === this.participationSc.nameOfParticipants.length - 1) {
-                    nameOfParticipants1 += '.';
-                  } else {
-                    nameOfParticipants1 += ', ';
-                  }
-                });
-              }
-            }
 
             var typeEvent = '';
             var other = 0;
@@ -574,11 +454,10 @@ export default {
               startDate: this.participationSc.startDate,
               endingDate: this.participationSc.endingDate,
               progressReport: this.participationSc.progressReport,
-              nameOfParticipants: nameOfParticipants1,
-              nameOfResearch: nameOfResearchLine1,
+              nameOfParticipants: this.participationSc.nameOfParticipants,
               comments: this.participationSc.comments,
             };
-            axios.put(`api/participationScEvents/${this.id}`, participationSc ).then((result) => {
+            await axios.put(`api/participationScEvents/${this.id}`, participationSc ).then((result) => {
               this.toast.success("Participation edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -593,6 +472,29 @@ export default {
                 icon: true,
                 rtl: false
               });
+              const formData = new FormData();
+              formData.append('id', this.id);
+              formData.append('file', this.participationSc.file);
+              axios.post('api/participationScEvents/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then( response => {
+                  console.log(response.data);
+                this.toast.success("File added successfully!", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              })
             })
             .catch((error)=> {
               if (error.response.status == 422){
@@ -613,52 +515,6 @@ export default {
                 });
               }
             });
-            if(this.participation1.file == null){
-                let salida = {
-                  id: this.id,
-                  file: this.participationSc.file,
-                }
-                axios.post('api/participationScEvents/addFile', salida, {
-                    headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then( response => {
-                  this.toast.success("File added successfully!", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                  setTimeout(() => {this.cerrarModal();}, 1500);
-                })
-                .catch((error)=> {
-                  if (error.response.status == 422){
-                    this.errors = error.response.data.errors;
-                    this.toast.warning('There is an invalid value.', {
-                        position: "top-right",
-                        timeout: 3000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                    });
-                  }
-                });
-             }else{
-              setTimeout(() => {this.cerrarModal();}, 1500);
-             }
            }
         }
       },

@@ -40,9 +40,30 @@
                                         Update Password </label>
                                     </div>
                                 </div>
-                                <hr size="3" class="separador">
+                                <br>
                                 <div class="row">
                                     <div class="col-6">
+                                        <label for="">Role User:</label>
+                                        <select class="form-select" v-model="user.idRole">
+                                        <option disabled value="">Select a role</option>
+                                        <option v-for="roleUser in rolesUser" v-bind:key="roleUser.id" v-bind:value="roleUser.id">
+                                        {{ roleUser.name }}
+                                        </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="">Research Line:</label>
+                                        <select class="form-select" v-model="user.idResearchLine">
+                                        <option disabled value="">Select a research line</option>
+                                        <option v-for="researchLine in researchLines" v-bind:key="researchLine.id" v-bind:value="researchLine.id">
+                                        {{ researchLine.name }}
+                                        </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <hr size="3" class="separador">
+                                <div class="row">
+                                    <div class="col-12">
                                         <label for="">Roles:</label>
                                         <div v-if="marcados == false" class="form-check">
                                         <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos()" class="form-check-input" v-model="selected"> Check all </label>
@@ -53,19 +74,6 @@
                                         <div v-for="rol in roles" :key="rol.id" class="form-check">
                                             <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:id="rol.id" v-bind:value="rol.id" v-model="selected"  >
                                             {{rol.name}} </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="">Permissions:</label>
-                                        <div v-if="marcados2 == false" class="form-check">
-                                        <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Check all </label>
-                                        </div>
-                                        <div v-else class="form-check">
-                                        <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos2()" class="form-check-input" v-model="selected2"> Uncheck all </label>
-                                        </div>
-                                        <div v-for="permiso in permisos" :key="permiso.id" class="form-check">
-                                            <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:id="permiso.id" v-bind:value="permiso.id" v-model="selected2"  >
-                                            {{permiso.name}} </label>
                                         </div>
                                     </div>
                                 </div>
@@ -93,7 +101,6 @@ import axios from 'axios'
 import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
-import Multiselect from '@vueform/multiselect';
 
 let roles = document.head.querySelector('meta[name="roles"]');
 
@@ -108,6 +115,8 @@ export default {
             email: "",
             password: "",
             confirmpassword: "",
+            idRole:"",
+            idResearchLine:"",
         },
         selected: [],
         marcados: false,
@@ -116,9 +125,9 @@ export default {
         id: "",
         errors: [],
         roles: '',
-        permisos: '',
         rolesUsuario: null,
-        permisosUsuario: null,
+        rolesUser: null,
+        researchLines: null,
         revision: false,
         revision2: false,
         cambiarContraseña: false,
@@ -130,10 +139,23 @@ export default {
         this.user.name = this.usuario.name;
         this.user.email = this.usuario.email;
         this.id = this.usuario.id;
+        this.user.idResearchLine = this.usuario.idResearchLine;
+        this.user.idRole = this.usuario.idRole;
         this.getRoles();
-        this.getPermisos();
+        this.getResearchLines();
+        this.getUserRoles();
     },
     methods: {
+        getResearchLines(){
+            axios.get('api/researchLines').then( response =>{
+            this.researchLines = response.data;
+            }).catch(e=> console.log(e))
+        },
+        getUserRoles(){
+            axios.get('api/rolesUser').then( response =>{
+            this.rolesUser = response.data;
+            }).catch(e=> console.log(e))
+        },
         cerrarModal(){
           const elem = this.$refs.closeBtn;
           this.$emit('recarga');
@@ -174,41 +196,6 @@ export default {
                 this.marcados = false;
             }
         },
-        async getPermisos(){
-            await axios.get('api/permisos').then( response =>{
-                this.permisos = response.data;
-            }).catch(e=> console.log(e))
-            this.getPermisosUsuario(this.id);
-        },
-        async getPermisosUsuario($id){
-            await axios.get(`api/permisos/${$id}`).then( response =>{
-                this.permisosUsuario = response.data;
-            }).catch(e=> console.log(e))
-            this.compararPermisos();
-        },
-        compararPermisos(){
-            if(this.revision2 == false){
-                this.permisos.forEach(element => {
-                    this.permisosUsuario.forEach(element2 => {
-                        if(element.name == element2.name){
-                            this.selected2.push(element.id);
-                        }
-                    })
-                });
-            }
-            this.revision2 = true;
-        },
-        marcarTodos2(){
-            if (this.marcados2 == false){
-                this.permisos.forEach(permiso => {
-                    this.selected2.push(permiso.id);
-                });
-                this.marcados2 = true;
-            }else{
-                this.selected2 = [];
-                this.marcados2 = false;
-            }
-        },
         async editarUsuario() {
             this.errors = [];
             for (const item in this.user){
@@ -228,15 +215,17 @@ export default {
             if (this.errors.length != 0){
                 this.errors.forEach(item => {
                     if(item == 'name'){
-                    mensaje =   mensaje + "The name field is required" + "\n";
+                    mensaje =   mensaje + "The Name field is required" + "\n";
                     }else if(item == 'email'){
-                    mensaje =   mensaje + "The email field is required" + "\n";
+                    mensaje =   mensaje + "The Email field is required" + "\n";
                     }else if(item == 'contraseñas diferentes'){
                     mensaje =   mensaje + "Passwords do not match" + "\n";
                     }else if(item == 'password'){
-                    mensaje =   mensaje + "The password field is required" + "\n";
+                    mensaje =   mensaje + "The Password field is required" + "\n";
                     }else if(item == 'confirmpassword'){
-                    mensaje =   mensaje + "The confirm password field is required" + "\n";
+                    mensaje =   mensaje + "The Confirm password field is required" + "\n";
+                    }else if(item == 'idRole'){
+                    mensaje =   mensaje + "The Role user field is required" + "\n";
                     }else{
                     mensaje =   mensaje + "The" + this.capitalizeFirstLetter(item) + "field is required" + "\n" 
                     }

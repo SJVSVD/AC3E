@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('posteriorArea')->nullable();
             $table->string('institutionPosteriorArea')->nullable();
             $table->string('comments')->nullable();
-            $table->string('thesisExtract')->nullable();
+            $table->string('file')->nullable();
             $table->integer('progressReport')->nullable();
             $table->timestamps();
             $table->softDeletes();

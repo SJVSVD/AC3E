@@ -22,27 +22,52 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Authors</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Activity</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Organization</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Type of Connection</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Researcher Involved</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="patent in patents" :key="patent.id">
+                                    <tr v-for="publicPrivate in publicPrivates" :key="publicPrivate.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ patent.id }}</p>
+                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ publicPrivate.id }}</p>
                                         </td>                                          
                                         <td>
-                                            <p v-if="patent.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ patent.status }}</p>
-                                            <p v-if="patent.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ patent.status }}</p>
+                                            <p v-if="publicPrivate.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ publicPrivate.status }}</p>
+                                            <p v-if="publicPrivate.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ publicPrivate.status }}</p>
                                         </td>                                          
                                         <td>
-                                            <p class="text-sm mb-0">{{ patent.usuario.name }}</p>
+                                            <p class="text-sm mb-0">{{ publicPrivate.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="publicPrivate.authors == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ publicPrivate.authors }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="publicPrivate.nameOfActivity == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ publicPrivate.nameOfActivity }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="publicPrivate.nameOfOrganization == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ publicPrivate.nameOfOrganization }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="publicPrivate.typeOfConnection == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ publicPrivate.typeOfConnection }}</p>
+                                        </td>
+                                        <td>
+                                            <p v-if="publicPrivate.researcherInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ publicPrivate.researcherInvolved }}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editPatent(patent)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editPublicPrivate(publicPrivate)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteActivity(patent.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -82,7 +107,7 @@ export default {
     mixins: [mixin],
     data(){
         return{
-            patents: null,
+            publicPrivates: null,
             showNewPublicPrivate: false,
             showPublicPrivateEdit: false,
             publicPrivateEdit: null,
@@ -92,12 +117,12 @@ export default {
         }
     },
     created(){
-        this.getPatents(this.userID);
+        this.getPublicPrivate(this.userID);
     },
     methods: {
-        getPatents(id){
+        getPublicPrivate(id){
             axios.get(`api/publicPrivate/${id}`).then( response =>{
-                this.patents = response.data;
+                this.publicPrivates = response.data;
                 if (this.table != null){
                     this.table.clear();
                     this.table.destroy();
@@ -108,18 +133,18 @@ export default {
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;
             if($tipoRecarga == 'General'){
-                this.patents = null;
-                this.getPatents(this.userID);
+                this.publicPrivates = null;
+                this.getPublicPrivate(this.userID);
             }
             else{
                 this.crearTabla("#myTablePublicPrivate");
             }
         },
-        editPatent(patent){
-            this.publicPrivateEdit = patent;
+        editPublicPrivate(publicPrivate){
+            this.publicPrivateEdit = publicPrivate;
             this.showPublicPrivateEdit= true;
         },
-        async deleteActivity(id) {
+        async deletePublicPrivate(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Public private connection',
                 message: `¿Are you sure you want to delete this Public private connection? This action cannot be undone.`,

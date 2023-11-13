@@ -10,8 +10,8 @@ class thesisStudentController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        if($request->hasFile('thesisExtract')){
-            $input['thesisExtract'] = $request->file('thesisExtract')->store('thesisExtracts','public');
+        if($request->hasFile('file')){
+            $input['file'] = $request->file('file')->store('thesisExtracts','public');
         }
         $thesisStudent = thesisStudent::create($input);
         return response()->json("Thesis Creada!");
@@ -30,7 +30,7 @@ class thesisStudentController extends Controller
         }
         else{
             foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrador'){
+                if ($rol['name'] == 'Administrator'){
                     array_push($roles, $rol['name']);
                     $administrador = true;
                 }
@@ -42,9 +42,24 @@ class thesisStudentController extends Controller
         return $thesisStudents;
     }
 
+    public function addFile(Request $request){
+        $input = $request->all();
+        
+        $thesis = thesisStudent::where('id', $input['id'])->first();
+        if(gettype($input['file']) == 'object'){
+            if($request->hasFile('file')){
+                $input['file'] = $request->file('file')->store('thesisExtracts','public');
+            }
+        }else if($input['file'] == 'null'){
+            unset($input['file']);
+        }
+        $thesis = thesisStudent::find($request['id'])->update($input);
+        return response()->json($thesis);
+    }
+
     public function thesisDownload($id){
         $thesis = thesisStudent::find($id);
-        $pathtoFile = public_path().'/defaults/'.$thesis['thesisExtract'];
+        $pathtoFile = public_path().'/defaults/'.$thesis['file'];
         return response()->download($pathtoFile);
     }
 

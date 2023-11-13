@@ -8,6 +8,7 @@
                 <slot name="header">
                     Edit Patent 
                 </slot>
+                <label for="">Progress year: {{ patent.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -15,8 +16,9 @@
                     <div class="row">
                           <div class="col-6">
                             <label for="">Ip type:</label>
+                            <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="patent.ipType">
-                              <option disabled :value="null">Select a type</option>
+                              <option disabled value="">Select a type</option>
                               <option value="Goods">Goods</option>
                               <option value="Services">Services</option>
                               <option value="Commercial establishments">Commercial establishments</option>
@@ -38,72 +40,58 @@
                           </div>
                           <div class="col-6">
                             <label for="">Authors:</label>
-                            <Multiselect
-                              placeholder="Select the Authors"
-                              v-model="patent.authors"
-                              limit=4
-                              :searchable="true"
-                              :close-on-select="false"
-                              :createTag="true"
-                              :options="researchers"
-                              mode="tags"
-                              label="name"
-                              trackBy="id"
-                              :object="true"
-                            />
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="patent.authors">
                           </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Name of research line:</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="patent.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-3">
                         <label for="">Institution owner(s):</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.institutionOwner">
                       </div>
                       <div class="col-3">
                         <label for="">Country of registration:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.countryOfRegistration">
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-3">
                         <label for="">Application date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="patent.applicationDate">
                       </div>
                       <div class="col-3">
                         <label for="">Grant date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="patent.grantDate">
                       </div>
-                      <div class="col-3">
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-4">
                         <label for="">Application status:</label>
+                        <label for="" style="color: orange;">*</label>
                         <select class="form-select" v-model="patent.applicationStatus">
-                          <option disabled :value="null">Select a type</option>
+                          <option disabled value="">Select a type</option>
                           <option value="In progress">In progress</option>
                           <option value="Approved">Approved</option>
                           </select>
                       </div>
-                      <div class="col-3">
+                      <div class="col-4">
+                        <label for="">Application granted n.º:</label>
+                        <label v-if="patent.applicationStatus == 'Approved'" for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="patent.applicationGranted">
+                      </div>
+                      <div class="col-4">
                         <label for="">Registration number:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.registrationNumber">
                       </div>
@@ -111,15 +99,14 @@
                     <br>
                     <div class="row">
                       <div class="col-3">
-                        <label for="">State:</label>
-                        <select class="form-select" v-model="patent.state">
-                          <option disabled :value="null">Select a type</option>
-                          <option value="Activities initiated during the funding period">Activities initiated during the funding period</option>
-                          <option value="Activities were continued as result of the funding">Activities were continued as result of the funding</option>
-                          </select>
+                        <label for="">Name of patent:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="patent.nameOfPatent">
                       </div>
                       <div class="col-6">
                         <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the researchers"
                           v-model="patent.researcherInvolved"
@@ -145,12 +132,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createPatent()" :disabled="buttonDisable">
+                    v-model="draft"> Edit as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editPatent()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -177,17 +164,17 @@ export default {
       patent:{
         ipType: '',
         authors: null,
-        nameOfResearch: null,
+        nameOfPatent: '',
         institutionOwner: '',
         countryOfRegistration: '',
         applicationDate: '',
         grantDate: '',
         applicationStatus: '',
+        applicationGranted:'',
         registrationNumber: '',
-        state: '',
         researcherInvolved: null,
         comments: '',
-        progressReport: 9,
+        progressReport: '',
       },
       other: '',
       draft: false,
@@ -195,15 +182,7 @@ export default {
       id: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Save Activity',
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
+      buttonText:'Edit patent',
     }),
     mounted(){
       this.getUsuarios();
@@ -220,32 +199,11 @@ export default {
       this.patent.grantDate = this.patent1.grantDate;
       this.patent.applicationStatus = this.patent1.applicationStatus;
       this.patent.registrationNumber = this.patent1.registrationNumber;
-      this.patent.state = this.patent1.state;
       this.patent.comments = this.patent1.comments;
-
-      if (this.patent1.authors != null) {
-          const valoresSeparados1 = this.patent1.authors.split(",");
-          this.patent.authors = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
-
-              return { value: valor, name: valor };
-          });
-      }
-
-      if (this.patent1.nameOfResearch != null) {
-          const valoresSeparados1 = this.patent1.nameOfResearch.split(",");
-          this.patent.nameOfResearch = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
-
-              return { value: valor, name: valor };
-          });
-      }
+      this.patent.progressReport = this.patent1.progressReport;
+      this.patent.nameOfPatent = this.patent1.nameOfPatent;
+      this.patent.applicationGranted = this.patent1.applicationGranted;
+      this.patent.authors = this.patent1.authors;
 
       if (this.patent1.researcherInvolved != null) {
           const valoresSeparados1 = this.patent1.researcherInvolved.split(",");
@@ -280,34 +238,6 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameAuthors = "";
-            if (this.patent.authors !== null){
-              if (this.patent.authors.length !== 0) {
-                this.patent.authors.forEach((authors, index) => {
-                  nameAuthors += authors.name;
-                  if (index === this.patent.authors.length - 1) {
-                    nameAuthors += '.';
-                  } else {
-                    nameAuthors += ', ';
-                  }
-                });
-              }
-            }
-
-            var nameOfResearch1 = "";
-            if (this.patent.nameOfResearch !== null){
-              if (this.patent.nameOfResearch.length !== 0) {
-                this.patent.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.patent.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
-            }
-
             var researcherInvolved1 = "";
             if (this.patent.researcherInvolved !== null){
               if (this.patent.researcherInvolved.length !== 0) {
@@ -324,16 +254,17 @@ export default {
 
             let patent = {
               status: 'Draft',
+              idUsuario: this.userID,
               ipType: this.patent.ipType,
-              authors: nameAuthors,
-              nameOfResearch: nameOfResearch1,
+              nameOfPatent: this.patent.nameOfPatent,
+              authors: this.patent.authors,
               institutionOwner: this.patent.institutionOwner,
               countryOfRegistration: this.patent.countryOfRegistration,
               applicationDate: this.patent.applicationDate,
               grantDate: this.patent.grantDate,
               applicationStatus: this.patent.applicationStatus,
               registrationNumber: this.patent.registrationNumber,
-              state: this.patent.state,
+              applicationGranted: this.patent.applicationGranted,
               researcherInvolved: researcherInvolved1,
               comments: this.patent.comments,
               progressReport: this.patent.progressReport,
@@ -384,22 +315,33 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createPatent() {
+      async editPatent() {
         this.errors = [];
+
+        const itemsToCheck = [
+          'applicationGranted',
+          'comments'
+        ];
+
 
         for (const item in this.patent){
           if(this.patent[item] === "" || this.patent[item] === 0 || this.patent[item] == null || this.patent[item] == []){
+            if (itemsToCheck.includes(item)) {
+              } else {
                 this.errors.push(item);
+              }
             }
+        }
+
+        if(this.patent.applicationGranted == '' && this.patent.applicationStatus == 'Approved'){
+          this.errors.push('application granted n.º')
         }
 
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
             if(item == 'ipType'){
-              mensaje =   mensaje + "The field Ip Type is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
+              mensaje =   mensaje + "The field Ip type is required" + "\n";
             }else if(item == 'institutionOwner'){
               mensaje =   mensaje + "The field Institution owners is required" + "\n";
             }else if(item == 'countryOfRegistration'){
@@ -414,6 +356,8 @@ export default {
               mensaje =   mensaje + "The field Registration number is required" + "\n";
             }else if(item == 'researcherInvolved'){
               mensaje =   mensaje + "The field Researchers involved is required" + "\n";
+            }else if(item == 'nameOfPatent'){
+              mensaje =   mensaje + "The field Name of patent is required" + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -435,39 +379,12 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Save Patent',
-            message: `¿Are you sure you want to save this Patent? This action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit Patent',
+            message: `¿Are you sure you want to edit this Patent? This action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
-            var nameAuthors = "";
-            if (this.patent.authors !== null){
-              if (this.patent.authors.length !== 0) {
-                this.patent.authors.forEach((authors, index) => {
-                  nameAuthors += authors.name;
-                  if (index === this.patent.authors.length - 1) {
-                    nameAuthors += '.';
-                  } else {
-                    nameAuthors += ', ';
-                  }
-                });
-              }
-            }
-
-            var nameOfResearch1 = "";
-            if (this.patent.nameOfResearch !== null){
-              if (this.patent.nameOfResearch.length !== 0) {
-                this.patent.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.patent.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
-            }
 
             var researcherInvolved1 = "";
             if (this.patent.researcherInvolved !== null){
@@ -486,15 +403,15 @@ export default {
             let patent = {
               status: 'Finished',
               ipType: this.patent.ipType,
-              authors: nameAuthors,
-              nameOfResearch: nameOfResearch1,
+              nameOfPatent: this.patent.nameOfPatent,
+              authors: this.patent.authors,
               institutionOwner: this.patent.institutionOwner,
               countryOfRegistration: this.patent.countryOfRegistration,
               applicationDate: this.patent.applicationDate,
               grantDate: this.patent.grantDate,
               applicationStatus: this.patent.applicationStatus,
               registrationNumber: this.patent.registrationNumber,
-              state: this.patent.state,
+              applicationGranted: this.patent.applicationGranted,
               researcherInvolved: researcherInvolved1,
               comments: this.patent.comments,
               progressReport: this.patent.progressReport,

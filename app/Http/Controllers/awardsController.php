@@ -27,7 +27,7 @@ class awardsController extends Controller
         }
         else{
             foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrador'){
+                if ($rol['name'] == 'Administrator'){
                     array_push($roles, $rol['name']);
                     $administrador = true;
                 }

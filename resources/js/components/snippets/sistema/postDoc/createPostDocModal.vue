@@ -9,6 +9,15 @@
                     New Postdoctoral fellow
                 </slot>
                 <label for="">Progress year: {{ postDoc.progressReport }}</label>
+                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -29,6 +38,7 @@
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Non binary">Non binary</option>
+                            <option value="Other">Other</option>
                             </select>
                       </div>
                       <div class="col-3">
@@ -57,20 +67,28 @@
                     <br>
                     <div class="row">
                       <div class="col-4">
-                        <label for="">Personal email:</label>
+                        <label for="">Research topic:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="postDoc.personalEmail">
+                        <input type="text" class= "form-control" v-model="postDoc.researchTopic">
                       </div>
                       <div class="col-4">
-                        <label for="">Posterior working area:</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="postDoc.posteriorWorkingArea">
+                          <label for="">Start year: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectYear" v-model="postDoc.startYear">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
                       </div>
                       <div class="col-4">
-                        <label for="">Institution posterior working area:</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="postDoc.institutionWorkingArea">
+                          <label for="">Ending year: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectYear" v-model="postDoc.endingYear">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
                       </div>
                     </div>
                     <br>
@@ -128,18 +146,6 @@
                           trackBy="name"
                           :object="true"
                         />
-                      </div>
-                      <div class="col-3">
-                          <label for="">Start year: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <input id="yearInput1" type="number" v-model="postDoc.startYear" :max="currentYear" @input="onInput1" class= "form-control" />
-                      </div>
-                      <div class="col-3">
-                          <label for="">Ending year: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <input id="yearInput1" type="number" v-model="postDoc.endingYear" :max="currentYear" @input="onInput2" class= "form-control" />
                       </div>
                     </div>
                     <br>
@@ -213,10 +219,10 @@
                     <br>
                     <div class="row">
                       <div class="col-4">
-                        <label for="">Research topic:</label>
+                        <label for="">Personal email:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="postDoc.researchTopic">
+                        <input type="text" class= "form-control" v-model="postDoc.personalEmail">
                       </div>
                       <div class="col-4">
                         <label for="">Institution where it was inserted:</label>
@@ -231,31 +237,13 @@
                       </div>
                     </div>
                     <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">Name of research line:</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="postDoc.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
-                      </div>
-                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
                     v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createPatent()" :disabled="buttonDisable">
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createPostDoc()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
@@ -291,8 +279,6 @@ export default {
         gender: '',
         researchTopic: '',
         personalEmail: '',
-        posteriorWorkingArea: '',
-        institutionWorkingArea: '',
         supervisorName: null,
         resourcesProvided: null,
         fundingSource: null,
@@ -309,7 +295,6 @@ export default {
         inTheCenter: 0,
         noneOfTheAbove: 0,
         institutionName: '',
-        nameOfResearch: null,
         comments: '',
         progressReport: '',
       },
@@ -323,16 +308,10 @@ export default {
         'Infrastructure',
         'Other',
       ],
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       draft: false,
       researchers: '',
+      usuarios: [],
+      idResearcher: '',
       buttonDisable: false,
       errors:[],
       buttonText:'Save fellow',
@@ -340,6 +319,13 @@ export default {
     mounted(){
       this.getUsuarios();
       this.getProgressReport();
+      this.getUsuarios2();
+      const currentYear = new Date().getFullYear();
+      const startYear = 2000;
+      const endYear = currentYear + 1;
+      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+      this.selectedYear = currentYear;
+      this.years.sort((a, b) => b - a);
     },
     methods: {
       getProgressReport(){
@@ -386,6 +372,11 @@ export default {
             this.postDoc.academy2 = 0;
           }
         }
+      },
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data;
+        }).catch(e=> console.log(e))
       },
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
@@ -493,31 +484,20 @@ export default {
                 });
               }
             }
-
-            var nameOfResearch1 = "";
-            if (this.postDoc.nameOfResearch !== null){
-              if (this.postDoc.nameOfResearch.length !== 0) {
-                this.postDoc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.postDoc.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
             }
-
             let postDoc = {
               status: 'Draft',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
               gender: this.postDoc.gender,
               personalEmail: this.postDoc.personalEmail,
-              posteriorWorkingArea: this.postDoc.posteriorWorkingArea,
-              institutionWorkingArea: this.postDoc.institutionWorkingArea,
               researchTopic: this.postDoc.researchTopic,
               supervisorName: supervisorName1,
               resourcesProvided: resourcesProvided1,
@@ -535,7 +515,6 @@ export default {
               inTheCenter: this.postDoc.inTheCenter,
               noneOfTheAbove: this.postDoc.noneOfTheAbove,
               institutionName: this.postDoc.institutionName,
-              nameOfResearch: nameOfResearch1,
               comments: this.postDoc.comments,
               progressReport: this.postDoc.progressReport,
             };
@@ -585,7 +564,7 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createPatent() {
+      async createPostDoc() {
         this.errors = [];
 
         const itemsToCheck = [
@@ -600,8 +579,7 @@ export default {
           'inTheCenter',
           'noneOfTheAbove',
           'comments',
-          'posteriorWorkingArea',
-          'institutionWorkingArea'
+          'institutionName',
         ];
 
 
@@ -643,8 +621,10 @@ export default {
               mensaje =   mensaje + "The field Ending year is required" + "\n";
             }else if(item == 'institutionName'){
               mensaje =   mensaje + "The field Institution where it was inserted is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
+            }else if(item == 'personalEmail'){
+              mensaje =   mensaje + "The field Personal Email is required" + "\n";
+            }else if(item == 'nameOfPostdoc'){
+              mensaje =   mensaje + "The field Name of post doc is required" + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -722,30 +702,21 @@ export default {
               }
             }
 
-            var nameOfResearch1 = "";
-            if (this.postDoc.nameOfResearch !== null){
-              if (this.postDoc.nameOfResearch.length !== 0) {
-                this.postDoc.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.postDoc.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
             }
 
             let postDoc = {
               status: 'Finished',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
               gender: this.postDoc.gender,
               personalEmail: this.postDoc.personalEmail,
-              posteriorWorkingArea: this.postDoc.posteriorWorkingArea,
-              institutionWorkingArea: this.postDoc.institutionWorkingArea,
               researchTopic: this.postDoc.researchTopic,
               supervisorName: supervisorName1,
               resourcesProvided: resourcesProvided1,
@@ -763,7 +734,6 @@ export default {
               inTheCenter: this.postDoc.inTheCenter,
               noneOfTheAbove: this.postDoc.noneOfTheAbove,
               institutionName: this.postDoc.institutionName,
-              nameOfResearch: nameOfResearch1,
               comments: this.postDoc.comments,
               progressReport: this.postDoc.progressReport,
             };

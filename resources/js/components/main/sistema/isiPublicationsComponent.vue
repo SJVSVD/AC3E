@@ -23,13 +23,9 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Coauthor(s) </th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Doi</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Doi</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Volume</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">First Page</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Last Page</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
@@ -53,8 +49,8 @@
                                             <p v-else class="text-sm mb-0">{{ isiPublication.authors }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="isiPublication.coauthor == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.coauthor }}</p>
+                                            <p v-if="isiPublication.doi == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ isiPublication.doi }}</p>
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.articleTitle == null" class="text-sm mb-0">---</p>
@@ -63,22 +59,6 @@
                                         <td>
                                             <p v-if="isiPublication.journalName == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ isiPublication.journalName }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.doi == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.doi }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.volume == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.volume }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.firstPage == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.firstPage }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.lastPage == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.lastPage }}</p>
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.yearPublished == null" class="text-sm mb-0">---</p>
