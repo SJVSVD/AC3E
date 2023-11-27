@@ -14,6 +14,12 @@ class technologyKnowledgeController extends Controller
         return response()->json("Registro Creado!");
     }
 
+    public function verifyTechnology(Request $request)
+    {
+        $existentes = technologyKnowledge::where('typeOfTransfer', $request['typeOfTransfer'])->whereNotNull('typeOfTransfer')->where('nameOfInstitutionInvolved', $request['nameOfInstitutionInvolved'])->whereNotNull('nameOfInstitutionInvolved')->where('year', $request['year'])->whereNotNull('year')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

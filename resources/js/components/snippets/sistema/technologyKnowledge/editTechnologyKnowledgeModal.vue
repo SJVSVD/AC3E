@@ -341,6 +341,15 @@ export default {
           this.errors.push('categoryTransfer');
         }
 
+        var contador = await axios.post('../api/verifyTechnology', this.technologyKnowledge).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
 
         var mensaje = ""
         if (this.errors.length != 0){
@@ -355,6 +364,8 @@ export default {
               mensaje =   mensaje + "The field Place/Region is required" + "\n";
             }else if(item == 'nameOfResearch'){
               mensaje =   mensaje + "The field Name of research is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

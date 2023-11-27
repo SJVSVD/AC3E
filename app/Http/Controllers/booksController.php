@@ -39,6 +39,12 @@ class booksController extends Controller
         return $books;
     }
 
+    public function verifyBook(Request $request)
+    {
+        $existentes = books::where('bookTitle', $request['bookTitle'])->where('chapterTitle', $request['chapterTitle'])->whereNotNull('bookTitle')->whereNotNull('chapterTitle')->count();
+        return response()->json($existentes); 
+    }
+
     public function update(Request $request, $id)
     {
         $books = books::find($id);

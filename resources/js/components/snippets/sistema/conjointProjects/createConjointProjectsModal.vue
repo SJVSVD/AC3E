@@ -9,7 +9,7 @@
                     New Conjoint Project
                 </slot>
                 <label for="">Progress year: {{ conjointProject.progressReport }}</label>
-                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
                     <option v-for="researcher in researchers2" v-bind:key="researcher.id" v-bind:value="researcher.id">
@@ -400,6 +400,39 @@ export default {
           this.errors.push('other2');
         }
 
+        let conjointProject1 = {
+          status: 'Finished',
+          idUsuario: idUser1,
+          moduleType: 1,
+          activityType: this.conjointProject.activityType,
+          institutionCollaborates: this.conjointProject.institutionCollaborates,
+          researcherInvolved: peopleInvolved1,
+          studentOrResearcher: this.conjointProject.studentOrResearcher,
+          activityName: type,
+          otherActivity: other1,
+          countryOrigin: this.conjointProject.countryOrigin,
+          cityOrigin: this.conjointProject.cityOrigin,
+          countryDestination: this.conjointProject.countryDestination,
+          cityDestination: this.conjointProject.cityDestination,
+          beginningDate: this.conjointProject.beginningDate,
+          endingDate: this.conjointProject.endingDate,
+          nameOfAC3EMember: this.conjointProject.nameOfAC3EMember,
+          nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
+          collaborationStay: type2,
+          otherStay: other1,
+          comments: this.conjointProject.comments,
+          progressReport: this.conjointProject.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyConjoint', conjointProject1).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -437,6 +470,8 @@ export default {
               mensaje =   mensaje + "The field Student or Researcher is required" + "\n";
             }else if(item == 'collaborationStay'){
               mensaje =   mensaje + "The field Collaboration Stay is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

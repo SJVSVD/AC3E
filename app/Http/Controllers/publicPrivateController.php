@@ -14,6 +14,12 @@ class publicPrivateController extends Controller
         return response()->json("Registro Creado!");
     }
 
+    public function verifyPublicPrivate(Request $request)
+    {
+        $existentes = publicPrivate::where('nameOfActivity', $request['nameOfActivity'])->whereNotNull('nameOfActivity')->where('startDate', $request['startDate'])->whereNotNull('startDate')->where('countryOrigin', $request['countryOrigin'])->whereNotNull('countryOrigin')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

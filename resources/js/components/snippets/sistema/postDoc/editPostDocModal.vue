@@ -657,6 +657,15 @@ export default {
             }
         }
 
+        var contador = await axios.post('../api/verifyPostdoc', this.postDoc).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -676,6 +685,8 @@ export default {
               mensaje =   mensaje + "The field Ending year is required" + "\n";
             }else if(item == 'institutionName'){
               mensaje =   mensaje + "The field Institution where it was inserted is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

@@ -31,6 +31,7 @@ const postDocComponent = defineAsyncComponent(() => import('@/components/main/si
 const fundingSourcesComponent = defineAsyncComponent(() => import('@/components/main/sistema/fundingSourcesComponent.vue'));
 const adminRolesComponent = defineAsyncComponent(() => import('@/components/main/sistema/adminRolesComponent.vue'));
 const userProfileComponent = defineAsyncComponent(() => import('@/components/userProfileComponent.vue'));
+const powerBiComponent = defineAsyncComponent(() => import('@/components/powerBiComponent.vue'));
 const error = defineAsyncComponent(() => import('@/components/errorComponent.vue'));
 
 app.component("dashboard-component", dashboardComponent);
@@ -89,6 +90,9 @@ app.mount("#admin-roles");
 
 app.component("user-profile-component", userProfileComponent);
 app.mount("#userp");
+
+app.component("powerbi-component", powerBiComponent);
+app.mount("#powerbi-component");
 
 app.component("error-component", error);
 app.mount("#error");

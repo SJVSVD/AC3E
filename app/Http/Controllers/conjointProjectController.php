@@ -14,6 +14,12 @@ class conjointProjectController extends Controller
         return response()->json("Colaboracion Creada!");
     }
 
+    public function verifyConjoint(Request $request)
+    {
+        $existentes = scCollaborations::where('moduleType', 1)->where('nameOfAC3EMember', $request['nameOfAC3EMember'])->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])->where('beginningDate', $request['beginningDate'])->whereNotNull('beginningDate')->whereNotNull('nameOfAC3EMember')->whereNotNull('nameOfExternalResearcher')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

@@ -376,6 +376,41 @@ export default {
           this.errors.push('other');
         }
 
+        var idUser1 = ''
+        if(this.idResearcher != ''){
+          idUser1 = this.idResearcher;
+        }else{
+          idUser1 = this.userID;
+        }
+
+        let participationSc1 = {
+          status: 'Finished',
+          idUsuario: idUser1,
+          typeEvent: typeEvent,
+          other: other,
+          presentationTitle: this.participationSc.presentationTitle,
+          typeOfParticipation: typeOfParticipation,
+          otherParticipation: other2,
+          eventName: this.participationSc.eventName,
+          country: this.participationSc.country,
+          city: this.participationSc.city,
+          startDate: this.participationSc.startDate,
+          endingDate: this.participationSc.endingDate,
+          progressReport: this.participationSc.progressReport,
+          nameOfParticipants: this.participationSc.nameOfParticipants,
+          file: this.participationSc.file,
+          comments: this.participationSc.comments,
+        };
+
+        var contador = await axios.post('../api/verifyParticipation', participationSc1).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -389,10 +424,10 @@ export default {
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
             }else if(item == 'nameOfParticipants'){
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else if(item == 'progressReport'){
               mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

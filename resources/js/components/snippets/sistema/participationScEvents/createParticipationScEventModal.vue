@@ -9,7 +9,7 @@
                     New Participation Sc Event
                 </slot>
                 <label for="">Progress year: {{ participationSc.progressReport }}</label>
-                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
                     <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
@@ -338,6 +338,41 @@ export default {
           this.errors.push('other');
         }
 
+        var idUser1 = ''
+        if(this.idResearcher != ''){
+          idUser1 = this.idResearcher;
+        }else{
+          idUser1 = this.userID;
+        }
+
+        let participationSc1 = {
+          status: 'Finished',
+          idUsuario: idUser1,
+          typeEvent: typeEvent,
+          other: other,
+          presentationTitle: this.participationSc.presentationTitle,
+          typeOfParticipation: typeOfParticipation,
+          otherParticipation: other2,
+          eventName: this.participationSc.eventName,
+          country: this.participationSc.country,
+          city: this.participationSc.city,
+          startDate: this.participationSc.startDate,
+          endingDate: this.participationSc.endingDate,
+          progressReport: this.participationSc.progressReport,
+          nameOfParticipants: this.participationSc.nameOfParticipants,
+          file: this.participationSc.file,
+          comments: this.participationSc.comments,
+        };
+
+        var contador = await axios.post('../api/verifyParticipation', participationSc1).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -353,6 +388,8 @@ export default {
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
             }else if(item == 'progressReport'){
               mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

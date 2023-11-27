@@ -14,6 +14,12 @@ class outreachActivitiesController extends Controller
         return response()->json("Registro Creado!");
     }
 
+    public function verifyOutreach(Request $request)
+    {
+        $existentes = outreachActivities::where('activityName', $request['activityName'])->where('date', $request['date'])->where('country', $request['country'])->whereNotNull('country')->whereNotNull('activityName')->whereNotNull('date')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

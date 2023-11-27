@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Funding source
                 </slot>
-                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
                     <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
@@ -329,6 +329,15 @@ export default {
             }
         }
 
+        var contador = await axios.post('../api/verifyFunding', this.fundingSource).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -352,6 +361,8 @@ export default {
               mensaje =   mensaje + "The field In cash is required" + "\n";
             }else if(item == 'typeOfCollaboration'){
               mensaje =   mensaje + "The field Type of collaboration is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

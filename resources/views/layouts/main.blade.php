@@ -135,6 +135,10 @@
                     </a>
                     <i class="fa-solid fa-sort-down arrow" id="arrow3"></i>
                 </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">Help</a></li>
+                    <li><a href="/power-bi">Power BI</a></li>
+                </ul>
             </li>
             <li>
                 <div class="iocn-link">

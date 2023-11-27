@@ -44,56 +44,71 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //IsiPublications
 Route::apiResource('isiPublications', isiPublicationsController::class);
 Route::post('useDoi', [isiPublicationsController::class, 'useDoi']);
+Route::post('verifyIsi', [isiPublicationsController::class, 'verifyIsi']);
 
 //nonIsiPublications
 Route::apiResource('nonIsiPublications', nonIsiPublicationsController::class);
 Route::get('nonIsiDownload/{id}' , [nonIsiPublicationsController::class, 'nonIsiDownload']);
 Route::post('nonIsi/addFile', [nonIsiPublicationsController::class, 'addFile']);
+Route::post('verifyNonIsi', [nonIsiPublicationsController::class, 'verifyNonIsi']);
 
 //Books
 Route::apiResource('books', booksController::class);
+Route::post('verifyBook', [booksController::class, 'verifyBook']);
 
 //Awards
 Route::apiResource('awards', awardsController::class);
+Route::post('verifyAward', [awardsController::class, 'verifyAward']);
 
 //OrganizationScEvents
 Route::apiResource('organizationScEvents', organizationsScEventsController::class);
 Route::get('organizationDownload/{id}' , [organizationsScEventsController::class, 'organizationDownload']);
 Route::post('organizationScEvents/addFile', [organizationsScEventsController::class, 'addFile']);
+Route::post('verifyOrganization', [organizationsScEventsController::class, 'verifyOrganization']);
 
 //participationScEvents
 Route::apiResource('participationScEvents', participationsScEventsController::class);
 Route::get('participationDownload/{id}' , [participationsScEventsController::class, 'participationDownload']);
 Route::post('participationScEvents/addFile', [participationsScEventsController::class, 'addFile']);
+Route::post('verifyParticipation', [participationsScEventsController::class, 'verifyParticipation']);
 
 //scCollaborations
 Route::apiResource('scCollaborations', scCollaborationsController::class);
+Route::post('verifyCollaboration', [scCollaborationsController::class, 'verifyCollaboration']);
 
 //conjointProjects
 Route::apiResource('conjointProjects', conjointProjectController::class);
+Route::post('verifyConjoint', [conjointProjectController::class, 'verifyConjoint']);
 
 //thesisStudents
 Route::apiResource('thesisStudents', thesisStudentController::class);
 Route::get('thesisDownload/{id}' , [thesisStudentController::class, 'thesisDownload']);
 Route::post('thesisStudents/addFile', [thesisStudentController::class, 'addFile']);
-
-//outreachActivities
-Route::apiResource('outreachActivities', outreachActivitiesController::class);
-
-//patents
-Route::apiResource('patents', patentsController::class);
-
-//publicPrivate
-Route::apiResource('publicPrivate', publicPrivateController::class);
-
-//technologyKnowledge
-Route::apiResource('technologyKnowledge', technologyKnowledgeController::class);
+Route::post('verifyThesis', [thesisStudentController::class, 'verifyThesis']);
 
 //postDoc
 Route::apiResource('postDoc', postDocController::class);
+Route::post('verifyPostdoc', [postDocController::class, 'verifyPostdoc']);
+
+//outreachActivities
+Route::apiResource('outreachActivities', outreachActivitiesController::class);
+Route::post('verifyOutreach', [outreachActivitiesController::class, 'verifyOutreach']);
+
+//patents
+Route::apiResource('patents', patentsController::class);
+Route::post('verifyPatent', [patentsController::class, 'verifyPatent']);
+
+//publicPrivate
+Route::apiResource('publicPrivate', publicPrivateController::class);
+Route::post('verifyPublicPrivate', [publicPrivateController::class, 'verifyPublicPrivate']);
+
+//technologyKnowledge
+Route::apiResource('technologyKnowledge', technologyKnowledgeController::class);
+Route::post('verifyTechnology', [technologyKnowledgeController::class, 'verifyTechnology']);
 
 //fundingSources
 Route::apiResource('fundingSources', fundingSourcesController::class);
+Route::post('verifyFunding', [fundingSourcesController::class, 'verifyFunding']);
 
 Route::apiResource('roles', RolController::class);
 Route::apiResource('permisos', PermisosController::class);

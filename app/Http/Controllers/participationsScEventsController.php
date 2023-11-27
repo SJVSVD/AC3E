@@ -17,6 +17,12 @@ class participationsScEventsController extends Controller
         return response()->json("Participacion Creada!");
     }
 
+    public function verifyParticipation(Request $request)
+    {
+        $existentes = participationScEvents::where('eventName', $request['eventName'])->where('startDate', $request['startDate'])->where('idUsuario', $request['idUsuario'])->whereNotNull('eventName')->whereNotNull('startDate')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

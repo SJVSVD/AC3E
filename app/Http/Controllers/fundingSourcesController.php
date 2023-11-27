@@ -14,6 +14,12 @@ class fundingSourcesController extends Controller
         return response()->json("Registro Creado!");
     }
 
+    public function verifyFunding(Request $request)
+    {
+        $existentes = fundingSources::where('programContest', $request['programContest'])->whereNotNull('programContest')->where('projectTitle', $request['projectTitle'])->whereNotNull('projectTitle')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

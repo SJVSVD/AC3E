@@ -8,8 +8,8 @@
                 <slot name="header">
                     New Publication 
                 </slot>
-                <label for="">Progress year: {{ isiPublication.progressReport }}</label>
-                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                <label for="">Progress year: {{ isiPublication.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
                     <option v-for="researcher in researchers" v-bind:key="researcher.id" v-bind:value="researcher.id">
@@ -182,6 +182,7 @@
                     </a>
                   </slot>
                 </div>
+                <modalProgressYear v-bind:progressYear="isiPublication.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
                 <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
@@ -194,13 +195,14 @@
 
 <script>
 import axios from 'axios'
+import modalProgressYear from './extraModals/progressYearEdit.vue';
 import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
 let user = document.head.querySelector('meta[name="user"]');
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { Multiselect, modalconfirmacion, modalalerta, modalProgressYear },
     mixins: [mixin],
     data: () => ({
       isiPublication:{
@@ -227,6 +229,7 @@ export default {
         'Basal Financing Program Funding',
         'Other sources',
       ],
+      showModalProgress: false,
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
@@ -258,6 +261,9 @@ export default {
       }
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.isiPublication.progressReport = year;
+      },
       getUsuarios(){
         axios.get('api/usuarios').then( response =>{
             this.researchers = response.data;
@@ -454,6 +460,15 @@ export default {
             }
         }
 
+        var contador = await axios.post('../api/verifyIsi', this.isiPublication).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -467,6 +482,8 @@ export default {
               mensaje =   mensaje + "The field Last Page is required" + "\n";
             }else if(item == 'yearPublished'){
               mensaje =   mensaje + "The field Year Published is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
@@ -503,9 +520,15 @@ export default {
                 fundingsName1 += ', ';
               }
             });
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
             let publication = {
               status: 'Finished',
-              idUsuario: this.userID,
+              idUsuario: idUser1,
               authors: this.isiPublication.authors,
               coauthor: this.isiPublication.coauthor,
               articleTitle: this.isiPublication.articleTitle,

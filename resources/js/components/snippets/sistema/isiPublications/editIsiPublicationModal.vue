@@ -457,6 +457,15 @@ export default {
             }
         }
 
+        var contador = await axios.post('../api/verifyIsi', this.isiPublication).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -470,6 +479,8 @@ export default {
               mensaje =   mensaje + "The field Last Page is required" + "\n";
             }else if(item == 'yearPublished'){
               mensaje =   mensaje + "The field Year Published is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

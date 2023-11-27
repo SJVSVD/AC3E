@@ -334,6 +334,38 @@ export default {
           this.errors.push('other');
         }
 
+        var idUser1 = ''
+        if(this.idResearcher != ''){
+          idUser1 = this.idResearcher;
+        }else{
+          idUser1 = this.userID;
+        }
+
+        let organizationSc1 = {
+          status: 'Finished',
+          idUsuario: idUser1,
+          typeEvent: typeEvent,
+          other: other,
+          eventName: this.organizationSc.eventName,
+          country: this.organizationSc.country,
+          city: this.organizationSc.city,
+          startDate: this.organizationSc.startDate,
+          endingDate: this.organizationSc.endingDate,
+          numberParticipants: this.organizationSc.numberParticipants,
+          file: this.organizationSc.file,
+          comments: this.organizationSc.comments,
+          progressReport: this.organizationSc.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyOrganization', organizationSc1).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -347,8 +379,8 @@ export default {
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
             }else if(item == 'numberParticipants'){
               mensaje =   mensaje + "The field Number of Participants is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

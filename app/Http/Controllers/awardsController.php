@@ -10,8 +10,14 @@ class awardsController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        $books = awards::create($input);
+        $awards = awards::create($input);
         return response()->json("Premio Creada!");
+    }
+
+    public function verifyAward(Request $request)
+    {
+        $existentes = awards::where('awardName', $request['awardName'])->where('institution', $request['institution'])->whereNotNull('awardName')->whereNotNull('institution')->count();
+        return response()->json($existentes); 
     }
 
     public function show($userID){

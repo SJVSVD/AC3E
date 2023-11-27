@@ -63,6 +63,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(nonIsiPublication)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(nonIsiPublication)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(nonIsiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -84,6 +86,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:nonIsiPublication1="nonIsiPublication" v-if="showDetailsIsi" @close="showDetailsIsi = false"></modalver>
             <modaleditar v-bind:nonIsiPublication1="nonIsiPublicationEdit" v-if="showEditNonIsiPublication" @close="showEditNonIsiPublication = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewNonIsiPublication" @close="showNewNonIsiPublication = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -92,6 +95,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/nonIsiPublications/detailsNonIsiPublicationModal.vue'
 import modalcrear from '../../snippets/sistema/nonIsiPublications/createNonIsiPublicationModal.vue'
 import modaleditar from '../../snippets/sistema/nonIsiPublications/editNonIsiPublicationModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -99,13 +103,15 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             nonIsiPublications: null,
             showNewNonIsiPublication: false,
             showEditNonIsiPublication: false,
+            showDetailsIsi: false,
+            nonIsiPublication: null,
             nonIsiPublicationEdit: null,
             mostrarTabla: false,
             mostrarCarga: true,
@@ -116,6 +122,10 @@ export default {
         this.getNonIsiPublications(this.userID);
     },
     methods: {
+        verIsiPublication(nonIsiPublication){
+            this.nonIsiPublication = nonIsiPublication;
+            this.showDetailsIsi = true;
+        },
         getNonIsiPublications(id){
             axios.get(`api/nonIsiPublications/${id}`).then( response =>{
                 this.nonIsiPublications = response.data;

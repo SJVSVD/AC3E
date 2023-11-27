@@ -9,7 +9,7 @@
                     New Thesis
                 </slot>
                 <label for="">Progress year: {{ thesisStudent.progressReport }}</label>
-                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
                     <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
@@ -571,6 +571,15 @@ export default {
             this.errors.push('institutionPosteriorArea');
         }
 
+        var contador = await axios.post('../api/verifyThesis', this.thesisStudent).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -614,6 +623,8 @@ export default {
               mensaje =   mensaje + "The field Institution posterior area is required" + "\n";
             }else if(item == 'noTutors'){
               mensaje =   mensaje + "A minimum of one tutor, co-tutor or other must enter" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

@@ -14,6 +14,12 @@ class patentsController extends Controller
         return response()->json("Registro Creado!");
     }
 
+    public function verifyPatent(Request $request)
+    {
+        $existentes = patents::where('registrationNumber', $request['registrationNumber'])->whereNotNull('registrationNumber')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

@@ -17,6 +17,12 @@ class thesisStudentController extends Controller
         return response()->json("Thesis Creada!");
     }
 
+    public function verifyThesis(Request $request)
+    {
+        $existentes = thesisStudent::where('identification', $request['identification'])->where('degreeDenomination', $request['degreeDenomination'])->whereNotNull('identification')->whereNotNull('degreeDenomination')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

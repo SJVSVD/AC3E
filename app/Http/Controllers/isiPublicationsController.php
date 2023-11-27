@@ -15,6 +15,15 @@ class isiPublicationsController extends Controller
         return response()->json("Publicación Creada!");
     }
 
+    public function verifyIsi(Request $request)
+    {
+        $doi = $request['doi'];
+        $existentes = isiPublication::where('doi', $doi)
+        ->whereNotNull('doi')
+        ->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

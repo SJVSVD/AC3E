@@ -9,7 +9,7 @@
                     New Outreach Activity 
                 </slot>
                 <label for="">Progress year: {{ outreachActivity.progressReport }}</label>
-                <label v-if="is('Administrator')" class="col-4 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
                     <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
@@ -469,9 +469,17 @@ export default {
 
         const isChecked = checkboxFields.some(field => this.outreachActivity[field]);
 
-        // Si ninguno está marcado, agrega el mensaje al arreglo de errores
         if (!isChecked) {
           this.errors.push('target audiencies');
+        }
+
+        var contador = await axios.post('../api/verifyOutreach', this.outreachActivity).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
         }
 
         var mensaje = ""
@@ -491,6 +499,8 @@ export default {
               mensaje =   mensaje + "The field Name of the main responsible is required" + "\n";
             }else if(item == 'researcherInvolved'){
               mensaje =   mensaje + "The field Researcher Involved is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

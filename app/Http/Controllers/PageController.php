@@ -111,4 +111,9 @@ class PageController extends Controller
     {
         return view('pages.fundingSources');
     }
+
+    public function powerBi()
+    {
+        return view('pages.powerBi');
+    }
 }

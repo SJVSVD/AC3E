@@ -17,6 +17,12 @@ class organizationsScEventsController extends Controller
         return response()->json("Organizacion Creada!");
     }
 
+    public function verifyOrganization(Request $request)
+    {
+        $existentes = organizationsScEvents::where('eventName', $request['eventName'])->where('startDate', $request['startDate'])->where('idUsuario', $request['idUsuario'])->whereNotNull('eventName')->whereNotNull('startDate')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

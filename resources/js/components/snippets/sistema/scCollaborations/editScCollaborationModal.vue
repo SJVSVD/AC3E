@@ -408,6 +408,39 @@ export default {
           this.errors.push('other2');
         }
 
+        let scCollaboration1 = {
+          status: 'Finished',
+          idUsuario: idUser1,
+          moduleType: 0,
+          activityType: this.scCollaboration.activityType,
+          institutionCollaborates: this.scCollaboration.institutionCollaborates,
+          researcherInvolved: peopleInvolved1,
+          studentOrResearcher: this.scCollaboration.studentOrResearcher,
+          activityName: type,
+          otherActivity: other1,
+          countryOrigin: this.scCollaboration.countryOrigin,
+          cityOrigin: this.scCollaboration.cityOrigin,
+          countryDestination: this.scCollaboration.countryDestination,
+          cityDestination: this.scCollaboration.cityDestination,
+          beginningDate: this.scCollaboration.beginningDate,
+          endingDate: this.scCollaboration.endingDate,
+          nameOfAC3EMember: this.scCollaboration.nameOfAC3EMember,
+          nameOfExternalResearcher: this.scCollaboration.nameOfExternalResearcher,
+          collaborationStay: type2,
+          otherStay: other1,
+          comments: this.scCollaboration.comments,
+          progressReport: this.scCollaboration.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyCollaboration', scCollaboration1).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -437,6 +470,8 @@ export default {
               mensaje =   mensaje + "The field Other Activity is required" + "\n";
             }else if(item == 'other2'){
               mensaje =   mensaje + "The field Other Stay is required" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }

@@ -14,6 +14,12 @@ class postDocController extends Controller
         return response()->json("Registro Creado!");
     }
 
+    public function verifyPostdoc(Request $request)
+    {
+        $existentes = postDoc::where('identification', $request['identification'])->whereNotNull('identification')->count();
+        return response()->json($existentes); 
+    }
+
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];

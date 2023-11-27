@@ -54,7 +54,6 @@ import axios from 'axios';
 import modalconfirmacion from '../alerts/confirmationModal.vue';
 import modalalerta from '../alerts/alertModal.vue';
 import {mixin} from '../../../../mixins.js';
-import Compressor from 'compressorjs';
 
 export default {
   components: { modalconfirmacion, modalalerta },
@@ -65,21 +64,6 @@ export default {
     fotoMiniatura: null,
   }),
   methods: {
-    async compressImages(fileInput, output) {
-      return new Promise(async function (resolve) {
-          const file = fileInput;
-          await new Promise((resolve) => {
-            new Compressor(file, {
-              quality: 0.5,
-              success(result) {
-                output.push(result);
-                resolve();
-              }
-            });
-          });
-          resolve();
-      });
-    },
     async getImage(e){
         this.profilePicChange = e.target.files[0];
         let compression = [];

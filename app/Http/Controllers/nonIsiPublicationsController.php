@@ -17,6 +17,12 @@ class nonIsiPublicationsController extends Controller
         return response()->json("Publicación Creada!");
     }
 
+    public function verifyNonIsi(Request $request)
+    {
+        $existentes = nonIsiPublication::where('articleTitle', $request['articleTitle'])->where('journalName', $request['journalName'])->whereNotNull('articleTitle')->whereNotNull('journalName')->count();
+        return response()->json($existentes); 
+    }
+
     public function nonIsiDownload($id){
         $nonIsi = nonIsiPublication::find($id);
         $pathtoFile = public_path().'/defaults/'.$nonIsi['file'];
