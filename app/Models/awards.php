@@ -14,6 +14,7 @@ class awards extends Model
 
     protected $fillable = [
         'status',
+        'idUsuario',
         'awardeeName',
         'awardName',
         'year',
@@ -25,6 +26,6 @@ class awards extends Model
     ];
 
     public function usuario(){
-        return $this->belongsTo(User::class, 'awardeeName', 'id');
+        return $this->belongsTo(User::class, 'idUsuario', 'id');
     }
 }

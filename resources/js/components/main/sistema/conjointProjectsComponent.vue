@@ -67,6 +67,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editProject(conjointProject)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verProject(conjointProject)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteProject(conjointProject.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -88,6 +90,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:project1="conjointProject" v-if="showDetailsProject" @close="showDetailsProject = false"></modalver>
             <modaleditar v-bind:project1="projectEdit" v-if="showEditProject" @close="showEditProject = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewProject" @close="showNewProject = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -96,6 +99,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/conjointProjects/detailsConjointProjectsModal.vue'
 import modalcrear from '../../snippets/sistema/conjointProjects/createConjointProjectsModal.vue'
 import modaleditar from '../../snippets/sistema/conjointProjects/editConjointProjectsModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -103,12 +107,14 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             conjointProjects: null,
+            conjointProject: null,
             showNewProject: false,
+            showDetailsProject: false,
             showEditProject: false,
             projectEdit: null,
             mostrarTabla: false,
@@ -120,6 +126,10 @@ export default {
         this.getConjointProjects(this.userID);
     },
     methods: {
+        verProject(conjointProject){
+            this.conjointProject = conjointProject;
+            this.showDetailsProject = true;
+        },
         getConjointProjects(id){
             axios.get(`api/conjointProjects/${id}`).then( response =>{
                 this.conjointProjects = response.data;

@@ -13,8 +13,8 @@ class organizationsScEvents extends Model
     protected $table = "organizationsScEvents";
 
     protected $fillable = [
-        'idUsuario',
         'status',
+        'idUsuario',
         'typeEvent',
         'other',
         'eventName',
@@ -23,7 +23,6 @@ class organizationsScEvents extends Model
         'startDate',
         'endingDate',
         'numberParticipants',
-        'nameOfResearch',
         'file',
         'comments',
         'progressReport',

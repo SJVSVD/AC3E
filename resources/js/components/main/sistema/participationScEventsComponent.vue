@@ -60,6 +60,8 @@
                                                 &nbsp;
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editParticipation(participationScEvent)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verParticipation(participationScEvent)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteParticipation(participationScEvent.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -81,6 +83,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:participation1="participationScEvent" v-if="showDetailsParticipation" @close="showDetailsParticipation = false"></modalver>
             <modaleditar v-bind:participation1="participationEdit" v-if="showEditParticipation" @close="showEditParticipation = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewParticipation" @close="showNewParticipation = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -89,6 +92,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/participationScEvents/detailsParticipationScEventsModal.vue'
 import modalcrear from '../../snippets/sistema/participationScEvents/createParticipationScEventModal.vue'
 import modaleditar from '../../snippets/sistema/participationScEvents/editParticipationScEventModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -96,11 +100,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             participationScEvents: null,
+            participationScEvent: null,
+            showDetailsParticipation: false,
             showNewParticipation: false,
             showEditParticipation: false,
             participationEdit: null,
@@ -113,6 +119,10 @@ export default {
         this.getParticipations(this.userID);
     },
     methods: {
+        verParticipation(participationScEvent){
+            this.participationScEvent = participationScEvent;
+            this.showDetailsParticipation = true;
+        },
         descargarExtracto(id,nombre){
             axios({
                 url: `api/participationDownload/${id}`,

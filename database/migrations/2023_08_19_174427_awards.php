@@ -16,8 +16,9 @@ return new class extends Migration
         Schema::create('awards', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('status')->nullable();
-            $table->bigInteger('awardeeName')->unsigned();
-            $table->foreign("awardeeName")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
+            $table->bigInteger('idUsuario')->unsigned();
+            $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
+            $table->string('awardeeName')->unsigned();
             $table->string('awardName')->nullable();
             $table->year('year')->nullable();
             $table->string('contributionAwardee')->nullable();

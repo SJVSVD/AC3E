@@ -52,6 +52,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editAward(award)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verAward(award)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteAward(award.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -73,6 +75,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:award1="award" v-if="showDetailsAward" @close="showDetailsAward = false"></modalver>
             <modaleditar v-bind:award1="awardEdit" v-if="showEditAward" @close="showEditAward = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewAward" @close="showNewAward = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -81,6 +84,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/awards/detailsAwardsModal.vue'
 import modalcrear from '../../snippets/sistema/awards/createAwardModal.vue'
 import modaleditar from '../../snippets/sistema/awards/editAwardModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -88,11 +92,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             awards: null,
+            award: null,
+            showDetailsAward: false,
             showNewAward: false,
             showEditAward: false,
             awardEdit: null,
@@ -105,6 +111,10 @@ export default {
         this.getAwards(this.userID);
     },
     methods: {
+        verAward(award){
+            this.award = award;
+            this.showDetailsAward = true;
+        },
         getAwards(id){
             axios.get(`api/awards/${id}`).then( response =>{
                 this.awards = response.data;

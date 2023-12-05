@@ -57,6 +57,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editBook(book)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verBook(book)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteBook(book.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -78,6 +80,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:book1="book" v-if="showDetailsBook" @close="showDetailsBook = false"></modalver>
             <modaleditar v-bind:book1="bookEdit" v-if="showEditBook" @close="showEditBook = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewBook" @close="showNewBook = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -86,6 +89,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/books/detailsBooksModal.vue'
 import modalcrear from '../../snippets/sistema/books/createBookModal.vue'
 import modaleditar from '../../snippets/sistema/books/editBookModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -93,11 +97,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             books: null,
+            book: null,
+            showDetailsBook: false,
             showNewBook: false,
             showEditBook: false,
             bookEdit: null,
@@ -110,6 +116,10 @@ export default {
         this.getBooks(this.userID);
     },
     methods: {
+        verBook(book){
+            this.book = book;
+            this.showDetailsBook = true;
+        },
         getBooks(id){
             axios.get(`api/books/${id}`).then( response =>{
                 this.books = response.data;

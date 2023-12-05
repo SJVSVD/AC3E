@@ -60,7 +60,9 @@
                                                 &nbsp;
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editOrganization(organizationScEvent)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteAward(organizationScEvent.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verOrganization(organizationScEvent)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteOrganization(organizationScEvent.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -81,6 +83,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:organization1="organizationScEvent" v-if="showDetailsOrganization" @close="showDetailsOrganization = false"></modalver>
             <modaleditar v-bind:organization1="organizationEdit" v-if="showEditOrganization" @close="showEditOrganization = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewOrganization" @close="showNewOrganization = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -89,6 +92,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/organizationScEvents/detailsOrganizationScEventsModal.vue'
 import modalcrear from '../../snippets/sistema/organizationScEvents/createOrganizationScEventModal.vue'
 import modaleditar from '../../snippets/sistema/organizationScEvents/editOrganizationScEventModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -96,11 +100,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             organizationScEvents: null,
+            organizationScEvent: null,
+            showDetailsOrganization: false,
             showNewOrganization: false,
             showEditOrganization: false,
             organizationEdit: null,
@@ -113,6 +119,10 @@ export default {
         this.getOrganizations(this.userID);
     },
     methods: {
+        verOrganization(organizationScEvent){
+            this.organizationScEvent = organizationScEvent;
+            this.showDetailsOrganization = true;
+        },
         descargarExtracto(id,nombre){
             axios({
                 url: `api/organizationDownload/${id}`,
@@ -152,7 +162,7 @@ export default {
             this.organizationEdit = organization;
             this.showEditOrganization = true;
         },
-        async deleteAward(id) {
+        async deleteOrganization(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Organization',
                 message: `¿Are you sure you want to delete this Organization? This action cannot be undone.`,

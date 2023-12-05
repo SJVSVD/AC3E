@@ -15,7 +15,6 @@ class fundingSources extends Model
     protected $fillable = [
         'idUsuario',
         'status',
-        'nameOfResearch',
         'typeSources',
         'nameOfInstitution',
         'programContest',
@@ -26,7 +25,6 @@ class fundingSources extends Model
         'comments',
         'inCash',
         'typeOfCollaboration',
-        'state',
         'progressReport',
     ];
 

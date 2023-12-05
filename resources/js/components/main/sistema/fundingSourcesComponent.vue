@@ -42,6 +42,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editFundingSource(fundingSource)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verFunding(fundingSource)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteFundingSource(fundingSource.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -63,6 +65,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:fundingSource1="fundingSource" v-if="showDetailsSource" @close="showDetailsSource = false"></modalver>
             <modaleditar v-bind:fundingSource1="fundingSourceEdit" v-if="showFundingSourceEdit" @close="showFundingSourceEdit = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewFundingSource" @close="showNewFundingSource = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -71,6 +74,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/fundingSources/detailsFundingSourcesModal.vue'
 import modalcrear from '../../snippets/sistema/fundingSources/createFundingSourcesModal.vue'
 import modaleditar from '../../snippets/sistema/fundingSources/editFundingSourcesModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -78,11 +82,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             fundingSources: null,
+            fundingSource: null,
+            showDetailsSource: false,
             showNewFundingSource: false,
             showFundingSourceEdit: false,
             fundingSourceEdit: null,
@@ -95,6 +101,10 @@ export default {
         this.getFundingSources(this.userID);
     },
     methods: {
+        verFunding(fundingSource){
+            this.fundingSource = fundingSource;
+            this.showDetailsSource = true;
+        },
         getFundingSources(id){
             axios.get(`api/fundingSources/${id}`).then( response =>{
                 this.fundingSources = response.data;

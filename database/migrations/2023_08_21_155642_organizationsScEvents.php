@@ -26,7 +26,6 @@ return new class extends Migration
             $table->date('startDate')->nullable();
             $table->date('endingDate')->nullable();
             $table->integer('numberParticipants')->nullable();
-            $table->string('nameOfResearch')->nullable();
             $table->string('file')->nullable();
             $table->string('comments')->nullable();
             $table->integer('progressReport')->nullable();

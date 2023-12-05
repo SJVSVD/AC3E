@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
 
 class dashboardController extends Controller
 {
-    public function getRegistros($cantidadRegistros)
+    public function getRegistros()
     {
         $modelos = [
             isiPublication::class,
@@ -39,23 +39,25 @@ class dashboardController extends Controller
             technologyKnowledge::class,
             fundingSources::class,
         ];
-
+    
         $registros = new Collection();
-
+    
         foreach ($modelos as $modelo) {
+            // Ajustar la consulta para obtener los últimos 10 registros más nuevos para cada modelo
+            $registrosModelo = $modelo::latest()->with('usuario')->limit(10)->get();
             
-            $registrosModelo = $modelo::latest()->with('usuario')->take($cantidadRegistros)->get();
             // Agregar el nombre del modelo como un atributo 'modulo'
             $registrosModelo->each(function ($registro) use ($modelo) {
                 $registro->modulo = class_basename($modelo);
             });
-
+    
             $registros = $registros->concat($registrosModelo);
         }
-
+    
         // Ordenar los registros por fecha de creación
-        $registros = $registros->sortByDesc('created_at');
-
+        $registros = $registros->sortByDesc('created_at')->take(10);
+    
         return $registros;
     }
+    
 }

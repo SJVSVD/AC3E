@@ -36,7 +36,6 @@ class outreachActivities extends Model
         'nameOfTheMainResponsible',
         'progressReport',
         'researcherInvolved',
-        'externalResearcher',
         'responsability',
         'comments',
     ];

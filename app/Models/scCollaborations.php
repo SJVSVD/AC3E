@@ -15,8 +15,8 @@ class scCollaborations extends Model
     protected $fillable = [
         'idUsuario',
         'status',
-        'institutionCollaborates',
         'moduleType',
+        'institutionCollaborates',
         'researcherInvolved',
         'studentOrResearcher',
         'activityType',

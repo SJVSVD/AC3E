@@ -8,6 +8,7 @@
                 <slot name="header">
                     New Funding source
                 </slot>
+                <label for="">Progress year: {{ fundingSource.progressReport }}</label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -22,40 +23,21 @@
               <div class="modal-body">
                 <slot name="body">
                   <div class="row">
-                    <div class="col-6">
-                        <label for="">Name of research line:</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="fundingSource.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-3">
-                          <label for="">Type of sources: </label>
-                          <br>
-                          <select class="form-select" v-model="fundingSource.typeSources">
-                            <option disabled value="">Select a type</option>
-                            <option value="Public funds">Public funds</option>
-                            <option value="Productive/Private funds">Productive/Private funds</option>
-                            <option value="International funds">International funds</option>
-                            </select>
+                        <label for="">Type of sources: </label>
+                        <br>
+                        <select class="form-select" v-model="fundingSource.typeSources">
+                          <option disabled value="">Select a type</option>
+                          <option value="Public funds">Public funds</option>
+                          <option value="Productive/Private funds">Productive/Private funds</option>
+                          <option value="International funds">International funds</option>
+                          </select>
                       </div>
                       <div class="col-3">
                         <label for="">Name of institution:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.nameOfInstitution">
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-3">
                         <label for="">Program/contest:</label>
                         <br>
@@ -66,6 +48,9 @@
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.projectTitle">
                       </div>
+                    </div>
+                    <br>
+                    <div class="row">
                       <div class="col-6">
                         <label for="">Principal researcher:</label>
                         <Multiselect
@@ -82,9 +67,6 @@
                           :object="true"
                         />
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-3">
                         <label for="">Start date:</label>
                         <br>
@@ -95,6 +77,9 @@
                         <br>
                         <input type="date" class= "form-control" v-model="fundingSource.finishDate">
                       </div>
+                    </div>
+                    <br>
+                    <div class="row">
                       <div class="col-3">
                         <label for="">In cash:</label>
                         <br>
@@ -110,18 +95,6 @@
                             <option value="License">License</option>
                             <option value="Grand/Competitive fund">Grand/Competitive fund</option>
                             <option value="Other (Specify in comments)">Other (Specify in comments)</option>
-                            </select>
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                          <label for="">State: </label>
-                          <br>
-                          <select class="form-select" v-model="fundingSource.state">
-                            <option disabled value="">Select a state</option>
-                            <option value="Activities initiated during the funding period">Activities initiated during the funding period</option>
-                            <option value="Activities were continued as result of the funding">Activities were continued as result of the funding</option>
                             </select>
                       </div>
                       <div class="col-6">
@@ -165,7 +138,6 @@ export default {
     mixins: [mixin],
     data: () => ({
       fundingSource:{
-        nameOfResearch: null,
         typeSources: '',
         nameOfInstitution: '',
         programContest: '',
@@ -176,17 +148,8 @@ export default {
         comments: '',
         inCash: '',
         typeOfCollaboration: '',
-        state: '',
-        progressReport: 9,
+        progressReport: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       draft: false,
       researchers: '',
       buttonDisable: false,
@@ -198,8 +161,14 @@ export default {
     mounted(){
       this.getUsuarios();
       this.getUsuarios2();
+      this.getProgressReport();
     },
     methods: {
+      getProgressReport(){
+        axios.get('api/showProgressReport').then( response =>{
+            this.fundingSource.progressReport = response.data;
+        }).catch(e=> console.log(e))
+      },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data;
@@ -234,20 +203,6 @@ export default {
               }
             }
 
-            var nameOfResearch1 = "";
-            if (this.fundingSource.nameOfResearch !== null){
-              if (this.fundingSource.nameOfResearch.length !== 0) {
-                this.fundingSource.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.fundingSource.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
-            }
-
             var idUser1 = ''
             if(this.idResearcher != ''){
               idUser1 = this.idResearcher;
@@ -258,7 +213,6 @@ export default {
             let fundingSources = {
               status: 'Draft',
               idUsuario: idUser1,
-              nameOfResearch: nameOfResearch1,
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,
               programContest: this.fundingSource.programContest,
@@ -271,7 +225,6 @@ export default {
               comments: this.fundingSource.comments,
               inCash: this.fundingSource.inCash,
               typeOfCollaboration: this.fundingSource.typeOfCollaboration,
-              state: this.fundingSource.state,
               progressReport: this.fundingSource.progressReport,
             };
             axios.post("api/fundingSources", fundingSources).then((result) => {
@@ -355,8 +308,6 @@ export default {
               mensaje =   mensaje + "The field Start date is required" + "\n";
             }else if(item == 'finishDate'){
               mensaje =   mensaje + "The field Finish date is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else if(item == 'inCash'){
               mensaje =   mensaje + "The field In cash is required" + "\n";
             }else if(item == 'typeOfCollaboration'){
@@ -405,20 +356,6 @@ export default {
               }
             }
 
-            var nameOfResearch1 = "";
-            if (this.fundingSource.nameOfResearch !== null){
-              if (this.fundingSource.nameOfResearch.length !== 0) {
-                this.fundingSource.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.fundingSource.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
-            }
-
             var idUser1 = ''
             if(this.idResearcher != ''){
               idUser1 = this.idResearcher;
@@ -429,7 +366,6 @@ export default {
             let fundingSources = {
               status: 'Finished',
               idUsuario: idUser1,
-              nameOfResearch: nameOfResearch1,
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,
               programContest: this.fundingSource.programContest,
@@ -442,7 +378,6 @@ export default {
               comments: this.fundingSource.comments,
               inCash: this.fundingSource.inCash,
               typeOfCollaboration: this.fundingSource.typeOfCollaboration,
-              state: this.fundingSource.state,
               progressReport: this.fundingSource.progressReport,
             };
             axios.post("api/fundingSources", fundingSources).then((result) => {

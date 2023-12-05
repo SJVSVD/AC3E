@@ -67,6 +67,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editCollaboration(scCollaboration)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verCollaboration(scCollaboration)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteCollaboration(scCollaboration.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -88,6 +90,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:collaboration1="scCollaboration" v-if="showDetailsScCollaboration" @close="showDetailsScCollaboration = false"></modalver>
             <modaleditar v-bind:collaboration1="collaborationEdit" v-if="showEditCollaboration" @close="showEditCollaboration = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewCollaboration" @close="showNewCollaboration = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -96,6 +99,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/scCollaborations/detailsScCollaborationsModal.vue'
 import modalcrear from '../../snippets/sistema/scCollaborations/createScCollaborationModal.vue'
 import modaleditar from '../../snippets/sistema/scCollaborations/editScCollaborationModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -103,11 +107,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             scCollaborations: null,
+            scCollaboration: null,
+            showDetailsScCollaboration: false,
             showNewCollaboration: false,
             showEditCollaboration: false,
             collaborationEdit: null,
@@ -120,6 +126,10 @@ export default {
         this.getCollaborations(this.userID);
     },
     methods: {
+        verCollaboration(scCollaboration){
+            this.scCollaboration = scCollaboration;
+            this.showDetailsScCollaboration = true;
+        },
         getCollaborations(id){
             axios.get(`api/scCollaborations/${id}`).then( response =>{
                 this.scCollaborations = response.data;

@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('applicationStatus')->nullable();
             $table->string('registrationNumber')->nullable();
             $table->string('applicationGranted')->nullable();
-            $table->string('state')->nullable();
             $table->string('researcherInvolved')->nullable();
             $table->string('comments')->nullable();
             $table->integer('progressReport')->nullable();

@@ -537,7 +537,8 @@ export default {
         var noTutor = false;
         for (const item in this.thesisStudent){
           if(this.thesisStudent[item] === "" || this.thesisStudent[item] === 0 || this.thesisStudent[item] === null){
-              if(item == 'yearThesisEnd' || item == 'posteriorArea' || item == 'institutionPosteriorArea'){
+              if(item == 'comments'){
+              }else if(item == 'yearThesisEnd' || item == 'posteriorArea' || item == 'institutionPosteriorArea'){
               }else if(this.thesisStudent.identification == '' && item == 'run' || this.thesisStudent.identification == '' && item == 'passport'){
               }else if(this.thesisStudent.identification == 'run' && item == 'passport'){
               }else if(this.thesisStudent.identification == 'passport' && item == 'run'){

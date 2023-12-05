@@ -29,7 +29,6 @@ return new class extends Migration
             $table->string('lastPage')->nullable();
             $table->string('editorialCityCountry')->nullable();
             $table->year('year')->nullable();
-            $table->string('nameOfResearchLine')->nullable();
             $table->integer('progressReport')->nullable();
             $table->string('comments')->nullable();
             $table->timestamps();

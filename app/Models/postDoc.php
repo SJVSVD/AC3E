@@ -36,12 +36,9 @@ class postDoc extends Model
         'inTheCenter',
         'noneOfTheAbove',
         'institutionName',
-        'nameOfResearch',
         'comments',
         'progressReport',
         'personalEmail',
-        'posteriorWorkingArea',
-        'institutionWorkingArea',
     ];
 
     public function usuario(){

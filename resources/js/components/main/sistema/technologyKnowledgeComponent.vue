@@ -62,6 +62,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editTechnology(technology)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verTechnology(technology)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteTechnology(technology.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -83,6 +85,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:technology1="technology" v-if="showDetailsTechnology" @close="showDetailsTechnology = false"></modalver>
             <modaleditar v-bind:technology1="technologyEdit" v-if="showEditTechnology" @close="showEditTechnology = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewTechnology" @close="showNewTechnology = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -91,6 +94,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/technologyKnowledge/detailsTechnologyKnowledgeModal.vue'
 import modalcrear from '../../snippets/sistema/technologyKnowledge/createTechnologyKnowledgeModal.vue'
 import modaleditar from '../../snippets/sistema/technologyKnowledge/editTechnologyKnowledgeModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -98,11 +102,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             technologys: null,
+            technology: null,
+            showDetailsTechnology: false,
             showNewTechnology: false,
             showEditTechnology: false,
             technologyEdit: null,
@@ -115,6 +121,10 @@ export default {
         this.getTechnologyKnowledge(this.userID);
     },
     methods: {
+        verTechnology(technology){
+            this.technology = technology;
+            this.showDetailsTechnology = true;
+        },
         getTechnologyKnowledge(id){
             axios.get(`api/technologyKnowledge/${id}`).then( response =>{
                 this.technologys = response.data;

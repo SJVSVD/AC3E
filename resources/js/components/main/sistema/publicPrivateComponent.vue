@@ -67,6 +67,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editPublicPrivate(publicPrivate)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verPublicPrivate(publicPrivate)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -88,6 +90,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:publicPrivate1="publicPrivate" v-if="showDetailsPublicPrivate" @close="showDetailsPublicPrivate = false"></modalver>
             <modaleditar v-bind:publicPrivate1="publicPrivateEdit" v-if="showPublicPrivateEdit" @close="showPublicPrivateEdit = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewPublicPrivate" @close="showNewPublicPrivate = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -96,6 +99,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/publicPrivate/detailsPublicPrivateModal.vue'
 import modalcrear from '../../snippets/sistema/publicPrivate/createPublicPrivateModal.vue'
 import modaleditar from '../../snippets/sistema/publicPrivate/editPublicPrivateModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -103,11 +107,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             publicPrivates: null,
+            publicPrivate: null,
+            showDetailsPublicPrivate: false,
             showNewPublicPrivate: false,
             showPublicPrivateEdit: false,
             publicPrivateEdit: null,
@@ -120,6 +126,10 @@ export default {
         this.getPublicPrivate(this.userID);
     },
     methods: {
+        verPublicPrivate(publicPrivate){
+            this.publicPrivate = publicPrivate;
+            this.showDetailsPublicPrivate = true;
+        },
         getPublicPrivate(id){
             axios.get(`api/publicPrivate/${id}`).then( response =>{
                 this.publicPrivates = response.data;

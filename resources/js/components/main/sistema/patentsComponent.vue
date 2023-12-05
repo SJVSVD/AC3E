@@ -67,7 +67,9 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editPatent(patent)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteActivity(patent.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verPatent(patent)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePatent(patent.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -88,6 +90,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:patent1="patent" v-if="showDetailsPatent" @close="showDetailsPatent = false"></modalver>
             <modaleditar v-bind:patent1="patentEdit" v-if="showEditPatent" @close="showEditPatent = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewPatent" @close="showNewPatent = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -96,6 +99,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/patents/detailsPatentsModal.vue'
 import modalcrear from '../../snippets/sistema/patents/createPatentsModal.vue'
 import modaleditar from '../../snippets/sistema/patents/editPatentsModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -103,11 +107,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             patents: null,
+            patent: null,
+            showDetailsPatent: false,
             showNewPatent: false,
             showEditPatent: false,
             patentEdit: null,
@@ -120,6 +126,10 @@ export default {
         this.getPatents(this.userID);
     },
     methods: {
+        verPatent(patent){
+            this.patent = patent;
+            this.showDetailsPatent = true;
+        },
         getPatents(id){
             axios.get(`api/patents/${id}`).then( response =>{
                 this.patents = response.data;
@@ -144,7 +154,7 @@ export default {
             this.patentEdit = patent;
             this.showEditPatent= true;
         },
-        async deleteActivity(id) {
+        async deletePatent(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Patent',
                 message: `¿Are you sure you want to delete this Patent? This action cannot be undone.`,

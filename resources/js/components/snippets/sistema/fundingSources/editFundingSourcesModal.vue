@@ -8,27 +8,12 @@
                 <slot name="header">
                     Edit Funding source
                 </slot>
+                <label for="">Progress year: {{ fundingSource.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
                   <div class="row">
-                    <div class="col-6">
-                        <label for="">Name of research line:</label>
-                        <Multiselect
-                          placeholder="Select the options"
-                          v-model="fundingSource.nameOfResearch"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="options1"
-                          mode="tags"
-                          label="name"
-                          trackBy="name"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-3">
                           <label for="">Type of sources: </label>
                           <br>
@@ -44,9 +29,6 @@
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.nameOfInstitution">
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-3">
                         <label for="">Program/contest:</label>
                         <br>
@@ -57,6 +39,9 @@
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.projectTitle">
                       </div>
+                    </div>
+                    <br>
+                    <div class="row">
                       <div class="col-6">
                         <label for="">Principal researcher:</label>
                         <Multiselect
@@ -73,9 +58,6 @@
                           :object="true"
                         />
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-3">
                         <label for="">Start date:</label>
                         <br>
@@ -86,6 +68,9 @@
                         <br>
                         <input type="date" class= "form-control" v-model="fundingSource.finishDate">
                       </div>
+                    </div>
+                    <br>
+                    <div class="row">
                       <div class="col-3">
                         <label for="">In cash:</label>
                         <br>
@@ -103,19 +88,6 @@
                             <option value="Other (Specify in comments)">Other (Specify in comments)</option>
                             </select>
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                          <label for="">State: </label>
-                          <br>
-                          <select class="form-select" v-model="fundingSource.state">
-                            <option disabled :value="null"
-                            >Select a state</option>
-                            <option value="Activities initiated during the funding period">Activities initiated during the funding period</option>
-                            <option value="Activities were continued as result of the funding">Activities were continued as result of the funding</option>
-                            </select>
-                      </div>
                       <div class="col-6">
                         <label for="">Comments:</label>
                         <br>
@@ -127,12 +99,12 @@
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
-                    v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createFunding()" :disabled="buttonDisable">
+                    v-model="draft"> Edit as a draft</label>
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editFunding()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
-                      Save draft
+                      Edit draft
                     </a>
                   </slot>
                 </div>
@@ -157,7 +129,6 @@ export default {
     mixins: [mixin],
     data: () => ({
       fundingSource:{
-        nameOfResearch: null,
         typeSources: '',
         nameOfInstitution: '',
         programContest: '',
@@ -168,17 +139,8 @@ export default {
         comments: '',
         inCash: '',
         typeOfCollaboration: '',
-        state: '',
-        progressReport: 9,
+        progressReport: '',
       },
-      options1: [
-        'Biomedical Systems',
-        'Control and Automation',
-        'Data Analytics and Artificial Intelligence',
-        'Electrical Systems',
-        'Energy Conversion and Power Systems',
-        'Instrumentation',
-      ],
       draft: false,
       researchers: '',
       id: '',
@@ -204,20 +166,7 @@ export default {
       this.fundingSource.comments = this.fundingSource1.comments;
       this.fundingSource.inCash = this.fundingSource1.inCash;
       this.fundingSource.typeOfCollaboration = this.fundingSource1.typeOfCollaboration;
-      this.fundingSource.state = this.fundingSource1.state;
       this.fundingSource.progressReport = this.fundingSource1.progressReport;
-
-      if (this.fundingSource1.nameOfResearch != null) {
-          const valoresSeparados1 = this.fundingSource1.nameOfResearch.split(",");
-          this.fundingSource.nameOfResearch = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
-
-              return { value: valor, name: valor };
-          });
-      }
 
       if (this.fundingSource1.principalResearcher != null) {
           const valoresSeparados1 = this.fundingSource1.principalResearcher.split(",");
@@ -278,7 +227,6 @@ export default {
 
             let fundingSources = {
               status: 'Draft',
-              nameOfResearch: nameOfResearch1,
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,
               programContest: this.fundingSource.programContest,
@@ -291,7 +239,6 @@ export default {
               comments: this.fundingSource.comments,
               inCash: this.fundingSource.inCash,
               typeOfCollaboration: this.fundingSource.typeOfCollaboration,
-              state: this.fundingSource.state,
               progressReport: this.fundingSource.progressReport,
             };
             axios.put(`api/fundingSources/${this.id}`, fundingSources ).then((result) => {
@@ -340,7 +287,7 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createFunding() {
+      async editFunding() {
         this.errors = [];
 
         for (const item in this.fundingSource){
@@ -375,8 +322,6 @@ export default {
               mensaje =   mensaje + "The field Start date is required" + "\n";
             }else if(item == 'finishDate'){
               mensaje =   mensaje + "The field Finish date is required" + "\n";
-            }else if(item == 'nameOfResearch'){
-              mensaje =   mensaje + "The field Name of research line is required" + "\n";
             }else if(item == 'inCash'){
               mensaje =   mensaje + "The field In cash is required" + "\n";
             }else if(item == 'typeOfCollaboration'){
@@ -425,23 +370,9 @@ export default {
               }
             }
 
-            var nameOfResearch1 = "";
-            if (this.fundingSource.nameOfResearch !== null){
-              if (this.fundingSource.nameOfResearch.length !== 0) {
-                this.fundingSource.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.fundingSource.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
-            }
 
             let fundingSources = {
               status: 'Finished',
-              nameOfResearch: nameOfResearch1,
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,
               programContest: this.fundingSource.programContest,
@@ -454,7 +385,6 @@ export default {
               comments: this.fundingSource.comments,
               inCash: this.fundingSource.inCash,
               typeOfCollaboration: this.fundingSource.typeOfCollaboration,
-              state: this.fundingSource.state,
               progressReport: this.fundingSource.progressReport,
             };
             axios.put(`api/fundingSources/${this.id}`, fundingSources ).then((result) => {

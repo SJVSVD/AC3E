@@ -62,6 +62,8 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editActivity(outreachActivity)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verActivity(outreachActivity)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteActivity(outreachActivity.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
@@ -83,6 +85,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:activity1="outreachActivity" v-if="showDetailsActivity" @close="showDetailsActivity = false"></modalver>
             <modaleditar v-bind:activity1="activityEdit" v-if="showEditOutreach" @close="showEditOutreach = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewOutreach" @close="showNewOutreach = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -91,6 +94,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/outreachActivities/detailsOutreachActivitiesModal.vue'
 import modalcrear from '../../snippets/sistema/outreachActivities/createOutreachActivitiesModal.vue'
 import modaleditar from '../../snippets/sistema/outreachActivities/editOutreachActivitiesModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -98,11 +102,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             outreachActivities: null,
+            outreachActivity: null,
+            showDetailsActivity: false,
             showNewOutreach: false,
             showEditOutreach: false,
             activityEdit: null,
@@ -115,6 +121,10 @@ export default {
         this.getOutreachActivities(this.userID);
     },
     methods: {
+        verActivity(outreachActivity){
+            this.outreachActivity = outreachActivity;
+            this.showDetailsActivity = true;
+        },
         getOutreachActivities(id){
             axios.get(`api/outreachActivities/${id}`).then( response =>{
                 this.outreachActivities = response.data;

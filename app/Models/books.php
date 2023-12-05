@@ -14,8 +14,8 @@ class books extends Model
 
     protected $fillable = [
         'status',
-        'workType',
         'centerResearcher',
+        'workType',
         'bookAuthors',
         'chapterAuthors',
         'bookTitle',
@@ -24,7 +24,6 @@ class books extends Model
         'lastPage',
         'editorialCityCountry',
         'year',
-        'nameOfResearchLine',
         'progressReport',
         'editors',
         'ISBN',

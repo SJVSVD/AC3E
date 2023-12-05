@@ -27,7 +27,6 @@ class participationScEvents extends Model
         'endingDate',
         'nameOfParticipants',
         'progressReport',
-        'nameOfResearch',
         'file',
         'comments',
     ];

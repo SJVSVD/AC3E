@@ -67,7 +67,9 @@
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editPostDoc(postDoc)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteTechnology(postDoc.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verPostDoc(postDoc)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePostDoc(postDoc.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -88,6 +90,7 @@
             </div>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalalerta ref="alert"></modalalerta>
+            <modalver v-bind:postDoc1="postDoc" v-if="showDetailsPostDoc" @close="showDetailsPostDoc = false"></modalver>
             <modaleditar v-bind:postDoc1="postDocEdit" v-if="showEditPostDoc" @close="showEditPostDoc = false" @recarga="recargarTabla('General')"></modaleditar>
             <modalcrear v-if="showNewPostDoc" @close="showNewPostDoc = false" @recarga="recargarTabla('General')"></modalcrear>
         </div>
@@ -96,6 +99,7 @@
 
 <script>
 import axios from 'axios'
+import modalver from '../../snippets/sistema/postDoc/detailsPostDocModal.vue'
 import modalcrear from '../../snippets/sistema/postDoc/createPostDocModal.vue'
 import modaleditar from '../../snippets/sistema/postDoc/editPostDocModal.vue'
 import modalconfirmacion from '../../snippets/sistema/alerts/confirmationModal.vue'
@@ -103,11 +107,13 @@ import modalalerta from '../../snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../../../mixins.js'
 
 export default {
-    components: { modalcrear, modaleditar, modalconfirmacion, modalalerta },
+    components: { modalver ,modalcrear, modaleditar, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data(){
         return{
             postDocs: null,
+            postDoc: null,
+            showDetailsPostDoc: false,
             showNewPostDoc: false,
             showEditPostDoc: false,
             postDocEdit: null,
@@ -120,6 +126,10 @@ export default {
         this.getPostDoc(this.userID);
     },
     methods: {
+        verPostDoc(postDoc){
+            this.postDoc = postDoc;
+            this.showDetailsPostDoc = true;
+        },
         getPostDoc(id){
             axios.get(`api/postDoc/${id}`).then( response =>{
                 this.postDocs = response.data;
@@ -144,7 +154,7 @@ export default {
             this.postDocEdit = postDoc;
             this.showEditPostDoc= true;
         },
-        async deleteTechnology(id) {
+        async deletePostDoc(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Postdoctoral fellow',
                 message: `¿Are you sure you want to delete this Postdoctoral fellow? This action cannot be undone.`,
