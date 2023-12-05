@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
-            $table->string('awardeeName')->unsigned();
+            $table->string('awardeeName')->nullable();
             $table->string('awardName')->nullable();
             $table->year('year')->nullable();
             $table->string('contributionAwardee')->nullable();
