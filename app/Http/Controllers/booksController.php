@@ -41,7 +41,17 @@ class booksController extends Controller
 
     public function verifyBook(Request $request)
     {
-        $existentes = books::where('bookTitle', $request['bookTitle'])->where('chapterTitle', $request['chapterTitle'])->whereNotNull('bookTitle')->whereNotNull('chapterTitle')->count();
+        $query = books::where('bookTitle', $request['bookTitle'])
+            ->where('chapterTitle', $request['chapterTitle'])
+            ->whereNotNull('bookTitle')
+            ->whereNotNull('chapterTitle');
+
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

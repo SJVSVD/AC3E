@@ -18,9 +18,15 @@ class isiPublicationsController extends Controller
     public function verifyIsi(Request $request)
     {
         $doi = $request['doi'];
-        $existentes = isiPublication::where('doi', $doi)
-        ->whereNotNull('doi')
-        ->count();
+        $query = isiPublication::where('doi', $doi)
+            ->whereNotNull('doi');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

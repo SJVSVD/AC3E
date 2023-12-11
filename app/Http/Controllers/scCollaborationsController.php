@@ -16,7 +16,20 @@ class scCollaborationsController extends Controller
 
     public function verifyCollaboration(Request $request)
     {
-        $existentes = scCollaborations::where('moduleType', 0)->where('nameOfAC3EMember', $request['nameOfAC3EMember'])->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])->where('beginningDate', $request['beginningDate'])->whereNotNull('beginningDate')->whereNotNull('nameOfAC3EMember')->whereNotNull('nameOfExternalResearcher')->count();
+        $query = scCollaborations::where('moduleType', 0)
+            ->where('nameOfAC3EMember', $request['nameOfAC3EMember'])
+            ->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])
+            ->where('beginningDate', $request['beginningDate'])
+            ->whereNotNull('beginningDate')
+            ->whereNotNull('nameOfAC3EMember')
+            ->whereNotNull('nameOfExternalResearcher');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

@@ -16,7 +16,15 @@ class patentsController extends Controller
 
     public function verifyPatent(Request $request)
     {
-        $existentes = patents::where('registrationNumber', $request['registrationNumber'])->whereNotNull('registrationNumber')->count();
+        $query = patents::where('registrationNumber', $request['registrationNumber'])
+            ->whereNotNull('registrationNumber');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

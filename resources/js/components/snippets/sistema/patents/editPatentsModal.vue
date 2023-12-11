@@ -337,7 +337,24 @@ export default {
           this.errors.push('application granted n.º')
         }
 
-        var contador = await axios.post('../api/verifyPatent', this.patent).then(function(response) {
+        let patent1 = {
+          id: this.id,
+          ipType: this.patent.ipType,
+          nameOfPatent: this.patent.nameOfPatent,
+          authors: this.patent.authors,
+          institutionOwner: this.patent.institutionOwner,
+          countryOfRegistration: this.patent.countryOfRegistration,
+          applicationDate: this.patent.applicationDate,
+          grantDate: this.patent.grantDate,
+          applicationStatus: this.patent.applicationStatus,
+          registrationNumber: this.patent.registrationNumber,
+          applicationGranted: this.patent.applicationGranted,
+          researcherInvolved: researcherInvolved1,
+          comments: this.patent.comments,
+          progressReport: this.patent.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyPatent', patent1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

@@ -19,7 +19,18 @@ class organizationsScEventsController extends Controller
 
     public function verifyOrganization(Request $request)
     {
-        $existentes = organizationsScEvents::where('eventName', $request['eventName'])->where('startDate', $request['startDate'])->where('idUsuario', $request['idUsuario'])->whereNotNull('eventName')->whereNotNull('startDate')->count();
+        $query = organizationsScEvents::where('eventName', $request['eventName'])
+            ->where('startDate', $request['startDate'])
+            ->where('idUsuario', $request['idUsuario'])
+            ->whereNotNull('eventName')
+            ->whereNotNull('startDate');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

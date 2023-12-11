@@ -16,7 +16,19 @@ class publicPrivateController extends Controller
 
     public function verifyPublicPrivate(Request $request)
     {
-        $existentes = publicPrivate::where('nameOfActivity', $request['nameOfActivity'])->whereNotNull('nameOfActivity')->where('startDate', $request['startDate'])->whereNotNull('startDate')->where('countryOrigin', $request['countryOrigin'])->whereNotNull('countryOrigin')->count();
+        $query = publicPrivate::where('nameOfActivity', $request['nameOfActivity'])
+            ->whereNotNull('nameOfActivity')
+            ->where('startDate', $request['startDate'])
+            ->whereNotNull('startDate')
+            ->where('countryOrigin', $request['countryOrigin'])
+            ->whereNotNull('countryOrigin');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

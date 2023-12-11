@@ -16,7 +16,17 @@ class fundingSourcesController extends Controller
 
     public function verifyFunding(Request $request)
     {
-        $existentes = fundingSources::where('programContest', $request['programContest'])->whereNotNull('programContest')->where('projectTitle', $request['projectTitle'])->whereNotNull('projectTitle')->count();
+        $query = fundingSources::where('programContest', $request['programContest'])
+            ->whereNotNull('programContest')
+            ->where('projectTitle', $request['projectTitle'])
+            ->whereNotNull('projectTitle');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

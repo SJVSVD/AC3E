@@ -342,7 +342,7 @@ export default {
         }
 
         let organizationSc1 = {
-          status: 'Finished',
+          id: this.id,
           idUsuario: idUser1,
           typeEvent: typeEvent,
           other: other,
@@ -402,9 +402,9 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Save Organization',
-            message: `¿Are you sure you want to save this organization of sc event? This action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit Organization',
+            message: `¿Are you sure you want to edit this organization of sc event? This action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {

@@ -16,7 +16,19 @@ class technologyKnowledgeController extends Controller
 
     public function verifyTechnology(Request $request)
     {
-        $existentes = technologyKnowledge::where('typeOfTransfer', $request['typeOfTransfer'])->whereNotNull('typeOfTransfer')->where('nameOfInstitutionInvolved', $request['nameOfInstitutionInvolved'])->whereNotNull('nameOfInstitutionInvolved')->where('year', $request['year'])->whereNotNull('year')->count();
+        $query = technologyKnowledge::where('typeOfTransfer', $request['typeOfTransfer'])
+            ->whereNotNull('typeOfTransfer')
+            ->where('nameOfInstitutionInvolved', $request['nameOfInstitutionInvolved'])
+            ->whereNotNull('nameOfInstitutionInvolved')
+            ->where('year', $request['year'])
+            ->whereNotNull('year');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

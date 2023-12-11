@@ -415,7 +415,25 @@ export default {
             }
         }
 
-        var contador = await axios.post('../api/verifyPublicPrivate', this.publicPrivate).then(function(response) {
+        let publicPrivate1 = {
+          id: this.id,
+          agentType: agentType1,
+          typeOfConnection: typeOfConnection1,
+          researcherInvolved: researcherInvolved1,
+          placeWhereWasExecuted: this.publicPrivate.placeWhereWasExecuted,
+          internationalNational: this.publicPrivate.internationalNational,
+          participationPublicPolicies: this.publicPrivate.participationPublicPolicies,
+          nameOfActivity: this.publicPrivate.nameOfActivity,
+          startDate: this.publicPrivate.startDate,
+          endingDate: this.publicPrivate.endingDate,
+          resultsGoals: this.publicPrivate.resultsGoals,
+          nameOfOrganization: this.publicPrivate.nameOfOrganization,
+          countryOrigin: this.publicPrivate.countryOrigin,
+          comments: this.publicPrivate.comments,
+          progressReport: this.publicPrivate.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyPublicPrivate', publicPrivate1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

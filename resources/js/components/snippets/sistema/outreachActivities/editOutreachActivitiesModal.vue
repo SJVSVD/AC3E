@@ -499,7 +499,34 @@ export default {
           this.errors.push('other');
         }
 
-        var contador = await axios.post('../api/verifyOutreach', this.outreachActivity).then(function(response) {
+        let outreachActivity1 = {
+          id: this.id,
+          activityType: type,
+          otherType: other1,
+          activityName: this.outreachActivity.activityName,
+          activityDescription: this.outreachActivity.activityDescription,
+          date: this.outreachActivity.date,
+          attendantsAmount: this.outreachActivity.attendantsAmount,
+          duration: this.outreachActivity.duration,
+          country: this.outreachActivity.country,
+          placeRegion: this.outreachActivity.placeRegion,
+          city: this.outreachActivity.city,
+          undergraduateStudents: this.outreachActivity.undergraduateStudents,
+          primaryEducationStudents: this.outreachActivity.primaryEducationStudents,
+          secondaryEducationStudents: this.outreachActivity.secondaryEducationStudents,
+          generalCommunity: this.outreachActivity.generalCommunity,
+          companiesIndustriesServices: this.outreachActivity.companiesIndustriesServices,
+          schoolTeachers: this.outreachActivity.schoolTeachers,
+          governmentOfficial: this.outreachActivity.governmentOfficial,
+          other: this.outreachActivity.other,
+          nameOfTheMainResponsible: namesResponsibles1,
+          researcherInvolved: researcherInvolved1,
+          responsability: this.outreachActivity.responsability,
+          comments: this.outreachActivity.comments,
+          progressReport: this.outreachActivity.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyOutreach', outreachActivity1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

@@ -546,7 +546,30 @@ export default {
             }
         }
 
-        var contador = await axios.post('../api/verifyNonIsi', this.nonIsiPublication).then(function(response) {
+        let publication1 = {
+            id: this.id,
+            authors: this.nonIsiPublication.authors,
+            indexedBy: indexedBy1,
+            researcherInvolved: researcherInvolved1,
+            articleTitle: this.nonIsiPublication.articleTitle,
+            journalName: this.nonIsiPublication.journalName,
+            volume: this.nonIsiPublication.volume,
+            firstPage: this.nonIsiPublication.firstPage,
+            lastPage: this.nonIsiPublication.lastPage,
+            yearPublished: this.nonIsiPublication.yearPublished,
+            funding: fundingsName1,
+            mainResearchers: this.nonIsiPublication.mainResearchers,
+            associativeResearchers: this.nonIsiPublication.associativeResearchers,
+            postDoc: this.nonIsiPublication.postDoc,
+            thesisStudents: this.nonIsiPublication.thesisStudents,
+            nationalExternalResearchers: this.nonIsiPublication.nationalExternalResearchers,
+            internationalExternalResearchers: this.nonIsiPublication.internationalExternalResearchers,
+            comments: this.nonIsiPublication.comments,
+            file: this.nonIsiPublication.file,
+            progressReport: this.nonIsiPublication.progressReport,
+          };
+
+        var contador = await axios.post('../api/verifyNonIsi', publication1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);
@@ -595,9 +618,9 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Send Publication',
-            message: `¿Are you sure you want to send this publication? This action cannot be undone.`,
-            okButton: 'Send',
+            title: 'Edit Publication',
+            message: `¿Are you sure you want to edit this publication? This action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {

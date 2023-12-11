@@ -409,6 +409,7 @@ export default {
         }
 
         let conjointProject1 = {
+          id: this.id,
           status: 'Finished',
           idUsuario: idUser1,
           moduleType: 1,

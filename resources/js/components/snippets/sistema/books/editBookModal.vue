@@ -302,7 +302,25 @@ export default {
           this.errors.push('chapterAuthors');
         }
 
-        var contador = await axios.post('../api/verifyBook', this.book).then(function(response) {
+        let book1 = {
+          id: this.id,
+          workType: this.book.workType,
+          centerResearcher: this.userID,
+          bookAuthors: this.book.bookAuthors,
+          chapterAuthors: this.book.chapterAuthors,
+          editors: this.book.editors,
+          ISBN: this.book.ISBN,
+          bookTitle: this.book.bookTitle,
+          chapterTitle: this.book.chapterTitle,
+          firstPage: this.book.firstPage,
+          lastPage: this.book.lastPage,
+          editorialCityCountry: this.book.editorialCityCountry,
+          year: this.book.year,
+          progressReport: this.book.progressReport,
+          comments: this.book.comments,
+        };
+
+        var contador = await axios.post('../api/verifyBook', book1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);
@@ -357,9 +375,9 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Save Book',
-            message: `¿Are you sure you want to save this book? This action cannot be undone.`,
-            okButton: 'Save',
+            title: 'Edit Book',
+            message: `¿Are you sure you want to edit this book? This action cannot be undone.`,
+            okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {

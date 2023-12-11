@@ -657,7 +657,35 @@ export default {
             }
         }
 
-        var contador = await axios.post('../api/verifyPostdoc', this.postDoc).then(function(response) {
+        let postDoc1 = {
+          id: this.id,
+          nameOfPostdoc: this.postDoc.nameOfPostdoc,
+          identification: this.postDoc.identification,
+          runOrPassport: runOrPassport1,
+          gender: this.postDoc.gender,
+          personalEmail: this.postDoc.personalEmail,
+          researchTopic: this.postDoc.researchTopic,
+          supervisorName: supervisorName1,
+          resourcesProvided: resourcesProvided1,
+          fundingSource: fundingSource1,
+          startYear: this.postDoc.startYear,
+          endingYear: this.postDoc.endingYear,
+          privateSector: this.postDoc.privateSector,
+          academy1: this.postDoc.academy1,
+          business: this.postDoc.business,
+          ownEntrepreneurship: this.postDoc.ownEntrepreneurship,
+          publicSector: this.postDoc.publicSector,
+          government: this.postDoc.government,
+          academy2: this.postDoc.academy2,
+          socialOng: this.postDoc.socialOng,
+          inTheCenter: this.postDoc.inTheCenter,
+          noneOfTheAbove: this.postDoc.noneOfTheAbove,
+          institutionName: this.postDoc.institutionName,
+          comments: this.postDoc.comments,
+          progressReport: this.postDoc.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyPostdoc', postDoc1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

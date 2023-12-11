@@ -296,7 +296,24 @@ export default {
             }
         }
 
-        var contador = await axios.post('../api/verifyFunding', this.fundingSource).then(function(response) {
+        let fundingSources1 = {
+          id: this.id,
+          typeSources: this.fundingSource.typeSources,
+          nameOfInstitution: this.fundingSource.nameOfInstitution,
+          programContest: this.fundingSource.programContest,
+          projectTitle: this.fundingSource.projectTitle,
+          principalResearcher: principalResearcher1,
+          startDate: this.fundingSource.startDate,
+          finishDate: this.fundingSource.finishDate,
+          startYear: this.fundingSource.startYear,
+          endingYear: this.fundingSource.endingYear,
+          comments: this.fundingSource.comments,
+          inCash: this.fundingSource.inCash,
+          typeOfCollaboration: this.fundingSource.typeOfCollaboration,
+          progressReport: this.fundingSource.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyFunding', fundingSources1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

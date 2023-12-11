@@ -341,7 +341,24 @@ export default {
           this.errors.push('categoryTransfer');
         }
 
-        var contador = await axios.post('../api/verifyTechnology', this.technologyKnowledge).then(function(response) {
+        let technologyKnowledge1 = {
+          id: this.id,
+          description: this.technologyKnowledge.description,
+          nameOfInstitutionInvolved: this.technologyKnowledge.nameOfInstitutionInvolved,
+          researcherInvolved: researcherInvolved1,
+          technologyTransfer: this.technologyKnowledge.technologyTransfer,
+          knowledgeTransfer: this.technologyKnowledge.knowledgeTransfer,
+          typeOfTransfer: this.technologyKnowledge.typeOfTransfer,
+          nameOfBeneficiary: this.technologyKnowledge.nameOfBeneficiary,
+          country: this.technologyKnowledge.country,
+          city: this.technologyKnowledge.city,
+          placeRegion: this.technologyKnowledge.placeRegion,
+          year: this.technologyKnowledge.year,
+          comments: this.technologyKnowledge.comments,
+          progressReport: this.technologyKnowledge.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyTechnology', technologyKnowledge1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

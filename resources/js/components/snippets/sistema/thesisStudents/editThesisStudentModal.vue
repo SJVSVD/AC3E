@@ -98,7 +98,7 @@
                             <option value="2">In progress</option>
                           </select>
                       </div>
-                      <div class="col-3">
+                      <div v-if="thesisStudent.thesisStatus == 1" class="col-3">
                         <div class="form-group">
                         <label for="archivo">File:</label>
                         <label for="" style="color: orange;">*</label>
@@ -106,7 +106,7 @@
                         <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
                         </div>
                       </div>
-                      <div class="col-2 pt-2">
+                      <div v-if="thesisStudent.thesisStatus == 1" class="col-2 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                         &nbsp;
@@ -645,7 +645,39 @@ export default {
             this.errors.push('institutionPosteriorArea');
         }
 
-        var contador = await axios.post('../api/verifyThesis', this.thesisStudent).then(function(response) {
+        if(this.thesisStudent.thesisStatus == 1 && this.file == null){
+          this.errors.push('file');
+        }
+
+        let thesisStudent1 = {
+          id: this.id,
+          status: 'Finished',
+          identification: this.thesisStudent.identification,
+          studentName: this.thesisStudent.studentName,
+          runOrPassport: runOrPassport1,
+          gender: this.thesisStudent.gender,
+          studentMail: this.thesisStudent.studentMail,
+          thesisStatus: this.thesisStudent.thesisStatus,
+          thesisTitle: this.thesisStudent.thesisTitle,
+          academicDegree: this.thesisStudent.academicDegree,
+          degreeDenomination: this.thesisStudent.degreeDenomination,
+          tutorName: tutorName1,
+          tutorInstitution: tutorInstitution1,
+          cotutorName: cotutorName1,
+          cotutorInstitution: cotutorInstitution1,
+          otherName: otherName1,
+          otherInstitution: otherInstitution1,
+          university: this.thesisStudent.university,
+          yearStart: this.thesisStudent.yearStart,
+          yearThesisEnd: this.thesisStudent.yearThesisEnd,
+          resourcesCenter: resources1,
+          posteriorArea: this.thesisStudent.posteriorArea,
+          institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
+          comments: this.thesisStudent.comments,
+          progressReport: this.thesisStudent.progressReport,
+        };
+
+        var contador = await axios.post('../api/verifyThesis', thesisStudent1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);
@@ -773,7 +805,6 @@ export default {
             });
 
             let thesisStudent = {
-              idUsuario: this.userID,
               status: 'Finished',
               identification: this.thesisStudent.identification,
               studentName: this.thesisStudent.studentName,

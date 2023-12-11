@@ -16,7 +16,17 @@ class awardsController extends Controller
 
     public function verifyAward(Request $request)
     {
-        $existentes = awards::where('awardName', $request['awardName'])->where('institution', $request['institution'])->whereNotNull('awardName')->whereNotNull('institution')->count();
+        $query = awards::where('awardName', $request['awardName'])
+            ->where('institution', $request['institution'])
+            ->whereNotNull('awardName')
+            ->whereNotNull('institution');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

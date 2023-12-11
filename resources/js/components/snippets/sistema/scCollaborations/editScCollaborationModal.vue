@@ -409,7 +409,7 @@ export default {
         }
 
         let scCollaboration1 = {
-          status: 'Finished',
+          id: this.id,
           idUsuario: idUser1,
           moduleType: 0,
           activityType: this.scCollaboration.activityType,

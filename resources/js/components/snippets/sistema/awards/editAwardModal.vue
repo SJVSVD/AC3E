@@ -213,7 +213,18 @@ export default {
             }
         }
 
-        var contador = await axios.post('../api/verifyAward', this.award).then(function(response) {
+        let award1 = {
+          id: this.id,
+          awardeeName: this.userID,
+          awardName: this.award.awardName,
+          year: this.award.year,
+          contributionAwardee: this.award.contributionAwardee,
+          institution: this.award.institution,
+          country: this.award.country,
+          comments: this.award.comments
+        };
+
+        var contador = await axios.post('../api/verifyAward', award1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

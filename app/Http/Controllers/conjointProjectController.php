@@ -16,7 +16,21 @@ class conjointProjectController extends Controller
 
     public function verifyConjoint(Request $request)
     {
-        $existentes = scCollaborations::where('moduleType', 1)->where('nameOfAC3EMember', $request['nameOfAC3EMember'])->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])->where('beginningDate', $request['beginningDate'])->whereNotNull('beginningDate')->whereNotNull('nameOfAC3EMember')->whereNotNull('nameOfExternalResearcher')->count();
+        $query = scCollaborations::where('moduleType', 1)
+            ->where('nameOfAC3EMember', $request['nameOfAC3EMember'])
+            ->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])
+            ->where('beginningDate', $request['beginningDate'])
+            ->whereNotNull('beginningDate')
+            ->whereNotNull('nameOfAC3EMember')
+            ->whereNotNull('nameOfExternalResearcher');
+    
+        // Si el request trae el campo 'id', agregamos una condición para excluir ese ID de la búsqueda
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

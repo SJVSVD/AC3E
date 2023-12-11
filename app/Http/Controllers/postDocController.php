@@ -16,7 +16,15 @@ class postDocController extends Controller
 
     public function verifyPostdoc(Request $request)
     {
-        $existentes = postDoc::where('identification', $request['identification'])->whereNotNull('identification')->count();
+        $query = postDoc::where('identification', $request['identification'])
+            ->whereNotNull('identification');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

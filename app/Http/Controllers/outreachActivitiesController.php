@@ -16,7 +16,19 @@ class outreachActivitiesController extends Controller
 
     public function verifyOutreach(Request $request)
     {
-        $existentes = outreachActivities::where('activityName', $request['activityName'])->where('date', $request['date'])->where('country', $request['country'])->whereNotNull('country')->whereNotNull('activityName')->whereNotNull('date')->count();
+        $query = outreachActivities::where('activityName', $request['activityName'])
+            ->where('date', $request['date'])
+            ->where('country', $request['country'])
+            ->whereNotNull('activityName')
+            ->whereNotNull('date')
+            ->whereNotNull('country');
+    
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

@@ -19,7 +19,18 @@ class thesisStudentController extends Controller
 
     public function verifyThesis(Request $request)
     {
-        $existentes = thesisStudent::where('identification', $request['identification'])->where('degreeDenomination', $request['degreeDenomination'])->whereNotNull('identification')->whereNotNull('degreeDenomination')->count();
+        $query = thesisStudent::where('identification', $request['identification'])
+            ->where('degreeDenomination', $request['degreeDenomination'])
+            ->whereNotNull('identification')
+            ->whereNotNull('degreeDenomination');
+    
+        // Si el request trae el campo 'id', agregamos una condición para excluir ese ID de la búsqueda
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 

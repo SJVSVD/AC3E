@@ -457,7 +457,28 @@ export default {
             }
         }
 
-        var contador = await axios.post('../api/verifyIsi', this.isiPublication).then(function(response) {
+        let publication1 = {
+          id: this.id,
+          authors: this.isiPublication.authors,
+          coauthor: this.isiPublication.coauthor,
+          articleTitle: this.isiPublication.articleTitle,
+          journalName: this.isiPublication.journalName,
+          doi: this.isiPublication.doi,
+          volume: this.isiPublication.volume,
+          firstPage: this.isiPublication.firstPage,
+          lastPage: this.isiPublication.lastPage,
+          yearPublished: this.isiPublication.yearPublished,
+          funding: fundingsName1,
+          mainResearchers: this.isiPublication.mainResearchers,
+          associativeResearchers: this.isiPublication.associativeResearchers,
+          postDoc: this.isiPublication.postDoc,
+          thesisStudents: this.isiPublication.thesisStudents,
+          nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
+          internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
+          comments: this.isiPublication.comments,
+        };
+
+        var contador = await axios.post('../api/verifyIsi', publication1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
           console.log(e);

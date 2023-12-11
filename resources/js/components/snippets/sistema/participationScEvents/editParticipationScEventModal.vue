@@ -6,7 +6,7 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Participation Sc Event
+                    Edit Participation Sc Event {{ participationSc.file }}
                 </slot>
                 <label for="">Progress year: {{ participationSc.progressReport }}</label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
@@ -14,16 +14,18 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-3">
+                      <div class="col-3">
                             <label for="">Type of Event:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="participationSc.typeEvent">
-                              <option disabled :value="null">Select a type</option>
-                              <option value="International congress">International congress</option>
-                              <option value="National congress">National congress</option>
-                              <option value="Session chair">Session chair</option>
-                              <option value="Keynote">Keynote</option>
-                              <option value="Just assistance">Just assistance</option>
+                              <option disabled value="">Select a type</option>
+                              <option value="Paper presentation">International congress</option>
+                              <option value="Talk">Talk</option>
+                              <option value="Workshop">Workshop</option>
+                              <option value="Course">Course</option>
+                              <option value="Conference">Conference</option>
+                              <option value="Seminar">Seminar</option>
+                              <option value="Symposium">Symposium</option>
                               <option value="Other">Other</option>
                               </select>
                           </div>
@@ -37,14 +39,12 @@
                             <label for="">Type of Participation:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="participationSc.typeOfParticipation">
-                              <option disabled :value="null">Select a type</option>
-                              <option value="Paper presentation">International congress</option>
-                              <option value="Talk">Talk</option>
-                              <option value="Workshop">Workshop</option>
-                              <option value="Course">Course</option>
-                              <option value="Conference">Conference</option>
-                              <option value="Seminar">Seminar</option>
-                              <option value="Symposium">Symposium</option>
+                              <option disabled value="">Select a type</option>
+                              <option value="International congress">International congress</option>
+                              <option value="National congress">National congress</option>
+                              <option value="Session chair">Session chair</option>
+                              <option value="Keynote">Keynote</option>
+                              <option value="Just assistance">Just assistance</option>
                               <option value="Other">Other</option>
                               </select>
                           </div>
@@ -107,6 +107,7 @@
                       <div class="col-4">
                         <div class="form-group">
                         <label for="archivo">File:</label>
+                        <label for="" style="color: orange;">*</label>
                         <label v-if="participation1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
                         </div>
@@ -286,7 +287,6 @@ export default {
               endingDate: this.participationSc.endingDate,
               progressReport: this.participationSc.progressReport,
               nameOfParticipants: this.participationSc.nameOfParticipants,
-              file: this.participationSc.file,
               comments: this.participationSc.comments,
             };
 
@@ -305,29 +305,31 @@ export default {
                 icon: true,
                 rtl: false
               });
-              const formData = new FormData();
-              formData.append('id', this.id);
-              formData.append('file', this.participationSc.file);
-              axios.post('api/participationScEvents/addFile', formData, {
-                  headers: { 'Content-Type' : 'multipart/form-data' }
-                }).then( response => {
-                  console.log(response.data);
-                this.toast.success("File added successfully!", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-                setTimeout(() => {this.cerrarModal();}, 1500);
-              })
+              if(this.participationSc.file != null){
+                const formData = new FormData();
+                formData.append('id', this.id);
+                formData.append('file', this.participationSc.file);
+                axios.post('api/participationScEvents/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then( response => {
+                    console.log(response.data);
+                  this.toast.success("File added successfully!", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                  setTimeout(() => {this.cerrarModal();}, 1500);
+                })
+              }
             })
             .catch((error)=> {
               if (error.response.status == 422){
@@ -384,7 +386,7 @@ export default {
         }
 
         let participationSc1 = {
-          status: 'Finished',
+          id: this.id,
           idUsuario: idUser1,
           typeEvent: typeEvent,
           other: other,
@@ -398,7 +400,6 @@ export default {
           endingDate: this.participationSc.endingDate,
           progressReport: this.participationSc.progressReport,
           nameOfParticipants: this.participationSc.nameOfParticipants,
-          file: this.participationSc.file,
           comments: this.participationSc.comments,
         };
 
@@ -507,29 +508,31 @@ export default {
                 icon: true,
                 rtl: false
               });
-              const formData = new FormData();
-              formData.append('id', this.id);
-              formData.append('file', this.participationSc.file);
-              axios.post('api/participationScEvents/addFile', formData, {
-                  headers: { 'Content-Type' : 'multipart/form-data' }
-                }).then( response => {
-                  console.log(response.data);
-                this.toast.success("File added successfully!", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-                setTimeout(() => {this.cerrarModal();}, 1500);
-              })
+              if(this.participationSc.file != null){
+                const formData = new FormData();
+                formData.append('id', this.id);
+                formData.append('file', this.participationSc.file);
+                axios.post('api/participationScEvents/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then( response => {
+                    console.log(response.data);
+                  this.toast.success("File added successfully!", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                  setTimeout(() => {this.cerrarModal();}, 1500);
+                })
+              }
             })
             .catch((error)=> {
               if (error.response.status == 422){

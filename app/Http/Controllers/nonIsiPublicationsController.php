@@ -19,7 +19,17 @@ class nonIsiPublicationsController extends Controller
 
     public function verifyNonIsi(Request $request)
     {
-        $existentes = nonIsiPublication::where('articleTitle', $request['articleTitle'])->where('journalName', $request['journalName'])->whereNotNull('articleTitle')->whereNotNull('journalName')->count();
+        $query = nonIsiPublication::where('articleTitle', $request['articleTitle'])
+            ->where('journalName', $request['journalName'])
+            ->whereNotNull('articleTitle')
+            ->whereNotNull('journalName');
+
+        if ($request->has('id')) {
+            $query->where('id', '!=', $request->input('id'));
+        }
+    
+        $existentes = $query->count();
+    
         return response()->json($existentes); 
     }
 
