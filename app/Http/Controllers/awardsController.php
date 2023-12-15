@@ -34,7 +34,7 @@ class awardsController extends Controller
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
         $administrador = false;
-        $awards = awards::where('awardeeName', $userID)->with('usuario')->get();
+        $awards = awards::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->get();
         // Mantener aquellos que cumplen con los roles del usuario:
@@ -49,7 +49,13 @@ class awardsController extends Controller
                 }
             }
         }
-        if($administrador == true){
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $awards = Awards::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
             $awards = awards::with('usuario')->get();
         }
         return $awards;

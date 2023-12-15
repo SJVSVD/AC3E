@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Publication
                 </slot>
-                <label for="">Progress year: {{ nonIsiPublication.progressReport }}</label>
+                <label for="">Progress year: {{ nonIsiPublication.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -213,6 +213,7 @@
                 <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="nonIsiPublication.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -226,9 +227,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       nonIsiPublication:{
@@ -265,6 +267,7 @@ export default {
       currentYear: new Date().getFullYear(),
       draft: false,
       buttonDisable: false,
+      showModalProgress: false,
       researchers: [],
       usuarios: [],
       errors:[],
@@ -283,6 +286,9 @@ export default {
       this.years.sort((a, b) => b - a); 
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.nonIsiPublication.progressReport = year;
+      },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data;

@@ -15,6 +15,7 @@ class participationScEvents extends Model
     protected $fillable = [
         'idUsuario',
         'status',
+        'researcherInvolved',
         'presentationTitle',
         'typeOfParticipation',
         'otherParticipation',

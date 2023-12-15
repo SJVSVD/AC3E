@@ -15,6 +15,7 @@ class organizationsScEvents extends Model
     protected $fillable = [
         'status',
         'idUsuario',
+        'researcherInvolved',
         'typeEvent',
         'other',
         'eventName',

@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('nameOfOrganization')->nullable();
             $table->string('countryOrigin')->nullable();
             $table->string('comments')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

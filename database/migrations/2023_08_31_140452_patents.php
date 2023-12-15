@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('nameOfPatent')->nullable();
             $table->string('ipType')->nullable();
-            $table->string('authors')->nullable();
+            $table->string('authors', 255)->nullable();
             $table->string('institutionOwner')->nullable();
             $table->string('countryOfRegistration')->nullable();
             $table->date('applicationDate')->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('applicationGranted')->nullable();
             $table->string('researcherInvolved')->nullable();
             $table->string('comments')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

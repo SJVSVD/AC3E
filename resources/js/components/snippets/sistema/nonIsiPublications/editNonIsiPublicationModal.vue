@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Publication 
                 </slot>
-                <label for="">Progress year: {{ nonIsiPublication.progressReport }}</label>
+                <label for="">Progress year: {{ nonIsiPublication.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -206,6 +206,7 @@
                 <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="nonIsiPublication.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -219,9 +220,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { modalconfirmacion, modalalerta, Multiselect },
+    components: { modalProgressYear,modalconfirmacion, modalalerta, Multiselect },
     mixins: [mixin],
     data: () => ({
       nonIsiPublication:{
@@ -257,6 +259,7 @@ export default {
       ],
       id: null,
       draft: false,
+      showModalProgress: false,
       currentYear: new Date().getFullYear(),
       buttonDisable: false,
       errors:[],
@@ -333,6 +336,9 @@ export default {
       this.years.sort((a, b) => b - a); 
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.nonIsiPublication.progressReport = year;
+      },
       descargarExtracto(id,nombre){
           axios({
               url: `api/nonIsiDownload/${id}`,

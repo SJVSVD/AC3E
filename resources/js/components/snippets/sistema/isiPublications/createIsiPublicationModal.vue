@@ -12,7 +12,7 @@
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
-                    <option v-for="researcher in researchers" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
                       {{ researcher.name }}
                     </option>
                     </select>
@@ -168,6 +168,26 @@
                           </div>
                       </div>
                     </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="isiPublication.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -195,14 +215,14 @@
 
 <script>
 import axios from 'axios'
-import modalProgressYear from './extraModals/progressYearEdit.vue';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
 let user = document.head.querySelector('meta[name="user"]');
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta, modalProgressYear },
+    components: {modalProgressYear, Multiselect, modalconfirmacion, modalalerta, modalProgressYear },
     mixins: [mixin],
     data: () => ({
       isiPublication:{
@@ -216,6 +236,7 @@ export default {
         lastPage: "",
         yearPublished: "",
         fundings: null,
+        researcherInvolved: null,
         mainResearchers: false,
         associativeResearchers: false,
         postDoc: false,
@@ -236,12 +257,14 @@ export default {
       buttonDisable: false,
       idResearcher: '',
       researchers: [],
+      usuarios:[],
       errors:[],
       years: [],
       buttonText:'Send Publication',
     }),
     mounted(){
       this.getUsuarios();
+      this.getUsuarios2();
       const currentYear = new Date().getFullYear();
       const startYear = 2000;
       const endYear = currentYear + 1;
@@ -264,9 +287,14 @@ export default {
       handleFormSubmit1(year) {
         this.isiPublication.progressReport = year;
       },
+      getUsuarios2(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
       getUsuarios(){
         axios.get('api/usuarios').then( response =>{
-            this.researchers = response.data;
+            this.usuarios = response.data;
         }).catch(e=> console.log(e))
       },
       getProgressReport(){
@@ -303,9 +331,24 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.isiPublication.researcherInvolved !== null){
+              if (this.isiPublication.researcherInvolved.length !== 0) {
+                this.isiPublication.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.isiPublication.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let publication = {
               status: 'Draft',
               idUsuario: idUser1,
+              researcherInvolved: peopleInvolved1,
               authors: this.isiPublication.authors,
               coauthor: this.isiPublication.coauthor,
               articleTitle: this.isiPublication.articleTitle,
@@ -526,8 +569,24 @@ export default {
             }else{
               idUser1 = this.userID;
             }
+
+            var peopleInvolved1 = "";
+            if (this.isiPublication.researcherInvolved !== null){
+              if (this.isiPublication.researcherInvolved.length !== 0) {
+                this.isiPublication.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.isiPublication.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let publication = {
               status: 'Finished',
+              researcherInvolved: peopleInvolved1,
               idUsuario: idUser1,
               authors: this.isiPublication.authors,
               coauthor: this.isiPublication.coauthor,

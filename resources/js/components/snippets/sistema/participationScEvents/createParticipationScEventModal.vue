@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Participation Sc Event
                 </slot>
-                <label for="">Progress year: {{ participationSc.progressReport }}</label>
+                <label for="">Progress year: {{ participationSc.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -132,7 +132,25 @@
                           <br>
                           <input type="text" class= "form-control" v-model="participationSc.comments">
                       </div>
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="participationSc.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
                     </div>
+                    <br>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -149,6 +167,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="participationSc.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -162,9 +181,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       participationSc:{
@@ -184,8 +204,9 @@ export default {
       other: '',
       other2: '',
       draft: false,
-      researchers: '',
+      showModalProgress: false,
       usuarios: [],
+      researchers:[],
       idResearcher: '',
       buttonDisable: false,
       errors:[],
@@ -199,6 +220,9 @@ export default {
       this.getProgressReport();
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.participationSc.progressReport = year;
+      },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data;
@@ -257,8 +281,23 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.participationSc.researcherInvolved !== null){
+              if (this.participationSc.researcherInvolved.length !== 0) {
+                this.participationSc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.participationSc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let participationSc = {
               status: 'Draft',
+              researcherInvolved: peopleInvolved1,
               idUsuario: idUser1,
               typeEvent: typeEvent,
               other: other,
@@ -446,8 +485,23 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.participationSc.researcherInvolved !== null){
+              if (this.participationSc.researcherInvolved.length !== 0) {
+                this.participationSc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.participationSc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let participationSc = {
               status: 'Finished',
+              researcherInvolved: peopleInvolved1,
               idUsuario: idUser1,
               typeEvent: typeEvent,
               other: other,

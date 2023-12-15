@@ -53,7 +53,13 @@ class participationsScEventsController extends Controller
                 }
             }
         }
-        if($administrador == true){
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $participationScEvents = participationScEvents::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
             $participationScEvents = participationScEvents::with('usuario')->get();
         }
         return $participationScEvents;

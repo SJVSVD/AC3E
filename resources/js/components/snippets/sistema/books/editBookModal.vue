@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Book
                 </slot>
-                <label for="">Progress year: {{ book.progressReport }}</label>
+                <label for="">Progress year: {{ book.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -100,6 +100,26 @@
                         <input type="text" class= "form-control" v-model="book.comments">
                       </div>
                     </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="book.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -116,6 +136,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="book.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -129,9 +150,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { modalconfirmacion, modalalerta, Multiselect},
+    components: { modalProgressYear,modalconfirmacion, modalalerta, Multiselect},
     mixins: [mixin],
     data: () => ({
       book:{
@@ -140,6 +162,7 @@ export default {
         chapterAuthors: '',
         bookTitle: '',
         chapterTitle: '',
+        researcherInvolved: null,
         firstPage: '',
         lastPage: '',
         editorialCityCountry: '',
@@ -160,10 +183,12 @@ export default {
       showModalBookAutor: false,
       showModalChapterAutor: false,
       bookAuthors1:[],
+      researchers:[],
       chapterAuthors1:[],
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
+      showModalProgress: false,
       buttonDisable: false,
       id:'',
       errors:[],
@@ -189,14 +214,36 @@ export default {
       this.book.bookAuthors = this.book1.bookAuthors;
       this.book.chapterAuthors = this.book1.chapterAuthors;
       this.book.comments = this.book1.comments;
+
+      if (this.book1.researcherInvolved != null) {
+          const valoresSeparados1 = this.book1.researcherInvolved.split(",");
+          this.book.researcherInvolved = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
+
       const currentYear = new Date().getFullYear();
       const startYear = 2000;
       const endYear = currentYear + 1;
       this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
       this.selectedYear = currentYear;
       this.years.sort((a, b) => b - a); 
+      this.getUsuarios();
     },
     methods: {
+      getUsuarios(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
+      handleFormSubmit1(year) {
+        this.book.progressReport = year;
+      },
       onInput(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
@@ -219,8 +266,23 @@ export default {
           })
           if (ok) {
 
+            var peopleInvolved1 = "";
+            if (this.book.researcherInvolved !== null){
+              if (this.book.researcherInvolved.length !== 0) {
+                this.book.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.book.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let book = {
               status: 'Draft',
+              researcherInvolved: peopleInvolved1,
               workType: this.book.workType,
               centerResearcher: this.userID,
               bookAuthors: this.book.bookAuthors,
@@ -382,8 +444,23 @@ export default {
           })
           if (ok) {
 
+            var peopleInvolved1 = "";
+            if (this.book.researcherInvolved !== null){
+              if (this.book.researcherInvolved.length !== 0) {
+                this.book.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.book.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let book = {
               status: 'Finished',
+              researcherInvolved: peopleInvolved1,
               workType: this.book.workType,
               centerResearcher: this.userID,
               bookAuthors: this.book.bookAuthors,

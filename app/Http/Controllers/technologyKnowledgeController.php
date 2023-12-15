@@ -51,7 +51,13 @@ class technologyKnowledgeController extends Controller
                 }
             }
         }
-        if($administrador == true){
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $technologyKnowledge = technologyKnowledge::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
             $technologyKnowledge = technologyKnowledge::with('usuario')->get();
         }
         return $technologyKnowledge;

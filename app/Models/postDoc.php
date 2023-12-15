@@ -15,6 +15,7 @@ class postDoc extends Model
     protected $fillable = [
         'idUsuario',
         'status',
+        'researcherInvolved',
         'nameOfPostdoc',
         'identification',
         'runOrPassport',

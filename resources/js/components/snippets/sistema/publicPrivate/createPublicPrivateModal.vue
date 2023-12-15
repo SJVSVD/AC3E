@@ -8,7 +8,7 @@
                 <slot name="header">
                     New connection 
                 </slot>
-                <label for="">Progress year: {{ publicPrivate.progressReport }}</label>
+                <label for="">Progress year: {{ publicPrivate.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -165,6 +165,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="publicPrivate.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -178,9 +179,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: {modalProgressYear, Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       publicPrivate:{
@@ -201,6 +203,7 @@ export default {
       },
       other: '',
       draft: false,
+      showModalProgress: false,
       researchers2: '',
       externalResearcher: '',
       buttonDisable: false,
@@ -233,6 +236,9 @@ export default {
       this.getUsuarios();
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.publicPrivate.progressReport = year;
+      },
       getUsuarios(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data;

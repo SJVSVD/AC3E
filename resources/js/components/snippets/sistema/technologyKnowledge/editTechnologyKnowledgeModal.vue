@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Technology and knowledge transfer
                 </slot>
-                <label for="">Progress year: {{ technologyKnowledge.progressReport }}</label>
+                <label for="">Progress year: {{ technologyKnowledge.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -137,6 +137,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="technologyKnowledge.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -150,9 +151,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear, Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       technologyKnowledge:{
@@ -170,6 +172,7 @@ export default {
       },
       id: '',
       draft: false,
+      showModalProgress: false,
       buttonDisable: false,
       researchers2: '',
       errors:[],
@@ -214,6 +217,9 @@ export default {
       this.years.sort((a, b) => b - a);
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.technologyKnowledge.progressReport = year;
+      },
       getUsuarios2(){
         axios.get('api/researchers').then( response =>{
             this.researchers2 = response.data;

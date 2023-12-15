@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Postdoctoral fellow
                 </slot>
-                <label for="">Progress year: {{ postDoc.progressReport }}</label>
+                <label for="">Progress year: {{ postDoc.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -228,6 +228,25 @@
                       </div>
                     </div>
                     <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="postDoc.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -244,6 +263,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="postDoc.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -257,9 +277,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       postDoc:{
@@ -270,6 +291,7 @@ export default {
         gender: '',
         researchTopic: '',
         personalEmail: '',
+        researcherInvolved: null,
         supervisorName: null,
         resourcesProvided: null,
         fundingSource: null,
@@ -301,7 +323,8 @@ export default {
       ],
       id: '',
       draft: false,
-      researchers: '',
+      showModalProgress: false,
+      researchers: [],
       buttonDisable: false,
       errors:[],
       buttonText:'Edit fellow',
@@ -343,10 +366,9 @@ export default {
       this.postDoc.comments = this.postDoc1.comments;
       this.postDoc.progressReport = this.postDoc1.progressReport;
 
-
-      if (this.postDoc1.nameOfResearch != null) {
-          const valoresSeparados1 = this.postDoc1.nameOfResearch.split(",");
-          this.postDoc.nameOfResearch = valoresSeparados1.map((valor, index) => {
+      if (this.postDoc1.researcherInvolved != null) {
+          const valoresSeparados1 = this.postDoc1.researcherInvolved.split(",");
+          this.postDoc.researcherInvolved = valoresSeparados1.map((valor, index) => {
               valor = valor.trim();
               if (valor.endsWith('.')) {
                   valor = valor.slice(0, -1);
@@ -399,6 +421,9 @@ export default {
       this.years.sort((a, b) => b - a);
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.postDoc.progressReport = year;
+      },
       checkInputs(input) {
         if (input === 'private') {
           if (this.postDoc.academy1 || this.postDoc.business || this.postDoc.ownEntrepreneurship) {
@@ -546,8 +571,23 @@ export default {
               }
             }
 
+            var peopleInvolved1 = "";
+            if (this.postDoc.researcherInvolved !== null){
+              if (this.postDoc.researcherInvolved.length !== 0) {
+                this.postDoc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.postDoc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let postDoc = {
               status: 'Draft',
+              researcherInvolved: peopleInvolved1,
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
@@ -792,9 +832,23 @@ export default {
               }
             }
 
+            var peopleInvolved1 = "";
+            if (this.postDoc.researcherInvolved !== null){
+              if (this.postDoc.researcherInvolved.length !== 0) {
+                this.postDoc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.postDoc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
 
             let postDoc = {
               status: 'Finished',
+              researcherInvolved: peopleInvolved1,
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,

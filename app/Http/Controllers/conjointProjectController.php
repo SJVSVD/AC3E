@@ -53,8 +53,14 @@ class conjointProjectController extends Controller
                 }
             }
         }
-        if($administrador == true){
-            $scCollaborations = scCollaborations::with('usuario')->where('moduleType',1)->get();
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $scCollaborations = scCollaborations::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
+            $scCollaborations = scCollaborations::with('usuario')->get();
         }
         return $scCollaborations;
     }

@@ -51,7 +51,13 @@ class publicPrivateController extends Controller
                 }
             }
         }
-        if($administrador == true){
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $publicPrivate = publicPrivate::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
             $publicPrivate = publicPrivate::with('usuario')->get();
         }
         return $publicPrivate;

@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('nameOfInstitutionInvolved')->nullable();
             $table->string('researcherInvolved')->nullable();
             $table->boolean('externalResearcher')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

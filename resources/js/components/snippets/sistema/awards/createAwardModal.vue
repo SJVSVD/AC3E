@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Award
                 </slot>
-                <label for="">Progress year: {{ award.progressReport }}</label>
+                <label for="">Progress year: {{ award.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -23,6 +23,12 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
+                          <div class="col-3">
+                            <label for="">Awardee Name:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="award.awardeeName">
+                          </div>
                           <div class="col-4">
                             <label for="">Award Name:</label>
                             <label for="" style="color: orange;">*</label>
@@ -36,7 +42,7 @@
                             <select class="form-select" id="selectYear" v-model="award.year">
                             <option disabled value="">Select a year</option>
                             <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-                        </select>
+                            </select>
                           </div>
                           <div class="col-3">
                             <label for="">Institution:</label>
@@ -44,28 +50,47 @@
                             <br>
                             <input type="text" class= "form-control" v-model="award.institution">
                           </div>
-                          <div class="col-3">
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-3">
                             <label for="">Country:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="award.country">
                           </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-6">
                           <label for="">Contribution of the awardee:</label>
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <textarea class= "form-control" v-model="award.contributionAwardee" style="resize: none;" cols="30" rows="5"></textarea>
                       </div>
-                      <div class="col-6">
+                      <div class="col-3">
                           <label for="">Comments:</label>
                           <br>
                           <input type="text" class= "form-control" v-model="award.comments">
                       </div>
                     </div>
                     <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="award.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -85,6 +110,7 @@
                 <modalChapterAutor v-if="showModalChapterAutor" @close="showModalChapterAutor = false" @submit="handleFormSubmit2"></modalChapterAutor>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="award.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -98,9 +124,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       award:{
@@ -111,19 +138,23 @@ export default {
         institution: '',
         country: '',
         progressReport: '',
+        researcherInvolved: null,
         comments: '',
       },
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
+      showModalProgress: false,
       buttonDisable: false,
       idResearcher: '',
       usuarios: [],
+      researchers: [],
       errors:[],
       buttonText:'Save Award',
     }),
     created(){
       this.getProgressReport();
+      this.getUsuarios();
       this.getUsuarios2();
       const currentYear = new Date().getFullYear();
       const startYear = 2000;
@@ -133,6 +164,14 @@ export default {
       this.years.sort((a, b) => b - a); 
     },
     methods: {
+      getUsuarios(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
+      handleFormSubmit1(year) {
+        this.award.progressReport = year;
+      },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data;
@@ -158,9 +197,25 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.award.researcherInvolved !== null){
+              if (this.award.researcherInvolved.length !== 0) {
+                this.award.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.award.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let award = {
               status: 'Draft',
-              awardeeName: idUser1,
+              idUsuario: idUser1,
+              awardeeName: this.award.awardeeName,
+              researcherInvolved: peopleInvolved1,
               awardName: this.award.awardName,
               year: this.award.year,
               contributionAwardee: this.award.contributionAwardee,
@@ -223,7 +278,6 @@ export default {
       async createAward() {
         this.errors = [];
         const itemsToSkip = [
-          'awardeeName',
           'comments'
         ];
         for (const item in this.award) {
@@ -247,6 +301,8 @@ export default {
           this.errors.forEach(item => {
             if(item == 'awardName'){
               mensaje =   mensaje + "The field Award Name is required" + "\n";
+            }else if(item == 'awardeeName'){
+              mensaje =   mensaje + "The field Awardee Name is required" + "\n";
             }else if(item == 'contributionAwardee'){
               mensaje =   mensaje + "The field Contribution Awardee is required" + "\n";
             }else if(item == 'chapterTitle'){
@@ -289,9 +345,25 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.award.researcherInvolved !== null){
+              if (this.award.researcherInvolved.length !== 0) {
+                this.award.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.award.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let award = {
               status: 'Finished',
-              awardeeName: idUser1,
+              idUsuario: idUser1,
+              awardeeName: this.award.awardeeName,
+              researcherInvolved: peopleInvolved1,
               awardName: this.award.awardName,
               year: this.award.year,
               contributionAwardee: this.award.contributionAwardee,

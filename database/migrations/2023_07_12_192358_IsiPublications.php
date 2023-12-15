@@ -18,6 +18,7 @@ return new class extends Migration
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
+            $table->string('researcherInvolved')->nullable();
             $table->string('authors', 255)->nullable();
             $table->string('coauthor')->nullable();
             $table->string('articleTitle')->nullable();
@@ -35,7 +36,7 @@ return new class extends Migration
             $table->boolean('nationalExternalResearchers')->nullable();
             $table->boolean('internationalExternalResearchers')->nullable();
             $table->string('comments')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

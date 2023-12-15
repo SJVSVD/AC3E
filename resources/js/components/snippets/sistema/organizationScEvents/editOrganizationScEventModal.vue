@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Organization Sc Event
                 </slot>
-                <label for="">Progress year: {{ organizationSc.progressReport }}</label>
+                <label for="">Progress year: {{ organizationSc.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -95,6 +95,26 @@
                         <input type="text" class= "form-control" v-model="organizationSc.comments">
                       </div>
                     </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="organizationSc.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -114,6 +134,7 @@
                 <modalChapterAutor v-if="showModalChapterAutor" @close="showModalChapterAutor = false" @submit="handleFormSubmit2"></modalChapterAutor>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="organizationSc.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -127,9 +148,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       organizationSc:{
@@ -139,6 +161,7 @@ export default {
         city: '',
         startDate: '',
         endingDate: '',
+        researcherInvolved: null,
         numberParticipants: '',
         file: '',
         comments: '',
@@ -148,8 +171,10 @@ export default {
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
+      showModalProgress: false,
       id: '',
       user: '',
+      researchers:[],
       buttonDisable: false,
       errors:[],
       buttonText:'Save Organization',
@@ -158,6 +183,7 @@ export default {
       organization1: Object,
     },
     created(){
+      this.getUsuarios();
       this.id = this.organization1.id;
       this.user = this.organization1.usuario.name;
       this.organizationSc.typeEvent = this.organization1.typeEvent;
@@ -175,8 +201,29 @@ export default {
         this.organizationSc.typeEvent = 'Other';
         this.other = this.organization1.typeEvent;
       }
+
+      if (this.organization1.researcherInvolved != null) {
+          const valoresSeparados1 = this.organization1.researcherInvolved.split(",");
+          this.organizationSc.researcherInvolved = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
+
     },
     methods: {
+      getUsuarios(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
+      handleFormSubmit1(year) {
+        this.organizationSc.progressReport = year;
+      },
       descargarExtracto(id,nombre){
           axios({
               url: `api/organizationDownload/${id}`,
@@ -217,8 +264,23 @@ export default {
               typeEvent = this.organizationSc.typeEvent;
             }
 
+            var peopleInvolved1 = "";
+            if (this.organizationSc.researcherInvolved !== null){
+              if (this.organizationSc.researcherInvolved.length !== 0) {
+                this.organizationSc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.organizationSc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let organizationSc = {
               status: 'Draft',
+              researcherInvolved: peopleInvolved1,
               typeEvent: typeEvent,
               other: other,
               eventName: this.organizationSc.eventName,
@@ -420,8 +482,23 @@ export default {
               typeEvent = this.organizationSc.typeEvent;
             }
 
+            var peopleInvolved1 = "";
+            if (this.organizationSc.researcherInvolved !== null){
+              if (this.organizationSc.researcherInvolved.length !== 0) {
+                this.organizationSc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.organizationSc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let organizationSc = {
               status: 'Finished',
+              researcherInvolved: peopleInvolved1,
               typeEvent: typeEvent,
               other: other,
               eventName: this.organizationSc.eventName,

@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Thesis {{ thesisStudent.file }}
                 </slot>
-                <label for="">Progress year: {{ thesisStudent.progressReport }}</label>
+                <label for="">Progress year: {{ thesisStudent.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -208,6 +208,26 @@
                           <input type="text" class= "form-control" v-model="thesisStudent.comments">
                       </div>
                     </div>
+                    <br>                    
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="thesisStudent.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -230,6 +250,7 @@
                 <modalEditarOther v-bind:others1="others" v-if="showModalEditOther" @close="showModalEditOther = false"></modalEditarOther>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="thesisStudent.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -249,9 +270,10 @@ import modalEditarCotutor from './extraModals/editCotutor.vue';
 import modalEditarOther from './extraModals/editOther.vue';
 import {mixin} from '../../../../mixins.js';
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect,modalconfirmacion, modalalerta, modalAutor, modalCoautor , modalOther, modalEditarTutor, modalEditarCotutor, modalEditarOther },
+    components: { modalProgressYear,Multiselect,modalconfirmacion, modalalerta, modalAutor, modalCoautor , modalOther, modalEditarTutor, modalEditarCotutor, modalEditarOther },
     mixins: [mixin],
     data: () => ({
       thesisStudent:{
@@ -275,6 +297,7 @@ export default {
         yearStart: "",
         yearThesisEnd: "",
         resourcesCenter: null,
+        researcherInvolved: null,
         posteriorArea: "",
         institutionPosteriorArea: "",
         progressReport: "",
@@ -296,12 +319,14 @@ export default {
       buttonDisable: false,
       file: null,
       draft: false,
+      showModalProgress: false,
       tutors:[],
       cotutors:[],
       others:[],
       errors:[],
       id: '',
       user: '',
+      researchers:[],
       buttonText:'Edit Thesis',
       years: [],
     }),
@@ -312,6 +337,7 @@ export default {
       thesisStudent1: Object,
     },
     created(){
+      this.getUsuarios();
       this.id = this.thesisStudent1.id;
       this.user = this.thesisStudent1.usuario.name;
       this.thesisStudent.studentName = this.thesisStudent1.studentName;
@@ -379,8 +405,28 @@ export default {
       this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
       this.selectedYear = currentYear;
       this.years.sort((a, b) => b - a);
+
+      if (this.thesisStudent1.researcherInvolved != null) {
+          const valoresSeparados1 = this.thesisStudent1.researcherInvolved.split(",");
+          this.thesisStudent.researcherInvolved = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
     },
     methods: {
+      getUsuarios(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
+      handleFormSubmit1(year) {
+        this.thesisStudent.progressReport = year;
+      },
       descargarExtracto(id,nombre){
           axios({
               url: `api/thesisDownload/${id}`,
@@ -518,8 +564,23 @@ export default {
               resources1 += resource.value + ',';
             }); 
           }
+
+          var peopleInvolved1 = "";
+          if (this.thesisStudent.researcherInvolved !== null){
+            if (this.thesisStudent.researcherInvolved.length !== 0) {
+              this.thesisStudent.researcherInvolved.forEach((researcherInvolved, index) => {
+                peopleInvolved1 += researcherInvolved.name;
+                if (index === this.thesisStudent.researcherInvolved.length - 1) {
+                  peopleInvolved1 += '.';
+                } else {
+                  peopleInvolved1 += ', ';
+                }
+              });
+            }
+          }
           let thesisStudent = {
             status: 'Draft',
+            researcherInvolved: peopleInvolved1,
             identification: this.thesisStudent.identification,
             studentName: this.thesisStudent.studentName,
             runOrPassport: runOrPassport1,
@@ -804,8 +865,23 @@ export default {
               resources1 += resource.value + ',';
             });
 
+            var peopleInvolved1 = "";
+            if (this.thesisStudent.researcherInvolved !== null){
+              if (this.thesisStudent.researcherInvolved.length !== 0) {
+                this.thesisStudent.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.thesisStudent.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let thesisStudent = {
               status: 'Finished',
+              researcherInvolved: peopleInvolved1,
               identification: this.thesisStudent.identification,
               studentName: this.thesisStudent.studentName,
               runOrPassport: runOrPassport1,

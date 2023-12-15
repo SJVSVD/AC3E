@@ -33,7 +33,13 @@ class booksController extends Controller
                 }
             }
         }
-        if($administrador == true){
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $books = books::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
             $books = books::with('usuario')->get();
         }
         return $books;

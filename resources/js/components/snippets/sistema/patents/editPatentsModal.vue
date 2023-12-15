@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Patent 
                 </slot>
-                <label for="">Progress year: {{ patent.progressReport }}</label>
+                <label for="">Progress year: {{ patent.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -143,6 +143,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="patent.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -156,9 +157,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       patent:{
@@ -178,6 +180,7 @@ export default {
       },
       other: '',
       draft: false,
+      showModalProgress: false,
       researchers: '',
       id: '',
       buttonDisable: false,
@@ -219,6 +222,9 @@ export default {
 
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.patent.progressReport = year;
+      },
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;

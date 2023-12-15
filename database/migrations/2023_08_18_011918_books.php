@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('workType')->nullable();
             $table->bigInteger('centerResearcher')->unsigned();
             $table->foreign("centerResearcher")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
+            $table->string('researcherInvolved')->nullable();
             $table->string('bookAuthors')->nullable();
             $table->string('chapterAuthors')->nullable();
             $table->string('bookTitle')->nullable();
@@ -29,7 +30,7 @@ return new class extends Migration
             $table->string('lastPage')->nullable();
             $table->string('editorialCityCountry')->nullable();
             $table->year('year')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->string('comments')->nullable();
             $table->timestamps();
             $table->softDeletes();

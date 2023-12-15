@@ -15,6 +15,7 @@ class books extends Model
     protected $fillable = [
         'status',
         'centerResearcher',
+        'researcherInvolved',
         'workType',
         'bookAuthors',
         'chapterAuthors',

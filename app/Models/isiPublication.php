@@ -15,6 +15,7 @@ class isiPublication extends Model
     protected $fillable = [
         'status',
         'idUsuario',
+        'researcherInvolved',
         'authors',
         'coauthor',
         'articleTitle',

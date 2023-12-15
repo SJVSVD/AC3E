@@ -15,6 +15,7 @@ class awards extends Model
     protected $fillable = [
         'status',
         'idUsuario',
+        'researcherInvolved',
         'awardeeName',
         'awardName',
         'year',

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
             $table->string('indexedBy')->nullable();
-            $table->string('authors')->nullable();
+            $table->string('authors', 255)->nullable();
             $table->string('articleTitle')->nullable();
             $table->string('journalName')->nullable();
             $table->string('volume')->nullable();
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->boolean('nationalExternalResearchers')->nullable();
             $table->boolean('internationalExternalResearchers')->nullable();
             $table->string('comments')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

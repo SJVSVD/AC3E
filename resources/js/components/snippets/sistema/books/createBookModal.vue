@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Book
                 </slot>
-                <label for="">Progress year: {{ book.progressReport }}</label>
+                <label for="">Progress year: {{ book.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -107,6 +107,26 @@
                         <input type="text" class= "form-control" v-model="book.comments">
                       </div>
                     </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="book.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -124,6 +144,7 @@
                 <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="book.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -137,9 +158,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       book:{
@@ -151,6 +173,7 @@ export default {
         firstPage: '',
         lastPage: '',
         editorialCityCountry: '',
+        researcherInvolved: null,
         year: '',
         ISBN: '',
         editors: '',
@@ -160,14 +183,17 @@ export default {
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
+      showModalProgress: false,
       buttonDisable: false,
       usuarios: [],
+      researchers: [],
       idResearcher: '',
       errors:[],
       buttonText:'Save Book',
     }),
     created(){
       this.getProgressReport();
+      this.getUsuarios();   
       this.getUsuarios2();      
       const currentYear = new Date().getFullYear();
       const startYear = 2000;
@@ -177,6 +203,14 @@ export default {
       this.years.sort((a, b) => b - a); 
     },
     methods: {
+      getUsuarios(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
+      handleFormSubmit1(year) {
+        this.book.progressReport = year;
+      },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data;
@@ -202,8 +236,23 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.book.researcherInvolved !== null){
+              if (this.book.researcherInvolved.length !== 0) {
+                this.book.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.book.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let book = {
               status: 'Draft',
+              researcherInvolved: peopleInvolved1,
               workType: this.book.workType,
               centerResearcher: idUser1,
               bookAuthors: this.book.bookAuthors,
@@ -366,8 +415,23 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.book.researcherInvolved !== null){
+              if (this.book.researcherInvolved.length !== 0) {
+                this.book.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.book.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let book = {
               status: 'Finished',
+              researcherInvolved: peopleInvolved1,
               workType: this.book.workType,
               centerResearcher: idUser1,
               bookAuthors: this.book.bookAuthors,

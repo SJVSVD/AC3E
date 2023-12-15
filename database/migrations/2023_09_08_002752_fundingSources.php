@@ -18,6 +18,7 @@ return new class extends Migration
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
+            $table->string('researcherInvolved')->nullable();
             $table->string('nameOfResearch')->nullable();
             $table->string('typeSources')->nullable();
             $table->string('nameOfInstitution')->nullable();
@@ -30,7 +31,7 @@ return new class extends Migration
             $table->integer('inCash')->nullable();
             $table->string('typeOfCollaboration')->nullable();
             $table->string('state')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

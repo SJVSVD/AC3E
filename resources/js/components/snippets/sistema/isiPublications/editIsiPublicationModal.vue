@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Publication
                 </slot>
-                <label for="">Progress year: {{ isiPublication.progressReport }}</label>
+                <label for="">Progress year: {{ isiPublication.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -162,6 +162,26 @@
                           </div>
                       </div>
                     </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="isiPublication.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -179,6 +199,7 @@
                 <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="isiPublication.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -192,9 +213,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { modalconfirmacion, modalalerta, Multiselect },
+    components: { modalProgressYear,modalconfirmacion, modalalerta, Multiselect },
     mixins: [mixin],
     data: () => ({
       isiPublication:{
@@ -206,6 +228,7 @@ export default {
         volume: "",
         firstPage: "",
         lastPage: "",
+        researcherInvolved: null,
         fundings: null,
         mainResearchers: false,
         associativeResearchers: false,
@@ -224,8 +247,10 @@ export default {
       id: null,
       coauthor: false,
       draft: false,
+      showModalProgress: false,
       currentYear: new Date().getFullYear(),
       buttonDisable: false,
+      researchers: [],
       errors:[],
       buttonText:'Edit Publication',
     }),
@@ -233,6 +258,7 @@ export default {
       isiPublication1: Object,
     },
     mounted(){
+      this.getUsuarios2();
       const currentYear = new Date().getFullYear();
       const startYear = 2000;
       const endYear = currentYear + 1;
@@ -258,6 +284,18 @@ export default {
       if (this.isiPublication1.funding != null) {
           const valoresSeparados1 = this.isiPublication1.funding.split(",");
           this.isiPublication.fundings = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
+
+      if (this.isiPublication1.researcherInvolved != null) {
+          const valoresSeparados1 = this.isiPublication1.researcherInvolved.split(",");
+          this.isiPublication.researcherInvolved = valoresSeparados1.map((valor, index) => {
               valor = valor.trim();
               if (valor.endsWith('.')) {
                   valor = valor.slice(0, -1);
@@ -295,6 +333,14 @@ export default {
       this.isiPublication.progressReport = this.isiPublication1.progressReport;
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
+      handleFormSubmit1(year) {
+        this.isiPublication.progressReport = year;
+      },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Edit draft',
@@ -316,8 +362,24 @@ export default {
                 });
               }
             }
+
+            var peopleInvolved1 = "";
+            if (this.isiPublication.researcherInvolved !== null){
+              if (this.isiPublication.researcherInvolved.length !== 0) {
+                this.isiPublication.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.isiPublication.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let publication = {
               status: 'Draft',
+              researcherInvolved: peopleInvolved1,
               authors: this.isiPublication.authors,
               coauthor: this.isiPublication.coauthor,
               articleTitle: this.isiPublication.articleTitle,

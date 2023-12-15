@@ -49,7 +49,13 @@ class fundingSourcesController extends Controller
                 }
             }
         }
-        if($administrador == true){
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $fundingSources = fundingSources::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
             $fundingSources = fundingSources::with('usuario')->get();
         }
         return $fundingSources;

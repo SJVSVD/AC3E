@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Award
                 </slot>
-                <label for="">Progress year: {{ award.progressReport }}</label>
+                <label for="">Progress year: {{ award.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
@@ -57,6 +57,25 @@
                       </div>
                     </div>
                     <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="award.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -76,6 +95,7 @@
                 <modalChapterAutor v-if="showModalChapterAutor" @close="showModalChapterAutor = false" @submit="handleFormSubmit2"></modalChapterAutor>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="award.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -89,9 +109,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       award:{
@@ -101,13 +122,16 @@ export default {
         contributionAwardee: '',
         institution: '',
         country: '',
+        researcherInvolved: null,
         progressReport: '',
       },
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
+      showModalProgress: false,
       id: '',
       buttonDisable: false,
+      researchers: [],
       errors:[],
       buttonText:'Edit Award',
     }),
@@ -116,6 +140,7 @@ export default {
     },
     created(){
       this.id = this.award1.id;
+      this.award.awardeeName = this.award1.awardeeName;
       this.award.awardName = this.award1.awardName;
       this.award.year = this.award1.year;
       this.award.contributionAwardee = this.award1.contributionAwardee;
@@ -123,14 +148,36 @@ export default {
       this.award.country = this.award1.country;
       this.award.progressReport = this.award1.progressReport;
       this.award.comments = this.award1.comments;
+
+      if (this.award1.researcherInvolved != null) {
+          const valoresSeparados1 = this.award1.researcherInvolved.split(",");
+          this.award.researcherInvolved = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
+
       const currentYear = new Date().getFullYear();
       const startYear = 2000;
       const endYear = currentYear + 1;
       this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
       this.selectedYear = currentYear;
       this.years.sort((a, b) => b - a); 
+      this.getUsuarios();
     },
     methods: {
+      getUsuarios(){
+        axios.get('api/researchers').then( response =>{
+            this.researchers = response.data;
+        }).catch(e=> console.log(e))
+      },
+      handleFormSubmit1(year) {
+        this.award.progressReport = year;
+      },
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Edit draft',
@@ -139,14 +186,29 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
+            var peopleInvolved1 = "";
+            if (this.award.researcherInvolved !== null){
+              if (this.award.researcherInvolved.length !== 0) {
+                this.award.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.award.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
             let award = {
               status: 'Draft',
-              awardeeName: this.userID,
+              awardeeName: this.award.awardeeName,
+              researcherInvolved: peopleInvolved1,
               awardName: this.award.awardName,
               year: this.award.year,
               contributionAwardee: this.award.contributionAwardee,
               institution: this.award.institution,
               country: this.award.country,
+              progressReport: this.award.progressReport,
               comments: this.award.comments,
             };
             axios.put(`api/awards/${this.id}`, award).then((result) => {
@@ -215,7 +277,8 @@ export default {
 
         let award1 = {
           id: this.id,
-          awardeeName: this.userID,
+          idUsuario: this.userID,
+          awardeeName: this.award.awardeeName,
           awardName: this.award.awardName,
           year: this.award.year,
           contributionAwardee: this.award.contributionAwardee,
@@ -274,15 +337,31 @@ export default {
           })
           if (ok) {
 
+            var peopleInvolved1 = "";
+            if (this.award.researcherInvolved !== null){
+              if (this.award.researcherInvolved.length !== 0) {
+                this.award.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.award.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let award = {
               status: 'Finished',
-              awardeeName: this.userID,
+              awardeeName: this.award.awardeeName,
+              researcherInvolved: peopleInvolved1,
               awardName: this.award.awardName,
               year: this.award.year,
               contributionAwardee: this.award.contributionAwardee,
               institution: this.award.institution,
               country: this.award.country,
-              comments: this.award.comments
+              progressReport: this.award.progressReport,
+              comments: this.award.comments,
             };
             this.buttonDisable = true;
             this.buttonText = 'Editing...';

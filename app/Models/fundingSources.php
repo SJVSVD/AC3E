@@ -15,6 +15,7 @@ class fundingSources extends Model
     protected $fillable = [
         'idUsuario',
         'status',
+        'researcherInvolved',
         'typeSources',
         'nameOfInstitution',
         'programContest',

@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('nameOfExternalResearcher')->nullable();
             $table->string('collaborationStay')->nullable();
             $table->boolean('otherStay')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->string('comments')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -49,7 +49,13 @@ class isiPublicationsController extends Controller
                 }
             }
         }
-        if($administrador == true){
+        if($administrador == false){
+            $userName = User::findOrFail($userID)->name;
+            $isiPublications = IsiPublication::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                      ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+        }else{
             $isiPublications = isiPublication::with('usuario')->get();
         }
         return $isiPublications;

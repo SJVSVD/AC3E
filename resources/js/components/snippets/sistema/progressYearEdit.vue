@@ -48,9 +48,9 @@
   
   <script>
   import axios from 'axios'
-  import modalconfirmacion from '../../../sistema/alerts/confirmationModal.vue'
-  import modalalerta from '../../../sistema/alerts/alertModal.vue'
-  import {mixin} from '../../../../../mixins.js'
+  import modalconfirmacion from '../sistema/alerts/confirmationModal.vue'
+  import modalalerta from '../sistema/alerts/alertModal.vue'
+  import {mixin} from '../../../mixins.js'
   
   export default {
       components: { modalconfirmacion, modalalerta },
@@ -70,7 +70,7 @@
         progressYear: Object,
       },
       created(){
-        this.numeroConcatenado = this.progressYear;
+        this.numeroConcatenado = this.progressYear.replace(/\./g, "");
       },
       methods: {  
         eliminarNumero() {

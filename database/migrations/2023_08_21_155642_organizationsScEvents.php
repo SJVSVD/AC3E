@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('organizationsScEvents', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('idUsuario')->unsigned();
+            $table->string('researcherInvolved')->nullable();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
             $table->string('typeEvent')->nullable();
@@ -28,7 +29,7 @@ return new class extends Migration
             $table->integer('numberParticipants')->nullable();
             $table->string('file')->nullable();
             $table->string('comments')->nullable();
-            $table->integer('progressReport')->nullable();
+            $table->string('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

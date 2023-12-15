@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Patent 
                 </slot>
-                <label for="">Progress year: {{ patent.progressReport }}</label>
+                <label for="">Progress year: {{ patent.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -152,6 +152,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="patent.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -165,9 +166,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       patent:{
@@ -187,6 +189,7 @@ export default {
       },
       other: '',
       draft: false,
+      showModalProgress: false,
       researchers: '',
       buttonDisable: false,
       usuarios: [],
@@ -200,6 +203,9 @@ export default {
       this.getProgressReport();
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.patent.progressReport = year;
+      },
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.patent.progressReport = response.data;

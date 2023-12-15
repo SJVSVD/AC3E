@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Postdoctoral fellow
                 </slot>
-                <label for="">Progress year: {{ postDoc.progressReport }}</label>
+                <label for="">Progress year: {{ postDoc.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -237,6 +237,25 @@
                       </div>
                     </div>
                     <br>
+                    <div class="row">
+                      <div class="col-6">
+                        <label for="">Researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="postDoc.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -253,6 +272,7 @@
                 </div>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
+                <modalProgressYear v-bind:progressYear="postDoc.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
           </div>
         </div>
       </div>
@@ -266,9 +286,10 @@ import modalconfirmacion from '../../sistema/alerts/confirmationModal.vue'
 import modalalerta from '../../sistema/alerts/alertModal.vue'
 import {mixin} from '../../../../mixins.js'
 import Multiselect from '@vueform/multiselect';
+import modalProgressYear from '../../sistema/progressYearEdit.vue';
 
 export default {
-    components: { Multiselect, modalconfirmacion, modalalerta },
+    components: { modalProgressYear,Multiselect, modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
       postDoc:{
@@ -279,6 +300,7 @@ export default {
         gender: '',
         researchTopic: '',
         personalEmail: '',
+        researcherInvolved: null,
         supervisorName: null,
         resourcesProvided: null,
         fundingSource: null,
@@ -309,7 +331,8 @@ export default {
         'Other',
       ],
       draft: false,
-      researchers: '',
+      showModalProgress: false,
+      researchers: [],
       usuarios: [],
       idResearcher: '',
       buttonDisable: false,
@@ -328,6 +351,9 @@ export default {
       this.years.sort((a, b) => b - a);
     },
     methods: {
+      handleFormSubmit1(year) {
+        this.postDoc.progressReport = year;
+      },
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.postDoc.progressReport = response.data;
@@ -490,9 +516,24 @@ export default {
             }else{
               idUser1 = this.userID;
             }
+
+            var peopleInvolved1 = "";
+            if (this.postDoc.researcherInvolved !== null){
+              if (this.postDoc.researcherInvolved.length !== 0) {
+                this.postDoc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.postDoc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
             let postDoc = {
               status: 'Draft',
               idUsuario: idUser1,
+              researcherInvolved: peopleInvolved1,
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
@@ -720,9 +761,24 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.postDoc.researcherInvolved !== null){
+              if (this.postDoc.researcherInvolved.length !== 0) {
+                this.postDoc.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.postDoc.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let postDoc = {
               status: 'Finished',
               idUsuario: idUser1,
+              researcherInvolved: peopleInvolved1,
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
