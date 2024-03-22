@@ -6,7 +6,7 @@
             <div class="modal-container-s">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Sc Collaboration
+                    Edit Sc Collaboration {{ scCollaboration.collaborationStay }}
                 </slot>
                 <label for="">Progress year: {{ scCollaboration.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
@@ -14,33 +14,30 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-3">
+                      <div class="col-6">
                             <label for="">Activity Name:</label>
                             <label for="" style="color: orange;">*</label>
-                            <br>
-                            <select class="form-select" v-model="scCollaboration.activityName">
-                              <option disabled :value="null">Select a type</option>
-                              <option value="Visit in Chile (include students)">Visit in Chile (include students)</option>
-                              <option value="Visit abroad (include students)">Visit abroad (include students)</option>
-                              <option value="Research Stay (Pasantia de investigacion) (include students)">Research Stay (Pasantia de investigacion) (include students)</option>
-                              <option value="Participation in R&D Projects directed by other Researcher (external)">Participation in R&D Projects directed by other Researcher (external)</option>
-                              <option value="Participation in R&D Projects directed by an AC3E Researcher">Participation in R&D Projects directed by an AC3E Researcher</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="scCollaboration.activityName == 'Other'" class="col-3">
-                            <label for="">Other Activity:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other">
+                            <Multiselect
+                                placeholder="Select the options"
+                                v-model="scCollaboration.activityName"
+                                limit=8
+                                :searchable="true"
+                                :close-on-select="false"
+                                :createTag="true"
+                                :options="optionsTypeEvent"
+                                mode="tags"
+                                label="name"
+                                trackBy="name"
+                                :object="true"
+                            />
                           </div>
                           <div class="col-3">
                             <label for="">Collaboration Stay:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="scCollaboration.collaborationStay">
                               <option disabled :value="null">Select a type</option>
-                              <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
-                              <option value="Long Visit (More than two weeks)">Long Visit (More than two weeks)</option>
+                              <option value="Short Visit (up to two weeks)">Short Visit (Up to two weeks)</option>
+                              <option value="Long Visit (more than two weeks)">Long Visit (More than two weeks)</option>
                               <option value="Other">Other</option>
                               </select>
                           </div>
@@ -84,8 +81,8 @@
                         <label for="" style="color: orange;">*</label>
                         <select class="form-select" v-model="scCollaboration.nameOfAC3EMember">
                         <option disabled :value="null">Select a member</option>
-                        <option v-for="researcher in researchers2" v-bind:key="researcher.id" v-bind:value="researcher.id">
-                          {{ researcher.name }}
+                        <option v-for="researcher in researchers" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                          {{ researcher }}
                         </option>
                         </select>
                       </div>
@@ -201,7 +198,7 @@ export default {
     data: () => ({
       scCollaboration:{
         activityType: '',
-        activityName: '',
+        activityName: null,
         researcherInvolved: null,
         institutionCollaborates: '',
         countryOrigin: '',
@@ -219,6 +216,14 @@ export default {
       showModalProgress: false,
       researchers: '',
       buttonDisable: false,
+      activityNames: [
+        "Visit in Chile (include students)",
+        "Visit abroad (include students)",
+        "Research Stay (Pasantia de investigacion) (include students)",
+        "Participation in R&D Projects directed by other Researcher (external)",
+        "Participation in R&D Projects directed by an AC3E Researcher",
+        "Other",
+      ],
       errors:[],
       buttonText:'Edit Collaboration',
     }),
@@ -232,7 +237,6 @@ export default {
       this.id = this.collaboration1.id;
 
       this.scCollaboration.activityType = this.collaboration1.activityType;
-      this.scCollaboration.activityName = this.collaboration1.activityName;
       this.scCollaboration.institutionCollaborates = this.collaboration1.institutionCollaborates;
       this.scCollaboration.countryOrigin = this.collaboration1.countryOrigin;
       this.scCollaboration.cityOrigin = this.collaboration1.cityOrigin;
@@ -258,14 +262,20 @@ export default {
           });
       }
 
-      if(this.collaboration1.otherActivity == true){
-        this.scCollaboration.activityName = 'Other';
-        this.other = this.collaboration1.activityName;
-      }else{
-        this.scCollaboration.activityName = this.collaboration1.activityName;
+      if (this.collaboration1.activityName != null) {
+          const valoresSeparados1 = this.collaboration1.activityName.split(",");
+          this.scCollaboration.activityName = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
       }
 
-      if(this.collaboration1.otherStay == true){
+
+      if(this.collaboration1.otherStay == 1){
         this.scCollaboration.collaborationStay = 'Other';
         this.other2 = this.collaboration1.collaborationStay;
       }else{
@@ -404,6 +414,13 @@ export default {
             if (!skipItem && (this.scCollaboration[item] === "" || this.scCollaboration[item] === 0 || this.scCollaboration[item] == null)) {
                 this.errors.push(item);
             }
+        }
+
+        var idUser1 = ''
+        if(this.idResearcher != ''){
+          idUser1 = this.idResearcher;
+        }else{
+          idUser1 = this.userID;
         }
 
         if(this.scCollaboration.activityName == 'Other' && this.other == ''){

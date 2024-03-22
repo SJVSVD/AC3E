@@ -28,13 +28,11 @@
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="participationSc.typeEvent">
                               <option disabled value="">Select a type</option>
-                              <option value="Paper presentation">International congress</option>
-                              <option value="Talk">Talk</option>
+                              <option value="International congress">International congress</option>
+                              <option value="National congress">National congress</option>
                               <option value="Workshop">Workshop</option>
                               <option value="Course">Course</option>
                               <option value="Conference">Conference</option>
-                              <option value="Seminar">Seminar</option>
-                              <option value="Symposium">Symposium</option>
                               <option value="Other">Other</option>
                               </select>
                           </div>
@@ -49,8 +47,8 @@
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="participationSc.typeOfParticipation">
                               <option disabled value="">Select a type</option>
-                              <option value="International congress">International congress</option>
-                              <option value="National congress">National congress</option>
+                              <option value="Paper presentation">Paper presentation</option>
+                              <option value="Talk">Talk</option>
                               <option value="Session chair">Session chair</option>
                               <option value="Keynote">Keynote</option>
                               <option value="Just assistance">Just assistance</option>

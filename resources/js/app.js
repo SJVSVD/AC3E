@@ -32,6 +32,7 @@ const fundingSourcesComponent = defineAsyncComponent(() => import('@/components/
 const adminRolesComponent = defineAsyncComponent(() => import('@/components/main/sistema/adminRolesComponent.vue'));
 const userProfileComponent = defineAsyncComponent(() => import('@/components/userProfileComponent.vue'));
 const powerBiComponent = defineAsyncComponent(() => import('@/components/powerBiComponent.vue'));
+const importInfoComponent = defineAsyncComponent(() => import('@/components/importInfoComponent.vue'));
 const error = defineAsyncComponent(() => import('@/components/errorComponent.vue'));
 
 app.component("dashboard-component", dashboardComponent);
@@ -93,6 +94,9 @@ app.mount("#userp");
 
 app.component("powerbi-component", powerBiComponent);
 app.mount("#powerbi-component");
+
+app.component("import-info", importInfoComponent);
+app.mount("#import-info");
 
 app.component("error-component", error);
 app.mount("#error");

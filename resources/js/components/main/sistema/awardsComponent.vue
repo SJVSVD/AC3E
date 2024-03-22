@@ -42,7 +42,7 @@
                                         </td>
                                         <td>
                                             <p v-if="award.awardName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ award.awardName }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ award.awardName }}</p>
                                         </td>
                                         <td>
                                             <p v-if="award.year == null" class="text-sm mb-0">---</p>

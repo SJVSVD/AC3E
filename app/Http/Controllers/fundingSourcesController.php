@@ -70,6 +70,29 @@ class fundingSourcesController extends Controller
         return response()->json($input);
     }
 
+    public function importFunding(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            $fundingSources = fundingSources::create([
+                'idUsuario' => $rowData['idUsuario'],
+                'status' => 'Finished',
+                'typeSources' => $rowData['Type Sources'],
+                'nameOfInstitution' => $rowData['Name of the Institution'],
+                'programContest' => $rowData['Program / Contest'],
+                'projectTitle' => $rowData['Project title'],
+                'principalResearcher' => $rowData['Principal Researcher'],
+                // 'startDate' => $rowData['Start'],
+                // 'finishDate' => $rowData['Finish'],
+                'comments' => $rowData['Comentarios'],
+                // 'inCash' => $rowData['In Cash'],
+                'typeOfCollaboration' => $rowData['Type of collaboration'],
+                'progressReport' => $rowData['Progress Report'],
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
 
     public function destroy($id)
     {

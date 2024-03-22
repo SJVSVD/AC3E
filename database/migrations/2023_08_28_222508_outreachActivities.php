@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('responsability')->nullable();
             $table->string('activityType')->nullable();
             $table->boolean('otherType')->nullable();
-            $table->string('activityName')->nullable();
-            $table->string('activityDescription')->nullable();
+            $table->string('activityName',1000)->nullable();
+            $table->string('activityDescription',500)->nullable();
             $table->date('date')->nullable();
             $table->integer('attendantsAmount')->nullable();
             $table->integer('duration')->nullable();
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->boolean('governmentOfficial')->nullable();
             $table->boolean('other')->nullable();
             $table->string('nameOfTheMainResponsible')->nullable();
-            $table->string('comments')->nullable();
+            $table->string('comments',1000)->nullable();
             $table->string('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -6,7 +6,7 @@
             <div class="modal-container ">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Thesis {{ thesisStudent.file }}
+                    Edit Thesis {{ thesisStudent.run }}
                 </slot>
                 <label for="">Progress year: {{ thesisStudent.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
@@ -37,17 +37,17 @@
                             <br>
                             <select class="form-select" @change="thesisStudent.run = ''; thesisStudent.passport = '';" v-model="thesisStudent.identification">
                               <option disabled :value="null">Select One</option>
-                              <option value="run">Run</option>
-                              <option value="passport">Passport</option>
+                              <option value="Run">Run</option>
+                              <option value="Passport">Passport</option>
                             </select>
                         </div>                        
-                        <div v-if="thesisStudent.identification == 'run'" class="col-3">
+                        <div v-if="thesisStudent.identification == 'Run'" class="col-3">
                             <label for="">Run: </label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="thesisStudent.run">
                         </div>
-                        <div v-if="thesisStudent.identification == 'passport'" class="col-3">
+                        <div v-if="thesisStudent.identification == 'Passport'" class="col-3">
                             <label for="">Passport: </label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -343,7 +343,7 @@ export default {
       this.thesisStudent.studentName = this.thesisStudent1.studentName;
       this.thesisStudent.progressReport = this.thesisStudent1.progressReport;
       this.thesisStudent.identification = this.thesisStudent1.identification;
-      if(this.thesisStudent1.identification == 'run'){
+      if(this.thesisStudent1.identification == 'Run'){
         this.thesisStudent.run = this.thesisStudent1.runOrPassport;
       }else{
         this.thesisStudent.passport = this.thesisStudent1.runOrPassport;
@@ -519,7 +519,7 @@ export default {
         })
         if (ok) {
           var runOrPassport1 = '';
-          if(this.thesisStudent.identification == 'run'){
+          if(this.thesisStudent.identification == 'Run'){
             runOrPassport1 = this.formatoRut(this.thesisStudent.run);
           }else{
             runOrPassport1 = this.thesisStudent.passport;
@@ -687,7 +687,7 @@ export default {
             }
         }
 
-        if(this.thesisStudent.identification == 'run' && this.thesisStudent.run != ""){
+        if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run != ""){
           var validacion = this.validarRut(this.thesisStudent.run);
           if(validacion == false){
             this.errors.push('invalidRut');
@@ -820,7 +820,7 @@ export default {
           })
           if (ok) {
             var runOrPassport1 = '';
-            if(this.thesisStudent.identification == 'run'){
+            if(this.thesisStudent.identification == 'Run'){
               runOrPassport1 = this.formatoRut(this.thesisStudent.run);
             }else{
               runOrPassport1 = this.thesisStudent.passport;

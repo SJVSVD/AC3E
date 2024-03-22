@@ -72,6 +72,59 @@ class outreachActivitiesController extends Controller
         return response()->json($input);
     }
 
+    public function importOutreach(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            // Obtén el valor de 'attendantsAmount' del $rowData
+            $attendantsAmount = $rowData['Attendant Amount'];
+
+            // Verifica si el valor es un entero
+            if (!is_numeric($attendantsAmount)) {
+                // Si no es un número, establece 'attendantsAmount' en 0
+                $attendantsAmount = 0;
+            }
+
+            // Obtén el valor de 'attendantsAmount' del $rowData
+            $duration = $rowData['Duration [days]'];
+
+            // Verifica si el valor es un entero
+            if (!is_numeric($duration)) {
+                // Si no es un número, establece 'duration' en 0
+                $duration = 0;
+            }
+
+            $outreachActivities = outreachActivities::create([
+                'idUsuario' => $rowData['idUsuario'],
+                'status' => $rowData['Status'],
+                'activityType' => $rowData['Type of Activity'],
+                'activityName' => $rowData['Event Title'],
+                'activityDescription' => $rowData['Activity Description'],
+                'date' => $rowData['Date'],
+                'attendantsAmount' => $attendantsAmount,
+                'duration' => $duration,
+                'country' => $rowData['Country'],
+                'placeRegion' => $rowData['Place Region'],
+                'city' => $rowData['City'],
+                // 'undergraduateStudents' => $rowData[''],
+                // 'primaryEducationStudents' => $rowData[''],
+                // 'secondaryEducationStudents' => $rowData[''],
+                // 'generalCommunity' => $rowData[''],
+                // 'companiesIndustriesServices' => $rowData[''],
+                // 'schoolTeachers' => $rowData[''],
+                // 'governmentOfficial' => $rowData[''],
+                // 'other' => $rowData[''],
+                'nameOfTheMainResponsible' => $rowData['Name of the main responsible'],
+                'progressReport' => $rowData['Progress Report'],
+                'researcherInvolved' => $rowData['Researcher Involved'],
+                'responsability' => $rowData['Responsibility'],
+                'comments' => $rowData['Comentarios'],
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
 
     public function destroy($id)
     {

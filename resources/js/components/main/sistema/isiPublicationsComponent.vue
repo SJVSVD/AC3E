@@ -46,7 +46,7 @@
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.authors == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.authors }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ isiPublication.authors }}</p>
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.doi == null" class="text-sm mb-0">---</p>
@@ -54,7 +54,7 @@
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.articleTitle == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.articleTitle }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ isiPublication.articleTitle }}</p>
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.journalName == null" class="text-sm mb-0">---</p>

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->char('gender')->nullable();
             $table->string('studentMail')->nullable();
             $table->string('thesisStatus')->nullable();
-            $table->string('thesisTitle')->nullable();
+            $table->string('thesisTitle', 500)->nullable();
             $table->string('academicDegree')->nullable();
             $table->string('degreeDenomination')->nullable();
             $table->string('tutorName')->nullable();

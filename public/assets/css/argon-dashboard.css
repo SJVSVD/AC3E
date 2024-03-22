@@ -61,6 +61,13 @@
   --bs-body-bg: #fff;
 }
 
+.truncate-text {
+  max-width: 200px; /* Ajusta el ancho máximo según tus necesidades */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 *,
 *::before,
 *::after {

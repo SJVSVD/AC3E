@@ -72,6 +72,32 @@ class publicPrivateController extends Controller
         return response()->json($input);
     }
 
+    public function importPublicPrivate(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            $publicPrivate = publicPrivate::create([
+                'idUsuario'=> $rowData['idUsuario'],
+                'status'=> 'Finished',
+                'nameOfActivity'=> $rowData['Name of Activity'],
+                'agentType'=> $rowData['Agent Type'],
+                'typeOfConnection'=> $rowData['Type of Connection'],
+                'placeWhereWasExecuted'=> $rowData['Place(s) where activity was executed'],
+                'internationalNational'=> $rowData['Internacional/Nacional'],
+                'participationPublicPolicies'=> $rowData['Participation in definition of public policies'],
+                'researcherInvolved'=> $rowData['Researcher Involved'],
+                // 'startDate'=> $rowData['Start Date'],
+                // 'endingDate'=> $rowData['End Date'],
+                'resultsGoals'=> $rowData['Results / Goals'],
+                'nameOfOrganization'=> $rowData['Name of Organization'],
+                'countryOrigin'=> $rowData['Country/City of origin'],
+                'comments'=> $rowData['Comentarios'],
+                'progressReport'=> $rowData['Progress Report'],
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
 
     public function destroy($id)
     {

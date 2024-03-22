@@ -74,6 +74,7 @@
                     <li><a class="link_name" href="#">Administration</a></li>
                     <li><a href="/admin-usuarios">of Users</a></li>
                     <li><a href="/admin-roles">of Roles and Permissions</a></li>
+                    <li><a href="/import-info">Import data</a></li>
                 </ul>
             </li>
             @endrole

@@ -68,6 +68,40 @@ class patentsController extends Controller
         return response()->json($input);
     }
 
+    public function importPatent(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            // Obtén el valor de 'attendantsAmount' del $rowData
+            $grantDate = $rowData['Grant Date'];
+
+            // Verifica si el valor es un entero
+            if (!is_numeric($grantDate)) {
+                // Si no es un número, establece 'grantDate' en 0
+                $grantDate = null;
+            }
+
+            $patents = patents::create([
+                'idUsuario' => $rowData['idUsuario'],
+                'status' => $rowData['Status'],
+                'ipType' => $rowData['IP Type'],
+                'authors' => $rowData['Authors'],
+                'institutionOwner' => $rowData['Institution Owner(s)'],
+                'countryOfRegistration' => $rowData['Country of Registration'],
+                'applicationDate' => $rowData['Application Date'],
+                'grantDate' => $grantDate,
+                'applicationStatus' => $rowData['Application Status'],
+                'registrationNumber' => $rowData['Registration Number'],
+                'nameOfPatent' => $rowData['Name of Patent Applications'],
+                'researcherInvolved' => $rowData['Researcher Involved'],
+                'comments' => $rowData['Comentarios'],
+                'progressReport' => $rowData['Progress Report'],
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
 
     public function destroy($id)
     {

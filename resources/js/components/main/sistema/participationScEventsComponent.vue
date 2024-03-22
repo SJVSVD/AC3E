@@ -43,7 +43,7 @@
                                         </td>
                                         <td>
                                             <p v-if="participationScEvent.eventName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ participationScEvent.eventName }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ participationScEvent.eventName }}</p>
                                         </td>
                                         <td>
                                             <p v-if="participationScEvent.startDate == null" class="text-sm mb-0">---</p>

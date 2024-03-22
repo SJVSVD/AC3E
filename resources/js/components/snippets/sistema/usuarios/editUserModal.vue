@@ -259,7 +259,8 @@ export default {
                         password: this.user.password,
                         confirmpassword: this.user.confirmpassword,
                         roles: this.selected,
-                        permisos: this.selected2,
+                        idRole: this.user.idRole,
+                        idResearchLine: this.user.idResearchLine,
                     }
                     var id = this.id;
                     axios.post(`api/usuarios/updateUser/${id}`, usuario ).then((result) => {

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
             $table->string('researcherInvolved')->nullable();
-            $table->string('authors', 255)->nullable();
+            $table->string('authors', 1500)->nullable();
             $table->string('coauthor')->nullable();
             $table->string('articleTitle')->nullable();
             $table->string('journalName')->nullable();

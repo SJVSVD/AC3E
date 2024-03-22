@@ -48,7 +48,7 @@
                                         </td>
                                         <td>
                                             <p v-if="outreachActivity.activityName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ outreachActivity.activityName }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ outreachActivity.activityName }}</p>
                                         </td>
                                         <td>
                                             <p v-if="outreachActivity.date == null" class="text-sm mb-0">---</p>

@@ -95,6 +95,114 @@ class thesisStudentController extends Controller
         return response()->json("Thesis Editada");
     }
 
+    public function importThesis(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            $gender =  '';
+            if($rowData['Gender (M/F)'] == 'M'){
+                $gender =  'Male';
+            }else{
+                $gender = 'Female';
+            }
+
+            $academicDegreeMapping = [
+                "1" => "Undergraduate degree or profesional title",
+                "2" => "Master o equivalent",
+                "3" => "PhD degree"
+            ];
+            
+            // Verificar si el campo 'Academic Degree' está presente y es un valor válido en el mapeo
+            $academicDegree = isset($rowData['Academic Degree']) && isset($academicDegreeMapping[$rowData['Academic Degree']]) ? $academicDegreeMapping[$rowData['Academic Degree']] : '';
+            
+            $activityName = '';
+
+            $optionsMapping = [
+                '1' => 'Equipment',
+                '2' => 'Information',
+                '3' => 'Infrastructure',
+                '4' => 'Other'
+            ];
+        
+
+            // Verificar si el campo 'Type of Event' está presente
+            if (isset($rowData['Resources provided by the Center'])) {
+                // Separar el campo 'Type of Event' por comas
+                $events = explode(',', $rowData['Resources provided by the Center']);
+            
+                // Iterar sobre cada evento
+                foreach ($events as &$event) {
+                    // Eliminar espacios en blanco alrededor del evento
+                    $event = trim($event);
+            
+                    // Reemplazar el 6 seguido de un espacio y paréntesis por 'Other'
+                    $event = preg_replace('/\b4\s*\(/', 'Other (', $event);
+            
+                    // Verificar si el evento es un número válido en el mapeo
+                    if (isset($optionsMapping[$event])) {
+                        // Si es un número válido, asignar el valor correspondiente del mapeo
+                        $event = $optionsMapping[$event];
+                    } elseif ($event === '6') {
+                        // Si el evento es '6', asignar el valor 'Other'
+                        $event = 'Other';
+                    }
+                }
+            
+                // Unir los eventos nuevamente en una cadena separada por comas
+                $activityName = implode(', ', $events);
+            
+                // Agregar un punto al final de la cadena si no está presente
+                if (!empty($activityName)) {
+                    $activityName .= '.';
+                }
+            }      
+
+            $optionsMapping2 = [
+                '1' => "Private Education",
+                '2' => "Business",
+                '3' => "Own entrepreneurship",
+                '4' => "Government",
+                '5' => "Public Education",
+                '6' => "Social-ONG",
+                '7' => "In the Center",
+                '8' => "None of the above"
+            ];
+            
+            // Verificar si el campo 'options' está presente y es un valor válido en el mapeo
+            $posteriorArea = isset($rowData['Posterior working area']) && isset($optionsMapping2[$rowData['Posterior working area']]);
+
+            $thesisStudent = thesisStudent::create([
+                'idUsuario' => $rowData['idUsuario'],
+                'status' => $rowData['Status'],
+                'identification' => $rowData['Identification'],
+                'studentName' => $rowData['Student Name'],
+                'runOrPassport' => $rowData['RUN or Passport'],
+                'gender' => $gender,
+                'studentMail' => $rowData['Student Mail'],
+                'thesisStatus' => $rowData['Thesis Status'],
+                'thesisTitle' => $rowData['Thesis Title'],
+                'academicDegree' => $academicDegree,
+                'degreeDenomination' => $rowData['Degree Denomination'],
+                'tutorName' => $rowData['Name1'],
+                'tutorInstitution' => $rowData['Institution1'],
+                'cotutorName' => $rowData['Name2'],
+                'cotutorInstitution' => $rowData['Institution2'],
+                'otherName' => $rowData['Name3'],
+                'otherInstitution' => $rowData['Institution3'],
+                'university' => $rowData['University that gives the degree'],
+                'yearStart' => $rowData['Year in which thesis starts'],
+                // 'yearThesisEnd' => $rowData['Year in which thesis ends'],
+                'resourcesCenter' => $activityName,
+                'posteriorArea' => $posteriorArea,
+                'institutionPosteriorArea' => $rowData['Institution of Posterior working area'],
+                'comments' => $rowData['Comentarios'],
+                'progressReport' => $rowData['Progress Report'],
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
     public function destroy($id)
     {
         thesisStudent::find($id)->delete();

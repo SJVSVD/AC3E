@@ -109,11 +109,20 @@
         <div class="col-lg-4">
             <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="row p-3">
-                    <div class="col-6">
-                        <a class="btn btn-primary" v-if="is('Administrator')" @click="exportConsolidado()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Consolidated</a>
+                    <div class="col-4">
+                        <a class="btn btn-primary" v-if="is('Administrator')" @click="exportConsolidado">
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Consolidado
+                        </a>
                     </div>
-                    <div class="col-6">
-                        <a class="btn btn-primary" @click="exportIndividual()"><i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Individual Return</a>
+                    <div class="col-4">
+                        <a class="btn btn-primary" @click="exportIndividual">
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Retorno Individual
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a class="btn btn-primary" @click="exportStatistics">
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Indicadores
+                        </a>
                     </div>
                 </div>
             </div>
@@ -326,6 +335,24 @@ export default {
                 let link = document.createElement('a')
                 link.href = window.URL.createObjectURL(blob)
                 link.download = 'PlanillaIndividual.xlsx'
+                link.click()
+            })
+        },
+        exportStatistics(){
+            var data = {
+                userID: this.userID,
+            };
+            axios({
+                url: `api/exportStatistics`, data,
+                method: 'POST',
+                responseType: 'arraybuffer',
+            }).then((response) => {
+                let blob = new Blob([response.data], {
+                    type: 'application/xlsx'
+                })
+                let link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob)
+                link.download = 'Indicators.xlsx'
                 link.click()
             })
         },

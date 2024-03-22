@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('awardeeName')->nullable();
             $table->string('awardName')->nullable();
             $table->year('year')->nullable();
-            $table->string('contributionAwardee')->nullable();
+            $table->string('contributionAwardee', 500)->nullable();
             $table->string('institution')->nullable();
             $table->string('country')->nullable();
             $table->string('comments')->nullable();

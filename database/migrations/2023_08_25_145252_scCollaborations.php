@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('collaborationStay')->nullable();
             $table->boolean('otherStay')->nullable();
             $table->string('progressReport')->nullable();
-            $table->string('comments')->nullable();
+            $table->string('comments', 500)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

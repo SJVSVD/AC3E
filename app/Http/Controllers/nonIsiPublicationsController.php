@@ -85,6 +85,51 @@ class nonIsiPublicationsController extends Controller
         return $nonIsiPublications;
     }
 
+    public function importNonIsi(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            // Dividir el valor de funding si contiene comas y convertir cada valor según corresponda
+            $fundingValues = explode(',', $rowData['Funding']);
+            $funding = '';
+            foreach ($fundingValues as $value) {
+                if ($value === '0') {
+                    $funding .= 'Basal Financing Program Funding';
+                } elseif ($value === '1') {
+                    $funding .= 'Other sources';
+                }
+                // Añadir una coma si hay más valores después
+                if (next($fundingValues)) {
+                    $funding .= ', ';
+                }
+            }
+            $nonIsiPublicacion = nonIsiPublication::create([
+                'status' => $rowData['Status'],
+                'idUsuario' => $rowData['idUsuario'],
+                'authors' => $rowData['Author(s)'],
+                'indexedBy' => $rowData['Indexed By Scopus Scielo, etc'],
+                'articleTitle' => $rowData['Article Title'],
+                'journalName' => $rowData['Journal Name'],
+                'volume' => $rowData['Volume'],
+                'firstPage' => $rowData['First page'],
+                'lastPage' => $rowData['Last page'],
+                'yearPublished' => $rowData['Year Published'],
+                'funding' => $funding,
+                'mainResearchers' => $rowData['Main Researchers'],
+                'associativeResearchers' => $rowData['Associative Researchers'],
+                'postDoc' => $rowData['Postdoc.'],
+                'thesisStudents' => $rowData['Thesis Students'],
+                'nationalExternalResearchers' => $rowData['National External Researchers'],
+                'internationalExternalResearchers' => $rowData['International External Researchers'],
+                'researcherInvolved' => $rowData['Researcher Involved'],
+                'comments' => $rowData['Comentarios'],
+                'progressReport' => $rowData['Progress Report']
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
     public function update(Request $request, $id)
     {
         $nonIsiPublication = nonIsiPublication::find($id);

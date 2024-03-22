@@ -23,11 +23,11 @@ return new class extends Migration
             $table->string('typeSources')->nullable();
             $table->string('nameOfInstitution')->nullable();
             $table->string('programContest')->nullable();
-            $table->string('projectTitle')->nullable();
+            $table->string('projectTitle',500)->nullable();
             $table->string('principalResearcher')->nullable();
             $table->date('startDate')->nullable();
             $table->date('finishDate')->nullable();
-            $table->string('comments')->nullable();
+            $table->string('comments',500)->nullable();
             $table->integer('inCash')->nullable();
             $table->string('typeOfCollaboration')->nullable();
             $table->string('state')->nullable();

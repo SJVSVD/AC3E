@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('researcherInvolved')->nullable();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
-            $table->string('presentationTitle')->nullable();
+            $table->string('presentationTitle', 500)->nullable();
             $table->string('typeOfParticipation')->nullable();
             $table->boolean('otherParticipation')->nullable();
             $table->string('typeEvent')->nullable();

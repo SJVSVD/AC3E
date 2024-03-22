@@ -49,7 +49,7 @@
                                         </td>
                                         <td>
                                             <p v-if="publicPrivate.nameOfActivity == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ publicPrivate.nameOfActivity }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ publicPrivate.nameOfActivity }}</p>
                                         </td>
                                         <td>
                                             <p v-if="publicPrivate.nameOfOrganization == null" class="text-sm mb-0">---</p>

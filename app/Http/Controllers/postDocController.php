@@ -68,6 +68,44 @@ class postDocController extends Controller
         return response()->json($input);
     }
 
+    public function importPostdoc(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            $postDoc = postDoc::create([
+                'idUsuario' => $rowData['idUsuario'],
+                'status' => $rowData['Status'],
+                'nameOfPostdoc' => $rowData['Name of Postdoctoral Fellows'],
+                'identification' => $rowData['Identification'],
+                'runOrPassport' => $rowData['RUN / Passport'],
+                'gender' => $rowData['Gender (M/F)'],
+                'researchTopic' => $rowData['Research Topic'],
+                'supervisorName' => $rowData["Tutor's name"],
+                'resourcesProvided' => $rowData['Resources provided by the Center'],
+                'fundingSource' => $rowData['Funding Source'],
+                'startYear' => $rowData['Start Year'],
+                'endingYear' => $rowData['Ending Year'],
+                // 'privateSector' => $rowData[''],
+                // 'academy1' => $rowData[''],
+                // 'business' => $rowData[''],
+                // 'ownEntrepreneurship' => $rowData[''],
+                // 'publicSector' => $rowData[''],
+                // 'government' => $rowData[''],
+                // 'academy2' => $rowData[''],
+                // 'socialOng' => $rowData[''],
+                // 'inTheCenter' => $rowData[''],
+                // 'noneOfTheAbove' => $rowData[''],
+                'institutionName' => $rowData['Associated Institution'],
+                'comments' => $rowData['Comentarios'],
+                'progressReport' => $rowData['Progress Report'],
+                'personalEmail' => $rowData['Personal E-mail'],
+
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
 
     public function destroy($id)
     {

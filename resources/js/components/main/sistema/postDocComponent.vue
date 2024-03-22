@@ -45,7 +45,7 @@
                                         </td>
                                         <td>
                                             <p v-if="postDoc.nameOfPostdoc == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ postDoc.nameOfPostdoc }}</p>
+                                            <p v-else class="text-sm mb-0 ">{{ postDoc.nameOfPostdoc }}</p>
                                         </td>
                                         <td>
                                             <p v-if="postDoc.supervisorName == null" class="text-sm mb-0">---</p>
@@ -53,7 +53,7 @@
                                         </td>
                                         <td>
                                             <p v-if="postDoc.researchTopic == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ postDoc.researchTopic }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ postDoc.researchTopic }}</p>
                                         </td>
                                         <td>
                                             <p v-if="postDoc.startYear == null" class="text-sm mb-0">---</p>

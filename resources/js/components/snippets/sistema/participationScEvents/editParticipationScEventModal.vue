@@ -14,46 +14,40 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                      <div class="col-3">
-                            <label for="">Type of Event:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="participationSc.typeEvent">
-                              <option disabled value="">Select a type</option>
-                              <option value="Paper presentation">International congress</option>
-                              <option value="Talk">Talk</option>
-                              <option value="Workshop">Workshop</option>
-                              <option value="Course">Course</option>
-                              <option value="Conference">Conference</option>
-                              <option value="Seminar">Seminar</option>
-                              <option value="Symposium">Symposium</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="participationSc.typeEvent == 'Other'" class="col-3">
-                            <label for="">Other:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Type of Participation:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="participationSc.typeOfParticipation">
-                              <option disabled value="">Select a type</option>
-                              <option value="International congress">International congress</option>
-                              <option value="National congress">National congress</option>
-                              <option value="Session chair">Session chair</option>
-                              <option value="Keynote">Keynote</option>
-                              <option value="Just assistance">Just assistance</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="participationSc.typeOfParticipation == 'Other'" class="col-3">
-                            <label for="">Other:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other2">
-                          </div>
+                      <div class="col-6">
+                          <label for="">Type of Event:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <Multiselect
+                              placeholder="Select the options"
+                              v-model="participationSc.typeEvent"
+                              limit=8
+                              :searchable="true"
+                              :close-on-select="false"
+                              :createTag="true"
+                              :options="optionsTypeEvent"
+                              mode="tags"
+                              label="name"
+                              trackBy="name"
+                              :object="true"
+                          />
+                        </div>
+                        <div class="col-6">
+                          <label for="">Type of Participation:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <Multiselect
+                              placeholder="Select the options"
+                              v-model="participationSc.typeOfParticipation"
+                              limit=8
+                              :searchable="true"
+                              :close-on-select="false"
+                              :createTag="true"
+                              :options="optionsTypeParticipation"
+                              mode="tags"
+                              label="name"
+                              trackBy="name"
+                              :object="true"
+                          />
+                        </div>
                     </div>
                     <br>
                     <div class="row">
@@ -182,10 +176,10 @@ export default {
     mixins: [mixin],
     data: () => ({
       participationSc:{
-        typeEvent: '',
+        typeEvent: null,
         eventName: '',
         presentationTitle: '',
-        typeOfParticipation: '',
+        typeOfParticipation: null,
         researcherInvolved: null,
         country: '',
         city: '',
@@ -196,6 +190,24 @@ export default {
         file: '',
         comments: '',
       },
+      optionsTypeEvent: [
+        "International congress",
+        "National congress",
+        "Workshop",
+        "Course",
+        "Conference",
+        "Seminar",
+        "Symposium",
+        "Other",
+      ],
+      optionsTypeParticipation: [
+        "Paper presentation",
+        "Talk",
+        "Session chair",
+        "Keynote",
+        "Just assistance",
+        "Other",
+      ],
       other: '',
       other2: '',
       draft: false,
@@ -216,8 +228,6 @@ export default {
     created(){
       this.id = this.participation1.id;
       this.user = this.participation1.usuario.name;
-      this.participationSc.typeEvent = this.participation1.typeEvent;
-      this.participationSc.typeOfParticipation = this.participation1.typeOfParticipation;
       this.participationSc.eventName = this.participation1.eventName;
       this.participationSc.presentationTitle = this.participation1.presentationTitle;
       this.participationSc.country = this.participation1.country;
@@ -241,15 +251,30 @@ export default {
           });
       }
 
-      if(this.participation1.other == true){
-        this.participationSc.typeEvent = 'Other';
-        this.other = this.participation1.typeEvent;
+      if (this.participation1.typeEvent != null) {
+          const valoresSeparados1 = this.participation1.typeEvent.split(",");
+          this.participationSc.typeEvent = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
       }
 
-      if(this.participation1.otherParticipation == true){
-        this.participationSc.typeOfParticipation = 'Other';
-        this.other2 = this.participation1.typeOfParticipation;
+      if (this.participation1.typeOfParticipation != null) {
+          const valoresSeparados1 = this.participation1.typeOfParticipation.split(",");
+          this.participationSc.typeOfParticipation = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
       }
+
     },
     methods: {
       handleFormSubmit1(year) {

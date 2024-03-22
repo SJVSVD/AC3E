@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('typeEvent')->nullable();
             $table->boolean('other')->nullable();
-            $table->string('eventName')->nullable();
+            $table->string('eventName', 500)->nullable();
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->date('startDate')->nullable();

@@ -45,7 +45,7 @@
                                         </td>
                                         <td>
                                             <p v-if="thesisStudent.thesisTitle == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ thesisStudent.thesisTitle }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ thesisStudent.thesisTitle }}</p>
                                         </td>
                                         <td>
                                             <p v-if="thesisStudent.studentName == null" class="text-sm mb-0">---</p>

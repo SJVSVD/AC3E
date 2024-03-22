@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
-            $table->string('nameOfPatent')->nullable();
+            $table->string('nameOfPatent', 500)->nullable();
             $table->string('ipType')->nullable();
             $table->string('authors', 255)->nullable();
             $table->string('institutionOwner')->nullable();
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('registrationNumber')->nullable();
             $table->string('applicationGranted')->nullable();
             $table->string('researcherInvolved')->nullable();
-            $table->string('comments')->nullable();
+            $table->string('comments',500)->nullable();
             $table->string('progressReport')->nullable();
             $table->softDeletes();
             $table->timestamps();

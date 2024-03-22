@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('idUsuario')->unsigned();
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
-            $table->string('nameOfActivity')->nullable();
+            $table->string('nameOfActivity',500)->nullable();
             $table->string('agentType')->nullable();
             $table->string('typeOfConnection')->nullable();
             $table->string('placeWhereWasExecuted')->nullable();

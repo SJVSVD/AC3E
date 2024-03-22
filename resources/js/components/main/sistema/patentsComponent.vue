@@ -49,7 +49,7 @@
                                         </td>
                                         <td>
                                             <p v-if="patent.nameOfPatent == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ patent.nameOfPatent }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ patent.nameOfPatent }}</p>
                                         </td>
                                         <td>
                                             <p v-if="patent.statusApplication == null" class="text-sm mb-0">---</p>

@@ -14,26 +14,22 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-3">
+                          <div class="col-6">
                             <label for="">Type of Event:</label>
                             <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="organizationSc.typeEvent">
-                              <option disabled :value=null>Select a type</option>
-                              <option value="International congress">International congress</option>
-                              <option value="National congress">National congress</option>
-                              <option value="Workshop">Workshop</option>
-                              <option value="Course">Course</option>
-                              <option value="Conference">Conference</option>
-                              <option value="Seminar">Seminar</option>
-                              <option value="Symposium">Symposium</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="organizationSc.typeEvent == 'Other'" class="col-3">
-                            <label for="">Other:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other">
+                            <Multiselect
+                                placeholder="Select the options"
+                                v-model="organizationSc.typeEvent"
+                                limit=8
+                                :searchable="true"
+                                :close-on-select="false"
+                                :createTag="true"
+                                :options="optionsTypeEvent"
+                                mode="tags"
+                                label="name"
+                                trackBy="name"
+                                :object="true"
+                            />
                           </div>
                           <div class="col-3">
                             <label for="">Event Name:</label>
@@ -155,7 +151,7 @@ export default {
     mixins: [mixin],
     data: () => ({
       organizationSc:{
-        typeEvent: '',
+        typeEvent: null,
         eventName: '',
         country: '',
         city: '',
@@ -176,6 +172,17 @@ export default {
       user: '',
       researchers:[],
       buttonDisable: false,
+      optionsTypeEvent: [
+        "International congress",
+        "National congress",
+        "Workshop",
+        "Course",
+        "Conference",
+        "Seminar",
+        "Symposium",
+        "Other",
+      ],
+
       errors:[],
       buttonText:'Save Organization',
     }),
@@ -186,7 +193,6 @@ export default {
       this.getUsuarios();
       this.id = this.organization1.id;
       this.user = this.organization1.usuario.name;
-      this.organizationSc.typeEvent = this.organization1.typeEvent;
       this.organizationSc.eventName = this.organization1.eventName;
       this.organizationSc.country = this.organization1.country;
       this.organizationSc.city = this.organization1.city;
@@ -197,10 +203,10 @@ export default {
       this.organizationSc.file = this.organization1.file;
       this.organizationSc.comments = this.organization1.comments;
       this.organizationSc.progressReport = this.organization1.progressReport;
-      if(this.organization1.other == true){
-        this.organizationSc.typeEvent = 'Other';
-        this.other = this.organization1.typeEvent;
-      }
+      // if(this.organization1.other == true){
+      //   this.organizationSc.typeEvent = 'Other';
+      //   this.other = this.organization1.typeEvent;
+      // }
 
       if (this.organization1.researcherInvolved != null) {
           const valoresSeparados1 = this.organization1.researcherInvolved.split(",");
@@ -214,6 +220,17 @@ export default {
           });
       }
 
+      if (this.organization1.typeEvent != null) {
+          const valoresSeparados1 = this.organization1.typeEvent.split(",");
+          this.organizationSc.typeEvent = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
+      }
     },
     methods: {
       getUsuarios(){

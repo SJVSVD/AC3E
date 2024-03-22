@@ -64,6 +64,135 @@ class scCollaborationsController extends Controller
         return $scCollaborations;
     }
 
+    public function importCollaboration(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+
+            $activityNameMapping = [
+                "1" => "Visit in Chile (include students)",
+                "2" => "Visit abroad (include students)",
+                "3" => "Research Stay (Pasantia de investigacion) (include students)",
+                "4" => "Participation in R&D Projects directed by other Researcher (external)",
+                "5" => "Participation in R&D Projects directed by an AC3E Researcher",
+                "6" => "Other",
+            ];
+
+           $activityName = '';
+
+            // Verificar si el campo 'Type of Event' está presente
+            if (isset($rowData['Activity Name'])) {
+                // Separar el campo 'Type of Event' por comas
+                $events = explode(',', $rowData['Activity Name']);
+            
+                // Iterar sobre cada evento
+                foreach ($events as &$event) {
+                    // Eliminar espacios en blanco alrededor del evento
+                    $event = trim($event);
+            
+                    // Reemplazar el 6 seguido de un espacio y paréntesis por 'Other'
+                    $event = preg_replace('/\b6\s*\(/', 'Other (', $event);
+            
+                    // Verificar si el evento es un número válido en el mapeo
+                    if (isset($activityNameMapping[$event])) {
+                        // Si es un número válido, asignar el valor correspondiente del mapeo
+                        $event = $activityNameMapping[$event];
+                    } elseif ($event === '6') {
+                        // Si el evento es '6', asignar el valor 'Other'
+                        $event = 'Other';
+                    }
+                }
+            
+                // Unir los eventos nuevamente en una cadena separada por comas
+                $activityName = implode(', ', $events);
+            
+                // Agregar un punto al final de la cadena si no está presente
+                if (!empty($activityName)) {
+                    $activityName .= '.';
+                }
+            }            
+
+            $collaborationStayMapping = [
+                "1" => "Short Visit (up to two weeks)",
+                "2" => "Long Visit (more than two weeks)",
+                "3" => "Other",
+            ];
+            
+            $otherStay = 0;
+            
+            // Verificar si el campo 'Collaboration stay' está presente
+            if (isset($rowData['Collaboration stay'])) {
+                // Obtener el valor del campo 'Collaboration stay'
+                $collaborationStayValue = $rowData['Collaboration stay'];
+            
+                // Verificar si el valor es 1 o 2, de lo contrario, asignar "Other"
+                if (in_array($collaborationStayValue, ['1', '2'])) {
+                    $collaborationStay = $collaborationStayMapping[$collaborationStayValue];
+                    $otherStay = 0; // Establecer $otherStay como 0 cuando el valor no es 3
+                } else {
+                    $collaborationStay = $collaborationStayMapping['3'];
+                    $otherStay = 1; // Establecer $otherStay como 1 cuando el valor es 3
+                }
+            } else {
+                // Si el campo 'Collaboration stay' no está presente, asignar una cadena vacía o un valor predeterminado según lo necesites
+                $collaborationStay = null; // O cualquier valor predeterminado
+                $otherStay = 0; // O cualquier valor predeterminado
+            }
+
+            $studentOrResearcher = $rowData['External researcher is'];
+            if($studentOrResearcher == 1){
+                $studentOrResearcher = 'Researcher';
+            }else{
+                $studentOrResearcher = 'Student';
+            }
+            $internationalOrNational = $rowData['Colaboracion internacional'];
+            if($internationalOrNational == 1){
+                $internationalOrNational = 'International';
+            }else{
+                $internationalOrNational = 'National';
+            }
+            $cityCountry = explode(', ', $rowData['Country/City of destination']);
+
+            // Verificar si el formato es distinto al esperado
+            if (count($cityCountry) === 2) {
+                // Asignar la ciudad y el país a las variables correspondientes
+                $city = $cityCountry[1];
+                $country = $cityCountry[0];
+            } else {
+                // Asignar "Global" a ambas variables si el formato es diferente
+                $city = 'Global';
+                $country = 'Global';
+            }
+
+
+            
+            $scCollaborations = scCollaborations::create([
+                'idUsuario' => $rowData['idUsuario'],
+                'status' => $rowData['Status'],
+                'moduleType' => 0,
+                'institutionCollaborates' => $rowData['Institution with which the Center collaborates'],
+                'researcherInvolved' => $rowData['Name of AC3E member'],
+                'studentOrResearcher' => $studentOrResearcher,
+                'activityType' => $internationalOrNational,
+                'activityName' => $activityName,
+                'countryOrigin' => $rowData['Country Origin'],
+                'cityOrigin' => $rowData['City Origin'],
+                'countryDestination' => $country,
+                'cityDestination' => $city,
+                'beginningDate' => $rowData['Beginning Date'],
+                'endingDate' => $rowData['Ending Date'],
+                'progressReport' => $rowData['Progress Report'],
+                'nameOfAC3EMember' => $rowData['Name of AC3E member'],
+                'nameOfExternalResearcher' => $rowData['Name of external researcher involved'],
+                'collaborationStay' => $collaborationStay,
+                'otherStay' => $otherStay,
+                'comments' => $rowData['Comentarios']
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
 
     public function update(Request $request, $id)
     {

@@ -13,6 +13,10 @@ class PageController extends Controller
         return abort(404);
     }
 
+    public function importInfo()
+    {
+        return view('pages.importInfo');
+    }
 
     public function adminUsuarios()
     {

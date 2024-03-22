@@ -47,17 +47,17 @@
                             <br>
                             <select class="form-select" @change="thesisStudent.run = ''; thesisStudent.passport = '';" v-model="thesisStudent.identification">
                               <option disabled value="">Select One</option>
-                              <option value="run">Run</option>
-                              <option value="passport">Passport</option>
+                              <option value="Run">Run</option>
+                              <option value="Passport">Passport</option>
                             </select>
                         </div>                        
-                        <div v-if="thesisStudent.identification == 'run'" class="col-3">
+                        <div v-if="thesisStudent.identification == 'Run'" class="col-3">
                             <label for="">Run: </label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="thesisStudent.run">
                         </div>
-                        <div v-if="thesisStudent.identification == 'passport'" class="col-3">
+                        <div v-if="thesisStudent.identification == 'Passport'" class="col-3">
                             <label for="">Passport: </label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -445,7 +445,7 @@ export default {
         })
         if (ok) {
           var runOrPassport1 = '';
-          if(this.thesisStudent.identification == 'run'){
+          if(this.thesisStudent.identification == 'Run'){
             runOrPassport1 = this.formatoRut(this.thesisStudent.run);
           }else{
             runOrPassport1 = this.thesisStudent.passport;
@@ -602,7 +602,7 @@ export default {
             }
         }
 
-        if(this.thesisStudent.identification == 'run' && this.thesisStudent.run != ""){
+        if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run != ""){
           var validacion = this.validarRut(this.thesisStudent.run);
           if(validacion == false){
             this.errors.push('invalidRut');
@@ -703,7 +703,7 @@ export default {
           })
           if (ok) {
             var runOrPassport1 = '';
-            if(this.thesisStudent.identification == 'run'){
+            if(this.thesisStudent.identification == 'Run'){
               runOrPassport1 = this.formatoRut(this.thesisStudent.run);
             }else{
               runOrPassport1 = this.thesisStudent.passport;

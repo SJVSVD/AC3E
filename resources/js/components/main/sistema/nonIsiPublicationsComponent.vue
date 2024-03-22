@@ -45,15 +45,15 @@
                                         </td>                                   
                                         <td>
                                             <p v-if="nonIsiPublication.authors == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ nonIsiPublication.authors }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ nonIsiPublication.authors }}</p>
                                         </td>
                                         <td>
                                             <p v-if="nonIsiPublication.articleTitle == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ nonIsiPublication.articleTitle }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ nonIsiPublication.articleTitle }}</p>
                                         </td>
                                         <td>
                                             <p v-if="nonIsiPublication.journalName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ nonIsiPublication.journalName }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ nonIsiPublication.journalName }}</p>
                                         </td>
                                         <td>
                                             <p v-if="nonIsiPublication.yearPublished == null" class="text-sm mb-0">---</p>

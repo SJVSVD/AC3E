@@ -61,6 +61,45 @@ class awardsController extends Controller
         return $awards;
     }
 
+    public function importAward(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            // Obtener la cadena del campo 'Researcher Involved'
+            $researcherInvolvedString = $rowData['Researcher Involved'];
+
+            // Dividir la cadena en partes usando el delimitador ';'
+            $researchersArray = explode(';', $researcherInvolvedString);
+
+            // Iterar sobre cada parte para procesarla y formatearla correctamente
+            $researchersFormatted = [];
+            foreach ($researchersArray as $researcher) {
+                // Eliminar espacios en blanco al principio y al final de cada nombre
+                $researcher = trim($researcher);
+                // Agregar el nombre al array formateado
+                $researchersFormatted[] = $researcher;
+            }
+
+            // Unir los nombres formateados en una cadena usando ', ' como separador
+            $researcherInvolvedFormatted = implode(', ', $researchersFormatted);
+            $award = Awards::create([
+                'status' => $rowData['Status'],
+                'idUsuario' => $rowData['idUsuario'],
+                'researcherInvolved' => $researcherInvolvedFormatted,
+                'awardeeName' => $rowData['Awardee(s) Name(s)'],
+                'awardName' => $rowData['Award Name'],
+                'year' => $rowData['Year'],
+                'contributionAwardee' => $rowData['Contribution of the Awardee'],
+                'institution' => $rowData['Awarding Institution'],
+                'country' => $rowData['Country'],
+                'progressReport' => $rowData['Progress Report'],
+                'comments' => $rowData['Comentarios']
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
     public function update(Request $request, $id)
     {
         $awards = awards::find($id);

@@ -72,6 +72,33 @@ class technologyKnowledgeController extends Controller
         return response()->json($input);
     }
 
+    public function importTecAndKnow(Request $request)
+    {
+        $data = $request->input('data');
+        foreach ($data as $rowData) {
+            $technologyKnowledge = technologyKnowledge::create([
+                'idUsuario' => $rowData['idUsuario'],
+                'status' => $rowData['Status'],
+                // 'technologyTransfer' => $rowData[''],
+                // 'knowledgeTransfer' => $rowData[''],
+                'typeOfTransfer' => $rowData['Type of Transfer'],
+                'nameOfBeneficiary' => $rowData['Name of Beneficiary'],
+                'country' => $rowData['Country'],
+                'city' => $rowData['City'],
+                'placeRegion' => $rowData['Place Region'],
+                'year' => $rowData['Year'],
+                'nameOfResearch' => $rowData['Number of Research Line'],
+                'comments' => $rowData['Comentarios'],
+                'progressReport' => $rowData['Progress Report'],
+                'description' => $rowData['Description'],
+                'nameOfInstitutionInvolved' => $rowData['Name of the Institions Involved'],
+                'researcherInvolved' => $rowData['Researcher Involved'],
+            ]);
+        }
+        
+        return response()->json("Publicaciónes importadas");
+    }
+
 
     public function destroy($id)
     {

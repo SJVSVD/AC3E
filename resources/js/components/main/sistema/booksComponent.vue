@@ -43,7 +43,7 @@
                                         </td>
                                         <td>
                                             <p v-if="book.bookTitle == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ book.bookTitle }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text">{{ book.bookTitle }}</p>
                                         </td>
                                         <td>
                                             <p v-if="book.bookAuthors == null" class="text-sm mb-0">---</p>
