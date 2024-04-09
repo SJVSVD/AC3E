@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('institutionCollaborates')->nullable();
             $table->string('researcherInvolved')->nullable();
             $table->string('studentOrResearcher')->nullable();
-            $table->string('activityType')->nullable();
             $table->string('activityName')->nullable();
             $table->boolean('otherActivity')->nullable();
             $table->string('countryOrigin')->nullable();
@@ -31,7 +30,6 @@ return new class extends Migration
             $table->string('cityDestination')->nullable();
             $table->date('beginningDate')->nullable();
             $table->date('endingDate')->nullable();
-            $table->string('nameOfAC3EMember')->nullable();
             $table->string('nameOfExternalResearcher')->nullable();
             $table->string('collaborationStay')->nullable();
             $table->boolean('otherStay')->nullable();

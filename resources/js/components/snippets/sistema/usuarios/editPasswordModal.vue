@@ -13,14 +13,14 @@
                         <div class="modal-body">
                         <slot name="body">
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">New Password: </label>
                                         <br>
                                         <input type="password" class= "form-control" v-model="edits.password">
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for=""> Confirm New Password: </label>
                                         <br>
@@ -120,7 +120,7 @@ export default {
             if(this.errors.length === 0){
                 const ok = await this.$refs.confirmation.show({
                     title: 'Change Password',
-                    message: `Are you sure you want to change your password? This action cannot be undone.`,
+                    message: `Are you sure you want to change your password?.`,
                     okButton: 'Save',
                     cancelButton: 'Return'
                 })

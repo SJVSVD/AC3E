@@ -20,6 +20,7 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
@@ -27,7 +28,6 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
                                     </tr>
                                 </thead>
@@ -37,6 +37,15 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ isiPublication.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(isiPublication)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="isiPublication.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ isiPublication.status }}</p>
                                             <p v-if="isiPublication.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ isiPublication.status }}</p>
@@ -63,15 +72,6 @@
                                         <td>
                                             <p v-if="isiPublication.yearPublished == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ isiPublication.yearPublished }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(isiPublication)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -159,7 +159,7 @@ export default {
         async deletePublication(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Publication',
-                message: `¿Are you sure you want to delete this Publication? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Publication?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

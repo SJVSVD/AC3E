@@ -25,6 +25,7 @@ class books extends Model
         'lastPage',
         'editorialCityCountry',
         'year',
+        'month',
         'progressReport',
         'editors',
         'ISBN',

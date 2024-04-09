@@ -3,24 +3,51 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     Edit Organization Sc Event
                 </slot>
                 <label for="">Progress year: {{ organizationSc.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
+                  <div class="row">
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="organizationSc.researcherInvolved"
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                    </div>
+                    <br>
                     <div class="row">
-                          <div class="col-6">
+                          <div class="col-md-6">
                             <label for="">Type of Event:</label>
                             <label for="" style="color: orange;">*</label>
                             <Multiselect
                                 placeholder="Select the options"
                                 v-model="organizationSc.typeEvent"
-                                limit=8
                                 :searchable="true"
                                 :close-on-select="false"
                                 :createTag="true"
@@ -31,13 +58,13 @@
                                 :object="true"
                             />
                           </div>
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Event Name:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.eventName">
                           </div>
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Country:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -46,25 +73,25 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                             <label for="">City:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="organizationSc.city">
                           </div>
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Start Date:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="date" class= "form-control" v-model="organizationSc.startDate">
                           </div>
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Ending Date:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="date" class= "form-control" v-model="organizationSc.endingDate">
                           </div>
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Number of participants:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -73,42 +100,22 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <div class="form-group">
                         <label for="archivo">File:</label>
                         <label v-if="organization1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
+                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
                         </div>
                       </div>
-                      <div class="col-2 pt-2">
+                      <div class="col-md-2 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                         &nbsp;
                         <a v-if="organization1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <input type="text" class= "form-control" v-model="organizationSc.comments">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the participants"
-                          v-model="organizationSc.researcherInvolved"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
                       </div>
                     </div>
                   </slot>
@@ -163,7 +170,6 @@ export default {
         comments: '',
         progressReport: '',
       },
-      other: '',
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
@@ -171,6 +177,8 @@ export default {
       id: '',
       user: '',
       researchers:[],
+      usuarios: [],
+      idResearcher: '',
       buttonDisable: false,
       optionsTypeEvent: [
         "International congress",
@@ -191,6 +199,8 @@ export default {
     },
     created(){
       this.getUsuarios();
+      this.getUsuarios2();
+      this.idResearcher = this.organization1.idUsuario;
       this.id = this.organization1.id;
       this.user = this.organization1.usuario.name;
       this.organizationSc.eventName = this.organization1.eventName;
@@ -203,10 +213,6 @@ export default {
       this.organizationSc.file = this.organization1.file;
       this.organizationSc.comments = this.organization1.comments;
       this.organizationSc.progressReport = this.organization1.progressReport;
-      // if(this.organization1.other == true){
-      //   this.organizationSc.typeEvent = 'Other';
-      //   this.other = this.organization1.typeEvent;
-      // }
 
       if (this.organization1.researcherInvolved != null) {
           const valoresSeparados1 = this.organization1.researcherInvolved.split(",");
@@ -233,6 +239,11 @@ export default {
       }
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
+        }).catch(e=> console.log(e))
+      },
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
@@ -247,13 +258,21 @@ export default {
               method: 'GET',
               responseType: 'arraybuffer',
           }).then((response) => {
-              let blob = new Blob([response.data], {
-                      type: 'application/pdf'
-                  })
-                  let link = document.createElement('a')
-                  link.href = window.URL.createObjectURL(blob)
-                  link.download = `Organization-${nombre}.pdf`
-                  link.click()
+            let blob = new Blob([response.data], {
+                    type: response.headers['content-type']
+                });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                if (blob.type.includes('pdf')) {
+                    link.download = `Organization-${nombre}.pdf`;
+                } else if (blob.type.includes('image')) {
+                    link.download = `Organization-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                } else {
+                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                    console.error('Tipo de archivo no compatible');
+                    return;
+                }
+                link.click();
           });
       },
       clearFileInput() {
@@ -271,16 +290,6 @@ export default {
           })
           if (ok) {
 
-            var typeEvent = '';
-            var other = 0;
-
-            if(this.organizationSc.typeEvent == 'Other'){
-              typeEvent = this.other;
-              other = 1;
-            }else{
-              typeEvent = this.organizationSc.typeEvent;
-            }
-
             var peopleInvolved1 = "";
             if (this.organizationSc.researcherInvolved !== null){
               if (this.organizationSc.researcherInvolved.length !== 0) {
@@ -295,11 +304,32 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
+            var typeEvent1 = "";
+            if (this.organizationSc.typeEvent !== null){
+              if (this.organizationSc.typeEvent.length !== 0) {
+                this.organizationSc.typeEvent.forEach((typeEvent, index) => {
+                  typeEvent1 += typeEvent.name;
+                  if (index === this.organizationSc.typeEvent.length - 1) {
+                    typeEvent1 += '.';
+                  } else {
+                    typeEvent1 += ', ';
+                  }
+                });
+              }
+            }
+
             let organizationSc = {
+              idUsuario: idUser1,
               status: 'Draft',
               researcherInvolved: peopleInvolved1,
-              typeEvent: typeEvent,
-              other: other,
+              typeEvent: typeEvent1,
               eventName: this.organizationSc.eventName,
               country: this.organizationSc.country,
               city: this.organizationSc.city,
@@ -366,10 +396,77 @@ export default {
                 }
               });
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -409,9 +506,6 @@ export default {
             }
         }
 
-        if(this.organizationSc.typeEvent == 'Other' && this.other == ''){
-          this.errors.push('other');
-        }
 
         var idUser1 = ''
         if(this.idResearcher != ''){
@@ -421,10 +515,8 @@ export default {
         }
 
         let organizationSc1 = {
-          id: this.id,
           idUsuario: idUser1,
-          typeEvent: typeEvent,
-          other: other,
+          id: this.id,
           eventName: this.organizationSc.eventName,
           country: this.organizationSc.country,
           city: this.organizationSc.city,
@@ -482,22 +574,12 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Organization',
-            message: `¿Are you sure you want to edit this organization of sc event? This action cannot be undone.`,
+            message: `¿Are you sure you want to edit this organization of sc event?.`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
 
-
-            var typeEvent = '';
-            var other = 0;
-
-            if(this.organizationSc.typeEvent == 'Other'){
-              typeEvent = this.other;
-              other = 1;
-            }else{
-              typeEvent = this.organizationSc.typeEvent;
-            }
 
             var peopleInvolved1 = "";
             if (this.organizationSc.researcherInvolved !== null){
@@ -513,11 +595,32 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
+            var typeEvent1 = "";
+            if (this.organizationSc.typeEvent !== null){
+              if (this.organizationSc.typeEvent.length !== 0) {
+                this.organizationSc.typeEvent.forEach((typeEvent, index) => {
+                  typeEvent1 += typeEvent.name;
+                  if (index === this.organizationSc.typeEvent.length - 1) {
+                    typeEvent1 += '.';
+                  } else {
+                    typeEvent1 += ', ';
+                  }
+                });
+              }
+            }
+
             let organizationSc = {
+              idUsuario: idUser1,
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
-              typeEvent: typeEvent,
-              other: other,
+              typeEvent: typeEvent1,
               eventName: this.organizationSc.eventName,
               country: this.organizationSc.country,
               city: this.organizationSc.city,
@@ -585,10 +688,77 @@ export default {
                 }
               });
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

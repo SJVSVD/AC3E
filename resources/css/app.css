@@ -231,7 +231,8 @@
 }
 
 .modal-container-xs {
-    width: 500px;
+    width: 100%;
+    max-width: 300px;
     min-height: 250px;
     margin: 0px auto;
     padding: 20px 30px;
@@ -243,8 +244,9 @@
 }
 
 .modal-container-s {
-    width: 900px;
-    min-height: 450px;
+    width: 100%;
+    max-width: 800px;
+    min-height: 270px;
     margin: 0px auto;
     padding: 20px 30px;
     background-color: #fff;
@@ -255,8 +257,9 @@
 }
 
 .modal-container {
-    width: 1100px;
-    min-height: 500px;
+    width: 100%;
+    max-width: 800px;
+    min-height: 400px;
     margin: 0px auto;
     padding: 20px 30px;
     background-color: #fff;
@@ -267,7 +270,8 @@
 }
 
 .modal-container-xl {
-    width: 1400px;
+    width: 100%;
+    max-width: 1000px;
     min-height: 600px;
     margin: 0px auto;
     padding: 20px 30px;
@@ -279,7 +283,8 @@
 }
 
 .modal-container-2xl {
-    width: 1600px;
+    width: 100%;
+    max-width: 1200px;
     min-height: 600px;
     margin: 0px auto;
     padding: 20px 30px;
@@ -288,6 +293,37 @@
     box-shadow: 0 2px 8px rgba(66, 66, 66, 0.089);
     transition: all 0.3s ease;
     font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Media queries para hacer los modales responsivos */
+@media (min-width: 576px) {
+    .modal-container-xs {
+        max-width: 400px;
+    }
+}
+
+@media (min-width: 768px) {
+    .modal-container-s {
+        max-width: 700px;
+    }
+}
+
+@media (min-width: 992px) {
+    .modal-container {
+        max-width: 900px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .modal-container-xl {
+        max-width: 1100px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .modal-container-2xl {
+        max-width: 1300px;
+    }
 }
 
 /* MODALES REUTILIZABLES */

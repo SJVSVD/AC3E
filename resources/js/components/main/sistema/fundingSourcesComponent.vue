@@ -20,9 +20,9 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -31,13 +31,6 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ fundingSource.id }}</p>
                                         </td>                                          
-                                        <td>
-                                            <p v-if="fundingSource.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ fundingSource.status }}</p>
-                                            <p v-if="fundingSource.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ fundingSource.status }}</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ fundingSource.usuario.name }}</p>
-                                        </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editFundingSource(fundingSource)"><i class="fa fa-fw fa-edit"></i></a>
@@ -46,6 +39,13 @@
                                                 &nbsp;
                                                 <a class="btn btn-closed btn-xs" title="Delete" @click="deleteFundingSource(fundingSource.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
+                                        </td>
+                                        <td>
+                                            <p v-if="fundingSource.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ fundingSource.status }}</p>
+                                            <p v-if="fundingSource.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ fundingSource.status }}</p>
+                                        </td>                                          
+                                        <td>
+                                            <p class="text-sm mb-0">{{ fundingSource.usuario.name }}</p>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -132,7 +132,7 @@ export default {
         async deleteFundingSource(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Funding source',
-                message: `¿Are you sure you want to delete this Funding source? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Funding source?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

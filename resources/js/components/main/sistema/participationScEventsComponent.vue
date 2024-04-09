@@ -20,12 +20,12 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Event Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Start Date</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -34,6 +34,18 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ participationScEvent.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a v-if="participationScEvent.file != null" class="btn btn-search-blue btn-xs" title="Download File" @click="descargarExtracto(participationScEvent.id, participationScEvent.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editParticipation(participationScEvent)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verParticipation(participationScEvent)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteParticipation(participationScEvent.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="participationScEvent.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ participationScEvent.status }}</p>
                                             <p v-if="participationScEvent.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ participationScEvent.status }}</p>
@@ -52,18 +64,6 @@
                                         <td>
                                             <p v-if="participationScEvent.endingDate == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ participationScEvent.endingDate }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="participationScEvent.file != null" class="btn btn-search-blue btn-xs" title="Download File" @click="descargarExtracto(participationScEvent.id, participationScEvent.usuario.name)"><i class="fa-solid fa-download"></i></a>
-                                                <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editParticipation(participationScEvent)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verParticipation(participationScEvent)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteParticipation(participationScEvent.id)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -130,12 +130,20 @@ export default {
                 responseType: 'arraybuffer',
             }).then((response) => {
                 let blob = new Blob([response.data], {
-                        type: 'application/pdf'
-                    })
-                    let link = document.createElement('a')
-                    link.href = window.URL.createObjectURL(blob)
-                    link.download = `Participation-${nombre}.pdf`
-                    link.click()
+                    type: response.headers['content-type']
+                });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                if (blob.type.includes('pdf')) {
+                    link.download = `Participation-${nombre}.pdf`;
+                } else if (blob.type.includes('image')) {
+                    link.download = `Participation-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                } else {
+                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                    console.error('Tipo de archivo no compatible');
+                    return;
+                }
+                link.click();
             });
         },
         getParticipations(id){
@@ -165,7 +173,7 @@ export default {
         async deleteParticipation(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Participation',
-                message: `¿Are you sure you want to delete this Participation? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Participation?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

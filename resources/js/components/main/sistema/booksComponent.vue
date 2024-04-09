@@ -20,12 +20,12 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Book Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Book Authors</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -34,6 +34,15 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ book.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editBook(book)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verBook(book)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteBook(book.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="book.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ book.status }}</p>
                                             <p v-if="book.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ book.status }}</p>
@@ -52,15 +61,6 @@
                                         <td>
                                             <p v-if="book.year == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ book.year }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editBook(book)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verBook(book)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteBook(book.id)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -147,7 +147,7 @@ export default {
         async deleteBook(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Book',
-                message: `¿Are you sure you want to delete this Book? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Book?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

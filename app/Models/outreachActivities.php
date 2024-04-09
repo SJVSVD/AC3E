@@ -33,7 +33,6 @@ class outreachActivities extends Model
         'schoolTeachers',
         'governmentOfficial',
         'other',
-        'nameOfTheMainResponsible',
         'progressReport',
         'researcherInvolved',
         'responsability',

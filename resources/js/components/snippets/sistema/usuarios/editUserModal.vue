@@ -3,7 +3,7 @@
         <div name="modal">
             <div class="modal-mask">
                 <div class="modal-wrapper">
-                    <div class="modal-container-s">
+                    <div class="modal-container">
                         <div class="modal-header fw-bold" style="color: #444444;">
                             <slot name="header">
                                 Edit User
@@ -248,7 +248,7 @@ export default {
             if(this.errors.length === 0){
                 const ok = await this.$refs.confirmation.show({
                     title: 'Edit User',
-                    message: `¿Are you sure you want to edit the user '${this.user.name}'? This action cannot be undone.`,
+                    message: `¿Are you sure you want to edit the user '${this.user.name}'?.`,
                     okButton: 'Edit',
                     cancelButton: 'Return'
                 })

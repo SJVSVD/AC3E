@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New Conjoint Project
@@ -23,7 +23,7 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Activity Name:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -43,7 +43,7 @@
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Collaboration Stay:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="conjointProject.collaborationStay">
@@ -62,13 +62,12 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="conjointProject.researcherInvolved"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -79,7 +78,7 @@
                           :object="true"
                         />
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Institution which the center collaborates:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -88,24 +87,14 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-5">
-                        <label for="">Name of AC3E member:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <select class="form-select" v-model="conjointProject.nameOfAC3EMember">
-                        <option disabled value="">Select a member</option>
-                        <option v-for="researcher in researchers2" v-bind:key="researcher.id" v-bind:value="researcher.id">
-                          {{ researcher.name }}
-                        </option>
-                        </select>
-                      </div>
-                      <div class="col-4">
+                      <div class="col-md-3">
                         <label v-if="conjointProject.studentOrResearcher == 'Researcher'" for="">Name of external researcher:</label>
                         <label v-else for="">Name of external person:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.nameOfExternalResearcher">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                             <label for="">Student or Researcher:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -115,28 +104,40 @@
                               <option value="Researcher">Researcher</option>
                               </select>
                           </div>
+                          <div class="col-md-3">
+                        <label for="">Beginning Date:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="date" class= "form-control" v-model="conjointProject.beginningDate">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Ending Date:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="date" class= "form-control" v-model="conjointProject.endingDate">
+                      </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Country Origin:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.countryOrigin">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">City Origin:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.cityOrigin">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Country Destination:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.countryDestination">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">City Destination:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -145,28 +146,8 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
-                        <label for="">Beginning Date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="conjointProject.beginningDate">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Ending Date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="conjointProject.endingDate">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Activity Type:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <select class="form-select" v-model="conjointProject.activityType">
-                          <option disabled value="">Select a type</option>
-                          <option value="International congress">National</option>
-                          <option value="National congress">International</option>
-                          </select>
-                      </div>
-                      <div class="col-3">
+
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.comments">
@@ -210,7 +191,6 @@ export default {
     data: () => ({
       conjointProject:{
         activityName: '',
-        activityType: '',
         researcherInvolved: null,
         institutionCollaborates: '',
         countryOrigin: '',
@@ -219,7 +199,6 @@ export default {
         cityDestination: '',
         beginningDate: '',
         endingDate: '',
-        nameOfAC3EMember: '',
         nameOfExternalResearcher: '',
         studentOrResearcher: '',
         collaborationStay: '',
@@ -317,10 +296,9 @@ export default {
             }
 
             let conjointProject = {
-              status: 'Draft',
               idUsuario: idUser1,
+              status: 'Draft',
               moduleType: 1,
-              activityType: this.conjointProject.activityType,
               institutionCollaborates: this.conjointProject.institutionCollaborates,
               researcherInvolved: peopleInvolved1,
               studentOrResearcher: this.conjointProject.studentOrResearcher,
@@ -332,7 +310,6 @@ export default {
               cityDestination: this.conjointProject.cityDestination,
               beginningDate: this.conjointProject.beginningDate,
               endingDate: this.conjointProject.endingDate,
-              nameOfAC3EMember: this.conjointProject.nameOfAC3EMember,
               nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
               collaborationStay: type2,
               otherStay: other1,
@@ -356,10 +333,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -410,7 +454,6 @@ export default {
           status: 'Finished',
           idUsuario: idUser1,
           moduleType: 1,
-          activityType: this.conjointProject.activityType,
           institutionCollaborates: this.conjointProject.institutionCollaborates,
           researcherInvolved: peopleInvolved1,
           studentOrResearcher: this.conjointProject.studentOrResearcher,
@@ -422,7 +465,6 @@ export default {
           cityDestination: this.conjointProject.cityDestination,
           beginningDate: this.conjointProject.beginningDate,
           endingDate: this.conjointProject.endingDate,
-          nameOfAC3EMember: this.conjointProject.nameOfAC3EMember,
           nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
           collaborationStay: type2,
           otherStay: other1,
@@ -442,9 +484,7 @@ export default {
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
-            if(item == 'activityType'){
-              mensaje =   mensaje + "The field Activity Type is required" + "\n";
-            }else if(item == 'activityName'){
+            if(item == 'activityName'){
               mensaje =   mensaje + "The field Activity Name is required" + "\n";
             }else if(item == 'researcherInvolved'){
               mensaje =   mensaje + "The field Researcher Involved is required" + "\n";
@@ -468,8 +508,6 @@ export default {
               mensaje =   mensaje + "The field Other Activity is required" + "\n";
             }else if(item == 'other2'){
               mensaje =   mensaje + "The field Other Stay is required" + "\n";
-            }else if(item == 'nameOfAc3eMember'){
-              mensaje =   mensaje + "The field Name of ac3e member is required" + "\n";
             }else if(item == 'nameOfExternalResearcher'){
               mensaje =   mensaje + "The field Name of external researcher is required" + "\n";
             }else if(item == 'studentOrResearcher'){
@@ -500,7 +538,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Project',
-            message: `¿Are you sure you want to save this Conjoint Project? This action cannot be undone.`,
+            message: `¿Are you sure you want to save this Conjoint Project?.`,
             okButton: 'Save',
             cancelButton: 'Return'
           })
@@ -550,7 +588,6 @@ export default {
               status: 'Finished',
               idUsuario: idUser1,
               moduleType: 1,
-              activityType: this.conjointProject.activityType,
               institutionCollaborates: this.conjointProject.institutionCollaborates,
               researcherInvolved: peopleInvolved1,
               studentOrResearcher: this.conjointProject.studentOrResearcher,
@@ -562,7 +599,6 @@ export default {
               cityDestination: this.conjointProject.cityDestination,
               beginningDate: this.conjointProject.beginningDate,
               endingDate: this.conjointProject.endingDate,
-              nameOfAC3EMember: this.conjointProject.nameOfAC3EMember,
               nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
               collaborationStay: type2,
               otherStay: other1,
@@ -587,10 +623,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

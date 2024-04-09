@@ -3,112 +3,32 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     Edit Book
                 </slot>
                 <label for="">Progress year: {{ book.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
-                    <div class="row">
-                          <div class="col-4">
-                            <label for="">Work Type: </label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <select class="form-select" v-model="book.workType">
-                              <option disabled :value="null">Select an option</option>
-                              <option value="Book (Whole)">Book (Whole)</option>
-                              <option value="Book Chapter">Book Chapter</option>
-                              </select>
-                          </div>
-                          <div class="col-4">
-                            <label for="">Book Title:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="book.bookTitle">
-                          </div>
-                          <div class="col-4">
-                            <label for="">Chapter Title:</label>
-                            <label v-if="book.workType == 'Book Chapter'" for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="book.chapterTitle">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-3">
-                        <label for="">First Page:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.firstPage">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Last Page:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.lastPage">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Editorial/City/Country:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.editorialCityCountry">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Year:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <select class="form-select" id="selectYear" v-model="book.year">
-                          <option disabled :value="null">Select a year</option>
-                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-                        </select>
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-4">
-                        <label for="">Editors:</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.editors">
-                      </div>
-                      <div class="col-4">
-                        <label for="">Book Authors:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.bookAuthors">
-                      </div>
-                      <div class="col-4">
-                        <label for="">Chapter Authors:</label>
-                        <label v-if="book.workType == 'Book Chapter'" for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.chapterAuthors">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">ISBN:</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.ISBN">
-                      </div>
-                      <div class="col-6">
-                        <label for="">Comments:</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="book.comments">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
+                  <div class="row">
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="book.researcherInvolved"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -118,6 +38,114 @@
                           trackBy="id"
                           :object="true"
                         />
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                          <div class="col-md-4">
+                            <label for="">Work Type: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <select class="form-select" v-model="book.workType">
+                              <option disabled :value="null">Select an option</option>
+                              <option value="Book (Whole)">Book (Whole)</option>
+                              <option value="Book Chapter">Book Chapter</option>
+                              </select>
+                          </div>
+                          <div class="col-md-4">
+                            <label for="">Book Title:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="book.bookTitle">
+                          </div>
+                          <div class="col-md-4">
+                            <label for="">Chapter Title:</label>
+                            <label v-if="book.workType == 'Book Chapter'" for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="book.chapterTitle">
+                          </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
+                        <label for="">First Page:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.firstPage">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Last Page:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.lastPage">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Year:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <select class="form-select" id="selectYear" v-model="book.year">
+                          <option disabled :value="null">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="selectMonth">Month:</label>
+                          <label for="selectMonth" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="book.month">
+                              <option disabled :value="null">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <label for="">Editors:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.editors">
+                      </div>
+                      <div class="col-md-4">
+                        <label for="">Book Authors:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.bookAuthors">
+                      </div>
+                      <div class="col-md-4">
+                        <label for="">Chapter Authors:</label>
+                        <label v-if="book.workType == 'Book Chapter'" for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.chapterAuthors">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
+                        <label for="">Editorial/City/Country:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.editorialCityCountry">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">ISBN:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.ISBN">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="">Comments:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="book.comments">
                       </div>
                     </div>
                   </slot>
@@ -184,7 +212,9 @@ export default {
       showModalChapterAutor: false,
       bookAuthors1:[],
       researchers:[],
+      usuarios:[],
       chapterAuthors1:[],
+      idResearcher: '',
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
@@ -199,6 +229,7 @@ export default {
     },
     created(){
       this.id = this.book1.id;
+      this.idResearcher = this.book1.centerResearcher;
       this.book.workType = this.book1.workType;
       this.book.bookAuthors = this.book1.bookAuthors;
       this.book.chapterAuthors = this.book1.chapterAuthors;
@@ -210,6 +241,7 @@ export default {
       this.book.year = this.book1.year;
       this.book.progressReport = this.book1.progressReport;
       this.book.ISBN = this.book1.ISBN;
+      this.book.month = this.book1.month;
       this.book.editors = this.book1.editors;
       this.book.bookAuthors = this.book1.bookAuthors;
       this.book.chapterAuthors = this.book1.chapterAuthors;
@@ -234,8 +266,14 @@ export default {
       this.selectedYear = currentYear;
       this.years.sort((a, b) => b - a); 
       this.getUsuarios();
+      this.getUsuarios2();
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
+        }).catch(e=> console.log(e))
+      },
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
@@ -280,7 +318,15 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+            
             let book = {
+              centerResearcher: idUser1,
               status: 'Draft',
               researcherInvolved: peopleInvolved1,
               workType: this.book.workType,
@@ -295,6 +341,7 @@ export default {
               lastPage: this.book.lastPage,
               editorialCityCountry: this.book.editorialCityCountry,
               year: this.book.year,
+              month: this.book.month,
               progressReport: this.book.progressReport,
               comments: this.book.comments,
             };
@@ -315,10 +362,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -364,10 +478,17 @@ export default {
           this.errors.push('chapterAuthors');
         }
 
+        var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+            
         let book1 = {
+          centerResearcher: idUser1,
           id: this.id,
           workType: this.book.workType,
-          centerResearcher: this.userID,
           bookAuthors: this.book.bookAuthors,
           chapterAuthors: this.book.chapterAuthors,
           editors: this.book.editors,
@@ -378,6 +499,7 @@ export default {
           lastPage: this.book.lastPage,
           editorialCityCountry: this.book.editorialCityCountry,
           year: this.book.year,
+          month: this.book.month,
           progressReport: this.book.progressReport,
           comments: this.book.comments,
         };
@@ -438,7 +560,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Book',
-            message: `¿Are you sure you want to edit this book? This action cannot be undone.`,
+            message: `¿Are you sure you want to edit this book?.`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })
@@ -458,11 +580,18 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+            
             let book = {
+              centerResearcher: idUser1,
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
               workType: this.book.workType,
-              centerResearcher: this.userID,
               bookAuthors: this.book.bookAuthors,
               chapterAuthors: this.book.chapterAuthors,
               editors: this.book.editors,
@@ -473,6 +602,7 @@ export default {
               lastPage: this.book.lastPage,
               editorialCityCountry: this.book.editorialCityCountry,
               year: this.book.year,
+              month: this.book.month,
               progressReport: this.book.progressReport,
               comments: this.book.comments,
             };
@@ -495,10 +625,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

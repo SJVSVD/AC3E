@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New Postdoctoral fellow
@@ -23,13 +23,28 @@
               <div class="modal-body">
                 <slot name="body">
                   <div class="row">
-                      <div class="col-3">
+                    <div class="col-md-6">
+                        <label for="">Personal email:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.personalEmail">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="">Research topic:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.researchTopic">
+                      </div>
+                  </div>
+                  <br>
+                  <div class="row">
+                      <div class="col-md-3">
                         <label for="">Name of postdoc fellow:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.nameOfPostdoc">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                           <label for="">Gender: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -41,7 +56,7 @@
                             <option value="Other">Other</option>
                             </select>
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                           <label for="">Identification: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -51,13 +66,13 @@
                             <option value="passport">Passport</option>
                           </select>
                       </div>                        
-                      <div v-if="postDoc.identification == 'run'" class="col-3">
+                      <div v-if="postDoc.identification == 'run'" class="col-md-3">
                           <label for="">Run: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="postDoc.run">
                       </div>
-                      <div v-if="postDoc.identification == 'passport'" class="col-3">
+                      <div v-if="postDoc.identification == 'passport'" class="col-md-3">
                           <label for="">Passport: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -66,13 +81,8 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-4">
-                        <label for="">Research topic:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="postDoc.researchTopic">
-                      </div>
-                      <div class="col-4">
+
+                      <div class="col-md-3">
                           <label for="">Start year: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -81,7 +91,27 @@
                           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                         </select>
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-3">
+                          <label for="selectMonth">Start month:</label>
+                          <label  for="selectMonth" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="postDoc.startMonth">
+                              <option disabled value="">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
                           <label for="">Ending year: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -90,10 +120,30 @@
                           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                           </select>
                       </div>
+                      <div class="col-md-3">
+                          <label for="selectMonth">End month:</label>
+                          <label  for="selectMonth" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="postDoc.endMonth">
+                              <option disabled value="">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Supervisor name:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
@@ -110,7 +160,7 @@
                           :object="true"
                         />
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Resources provided by the center:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
@@ -130,7 +180,13 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+
+                      <div class="col-md-6">
+                        <label for="">Institution where it was inserted:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="postDoc.institutionName">
+                      </div>
+                      <div class="col-md-6">
                         <label for="">Funding source:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
@@ -150,110 +206,10 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="text-uppercase pb-2">Postdoctoral inserted:</div>
-                      <div class="col-3">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.privateSector" @change="checkInputs('privateSector')"> Private sector</label>
-                          </div>
-                      </div>
-                      <div class="col-3">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.academy1" @change="checkInputs('private')"> Academy</label>
-                          </div>
-                      </div>
-                      <div class="col-2">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.business" @change="checkInputs('private')"> Business </label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.ownEntrepreneurship" @change="checkInputs('private')"> Own entrepreneurship </label>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.publicSector"  @change="checkInputs('publicSector')"> Public sector</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.government" @change="checkInputs('public')"> Government</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.academy2" @change="checkInputs('public')"> Academy </label>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.socialOng"> Social-ONG </label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.inTheCenter"> In the center </label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="postDoc.noneOfTheAbove"> None of the above </label>
-                          </div>
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-4">
-                        <label for="">Personal email:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="postDoc.personalEmail">
-                      </div>
-                      <div class="col-4">
-                        <label for="">Institution where it was inserted:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="postDoc.institutionName">
-                      </div>
-                      <div class="col-4">
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.comments">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the participants"
-                          v-model="postDoc.researcherInvolved"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
                       </div>
                     </div>
                   </slot>
@@ -300,22 +256,13 @@ export default {
         gender: '',
         researchTopic: '',
         personalEmail: '',
-        researcherInvolved: null,
         supervisorName: null,
         resourcesProvided: null,
         fundingSource: null,
         startYear: '',
+        startMonth: '',
+        endMonth: '',
         endingYear: '',
-        privateSector: 0,
-        academy1: 0,
-        business: 0,
-        ownEntrepreneurship: 0,
-        publicSector: 0,
-        government: 0,
-        academy2: 0,
-        socialOng: 0,
-        inTheCenter: 0,
-        noneOfTheAbove: 0,
         institutionName: '',
         comments: '',
         progressReport: '',
@@ -359,49 +306,9 @@ export default {
             this.postDoc.progressReport = response.data;
         }).catch(e=> console.log(e))
       },
-      checkInputs(input) {
-        if (input === 'private') {
-          if (this.postDoc.academy1 || this.postDoc.business || this.postDoc.ownEntrepreneurship) {
-            this.postDoc.privateSector = 1;
-          } else {
-            this.postDoc.privateSector = 0;
-          }
-        }
-
-        if (input === 'public') {
-          if (this.postDoc.government || this.postDoc.academy2) {
-            this.postDoc.publicSector = 1;
-          } else {
-            this.postDoc.publicSector = 0;
-          }
-        }
-
-        if (input === 'privateSector') {
-          if (this.postDoc.privateSector) {
-            this.postDoc.academy1 = 1;
-            this.postDoc.business = 1;
-            this.postDoc.ownEntrepreneurship = 1;
-          } else {
-            this.postDoc.academy1 = 0;
-            this.postDoc.business = 0;
-            this.postDoc.ownEntrepreneurship = 0;
-          }
-        }
-
-        if (input === 'publicSector') {
-          if (this.postDoc.publicSector) {
-            this.postDoc.government = 1;
-            this.postDoc.academy2 = 1;
-            this.postDoc.education = 1;
-          } else {
-            this.postDoc.government = 0;
-            this.postDoc.academy2 = 0;
-          }
-        }
-      },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
-            this.usuarios = response.data;
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
       getUsuarios(){
@@ -510,6 +417,8 @@ export default {
                 });
               }
             }
+
+
             var idUser1 = ''
             if(this.idResearcher != ''){
               idUser1 = this.idResearcher;
@@ -517,23 +426,9 @@ export default {
               idUser1 = this.userID;
             }
 
-            var peopleInvolved1 = "";
-            if (this.postDoc.researcherInvolved !== null){
-              if (this.postDoc.researcherInvolved.length !== 0) {
-                this.postDoc.researcherInvolved.forEach((researcherInvolved, index) => {
-                  peopleInvolved1 += researcherInvolved.name;
-                  if (index === this.postDoc.researcherInvolved.length - 1) {
-                    peopleInvolved1 += '.';
-                  } else {
-                    peopleInvolved1 += ', ';
-                  }
-                });
-              }
-            }
             let postDoc = {
-              status: 'Draft',
               idUsuario: idUser1,
-              researcherInvolved: peopleInvolved1,
+              status: 'Draft',
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
@@ -544,17 +439,9 @@ export default {
               resourcesProvided: resourcesProvided1,
               fundingSource: fundingSource1,
               startYear: this.postDoc.startYear,
+              startMonth: this.postDoc.startMonth,
+              endMonth: this.postDoc.endMonth,
               endingYear: this.postDoc.endingYear,
-              privateSector: this.postDoc.privateSector,
-              academy1: this.postDoc.academy1,
-              business: this.postDoc.business,
-              ownEntrepreneurship: this.postDoc.ownEntrepreneurship,
-              publicSector: this.postDoc.publicSector,
-              government: this.postDoc.government,
-              academy2: this.postDoc.academy2,
-              socialOng: this.postDoc.socialOng,
-              inTheCenter: this.postDoc.inTheCenter,
-              noneOfTheAbove: this.postDoc.noneOfTheAbove,
               institutionName: this.postDoc.institutionName,
               comments: this.postDoc.comments,
               progressReport: this.postDoc.progressReport,
@@ -576,10 +463,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -609,16 +563,6 @@ export default {
         this.errors = [];
 
         const itemsToCheck = [
-          'privateSector',
-          'academy1',
-          'business',
-          'ownEntrepreneurship',
-          'publicSector',
-          'government',
-          'academy2',
-          'socialOng',
-          'inTheCenter',
-          'noneOfTheAbove',
           'comments',
           'institutionName',
         ];
@@ -699,7 +643,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Postdoctoral fellow',
-            message: `¿Are you sure you want to save this Postdoctoral fellow? This action cannot be undone.`,
+            message: `¿Are you sure you want to save this Postdoctoral fellow?.`,
             okButton: 'Save',
             cancelButton: 'Return'
           })
@@ -761,24 +705,10 @@ export default {
               idUser1 = this.userID;
             }
 
-            var peopleInvolved1 = "";
-            if (this.postDoc.researcherInvolved !== null){
-              if (this.postDoc.researcherInvolved.length !== 0) {
-                this.postDoc.researcherInvolved.forEach((researcherInvolved, index) => {
-                  peopleInvolved1 += researcherInvolved.name;
-                  if (index === this.postDoc.researcherInvolved.length - 1) {
-                    peopleInvolved1 += '.';
-                  } else {
-                    peopleInvolved1 += ', ';
-                  }
-                });
-              }
-            }
 
             let postDoc = {
               status: 'Finished',
               idUsuario: idUser1,
-              researcherInvolved: peopleInvolved1,
               nameOfPostdoc: this.postDoc.nameOfPostdoc,
               identification: this.postDoc.identification,
               runOrPassport: runOrPassport1,
@@ -790,16 +720,8 @@ export default {
               fundingSource: fundingSource1,
               startYear: this.postDoc.startYear,
               endingYear: this.postDoc.endingYear,
-              privateSector: this.postDoc.privateSector,
-              academy1: this.postDoc.academy1,
-              business: this.postDoc.business,
-              ownEntrepreneurship: this.postDoc.ownEntrepreneurship,
-              publicSector: this.postDoc.publicSector,
-              government: this.postDoc.government,
-              academy2: this.postDoc.academy2,
-              socialOng: this.postDoc.socialOng,
-              inTheCenter: this.postDoc.inTheCenter,
-              noneOfTheAbove: this.postDoc.noneOfTheAbove,
+              startMonth: this.postDoc.startMonth,
+              endMonth: this.postDoc.endMonth,
               institutionName: this.postDoc.institutionName,
               comments: this.postDoc.comments,
               progressReport: this.postDoc.progressReport,
@@ -821,10 +743,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

@@ -19,9 +19,9 @@ class thesisStudentController extends Controller
 
     public function verifyThesis(Request $request)
     {
-        $query = thesisStudent::where('identification', $request['identification'])
+        $query = thesisStudent::where('runOrPassport', $request['runOrPassport'])
             ->where('degreeDenomination', $request['degreeDenomination'])
-            ->whereNotNull('identification')
+            ->whereNotNull('runOrPassport')
             ->whereNotNull('degreeDenomination');
     
         // Si el request trae el campo 'id', agregamos una condición para excluir ese ID de la búsqueda
@@ -89,10 +89,9 @@ class thesisStudentController extends Controller
     public function update(Request $request, $id)
     {
         $thesis = thesisStudent::find($id);
-
         $input = $request->all();
         $thesis->update($input);
-        return response()->json("Thesis Editada");
+        return response()->json('se ha guardado');
     }
 
     public function importThesis(Request $request)

@@ -1,7 +1,7 @@
 @extends('layouts.main', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-    @include('layouts.navbars.auth.topnav', ['title' => 'Non Isi publications'])
+    @include('layouts.navbars.auth.topnav', ['title' => 'Non ISI publications'])
     <body class="antialiased">
         <div id="non-isi-publications">
             <non-isi-publications></non-isi-publications>

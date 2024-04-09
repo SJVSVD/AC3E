@@ -20,13 +20,13 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
                                     </tr>
                                 </thead>
@@ -36,6 +36,18 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ nonIsiPublication.id }}</p>
                                         </td>       
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a v-if="nonIsiPublication.file != null" class="btn btn-search-blue btn-xs" title="Download File" @click="descargarExtracto(nonIsiPublication.id, nonIsiPublication.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(nonIsiPublication)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(nonIsiPublication)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(nonIsiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="nonIsiPublication.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ nonIsiPublication.status }}</p>
                                             <p v-if="nonIsiPublication.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ nonIsiPublication.status }}</p>
@@ -58,15 +70,6 @@
                                         <td>
                                             <p v-if="nonIsiPublication.yearPublished == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ nonIsiPublication.yearPublished }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(nonIsiPublication)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(nonIsiPublication)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(nonIsiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -122,6 +125,29 @@ export default {
         this.getNonIsiPublications(this.userID);
     },
     methods: {
+        descargarExtracto(id, nombre) {
+            axios({
+                url: `api/nonIsiDownload/${id}`,
+                method: 'GET',
+                responseType: 'arraybuffer',
+            }).then((response) => {
+                let blob = new Blob([response.data], {
+                    type: response.headers['content-type']
+                });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                if (blob.type.includes('pdf')) {
+                    link.download = `NonISI-${nombre}.pdf`;
+                } else if (blob.type.includes('image')) {
+                    link.download = `NonISI-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                } else {
+                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                    console.error('Tipo de archivo no compatible');
+                    return;
+                }
+                link.click();
+            });
+        },
         verIsiPublication(nonIsiPublication){
             this.nonIsiPublication = nonIsiPublication;
             this.showDetailsIsi = true;
@@ -154,7 +180,7 @@ export default {
         async deletePublication(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Publication',
-                message: `¿Are you sure you want to delete this Publication? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Publication?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

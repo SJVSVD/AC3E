@@ -75,6 +75,7 @@
                     <li><a href="/admin-usuarios">of Users</a></li>
                     <li><a href="/admin-roles">of Roles and Permissions</a></li>
                     <li><a href="/import-info">Import data</a></li>
+                    <li><a href="/indicators">Indicators</a></li>
                 </ul>
             </li>
             @endrole
@@ -88,8 +89,8 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Modules</a></li>
-                    <li><a href="/isi-publications">Isi publications</a></li>
-                    <li><a href="/non-isi-publications">Non Isi publications</a></li>
+                    <li><a href="/isi-publications">ISI publications</a></li>
+                    <li><a href="/non-isi-publications">Non ISI publications</a></li>
                     <li><a href="/books">Books</a></li>
                     <li><a href="/awards">Awards</a></li>
                     <li><a href="/organization-sc-events">Organization of Sc events</a></li>
@@ -104,7 +105,7 @@
 
                     <li><a href="/outreach-activities">Outreach</a></li>
                     <li><a href="/patents">Patents</a></li>
-                    <li><a href="/public-private">Public-private conections</a></li>
+                    <li><a href="/public-private">Public-private connections</a></li>
                     
                     <li><a href="/technology-knowledge">Tec. and know. transfer</a></li>
                     
@@ -192,6 +193,18 @@
     <script src="{{asset('assets/js/core/bootstrap.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
+
+    <script>
+    $(document).ready(function(){
+        var path = window.location.pathname;
+        $('.sub-menu a').each(function(){
+            if ($(this).attr('href') === path) {
+                $(this).addClass('active');
+            }
+        });
+    });
+    </script>
+
     <script>
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -238,21 +251,6 @@
     </script> --}}
 
     <script>
-        window.sessionStorage;
-        window.onload = function() {
-            var estadoSidebar = sessionStorage.getItem('estadoSidebar');
-            if (estadoSidebar == 'abierta'){
-                sidebar.classList.toggle("close");
-            }
-            let arrow = document.querySelectorAll(".arrow");
-            var subMenuAbierto = '';
-            for (var i = 0; i < arrow.length; i++) {
-                if (sessionStorage.getItem('arrow'+[i+1]) == 'abierta'){
-                    subMenuAbierto = document.getElementById('arrow'+[i+1]);
-                    subMenuAbierto.parentElement.parentElement.classList.toggle("showMenu");
-                }
-            }  
-        };
         // Boton para subir
         let mybutton = document.getElementById("topButton");
         window.onscroll = function() {scrollFunction()};
@@ -346,3 +344,4 @@
     </script>
   </body>
 </html>
+

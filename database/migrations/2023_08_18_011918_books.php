@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('lastPage')->nullable();
             $table->string('editorialCityCountry')->nullable();
             $table->year('year')->nullable();
+            $table->string('month')->nullable();
             $table->string('progressReport')->nullable();
             $table->string('comments')->nullable();
             $table->timestamps();

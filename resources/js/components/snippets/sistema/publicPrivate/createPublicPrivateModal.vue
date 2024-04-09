@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New connection 
@@ -23,19 +23,19 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <label for="">Name of activity:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.nameOfActivity">
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <label for="">Name of organization:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.nameOfOrganization">
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <label for="">Country of origin:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -44,30 +44,28 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Agent type:</label>
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
-                          placeholder="Select the types"
-                          v-model="publicPrivate.agentType"
-                          limit=4
+                          placeholder="Select the researchers"
+                          v-model="publicPrivate.researcherInvolved"
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
-                          :options="options1"
+                          :options="researchers2"
                           mode="tags"
                           label="name"
                           trackBy="id"
                           :object="true"
                         />
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Type of connection:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the types"
                           v-model="publicPrivate.typeOfConnection"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -81,13 +79,13 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-5">
+                      <div class="col-md-5">
                         <label for="">Place where activity was executed:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.placeWhereWasExecuted">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                           <label for="">International/National:</label>
                           <label for="" style="color: orange;">*</label>
                           <select class="form-select" v-model="publicPrivate.internationalNational">
@@ -96,7 +94,7 @@
                             <option value="National congress">International</option>
                             </select>
                         </div>
-                        <div class="col-3 ">
+                        <div class="col-md-3 ">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
                                   v-model="publicPrivate.participationPublicPolicies"> Participation in definition of public policies </label>
@@ -105,45 +103,45 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Start date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="publicPrivate.startDate">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Ending date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="publicPrivate.endingDate">
                       </div>
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
+                      <div class="col-md-6">
+                        <label for="">Agent type:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
-                          placeholder="Select the researchers"
-                          v-model="publicPrivate.researcherInvolved"
-                          limit=4
+                          placeholder="Select the types"
+                          v-model="publicPrivate.agentType"
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
-                          :options="researchers2"
+                          :options="options1"
                           mode="tags"
                           label="name"
                           trackBy="id"
                           :object="true"
                         />
                       </div>
+
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                           <label for="">Results/Goals:</label>
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <textarea class= "form-control" v-model="publicPrivate.resultsGoals" style="resize: none;" cols="30" rows="5"></textarea>
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="publicPrivate.comments">
@@ -241,7 +239,7 @@ export default {
       },
       getUsuarios(){
         axios.get('api/usuarios').then( response =>{
-            this.usuarios = response.data;
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
       getUsuarios2(){
@@ -313,8 +311,8 @@ export default {
             }
 
             let publicPrivate = {
-              status: 'Draft',
               idUsuario: idUser1,
+              status: 'Draft',
               agentType: agentType1,
               typeOfConnection: typeOfConnection1,
               researcherInvolved: researcherInvolved1,
@@ -347,10 +345,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -452,7 +517,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Public private connection',
-            message: `¿Are you sure you want to save this Public private connection? This action cannot be undone.`,
+            message: `¿Are you sure you want to save this Public private connection?.`,
             okButton: 'Save',
             cancelButton: 'Return'
           })
@@ -542,10 +607,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

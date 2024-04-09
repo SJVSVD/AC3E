@@ -257,7 +257,7 @@ export default {
             if(this.errors.length === 0){
                 const ok = await this.$refs.confirmation.show({
                 title: 'Edit profile',
-                message: `Are you sure you want to edit your profile? This action cannot be undone.`,
+                message: `Are you sure you want to edit your profile?.`,
                 okButton: 'Edit',
                 cancelButton: 'Return'
                 })

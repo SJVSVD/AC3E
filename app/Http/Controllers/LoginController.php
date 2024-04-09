@@ -19,17 +19,16 @@ class LoginController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+    
+        if (Auth::attempt($credentials, $request->filled('rememberMe'))) {
             $request->session()->regenerate();
-
+    
             return redirect()->intended('dashboard');
         }
-
+    
         return back()->withErrors([
-            'email' => '
-            The data entered is incorrect.',
-        ]);
+            'email' => 'The data entered is incorrect.',
+        ])->withInput($request->only('email', 'rememberMe'));
     }
 
     public function logout(Request $request)

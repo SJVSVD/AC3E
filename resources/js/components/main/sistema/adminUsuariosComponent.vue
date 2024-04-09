@@ -191,7 +191,7 @@ export default {
         async deleteUsuario(id,Nombre) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete User',
-                message: `¿Are you sure you want to delete the user? '${Nombre}'? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete the user? '${Nombre}'?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

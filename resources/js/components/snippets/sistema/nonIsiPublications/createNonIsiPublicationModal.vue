@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New Publication
@@ -23,42 +23,74 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-6">
+                      <div class="col-md-6">
+                            <label for="">AC3E researcher involved: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <div>
+                              <Multiselect
+                                  placeholder="Select the options"
+                                  v-model="nonIsiPublication.researcherInvolved"
+                                  :searchable="true"
+                                  :close-on-select="false"
+                                  :createTag="true"
+                                  :options="researchers"
+                                  mode="tags"
+                                  label="name"
+                                  trackBy="name"
+                                  :object="true"
+                              />
+                          </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                          <div class="col-md-6">
                               <label for="">Author(s): </label>
                               <label for="" style="color: orange;">*</label>
+                              <label title="The format for this field should be as follows: 'Last Name, Initial of First Name; Last Name, Initial of First Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                               <br>
-                              <input title="First Name and Last Name." type="text" class= "form-control" v-model="nonIsiPublication.authors">
+                              <input  type="text" class= "form-control" v-model="nonIsiPublication.authors">
                           </div>
-                          <div class="col-6">
-                          <label for="">Indexed by: </label>
-                          <label for="" style="color: orange;">*</label>
+                          <div class="col-md-3">
+                            <label for="">Year Published:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <select class="form-select" id="selectYear" v-model="nonIsiPublication.yearPublished">
+                              <option disabled value="">Select a year</option>
+                              <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                            </select>
+                          </div>
+                          <div class="col-md-3">
+                          <label for="selectMonth">Month:</label>
+                          <label for="selectMonth" style="color: orange;">*</label>
                           <br>
-                          <div>
-                            <Multiselect
-                                placeholder="Select the options"
-                                v-model="nonIsiPublication.indexedBy"
-                                limit=4
-                                :searchable="true"
-                                :close-on-select="false"
-                                :createTag="true"
-                                :options="options2"
-                                mode="tags"
-                                label="name"
-                                trackBy="name"
-                                :object="true"
-                            />
-                        </div>
+                          <select class="form-select" id="selectMonth" v-model="nonIsiPublication.month">
+                              <option disabled value="">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
                       </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Article Title:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.articleTitle">
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Journal Name:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -67,34 +99,26 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-4">
                         <label for="">Volume:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.volume">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-4">
                         <label for="">First Page:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.firstPage">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-4">
                         <label for="">Last Page:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.lastPage">
                       </div>
-                      <div class="col-3">
-                        <label for="">Year Published:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <select class="form-select" id="selectYear" v-model="nonIsiPublication.yearPublished">
-                          <option disabled value="">Select a year</option>
-                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-                        </select>
-                      </div>
+
                     </div>
                     <br>
                     <div class="row">                        
-                      <div class="col-6">
+                      <div class="col-md-6">
                           <label for="">Fundings: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -114,7 +138,7 @@
                             />
                         </div>
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="nonIsiPublication.comments">
@@ -122,19 +146,18 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                          <label for="">Researcher involved: </label>
+                      <div class="col-md-6">
+                          <label for="">Indexed by: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <div>
                             <Multiselect
                                 placeholder="Select the options"
-                                v-model="nonIsiPublication.researcherInvolved"
-                                limit=4
+                                v-model="nonIsiPublication.indexedBy"
                                 :searchable="true"
                                 :close-on-select="false"
                                 :createTag="true"
-                                :options="researchers"
+                                :options="options2"
                                 mode="tags"
                                 label="name"
                                 trackBy="name"
@@ -142,58 +165,16 @@
                             />
                         </div>
                       </div>
-                      <div class="col-5">
+                      <div class="col-md-5">
                         <div class="form-group">
                           <label for="archivo">File: </label>
                           <label for="" style="color: orange;">*</label>
-                          <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
+                          <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
                         </div>
                       </div>
-                      <div  class="col-1 pt-2">
+                      <div  class="col-md-1 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
-                      </div>
-                    </div>
-                    <hr size="3" class="separador">
-                    <div class="row">
-                      <div class="text-uppercase pb-2">Participations:</div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="nonIsiPublication.mainResearchers"> Main researchers</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="nonIsiPublication.associativeResearchers"> Associative researchers</label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="nonIsiPublication.postDoc"> Post doc</label>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="nonIsiPublication.thesisStudents"> Thesis students </label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="nonIsiPublication.nationalExternalResearchers"> National external researchers </label>
-                          </div>
-                      </div>
-                      <div class="col-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="nonIsiPublication.internationalExternalResearchers"> Inter. external researchers </label>
-                          </div>
                       </div>
                     </div>
                   </slot>
@@ -242,13 +223,8 @@ export default {
         firstPage: "",
         lastPage: "",
         yearPublished: "",
+        month: "",
         fundings: null,
-        mainResearchers: 0,
-        associativeResearchers: 0,
-        postDoc: 0,
-        thesisStudents: 0,
-        nationalExternalResearchers: 0,
-        internationalExternalResearchers: 0,
         file: "",
         researcherInvolved: null,
         comments: "",
@@ -291,7 +267,7 @@ export default {
       },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
-            this.usuarios = response.data;
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
       clearFileInput() {
@@ -379,13 +355,8 @@ export default {
               firstPage: this.nonIsiPublication.firstPage,
               lastPage: this.nonIsiPublication.lastPage,
               yearPublished: this.nonIsiPublication.yearPublished,
+              month: this.nonIsiPublication.month,
               funding: fundingsName1,
-              mainResearchers: this.nonIsiPublication.mainResearchers,
-              associativeResearchers: this.nonIsiPublication.associativeResearchers,
-              postDoc: this.nonIsiPublication.postDoc,
-              thesisStudents: this.nonIsiPublication.thesisStudents,
-              nationalExternalResearchers: this.nonIsiPublication.nationalExternalResearchers,
-              internationalExternalResearchers: this.nonIsiPublication.internationalExternalResearchers,
               comments: this.nonIsiPublication.comments,
               file: this.nonIsiPublication.file,
               progressReport: this.nonIsiPublication.progressReport,
@@ -407,10 +378,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -448,12 +486,6 @@ export default {
         'volume',
         'firstPage',
         'lastPage',
-        'mainResearchers',
-        'associativeResearchers',
-        'postDoc',
-        'thesisStudents',
-        'nationalExternalResearchers',
-        'internationalExternalResearchers',
         ];
 
         for (const item in this.nonIsiPublication) {
@@ -513,7 +545,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Send Publication',
-            message: `¿Are you sure you want to send this publication? This action cannot be undone.`,
+            message: `¿Are you sure you want to send this publication?.`,
             okButton: 'Send',
             cancelButton: 'Return'
           })
@@ -579,13 +611,8 @@ export default {
               firstPage: this.nonIsiPublication.firstPage,
               lastPage: this.nonIsiPublication.lastPage,
               yearPublished: this.nonIsiPublication.yearPublished,
+              month: this.nonIsiPublication.month,
               funding: fundingsName1,
-              mainResearchers: this.nonIsiPublication.mainResearchers,
-              associativeResearchers: this.nonIsiPublication.associativeResearchers,
-              postDoc: this.nonIsiPublication.postDoc,
-              thesisStudents: this.nonIsiPublication.thesisStudents,
-              nationalExternalResearchers: this.nonIsiPublication.nationalExternalResearchers,
-              internationalExternalResearchers: this.nonIsiPublication.internationalExternalResearchers,
               comments: this.nonIsiPublication.comments,
               file: this.nonIsiPublication.file,
               progressReport: this.nonIsiPublication.progressReport,
@@ -609,10 +636,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

@@ -20,13 +20,13 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Type of Transfer</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Description</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Institution Involved</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Researcher Involved</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -35,6 +35,15 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ technology.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editTechnology(technology)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verTechnology(technology)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteTechnology(technology.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="technology.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ technology.status }}</p>
                                             <p v-if="technology.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ technology.status }}</p>
@@ -57,15 +66,6 @@
                                         <td>
                                             <p v-if="technology.researcherInvolved == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ technology.researcherInvolved }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editTechnology(technology)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verTechnology(technology)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteTechnology(technology.id)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -152,7 +152,7 @@ export default {
         async deleteTechnology(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Technology and knowledge transfer',
-                message: `¿Are you sure you want to delete this Technology and knowledge transfer? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Technology and knowledge transfer?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

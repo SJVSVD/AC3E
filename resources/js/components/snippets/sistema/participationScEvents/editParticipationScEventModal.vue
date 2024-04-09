@@ -3,18 +3,46 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     Edit Participation Sc Event {{ participationSc.file }}
                 </slot>
                 <label for="">Progress year: {{ participationSc.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
+                  <div class="row">
+                    <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="participationSc.researcherInvolved"
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                  </div>
+                  <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                           <label for="">Type of Event:</label>
                           <label for="" style="color: orange;">*</label>
                           <Multiselect
@@ -31,7 +59,7 @@
                               :object="true"
                           />
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                           <label for="">Type of Participation:</label>
                           <label for="" style="color: orange;">*</label>
                           <Multiselect
@@ -51,13 +79,13 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                           <label for="">Event Name:</label>
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="participationSc.eventName">
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                           <label for="">Presentation Title:</label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -66,25 +94,25 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Country:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="participationSc.country">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">City:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="participationSc.city">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Start Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="participationSc.startDate">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Ending Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -93,20 +121,20 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Name of participants:</label>
                         <label for="" style="color: orange;">*</label>
                         <input type="text" class= "form-control" v-model="participationSc.nameOfParticipants">
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <div class="form-group">
                         <label for="archivo">File:</label>
                         <label for="" style="color: orange;">*</label>
                         <label v-if="participation1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
+                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
                         </div>
                       </div>
-                      <div class="col-2 pt-2">
+                      <div class="col-md-2 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                         &nbsp;
@@ -115,27 +143,10 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                           <label for="">Comments:</label>
                           <br>
                           <input type="text" class= "form-control" v-model="participationSc.comments">
-                      </div>
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the participants"
-                          v-model="participationSc.researcherInvolved"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
                       </div>
                     </div>
                     <br>
@@ -213,6 +224,8 @@ export default {
       draft: false,
       showModalProgress: false,
       researchers: [],
+      usuarios: [],
+      idResearcher: '',
       user: '',
       id: '',
       buttonDisable: false,
@@ -221,12 +234,14 @@ export default {
     }),
     mounted(){
       this.getUsuarios();
+      this.getUsuarios2();
     },
     props:{
       participation1: Object,
     },
     created(){
       this.id = this.participation1.id;
+      this.idResearcher = this.participation1.idUsuario;
       this.user = this.participation1.usuario.name;
       this.participationSc.eventName = this.participation1.eventName;
       this.participationSc.presentationTitle = this.participation1.presentationTitle;
@@ -277,6 +292,11 @@ export default {
 
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
+        }).catch(e=> console.log(e))
+      },
       handleFormSubmit1(year) {
         this.participationSc.progressReport = year;
       },
@@ -286,13 +306,21 @@ export default {
               method: 'GET',
               responseType: 'arraybuffer',
           }).then((response) => {
-              let blob = new Blob([response.data], {
-                      type: 'application/pdf'
-                  })
-                  let link = document.createElement('a')
-                  link.href = window.URL.createObjectURL(blob)
-                  link.download = `Participation-${nombre}.pdf`
-                  link.click()
+            let blob = new Blob([response.data], {
+                    type: response.headers['content-type']
+                });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                if (blob.type.includes('pdf')) {
+                    link.download = `Participation-${nombre}.pdf`;
+                } else if (blob.type.includes('image')) {
+                    link.download = `Participation-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                } else {
+                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                    console.error('Tipo de archivo no compatible');
+                    return;
+                }
+                link.click();
           });
       },
       getUsuarios(){
@@ -314,25 +342,34 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var typeEvent = '';
-            var other = 0;
-
-            if(this.participationSc.typeEvent == 'Other'){
-              typeEvent = this.other;
-              other = 1;
-            }else{
-              typeEvent = this.participationSc.typeEvent;
+            var typeEvent1 = "";
+            if (this.participationSc.typeEvent !== null){
+              if (this.participationSc.typeEvent.length !== 0) {
+                this.participationSc.typeEvent.forEach((typeEvent, index) => {
+                  typeEvent1 += typeEvent.name;
+                  if (index === this.participationSc.typeEvent.length - 1) {
+                    typeEvent1 += '.';
+                  } else {
+                    typeEvent1 += ', ';
+                  }
+                });
+              }
             }
 
-            var typeOfParticipation = '';
-            var other2 = 0;
-
-            if(this.participationSc.typeOfParticipation == 'Other'){
-              typeOfParticipation = this.other2;
-              other2 = 1;
-            }else{
-              typeOfParticipation = this.participationSc.typeOfParticipation;
+            var typeOfParticipation1 = "";
+            if (this.participationSc.typeOfParticipation !== null){
+              if (this.participationSc.typeOfParticipation.length !== 0) {
+                this.participationSc.typeOfParticipation.forEach((typeOfParticipation, index) => {
+                  typeOfParticipation1 += typeOfParticipation.name;
+                  if (index === this.participationSc.typeOfParticipation.length - 1) {
+                    typeOfParticipation1 += '.';
+                  } else {
+                    typeOfParticipation1 += ', ';
+                  }
+                });
+              }
             }
+
 
             var peopleInvolved1 = "";
             if (this.participationSc.researcherInvolved !== null){
@@ -348,14 +385,20 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let participationSc = {
+              idUsuario: idUser1,
               status: 'Draft',
               researcherInvolved: peopleInvolved1, 
-              typeEvent: typeEvent,
-              other: other,
+              typeEvent: typeEvent1,
               presentationTitle: this.participationSc.presentationTitle,
-              typeOfParticipation: typeOfParticipation,
-              otherParticipation: other2,
+              typeOfParticipation: typeOfParticipation1,
               eventName: this.participationSc.eventName,
               country: this.participationSc.country,
               city: this.participationSc.city,
@@ -407,10 +450,77 @@ export default {
                 })
               }
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -450,10 +560,6 @@ export default {
             }
         }
 
-        if(this.participationSc.typeEvent == 'Other' && this.other == ''){
-          this.errors.push('other');
-        }
-
         var idUser1 = ''
         if(this.idResearcher != ''){
           idUser1 = this.idResearcher;
@@ -476,14 +582,10 @@ export default {
         }
 
         let participationSc1 = {
+          idUsuario: idUser1,
           id: this.id,
           researcherInvolved: peopleInvolved1,
-          idUsuario: idUser1,
-          typeEvent: typeEvent,
-          other: other,
           presentationTitle: this.participationSc.presentationTitle,
-          typeOfParticipation: typeOfParticipation,
-          otherParticipation: other2,
           eventName: this.participationSc.eventName,
           country: this.participationSc.country,
           city: this.participationSc.city,
@@ -542,31 +644,40 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Participation',
-            message: `¿Are you sure you want to edit this Participation of sc event? This action cannot be undone.`,
+            message: `¿Are you sure you want to edit this Participation of sc event?.`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
 
-            var typeEvent = '';
-            var other = 0;
-
-            if(this.participationSc.typeEvent == 'Other'){
-              typeEvent = this.other;
-              other = 1;
-            }else{
-              typeEvent = this.participationSc.typeEvent;
+            var typeEvent1 = "";
+            if (this.participationSc.typeEvent !== null){
+              if (this.participationSc.typeEvent.length !== 0) {
+                this.participationSc.typeEvent.forEach((typeEvent, index) => {
+                  typeEvent1 += typeEvent.name;
+                  if (index === this.participationSc.typeEvent.length - 1) {
+                    typeEvent1 += '.';
+                  } else {
+                    typeEvent1 += ', ';
+                  }
+                });
+              }
             }
 
-            var typeOfParticipation = '';
-            var other2 = 0;
-
-            if(this.participationSc.typeOfParticipation == 'Other'){
-              typeOfParticipation = this.other2;
-              other2 = 1;
-            }else{
-              typeOfParticipation = this.participationSc.typeOfParticipation;
+            var typeOfParticipation1 = "";
+            if (this.participationSc.typeOfParticipation !== null){
+              if (this.participationSc.typeOfParticipation.length !== 0) {
+                this.participationSc.typeOfParticipation.forEach((typeOfParticipation, index) => {
+                  typeOfParticipation1 += typeOfParticipation.name;
+                  if (index === this.participationSc.typeOfParticipation.length - 1) {
+                    typeOfParticipation1 += '.';
+                  } else {
+                    typeOfParticipation1 += ', ';
+                  }
+                });
+              }
             }
+
 
             var peopleInvolved1 = "";
             if (this.participationSc.researcherInvolved !== null){
@@ -582,14 +693,20 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let participationSc = {
+              idUsuario: idUser1,
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
-              typeEvent: typeEvent,
-              other: other,
+              typeEvent: typeEvent1,
               presentationTitle: this.participationSc.presentationTitle,
-              typeOfParticipation: typeOfParticipation,
-              otherParticipation: other2,
+              typeOfParticipation: typeOfParticipation1,
               eventName: this.participationSc.eventName,
               country: this.participationSc.country,
               city: this.participationSc.city,
@@ -640,10 +757,77 @@ export default {
                 })
               }
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

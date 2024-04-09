@@ -3,7 +3,7 @@
       <div name="modal">
         <div class="modal-mask">
             <div class="modal-wrapper">
-              <div class="modal-container-xs">
+              <div class="modal-container-s">
                 <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                   <slot name="header">
                       Edit tutors
@@ -30,7 +30,14 @@
                             <td><p class="text-sm mb-0"> {{ index + 1 }}  </p></td>
                             <td v-if="tutor.editing"><p class="text-sm mb-0"><input type="text" class= "form-control" v-model="tutor.name"></p></td>
                             <td v-else ><p class="text-sm mb-0"> {{ tutor.name }}  </p></td>
-                            <td v-if="tutor.editing"><p class="text-sm mb-0"><input type="text" class= "form-control" v-model="tutor.institution"></p></td>
+                            <td v-if="tutor.editing">
+                              <p class="text-sm mb-0">
+                                <select class="form-select" v-model="tutor.institution">
+                                  <option value="">Select Institution</option>
+                                  <option v-for="institution in universities" :value="institution.name">{{ institution.name }}</option>
+                                </select>
+                              </p>
+                            </td>
                             <td v-else ><p class="text-sm mb-0"> {{ tutor.institution }}  </p></td>
                             <td><p class="text-sm mb-0">
                             <a v-if="!tutor.editing" class="btn btn-alert btn-xs" title="Edit" @click="editarDetalle(index)"><i class="fa fa-fw fa-edit"></i></a>

@@ -1,50 +1,49 @@
 <template>
-    <transition name="modalcrear">
-      <div name="modal">
-        <div class="modal-mask">
-            <div class="modal-wrapper">
-              <div class="modal-container-xs">
-                <div class="modal-header pb-1 fw-bold" style="color: #444444;">
-                  <slot name="header">
-                      Edit Progress report year
-                  </slot>
-                  <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
-                </div>
-                <div class="modal-body">
-                  <slot name="body">
-                    <form >
-                      <div class="mb-3 d-flex align-items-center">
-                        <label class="col-auto m-0 fs-8"> Actual Progress report year:</label>
-                        &nbsp;&nbsp;
-                        <label v-if="numeroConcatenado != ''" class="fw-normal pt-2" style="font-size: 14px;">{{ numeroConcatenado }}</label>
-                        <label v-else class="fw-normal pt-2" style="font-size: 14px;">Empty</label>
-                        <button type="button" class="btn btn-closed ms-auto" @click="eliminarNumero"><i class="fa-solid fa-minus"></i></button>
-                      </div>
-                      <div class="mb-3 d-flex align-items-center">
-                        <label class="col-auto m-0 fs-8 pb-2"> New Progress report year: </label>
-                        &nbsp;&nbsp;
-                        <input type="number" class="form-control" id="nuevoNumero" v-model="nuevoNumero">
-                        &nbsp;&nbsp;
-                        <button type="button" class="btn btn-continue" @click="agregarNumero"><i class="fa-solid fa-plus"></i></button>
-                      </div>
-                    </form>
-                  </slot>
-                </div>
-                <div class="modal-footer">
-                    <slot name="footer">
-                        <button class="btn btn-continue float-end" @click="editProgress()" :disabled="buttonDisable">
-                            {{ buttonText }}
-                        </button>
-                    </slot>
-                </div>
-                <modalconfirmacion ref="confirmation"></modalconfirmacion>
-                <modalalerta ref="alert"></modalalerta>
+  <transition name="modalcrear">
+    <div name="modal">
+      <div class="modal-mask">
+        <div class="modal-wrapper">
+          <div class="modal-container-s">
+            <div class="modal-header pb-1 fw-bold" style="color: #444444;">
+              <slot name="header">Edit Progress report year</slot>
+              <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
             </div>
+            <div class="modal-body">
+              <slot name="body">
+                <form>
+                  <div class="mb-3 d-flex align-items-center">
+                    <label class="col-auto m-0 fs-8"> Actual Progress report year:</label>
+                    &nbsp;&nbsp;
+                    <label v-if="numeroConcatenado != ''" class="fw-normal pt-2" style="font-size: 14px;">{{ numeroConcatenado }}</label>
+                    <label v-else class="fw-normal pt-2" style="font-size: 14px;">Empty</label>
+                    <button type="button" class="btn btn-closed ms-auto" @click="eliminarNumero"><i class="fa-solid fa-minus"></i></button>
+                  </div>
+                  <div class="mb-3 d-flex align-items-center">
+                    <label class="col-auto m-0 fs-8 pb-2"> New Progress report year: </label>
+                    &nbsp;&nbsp;
+                    <input type="number" class="form-control" id="nuevoNumero" v-model="nuevoNumero">
+                    &nbsp;&nbsp;
+                    <button type="button" class="btn btn-continue" @click="agregarNumero"><i class="fa-solid fa-plus"></i></button>
+                  </div>
+                </form>
+              </slot>
+            </div>
+            <div class="modal-footer">
+              <slot name="footer">
+                <button class="btn btn-continue float-end" @click="editProgress()" :disabled="buttonDisable">
+                  {{ buttonText }}
+                </button>
+              </slot>
+            </div>
+            <modalconfirmacion ref="confirmation"></modalconfirmacion>
+            <modalalerta ref="alert"></modalalerta>
           </div>
         </div>
       </div>
-    </transition>
-  </template>
+    </div>
+  </transition>
+</template>
+
   
   <script>
   import axios from 'axios'

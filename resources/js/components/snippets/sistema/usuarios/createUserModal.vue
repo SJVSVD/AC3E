@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New User
@@ -13,22 +13,22 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                        <div class="col-3">
+                        <div class="col-md-3">
                             <label for="name">Name: </label>
                             <br>
                             <input type="text" class= "form-control" v-model="user.name">
                         </div>
-                        <div class="col-3">
+                        <div class="col-md-3">
                             <label for="email">Email: </label>
                             <br>
                             <input type="email" class= "form-control" v-model="user.email">
                         </div>
-                        <div class="col-3">
+                        <div class="col-md-3">
                             <label for="password">Password: </label>
                             <br>
                             <input type="password" class= "form-control" v-model="user.password">
                         </div>
-                        <div class="col-3">
+                        <div class="col-md-3">
                             <label for="confirm-password"> Confirm Password: </label>
                             <br>
                             <input type="password" class= "form-control" v-model="user.confirmpassword">
@@ -37,7 +37,7 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Role User:</label>
                         <select class="form-select" v-model="user.idRole">
                         <option disabled value="">Select a role</option>
@@ -46,7 +46,7 @@
                         </option>
                         </select>
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Research Line:</label>
                         <select class="form-select" v-model="user.idResearchLine">
                         <option disabled value="">Select a research line</option>
@@ -58,7 +58,7 @@
                     </div>
                     <hr size="3" class="separador">
                     <div class="row">
-                      <div class="col-12">
+                      <div class="col-md-12">
                         <label for="">Roles:</label>
                         <div v-if="marcados == false" class="form-check">
                           <label class="form-check-label fw-bold"><input type="checkbox" v-bind:value="0" @change="marcarTodos()" class="form-check-input" v-model="selected"> Check all </label>
@@ -211,7 +211,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Create User',
-            message: `¿Are you sure you want to create the user '${this.user.name}'? This action cannot be undone.`,
+            message: `¿Are you sure you want to create the user '${this.user.name}'?.`,
             okButton: 'Create',
             cancelButton: 'Return'
           })
@@ -263,10 +263,77 @@ export default {
                 setTimeout(() => {this.cerrarModal();}, 1500);
               }
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

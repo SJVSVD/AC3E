@@ -34,6 +34,7 @@ const userProfileComponent = defineAsyncComponent(() => import('@/components/use
 const powerBiComponent = defineAsyncComponent(() => import('@/components/powerBiComponent.vue'));
 const importInfoComponent = defineAsyncComponent(() => import('@/components/importInfoComponent.vue'));
 const error = defineAsyncComponent(() => import('@/components/errorComponent.vue'));
+const indicatorsComponent = defineAsyncComponent(() => import('@/components/indicatorsComponent.vue'));
 
 app.component("dashboard-component", dashboardComponent);
 app.mount("#dashboard");
@@ -97,6 +98,9 @@ app.mount("#powerbi-component");
 
 app.component("import-info", importInfoComponent);
 app.mount("#import-info");
+
+app.component("indicators-component", indicatorsComponent);
+app.mount("#indicators-component");
 
 app.component("error-component", error);
 app.mount("#error");

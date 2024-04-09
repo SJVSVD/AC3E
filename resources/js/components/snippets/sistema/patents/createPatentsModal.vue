@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New Patent 
@@ -23,7 +23,27 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-6">
+                      <div class="col-md-6">
+                          <label for="">AC3E researcher involved:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <Multiselect
+                            placeholder="Select the researchers"
+                            v-model="patent.researcherInvolved"
+
+                            :searchable="true"
+                            :close-on-select="false"
+                            :createTag="true"
+                            :options="researchers"
+                            mode="tags"
+                            label="name"
+                            trackBy="id"
+                            :object="true"
+                          />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                          <div class="col-md-6">
                             <label for="">Ip type:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="patent.ipType">
@@ -47,7 +67,7 @@
                               <option value="Others">Others</option>
                               </select>
                           </div>
-                          <div class="col-6">
+                          <div class="col-md-6">
                             <label for="">Authors:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -56,25 +76,25 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Institution owner(s):</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.institutionOwner">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Country of registration:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.countryOfRegistration">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Application date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="patent.applicationDate">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Grant date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -83,7 +103,7 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <label for="">Application status:</label>
                         <label for="" style="color: orange;">*</label>
                         <select class="form-select" v-model="patent.applicationStatus">
@@ -92,13 +112,13 @@
                           <option value="Approved">Approved</option>
                           </select>
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <label for="">Application granted n.º:</label>
                         <label v-if="patent.applicationStatus == 'Approved'" for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.applicationGranted">
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                         <label for="">Registration number:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -107,30 +127,14 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Name of patent:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.nameOfPatent">
                       </div>
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the researchers"
-                          v-model="patent.researcherInvolved"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
-                      </div>
-                      <div class="col-3">
+
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.comments">
@@ -213,7 +217,7 @@ export default {
       },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
-            this.usuarios = response.data;
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
       getUsuarios(){
@@ -257,8 +261,8 @@ export default {
             }
 
             let patent = {
-              status: 'Draft',
               idUsuario: idUser1,
+              status: 'Draft',
               ipType: this.patent.ipType,
               nameOfPatent: this.patent.nameOfPatent,
               authors: this.patent.authors,
@@ -290,10 +294,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -395,7 +466,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Patent',
-            message: `¿Are you sure you want to save this Patent? This action cannot be undone.`,
+            message: `¿Are you sure you want to save this Patent?.`,
             okButton: 'Save',
             cancelButton: 'Return'
           })
@@ -456,10 +527,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

@@ -100,7 +100,7 @@ export default {
             if(this.errors.length === 0){
                 const ok = await this.$refs.confirmation.show({
                     title: 'Edit progress report',
-                    message: `Are you sure you want to edit progress report year? This action cannot be undone.`,
+                    message: `Are you sure you want to edit progress report year?.`,
                     okButton: 'Save',
                     cancelButton: 'Return'
                 })

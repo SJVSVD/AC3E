@@ -3,18 +3,27 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     Edit Funding source
                 </slot>
                 <label for="">Progress year: {{ fundingSource.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
                   <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                           <label for="">Type of sources: </label>
                           <br>
                           <select class="form-select" v-model="fundingSource.typeSources">
@@ -24,17 +33,17 @@
                             <option value="International funds">International funds</option>
                             </select>
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Name of institution:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.nameOfInstitution">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Program/contest:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.programContest">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Project title:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.projectTitle">
@@ -42,12 +51,11 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Principal researcher:</label>
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <Multiselect
-                          placeholder="Select the options"
-                          v-model="fundingSource.principalResearcher"
-                          limit=4
+                          placeholder="Select the participants"
+                          v-model="fundingSource.researcherInvolved"
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -58,12 +66,12 @@
                           :object="true"
                         />
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Start date:</label>
                         <br>
                         <input type="date" class= "form-control" v-model="fundingSource.startDate">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Finish date:</label>
                         <br>
                         <input type="date" class= "form-control" v-model="fundingSource.finishDate">
@@ -71,12 +79,17 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-6">
+                        <label for="">Principal researcher:</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="fundingSource.principalResearcher">
+                      </div>
+                      <div class="col-md-3">
                         <label for="">In cash:</label>
                         <br>
                         <input type="number" class= "form-control" v-model="fundingSource.inCash">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                           <label for="">Type of collaboration: </label>
                           <br>
                           <select class="form-select" v-model="fundingSource.typeOfCollaboration">
@@ -88,7 +101,10 @@
                             <option value="Other (Specify in comments)">Other (Specify in comments)</option>
                             </select>
                       </div>
-                      <div class="col-6">
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="fundingSource.comments">
@@ -135,7 +151,7 @@ export default {
         nameOfInstitution: '',
         programContest: '',
         projectTitle: '',
-        principalResearcher: null,
+        researcherInvolved: null,
         startDate: '',
         finishDate: '',
         comments: '',
@@ -146,6 +162,8 @@ export default {
       draft: false,
       showModalProgress: false,
       researchers: '',
+      usuarios: [],
+      idResearcher: '',
       id: '',
       buttonDisable: false,
       errors:[],
@@ -153,13 +171,14 @@ export default {
     }),
     mounted(){
       this.getUsuarios();
+      this.getUsuarios2();
     },
     props:{
       fundingSource1: Object,
     },
     created(){
       this.id = this.fundingSource1.id;
-
+      this.idResearcher = this.fundingSource1.idUsuario;
       this.fundingSource.typeSources = this.fundingSource1.typeSources;
       this.fundingSource.nameOfInstitution = this.fundingSource1.nameOfInstitution;
       this.fundingSource.programContest = this.fundingSource1.programContest;
@@ -170,10 +189,11 @@ export default {
       this.fundingSource.inCash = this.fundingSource1.inCash;
       this.fundingSource.typeOfCollaboration = this.fundingSource1.typeOfCollaboration;
       this.fundingSource.progressReport = this.fundingSource1.progressReport;
+      this.fundingSource.principalResearcher = this.fundingSource1.principalResearcher;
 
-      if (this.fundingSource1.principalResearcher != null) {
-          const valoresSeparados1 = this.fundingSource1.principalResearcher.split(",");
-          this.fundingSource.principalResearcher = valoresSeparados1.map((valor, index) => {
+      if (this.fundingSource1.researcherInvolved != null) {
+          const valoresSeparados1 = this.fundingSource1.researcherInvolved.split(",");
+          this.fundingSource.researcherInvolved = valoresSeparados1.map((valor, index) => {
               valor = valor.trim();
               if (valor.endsWith('.')) {
                   valor = valor.slice(0, -1);
@@ -185,6 +205,11 @@ export default {
 
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
+        }).catch(e=> console.log(e))
+      },
       handleFormSubmit1(year) {
         this.fundingSource.progressReport = year;
       },
@@ -203,41 +228,37 @@ export default {
           if (ok) {
 
 
-            var principalResearcher1 = "";
-            if (this.fundingSource.principalResearcher !== null){
-              if (this.fundingSource.principalResearcher.length !== 0) {
-                this.fundingSource.principalResearcher.forEach((principalResearcher, index) => {
-                  principalResearcher1 += principalResearcher.name;
-                  if (index === this.fundingSource.principalResearcher.length - 1) {
-                    principalResearcher1 += '.';
+            var researcherInvolved1 = "";
+            if (this.fundingSource.researcherInvolved !== null){
+              if (this.fundingSource.researcherInvolved.length !== 0) {
+                this.fundingSource.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.fundingSource.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
                   } else {
-                    principalResearcher1 += ', ';
+                    researcherInvolved1 += ', ';
                   }
                 });
               }
             }
 
-            var nameOfResearch1 = "";
-            if (this.fundingSource.nameOfResearch !== null){
-              if (this.fundingSource.nameOfResearch.length !== 0) {
-                this.fundingSource.nameOfResearch.forEach((nameOfResearch, index) => {
-                  nameOfResearch1 += nameOfResearch.name;
-                  if (index === this.fundingSource.nameOfResearch.length - 1) {
-                    nameOfResearch1 += '.';
-                  } else {
-                    nameOfResearch1 += ', ';
-                  }
-                });
-              }
+
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
             }
 
             let fundingSources = {
+              idUsuario: idUser1,
               status: 'Draft',
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,
               programContest: this.fundingSource.programContest,
               projectTitle: this.fundingSource.projectTitle,
-              principalResearcher: principalResearcher1,
+              researcherInvolved: researcherInvolved1,
+              principalResearcher: this.fundingSource.principalResearcher,
               startDate: this.fundingSource.startDate,
               finishDate: this.fundingSource.finishDate,
               startYear: this.fundingSource.startYear,
@@ -264,10 +285,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -308,7 +396,8 @@ export default {
           nameOfInstitution: this.fundingSource.nameOfInstitution,
           programContest: this.fundingSource.programContest,
           projectTitle: this.fundingSource.projectTitle,
-          principalResearcher: principalResearcher1,
+          researcherInvolved: researcherInvolved1,
+          principalResearcher: this.fundingSource.principalResearcher,
           startDate: this.fundingSource.startDate,
           finishDate: this.fundingSource.finishDate,
           startYear: this.fundingSource.startYear,
@@ -339,7 +428,7 @@ export default {
               mensaje =   mensaje + "The field Program contest is required" + "\n";
             }else if(item == 'projectTitle'){
               mensaje =   mensaje + "The field Project title is required" + "\n";
-            }else if(item == 'principalResearcher'){
+            }else if(item == 'researcherInvolved'){
               mensaje =   mensaje + "The field Principal researcher is required" + "\n";
             }else if(item == 'startDate'){
               mensaje =   mensaje + "The field Start date is required" + "\n";
@@ -373,34 +462,42 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Funding source',
-            message: `¿Are you sure you want to edit this Funding source? This action cannot be undone.`,
+            message: `¿Are you sure you want to edit this Funding source?.`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
 
-            var principalResearcher1 = "";
-            if (this.fundingSource.principalResearcher !== null){
-              if (this.fundingSource.principalResearcher.length !== 0) {
-                this.fundingSource.principalResearcher.forEach((principalResearcher, index) => {
-                  principalResearcher1 += principalResearcher.name;
-                  if (index === this.fundingSource.principalResearcher.length - 1) {
-                    principalResearcher1 += '.';
+            var researcherInvolved1 = "";
+            if (this.fundingSource.researcherInvolved !== null){
+              if (this.fundingSource.researcherInvolved.length !== 0) {
+                this.fundingSource.researcherInvolved.forEach((researcherInvolved, index) => {
+                  researcherInvolved1 += researcherInvolved.name;
+                  if (index === this.fundingSource.researcherInvolved.length - 1) {
+                    researcherInvolved1 += '.';
                   } else {
-                    principalResearcher1 += ', ';
+                    researcherInvolved1 += ', ';
                   }
                 });
               }
             }
 
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let fundingSources = {
+              idUsuario: idUser1,
               status: 'Finished',
               typeSources: this.fundingSource.typeSources,
               nameOfInstitution: this.fundingSource.nameOfInstitution,
               programContest: this.fundingSource.programContest,
               projectTitle: this.fundingSource.projectTitle,
-              principalResearcher: principalResearcher1,
+              researcherInvolved: researcherInvolved1,
               startDate: this.fundingSource.startDate,
               finishDate: this.fundingSource.finishDate,
               startYear: this.fundingSource.startYear,
@@ -427,10 +524,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

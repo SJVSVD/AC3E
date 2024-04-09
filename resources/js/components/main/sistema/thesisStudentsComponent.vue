@@ -20,13 +20,13 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Thesis Title</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Student Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Tutor Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Academic Degree</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         
                                     </tr>
                                 </thead>
@@ -35,6 +35,18 @@
                                         <td></td>
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ thesisStudent.id }}</p>
+                                        </td>
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a v-if="thesisStudent.file != null" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(thesisStudent.id, thesisStudent.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verThesis(thesisStudent)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editThesisStudent(thesisStudent)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteThesisStudent(thesisStudent.id,)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
                                         </td>
                                         <td>
                                             <p v-if="thesisStudent.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ thesisStudent.status }}</p>
@@ -58,18 +70,6 @@
                                         <td>
                                             <p v-if="thesisStudent.academicDegree == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ thesisStudent.academicDegree }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="thesisStudent.file != null" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(thesisStudent.id, thesisStudent.usuario.name)"><i class="fa-solid fa-download"></i></a>
-                                                <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verThesis(thesisStudent)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editThesisStudent(thesisStudent)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteThesisStudent(thesisStudent.id,)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -132,12 +132,20 @@ export default {
                 responseType: 'arraybuffer',
             }).then((response) => {
                 let blob = new Blob([response.data], {
-                        type: 'application/pdf'
-                    })
-                    let link = document.createElement('a')
-                    link.href = window.URL.createObjectURL(blob)
-                    link.download = `${nombre}.pdf`
-                    link.click()
+                    type: response.headers['content-type']
+                });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                if (blob.type.includes('pdf')) {
+                    link.download = `Thesis-${nombre}.pdf`;
+                } else if (blob.type.includes('image')) {
+                    link.download = `Thesis-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                } else {
+                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                    console.error('Tipo de archivo no compatible');
+                    return;
+                }
+                link.click();
             });
         },
         verThesis(thesisStudent2){
@@ -171,7 +179,7 @@ export default {
         async deleteThesisStudent(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Thesis',
-                message: `¿Are you sure you want to delete this Thesis? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Thesis?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

@@ -18,9 +18,12 @@
                         <input type="text" class= "form-control" v-model="autor.name">
                       </div>
                       <div class="form-group">
-                        <label for="name">Institution: </label>
+                        <label for="institutionSelect">Institution:</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="autor.institution">
+                        <select id="institutionSelect" class="form-select" v-model="autor.institution">
+                          <option value="">Select Institution</option>
+                          <option v-for="institution in universities" :value="institution.name">{{ institution.name }}</option>
+                        </select>
                       </div>
                   </slot>
                 </div>

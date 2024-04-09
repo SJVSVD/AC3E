@@ -19,6 +19,7 @@ class awards extends Model
         'awardeeName',
         'awardName',
         'year',
+        'month',
         'contributionAwardee',
         'institution',
         'country',

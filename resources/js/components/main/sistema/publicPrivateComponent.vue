@@ -20,14 +20,13 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Authors</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Name of Activity</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Name of Organization</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Type of Connection</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Researcher Involved</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -36,16 +35,21 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ publicPrivate.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editPublicPrivate(publicPrivate)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verPublicPrivate(publicPrivate)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="publicPrivate.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ publicPrivate.status }}</p>
                                             <p v-if="publicPrivate.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ publicPrivate.status }}</p>
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ publicPrivate.usuario.name }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="publicPrivate.authors == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ publicPrivate.authors }}</p>
                                         </td>
                                         <td>
                                             <p v-if="publicPrivate.nameOfActivity == null" class="text-sm mb-0">---</p>
@@ -62,15 +66,6 @@
                                         <td>
                                             <p v-if="publicPrivate.researcherInvolved == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ publicPrivate.researcherInvolved }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editPublicPrivate(publicPrivate)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verPublicPrivate(publicPrivate)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -157,7 +152,7 @@ export default {
         async deletePublicPrivate(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Public private connection',
-                message: `¿Are you sure you want to delete this Public private connection? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Public private connection?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

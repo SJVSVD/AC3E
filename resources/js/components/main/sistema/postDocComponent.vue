@@ -20,6 +20,7 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Name of Postdoc</th>
@@ -27,7 +28,6 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Research Topic</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Start Year</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Ending Year</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -36,6 +36,15 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ postDoc.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editPostDoc(postDoc)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verPostDoc(postDoc)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePostDoc(postDoc.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="postDoc.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ postDoc.status }}</p>
                                             <p v-if="postDoc.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ postDoc.status }}</p>
@@ -62,15 +71,6 @@
                                         <td>
                                             <p v-if="postDoc.endingYear == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ postDoc.endingYear }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editPostDoc(postDoc)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verPostDoc(postDoc)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePostDoc(postDoc.id)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -157,7 +157,7 @@ export default {
         async deletePostDoc(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Postdoctoral fellow',
-                message: `¿Are you sure you want to delete this Postdoctoral fellow? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Postdoctoral fellow?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New Award
@@ -22,64 +22,13 @@
               </div>
               <div class="modal-body">
                 <slot name="body">
-                    <div class="row">
-                          <div class="col-3">
-                            <label for="">Awardee Name:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="award.awardeeName">
-                          </div>
-                          <div class="col-4">
-                            <label for="">Award Name:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="award.awardName">
-                          </div>
-                          <div class="col-2">
-                            <label for="">Year:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <select class="form-select" id="selectYear" v-model="award.year">
-                            <option disabled value="">Select a year</option>
-                            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-                            </select>
-                          </div>
-                          <div class="col-3">
-                            <label for="">Institution:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="award.institution">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-3">
-                            <label for="">Country:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="award.country">
-                          </div>
-                      <div class="col-6">
-                          <label for="">Contribution of the awardee:</label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <textarea class= "form-control" v-model="award.contributionAwardee" style="resize: none;" cols="30" rows="5"></textarea>
-                      </div>
-                      <div class="col-3">
-                          <label for="">Comments:</label>
-                          <br>
-                          <input type="text" class= "form-control" v-model="award.comments">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
+                  <div class="row">
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="award.researcherInvolved"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -90,7 +39,79 @@
                           :object="true"
                         />
                       </div>
+                      <div class="col-md-3">
+                            <label for="">Year:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <select class="form-select" id="selectYear" v-model="award.year">
+                            <option disabled value="">Select a year</option>
+                            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                            </select>
+                          </div>
+                      <div class="col-md-3">
+                          <label for="selectMonth">Month:</label>
+                          <label for="selectMonth" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="award.month">
+                              <option disabled value="">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
                     </div>
+                    <br>
+                    <div class="row">
+                          <div class="col-md-4">
+                            <label for="">Awardee Name:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="award.awardeeName">
+                          </div>
+                          <div class="col-md-4">
+                            <label for="">Award Name:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="award.awardName">
+                          </div>
+
+                          <div class="col-md-4">
+                            <label for="">Institution:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="award.institution">
+                          </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
+                            <label for="">Country:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="award.country">
+                          </div>
+                      <div class="col-md-6">
+                          <label for="">Contribution of the awardee:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <textarea class= "form-control" v-model="award.contributionAwardee" style="resize: none;" cols="30" rows="5"></textarea>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="">Comments:</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="award.comments">
+                      </div>
+                    </div>
+
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -134,6 +155,7 @@ export default {
         awardeeName: '',
         awardName: '',
         year: '',
+        month: '',
         contributionAwardee: '',
         institution: '',
         country: '',
@@ -174,7 +196,7 @@ export default {
       },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
-            this.usuarios = response.data;
+          this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));
         }).catch(e=> console.log(e))
       },
       getProgressReport(){
@@ -190,13 +212,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var idUser1 = ''
-            if(this.idResearcher != ''){
-              idUser1 = this.idResearcher;
-            }else{
-              idUser1 = this.userID;
-            }
-
+            
             var peopleInvolved1 = "";
             if (this.award.researcherInvolved !== null){
               if (this.award.researcherInvolved.length !== 0) {
@@ -210,14 +226,22 @@ export default {
                 });
               }
             }
+            
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
 
             let award = {
-              status: 'Draft',
               idUsuario: idUser1,
+              status: 'Draft',
               awardeeName: this.award.awardeeName,
               researcherInvolved: peopleInvolved1,
               awardName: this.award.awardName,
               year: this.award.year,
+              month: this.award.month,
               contributionAwardee: this.award.contributionAwardee,
               institution: this.award.institution,
               country: this.award.country,
@@ -241,10 +265,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -333,7 +424,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Award',
-            message: `¿Are you sure you want to save this award? This action cannot be undone.`,
+            message: `¿Are you sure you want to save this award?.`,
             okButton: 'Save',
             cancelButton: 'Return'
           })
@@ -366,6 +457,7 @@ export default {
               researcherInvolved: peopleInvolved1,
               awardName: this.award.awardName,
               year: this.award.year,
+              month: this.award.month,
               contributionAwardee: this.award.contributionAwardee,
               institution: this.award.institution,
               country: this.award.country,
@@ -391,10 +483,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

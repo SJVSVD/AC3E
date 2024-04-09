@@ -3,161 +3,52 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container ">
+            <div class="modal-container-xl ">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Thesis {{ thesisStudent.run }}
+                    Edit Thesis 
                 </slot>
                 <label for="">Progress year: {{ thesisStudent.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
-                    <div class="row">
-                        <div class="col-3">
-                            <label for="">Student Name: </label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="thesisStudent.studentName">
-                        </div>
-                        <div class="col-3">
-                            <label for="">Gender: </label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <select class="form-select" v-model="thesisStudent.gender">
-                              <option disabled :value="null">Select a Gender</option>
-                              <option value="Male">Male</option>
-                              <option value="Female">Female</option>
-                              <option value="Non binary">Non binary</option>
-                              </select>
-                        </div>
-                        <div class="col-3">
-                            <label for="">Identification: </label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <select class="form-select" @change="thesisStudent.run = ''; thesisStudent.passport = '';" v-model="thesisStudent.identification">
-                              <option disabled :value="null">Select One</option>
-                              <option value="Run">Run</option>
-                              <option value="Passport">Passport</option>
-                            </select>
-                        </div>                        
-                        <div v-if="thesisStudent.identification == 'Run'" class="col-3">
-                            <label for="">Run: </label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="thesisStudent.run">
-                        </div>
-                        <div v-if="thesisStudent.identification == 'Passport'" class="col-3">
-                            <label for="">Passport: </label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="thesisStudent.passport">
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-3">
-                            <label for="">Student Mail: </label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="email" class= "form-control" v-model="thesisStudent.studentMail">
-                      </div>
-                      <div class="col-5">
-                          <label for="">Academic Degree: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <select class="form-select" v-model="thesisStudent.academicDegree">
-                            <option disabled :value="null">Select a degree</option>
-                            <option value="Undergraduate degree or profesional title">Undergraduate degree or profesional title</option>
-                            <option value="Master o equivalent">Master o equivalent</option>
-                            <option value="PhD degree">PhD degree</option>
-                          </select>
-                      </div>
-                      <div class="col-4">
-                          <label for="">Degree Denomination: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <input type="text" class= "form-control" v-model="thesisStudent.degreeDenomination">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-4">
-                        <label for="">Thesis Title: </label>
+                  <div class="row">
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the participants"
+                          v-model="thesisStudent.researcherInvolved"
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+                      <div class="col-md-3">
+                        <label for="universitySelect">University that gives the Degree:</label>
+                        <label for="universitySelect" style="color: orange;">*</label>
                         <br>
-                        <input type="text" class= "form-control" v-model="thesisStudent.thesisTitle">
+                        <select id="universitySelect" class="form-select" v-model="thesisStudent.university">
+                          <option value="">Select University</option>
+                          <option v-for="university in universities" :value="university.name">{{ university.name }}</option>
+                        </select>
                       </div>
-                      <div class="col-3">
-                          <label for="">Thesis Status: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <select class="form-select" v-model="thesisStudent.thesisStatus">
-                            <option disabled value="">Select One</option>
-                            <option value="1">Finished</option>
-                            <option value="2">In progress</option>
-                          </select>
-                      </div>
-                      <div v-if="thesisStudent.thesisStatus == 1" class="col-3">
-                        <div class="form-group">
-                        <label for="archivo">File:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <label v-if="thesisStudent1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
-                        </div>
-                      </div>
-                      <div v-if="thesisStudent.thesisStatus == 1" class="col-2 pt-2">
-                        <br>
-                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
-                        &nbsp;
-                        <a v-if="thesisStudent1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
-                      </div>
-                    </div>
-                    <hr size="3" class="separador">
-                    <div class="row">
-                      <div class="col-4 d-flex justify-content-center">
-                        <a v-if="tutors.length != 0" class="btn btn-continue" @click="showModalEditTutor = true">{{ tutors.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalAutor = true"><i class="fa-solid fa-plus"></i> Add Tutor </a>
-                      </div>
-                      <div class="col-4 d-flex justify-content-center">
-                        <a v-if="cotutors.length != 0" class="btn btn-continue" @click="showModalEditCotutor = true">{{ cotutors.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalCoautor = true"><i class="fa-solid fa-plus"></i> Add Cotutor </a>
-                      </div>
-                      <div class="col-4 d-flex justify-content-centerd-flex justify-content-center">
-                        <a v-if="others.length != 0" class="btn btn-continue" @click="showModalEditOther = true">{{ others.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalOther = true"><i class="fa-solid fa-plus"></i> Add Other </a>
-                      </div>
-                    </div>
-                    <hr size="3" class="separador">
-                    <div class="row">
-                      <div class="col-3">
-                          <label for="">University that gives the Degree: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <input type="text" class= "form-control" v-model="thesisStudent.university">
-                      </div>
-                      <div class="col-3">
-                          <label for="">Year in which student starts: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <select class="form-select" id="selectYear" v-model="thesisStudent.yearStart">
-                          <option disabled :value="null">Select a year</option>
-                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-                          </select>
-                      </div>
-                      <div class="col-3">
-                          <label for="">Year in which the thesis ends: </label>
-                          <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
-                          <br>
-                          <select class="form-select" id="selectYear" v-model="thesisStudent.yearThesisEnd">
-                          <option disabled :value="null">Select a year</option>
-                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-                          </select>
-                      </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                           <label for="">Resources provided by the Center: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
@@ -180,7 +71,187 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                        <div class="col-md-3">
+                            <label for="">Student Name: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="thesisStudent.studentName">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">Gender: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <select class="form-select" v-model="thesisStudent.gender">
+                              <option disabled :value="null">Select a Gender</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Non binary">Non binary</option>
+                              </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="">Identification: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <select class="form-select" @change="thesisStudent.run = ''; thesisStudent.passport = '';" v-model="thesisStudent.identification">
+                              <option disabled :value="null">Select One</option>
+                              <option value="Run">Run</option>
+                              <option value="Passport">Passport</option>
+                            </select>
+                        </div>                        
+                        <div v-if="thesisStudent.identification == 'Run'" class="col-md-3">
+                            <label for="">Run: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-on:input="validateInput" v-on:keypress="isNumberOrDash" @keyup="checkRut()" v-model="thesisStudent.run">
+                        </div>
+                        <div v-if="thesisStudent.identification == 'Passport'" class="col-md-3">
+                            <label for="">Passport: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="thesisStudent.passport">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
+                            <label for="">Student Mail: </label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="email" class= "form-control" v-model="thesisStudent.studentMail">
+                      </div>
+                      <div class="col-md-5">
+                          <label for="">Academic Degree: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" v-model="thesisStudent.academicDegree">
+                            <option disabled :value="null">Select a degree</option>
+                            <option value="Undergraduate degree or profesional title">Undergraduate degree or profesional title</option>
+                            <option value="Master o equivalent">Master o equivalent</option>
+                            <option value="PhD degree">PhD degree</option>
+                          </select>
+                      </div>
+                      <div class="col-md-4">
+                          <label for="">Degree Denomination: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="thesisStudent.degreeDenomination">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <label for="">Thesis Title: </label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="thesisStudent.thesisTitle">
+                      </div>
+                      <div class="col-md-3">
+                          <label for="">Thesis Status: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" v-model="thesisStudent.thesisStatus">
+                            <option disabled value="">Select One</option>
+                            <option value="1">Finished</option>
+                            <option value="2">In progress</option>
+                          </select>
+                      </div>
+                      <div v-if="thesisStudent.thesisStatus == 1" class="col-md-3">
+                        <div class="form-group">
+                        <label for="archivo">File:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <label v-if="thesisStudent1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
+                        </div>
+                      </div>
+                      <div v-if="thesisStudent.thesisStatus == 1" class="col-md-2 pt-2">
+                        <br>
+                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                        &nbsp;
+                        <a v-if="thesisStudent1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
+                      </div>
+                    </div>
+                    <hr size="3" class="separador">
+                    <div class="row">
+                      <div class="col-md-4 d-flex justify-content-center">
+                        <a v-if="tutors.length != 0" class="btn btn-continue" @click="showModalEditTutor = true">{{ tutors.length }}</a>
+                        &nbsp;
+                        <a class="btn btn-search-blue" @click="showModalAutor = true"><i class="fa-solid fa-plus"></i> Add Tutor </a>
+                      </div>
+                      <div class="col-md-4 d-flex justify-content-center">
+                        <a v-if="cotutors.length != 0" class="btn btn-continue" @click="showModalEditCotutor = true">{{ cotutors.length }}</a>
+                        &nbsp;
+                        <a class="btn btn-search-blue" @click="showModalCoautor = true"><i class="fa-solid fa-plus"></i> Add Cotutor </a>
+                      </div>
+                      <div class="col-md-4 d-flex justify-content-centerd-flex justify-content-center">
+                        <a v-if="others.length != 0" class="btn btn-continue" @click="showModalEditOther = true">{{ others.length }}</a>
+                        &nbsp;
+                        <a class="btn btn-search-blue" @click="showModalOther = true"><i class="fa-solid fa-plus"></i> Add Other </a>
+                      </div>
+                    </div>
+                    <hr size="3" class="separador">
+                    <div class="row">
+                      <div class="col-md-3">
+                          <label for="">Year in which student starts: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectYear" v-model="thesisStudent.yearStart">
+                          <option disabled :value="null">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="selectMonth">Month in which student starts:</label>
+                          <label for="selectMonth" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="thesisStudent.monthStart">
+                              <option disabled :value="null">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="">Year in which the thesis ends: </label>
+                          <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectYear" v-model="thesisStudent.yearThesisEnd">
+                          <option disabled :value="null">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="selectMonth">Month in which the thesis ends:</label>
+                          <label v-if="thesisStudent.thesisStatus == 1" for="selectMonth" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="thesisStudent.monthEnd">
+                              <option disabled :value="null">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
+                      </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
                           <label for="">Posterior working area: </label>
                           <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
                           <br>
@@ -196,38 +267,18 @@
                             <option value="None of the above">None of the above</option>
                           </select>
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                           <label for="">Institution of Posterior working area: </label>
                           <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
                           <br>
                           <input type="text" class= "form-control" v-model="thesisStudent.institutionPosteriorArea">
                       </div>
-                      <div class="col-5">
+                      <div class="col-md-5">
                           <label for="">Comments: </label>
                           <br>
                           <input type="text" class= "form-control" v-model="thesisStudent.comments">
                       </div>
-                    </div>
-                    <br>                    
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the participants"
-                          v-model="thesisStudent.researcherInvolved"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
-                      </div>
-                    </div>
+                    </div>                
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -295,6 +346,8 @@ export default {
         otherInstitution: "",
         university: "",
         yearStart: "",
+        monthStart: "",
+        monthEnd: "",
         yearThesisEnd: "",
         resourcesCenter: null,
         researcherInvolved: null,
@@ -324,25 +377,33 @@ export default {
       cotutors:[],
       others:[],
       errors:[],
+      universities: [],
       id: '',
       user: '',
       researchers:[],
+      usuarios: [],
+      idResearcher: '',
       buttonText:'Edit Thesis',
       years: [],
     }),
     mounted() {
       this.calculateYears();
+      this.fetchData();
     },
     props:{
       thesisStudent1: Object,
     },
     created(){
       this.getUsuarios();
+      this.getUsuarios2();
       this.id = this.thesisStudent1.id;
+      this.idResearcher = this.thesisStudent1.idUsuario;
       this.user = this.thesisStudent1.usuario.name;
       this.thesisStudent.studentName = this.thesisStudent1.studentName;
       this.thesisStudent.progressReport = this.thesisStudent1.progressReport;
       this.thesisStudent.identification = this.thesisStudent1.identification;
+      this.thesisStudent.monthStart = this.thesisStudent1.monthStart;
+      this.thesisStudent.monthEnd = this.thesisStudent1.monthEnd;
       if(this.thesisStudent1.identification == 'Run'){
         this.thesisStudent.run = this.thesisStudent1.runOrPassport;
       }else{
@@ -417,8 +478,23 @@ export default {
               return { value: valor, name: valor };
           });
       }
+
     },
     methods: {
+      fetchData() {
+        axios.get('/api/universities') // Suponiendo que tienes una ruta en tu API para obtener las universidades
+          .then(response => {
+            this.universities = response.data;
+          })
+          .catch(error => {
+            console.error('Error fetching universities:', error);
+          });
+      },
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
+        }).catch(e=> console.log(e))
+      },
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
@@ -433,13 +509,21 @@ export default {
               method: 'GET',
               responseType: 'arraybuffer',
           }).then((response) => {
-              let blob = new Blob([response.data], {
-                      type: 'application/pdf'
-                  })
-                  let link = document.createElement('a')
-                  link.href = window.URL.createObjectURL(blob)
-                  link.download = `${nombre}.pdf`
-                  link.click()
+            let blob = new Blob([response.data], {
+                    type: response.headers['content-type']
+                });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                if (blob.type.includes('pdf')) {
+                    link.download = `Thesis-${nombre}.pdf`;
+                } else if (blob.type.includes('image')) {
+                    link.download = `Thesis-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                } else {
+                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                    console.error('Tipo de archivo no compatible');
+                    return;
+                }
+                link.click();
           });
       },
       handleFormSubmit1(formData) {
@@ -578,7 +662,15 @@ export default {
               });
             }
           }
+          var idUser1 = ''
+          if(this.idResearcher != ''){
+            idUser1 = this.idResearcher;
+          }else{
+            idUser1 = this.userID;
+          }
+          
           let thesisStudent = {
+            idUsuario: idUser1,
             status: 'Draft',
             researcherInvolved: peopleInvolved1,
             identification: this.thesisStudent.identification,
@@ -598,6 +690,8 @@ export default {
             otherInstitution: otherInstitution1,
             university: this.thesisStudent.university,
             yearStart: this.thesisStudent.yearStart,
+            monthStart: this.thesisStudent.monthStart,
+            monthEnd: this.thesisStudent.monthEnd,
             yearThesisEnd: this.thesisStudent.yearThesisEnd,
             resourcesCenter: resources1,
             posteriorArea: this.thesisStudent.posteriorArea,
@@ -605,9 +699,11 @@ export default {
             comments: this.thesisStudent.comments,
             progressReport: this.thesisStudent.progressReport,
           };
-          await axios.put(`api/thesisStudents/${this.id}`, thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
+          console.log(thesisStudent);
+          axios.put(`api/thesisStudents/${this.id}`, thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
             this.buttonDisable = true;
             this.buttonText = 'Sending...';
+            console.log(result.data);
             this.toast.success("Draft edited successfully!", {
               position: "top-right",
               timeout: 3000,
@@ -672,9 +768,9 @@ export default {
         var noTutor = false;
         for (const item in this.thesisStudent){
           if(this.thesisStudent[item] === "" || this.thesisStudent[item] === 0 || this.thesisStudent[item] === null){
-              if(item == 'yearThesisEnd' || item == 'posteriorArea' || item == 'institutionPosteriorArea'){
+              if(item == 'yearThesisEnd' || item == 'posteriorArea' || item == 'institutionPosteriorArea' || item == 'comments' || item == 'monthEnd'){
               }else if(this.thesisStudent.identification == '' && item == 'run' || this.thesisStudent.identification == '' && item == 'passport'){
-              }else if(this.thesisStudent.identification == 'run' && item == 'passport'){
+              }else if(this.thesisStudent.identification == 'Run' && item == 'passport'){
               }else if(this.thesisStudent.identification == 'passport' && item == 'run'){
               }else if(item == 'tutorName'||item == 'tutorInstitution'||item == 'cotutorName'||item == 'cotutorInstitution'||item == 'otherName'||item == 'otherInstitution'){
                 if((this.tutors.length == 0 && this.cotutors.length == 0 && this.others.length == 0) && noTutor == false){
@@ -710,32 +806,17 @@ export default {
           this.errors.push('file');
         }
 
+        var runOrPassport1 = '';
+          if(this.thesisStudent.identification == 'Run'){
+            runOrPassport1 = this.formatoRut(this.thesisStudent.run);
+          }else{
+            runOrPassport1 = this.thesisStudent.passport;
+          }
+          
         let thesisStudent1 = {
           id: this.id,
-          status: 'Finished',
-          identification: this.thesisStudent.identification,
-          studentName: this.thesisStudent.studentName,
           runOrPassport: runOrPassport1,
-          gender: this.thesisStudent.gender,
-          studentMail: this.thesisStudent.studentMail,
-          thesisStatus: this.thesisStudent.thesisStatus,
-          thesisTitle: this.thesisStudent.thesisTitle,
-          academicDegree: this.thesisStudent.academicDegree,
           degreeDenomination: this.thesisStudent.degreeDenomination,
-          tutorName: tutorName1,
-          tutorInstitution: tutorInstitution1,
-          cotutorName: cotutorName1,
-          cotutorInstitution: cotutorInstitution1,
-          otherName: otherName1,
-          otherInstitution: otherInstitution1,
-          university: this.thesisStudent.university,
-          yearStart: this.thesisStudent.yearStart,
-          yearThesisEnd: this.thesisStudent.yearThesisEnd,
-          resourcesCenter: resources1,
-          posteriorArea: this.thesisStudent.posteriorArea,
-          institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
-          comments: this.thesisStudent.comments,
-          progressReport: this.thesisStudent.progressReport,
         };
 
         var contador = await axios.post('../api/verifyThesis', thesisStudent1).then(function(response) {
@@ -814,17 +895,11 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Thesis',
-            message: `¿Are you sure you want to edit this thesis? This action cannot be undone.`,
+            message: `¿Are you sure you want to edit this thesis?.`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })
           if (ok) {
-            var runOrPassport1 = '';
-            if(this.thesisStudent.identification == 'Run'){
-              runOrPassport1 = this.formatoRut(this.thesisStudent.run);
-            }else{
-              runOrPassport1 = this.thesisStudent.passport;
-            }
 
             var tutorName1 = '';
             var tutorInstitution1 = '';
@@ -879,7 +954,15 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+            
             let thesisStudent = {
+              idUsuario: idUser1,
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
               identification: this.thesisStudent.identification,
@@ -900,13 +983,15 @@ export default {
               university: this.thesisStudent.university,
               yearStart: this.thesisStudent.yearStart,
               yearThesisEnd: this.thesisStudent.yearThesisEnd,
+              monthStart: this.thesisStudent.monthStart,
+              monthEnd: this.thesisStudent.monthEnd,
               resourcesCenter: resources1,
               posteriorArea: this.thesisStudent.posteriorArea,
               institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
               comments: this.thesisStudent.comments,
               progressReport: this.thesisStudent.progressReport,
             };
-            await axios.put(`api/thesisStudents/${this.id}`, thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
+            axios.put(`api/thesisStudents/${this.id}`, thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.buttonDisable = true;
               this.buttonText = 'Sending...';
               this.toast.success("Thesis send successfully!", {
@@ -947,10 +1032,77 @@ export default {
                 setTimeout(() => {this.cerrarModal();}, 1500);
               })
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

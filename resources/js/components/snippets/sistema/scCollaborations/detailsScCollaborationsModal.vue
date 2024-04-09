@@ -76,11 +76,6 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Name of AC3E Member: </label>
-                      <label v-if="collaboration1.nameOfAC3EMember != null" class="fw-normal" style="font-size: 14px;">{{ collaboration1.nameOfAC3EMember }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
                       <label>Name of External Researcher: </label>
                       <label v-if="collaboration1.nameOfExternalResearcher != null" class="fw-normal" style="font-size: 14px;">{{ collaboration1.nameOfExternalResearcher }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>

@@ -3,31 +3,40 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Technology and knowledge transfer
+                    Edit Tec. and know. transfer
                 </slot>
                 <label for="">Progress year: {{ technologyKnowledge.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in usuarios" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
                   <div class="row">
                       <div class="text-uppercase pb-2">Category of transfer:<label for="" style="color: orange;">*</label></div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
                                   v-model="technologyKnowledge.technologyTransfer"> Technology transfer</label>
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
                                   v-model="technologyKnowledge.knowledgeTransfer"> Knowledge transfer</label>
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-4">
                             <label for="">Type of transfer:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="technologyKnowledge.typeOfTransfer">
@@ -47,64 +56,12 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Description:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="technologyKnowledge.description">
-                      </div>
-                      <div class="col-6">
-                        <label for="">Name of the institution involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="technologyKnowledge.nameOfInstitutionInvolved">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-3">
-                        <label for="">Beneficiary institution:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="technologyKnowledge.nameOfBeneficiary">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Country:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="technologyKnowledge.country">
-                      </div>
-                      <div class="col-3">
-                        <label for="">City:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="technologyKnowledge.city">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Place/region:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="technologyKnowledge.placeRegion">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-2">
-                          <label for="">Year: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <select class="form-select" id="selectYear" v-model="technologyKnowledge.year">
-                          <option disabled :value="null">Select a year</option>
-                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-                          </select>
-                      </div>
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"
                           v-model="technologyKnowledge.researcherInvolved"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -115,7 +72,81 @@
                           :object="true"
                         />
                       </div>
-                      <div class="col-4">
+                      <div class="col-md-6">
+                        <label for="">Name of the institution involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.nameOfInstitutionInvolved">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label for="">Description:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.description">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Beneficiary institution:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.nameOfBeneficiary">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Country:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.country">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
+                        <label for="">City:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.city">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Place/region:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="technologyKnowledge.placeRegion">
+                      </div>
+                      <div class="col-md-3">
+                          <label for="">Year: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectYear" v-model="technologyKnowledge.year">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="selectMonth">Month:</label>
+                          <label  for="selectMonth" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="technologyKnowledge.month">
+                              <option disabled value="">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="technologyKnowledge.comments">
@@ -167,6 +198,7 @@ export default {
         city: '',
         placeRegion: '',
         year: '',
+        month: '',
         comments: '',
         progressReport: '',
       },
@@ -175,6 +207,8 @@ export default {
       showModalProgress: false,
       buttonDisable: false,
       researchers2: '',
+      usuarios: [],
+      idResearcher: '',
       errors:[],
       buttonText:'Edit transfer',
     }),
@@ -183,15 +217,18 @@ export default {
     },
     created(){
       this.getUsuarios2();
+      this.getUsuarios();
+      this.idResearcher = this.technology1.idUsuario;
       this.id = this.technology1.id;
-      this.technologyKnowledge.technologyTransfer = this.technology1.technologyTransfer;
-      this.technologyKnowledge.knowledgeTransfer = this.technology1.knowledgeTransfer;
+      this.technologyKnowledge.technologyTransfer = this.technology1.technologyTransfer === 1 ? true : false;
+      this.technologyKnowledge.knowledgeTransfer = this.technology1.knowledgeTransfer === 1 ? true : false;
       this.technologyKnowledge.typeOfTransfer = this.technology1.typeOfTransfer;
       this.technologyKnowledge.nameOfBeneficiary = this.technology1.nameOfBeneficiary;
       this.technologyKnowledge.country = this.technology1.country;
       this.technologyKnowledge.city = this.technology1.city;
       this.technologyKnowledge.placeRegion = this.technology1.placeRegion;
       this.technologyKnowledge.year = this.technology1.year;
+      this.technologyKnowledge.month = this.technology1.month;
       this.technologyKnowledge.comments = this.technology1.comments;
       this.technologyKnowledge.description = this.technology1.description;
       this.technologyKnowledge.nameOfInstitutionInvolved = this.technology1.nameOfInstitutionInvolved;
@@ -223,6 +260,11 @@ export default {
       getUsuarios2(){
         axios.get('api/researchers').then( response =>{
             this.researchers2 = response.data;
+        }).catch(e=> console.log(e))
+      },
+      getUsuarios(){
+        axios.get('api/usuarios').then( response =>{
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
       onInput1(event) {
@@ -258,7 +300,15 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let technologyKnowledge = {
+              idUsuario: idUser1,
               status: 'Draft',
               description: this.technologyKnowledge.description,
               nameOfInstitutionInvolved: this.technologyKnowledge.nameOfInstitutionInvolved,
@@ -271,6 +321,7 @@ export default {
               city: this.technologyKnowledge.city,
               placeRegion: this.technologyKnowledge.placeRegion,
               year: this.technologyKnowledge.year,
+              month: this.technologyKnowledge.month,
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };
@@ -291,10 +342,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -322,28 +440,20 @@ export default {
       },
       async editTechnology() {
         this.errors = [];
-
-        let categoryTransferErrorAdded = false;
-        let transferSelected = false; // Variable para verificar si al menos uno de los dos checkboxes está seleccionado
+        const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer']; // Arreglo de campos a excluir
 
         for (const item in this.technologyKnowledge) {
-          if (this.technologyKnowledge[item] === "" || this.technologyKnowledge[item] === 0 || this.technologyKnowledge[item] == null || this.technologyKnowledge[item] == []) {
-            if (item == 'technologyTransfer' || item == 'knowledgeTransfer') {
-              if (this.technologyKnowledge.technologyTransfer || this.technologyKnowledge.knowledgeTransfer) {
-                transferSelected = true; // Al menos uno de los checkboxes está seleccionado
-              }
-              if (!categoryTransferErrorAdded && !transferSelected) {
-                this.errors.push('categoryTransfer');
-                categoryTransferErrorAdded = true;
-              }
-            } else {
+          if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir
+            if (this.technologyKnowledge[item] === "" || this.technologyKnowledge[item] === 0 ||this.technologyKnowledge[item] == null || this.technologyKnowledge[item] == []){
               this.errors.push(item);
-            }
+            } 
           }
         }
 
-        // Ahora, después del bucle, verificamos si al menos uno de los checkboxes está seleccionado y, si no lo está, agregamos 'categoryTransfer'.
-        if (!transferSelected) {
+        if (
+          (this.technologyKnowledge['technologyTransfer'] === "" || this.technologyKnowledge['technologyTransfer'] === 0 || this.technologyKnowledge['technologyTransfer'] == null || this.technologyKnowledge['technologyTransfer'] == []) &&
+          (this.technologyKnowledge['knowledgeTransfer'] === "" || this.technologyKnowledge['knowledgeTransfer'] === 0 || this.technologyKnowledge['knowledgeTransfer'] == null || this.technologyKnowledge['knowledgeTransfer'] == [])
+        ) {
           this.errors.push('categoryTransfer');
         }
 
@@ -360,6 +470,7 @@ export default {
           city: this.technologyKnowledge.city,
           placeRegion: this.technologyKnowledge.placeRegion,
           year: this.technologyKnowledge.year,
+          month: this.technologyKnowledge.month,
           comments: this.technologyKnowledge.comments,
           progressReport: this.technologyKnowledge.progressReport,
         };
@@ -411,7 +522,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Technology and knowledge transfer',
-            message: `¿Are you sure you want to edit this Technology and knowledge transfer? This action cannot be undone.`,
+            message: `¿Are you sure you want to edit this Technology and knowledge transfer?.`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })
@@ -431,7 +542,15 @@ export default {
               }
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let technologyKnowledge = {
+              idUsuario: idUser1,
               status: 'Finished',
               description: this.technologyKnowledge.description,
               nameOfInstitutionInvolved: this.technologyKnowledge.nameOfInstitutionInvolved,
@@ -464,10 +583,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

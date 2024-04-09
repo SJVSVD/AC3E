@@ -67,7 +67,7 @@
                             <tr v-for="(registro, index) in registros" :key="index">
                                 <td></td>
                                 <td>{{ thisDate(registro.created_at,true) }}</td>
-                                <td v-if="registro.modulo == 'isiPublication'">Isi Publications</td>
+                                <td v-if="registro.modulo == 'isiPublication'">ISI Publications</td>
                                 <td v-else-if="registro.modulo == 'scCollaborations' && registro.moduleType == '1'">Conjoint Projects</td>
                                 <td v-else-if="registro.modulo == 'fundingSources'">Funding Sources</td>
                                 <td v-else-if="registro.modulo == 'organizationsScEvents'">Organization Sc Events</td>
@@ -77,7 +77,7 @@
                                 <td v-else-if="registro.modulo == 'postDoc'">Postdoctoral Fellows</td>
                                 <td v-else-if="registro.modulo == 'publicPrivate'">Public-Private Connections</td>
                                 <td v-else-if="registro.modulo == 'scCollaborations' && registro.moduleType == '0'">Sc Collaborations</td>
-                                <td v-else-if="registro.modulo == 'nonIsiPublication'">Non Isi Publications</td>
+                                <td v-else-if="registro.modulo == 'nonIsiPublication'">Non ISI Publications</td>
                                 <td v-else-if="registro.modulo == 'thesisStudent'">Thesis Students</td>
                                 <td v-else-if="registro.modulo == 'awards'">Awards</td>
                                 <td v-else-if="registro.modulo == 'books'">Books</td>
@@ -111,20 +111,41 @@
                 <div class="row p-3">
                     <div class="col-4">
                         <a class="btn btn-primary" v-if="is('Administrator')" @click="exportConsolidado">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Consolidado
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Consolidated
                         </a>
                     </div>
                     <div class="col-4">
                         <a class="btn btn-primary" @click="exportIndividual">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Retorno Individual
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Individual Return
                         </a>
                     </div>
                     <div class="col-4">
                         <a class="btn btn-primary" @click="exportStatistics">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Exportar Indicadores
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Indicators
                         </a>
                     </div>
                 </div>
+                <!-- <div class="row p-3">
+                    <div class="col-4">
+                        <input type="file" ref="fileInput" accept=".xlsx" class= "form-control" @change="processExcelFile">
+                    </div>
+                </div>
+                <div class="row p-3">
+                    <table v-if="keywordObjects.length > 0">
+                        <thead>
+                            <tr>
+                            <th>DOI</th>
+                            <th>Keyword</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in keywordObjects" :key="index">
+                            <td>{{ item.doi }}</td>
+                            <td>{{ item.keyword }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> -->
             </div>
         </div>
         <modalver v-bind:isiPublication1="isiPublication" v-if="showDetailsIsi" @close="showDetailsIsi = false"></modalver>
@@ -165,6 +186,7 @@ import modalver13 from './snippets/sistema/books/detailsBooksModal.vue'
 import modalver14 from './snippets/sistema/technologyKnowledge/detailsTechnologyKnowledgeModal.vue'
 import modalalerta from './snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../mixins.js'
+import * as XLSX from 'xlsx';
 
 export default {
     components: { modalconfirmacion,modalalerta,modalver,modalver1,modalver2,modalver3,modalver4,modalver5,modalver6,modalver7,modalver8,modalver9,modalver10,modalver11,modalver12,modalver13,modalver14 },
@@ -211,6 +233,7 @@ export default {
             showDetailsAwards: false,
             showDetailsBooks: false,
             showDetailsTechnologyKnowledge: false,
+            keywordObjects: [],
         }
     },
     beforeDestroy() {
@@ -231,6 +254,52 @@ export default {
         this.getRegistros(this.cantidadRegistros);
     },
     methods: {
+        async processExcelFile(event) {
+        try {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            // Procesar los datos
+            const totalRows = jsonData.length;
+            let processedCount = 0;
+            const processedData = await Promise.all(jsonData.map(async (row, index) => {
+                const doi = row[0]; // La primera columna es el DOI
+                const keyword = await this.getKeywordsFromDOI(doi);
+                processedCount++;
+                console.log(`Procesando fila ${index + 1}/${totalRows}. Faltan ${totalRows - processedCount} filas.`);
+                return {
+                doi: doi,
+                keyword: keyword
+                };
+            }));
+
+            // Aquí puedes continuar con el procesamiento de los datos
+            console.log(processedData);
+            this.keywordObjects = processedData;
+            };
+            reader.readAsArrayBuffer(file);
+        } catch (error) {
+            console.error('Error al procesar el archivo xlsx:', error);
+        }
+        },
+
+        async getKeywordsFromDOI(doi) {
+            try {
+                const encodedDoi = encodeURIComponent(doi);
+                const response = await axios.post('api/useDoi', { doi: encodedDoi });
+                return response.data.Data[0].Keyword.Keywords;
+            } catch (error) {
+                console.error('Error al obtener las palabras clave:', error);
+                return ''; // Maneja el error como prefieras
+            }
+        },
+
         verConjointProjects(conjointProject) {
             this.conjointProjects = conjointProject;
             this.showDetailsConjointProjects = true;
@@ -369,3 +438,4 @@ export default {
     }
 }
 </script>
+

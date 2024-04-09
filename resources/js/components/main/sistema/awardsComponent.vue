@@ -20,11 +20,11 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Awardee Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Award Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Year</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -33,6 +33,15 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ award.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editAward(award)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verAward(award)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteAward(award.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="award.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ award.status }}</p>
                                             <p v-if="award.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ award.status }}</p>
@@ -47,15 +56,6 @@
                                         <td>
                                             <p v-if="award.year == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ award.year }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editAward(award)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verAward(award)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteAward(award.id)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -142,7 +142,7 @@ export default {
         async deleteAward(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Award',
-                message: `¿Are you sure you want to delete this Award? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Award?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

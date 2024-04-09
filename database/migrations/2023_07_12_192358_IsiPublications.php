@@ -27,7 +27,9 @@ return new class extends Migration
             $table->string('volume')->nullable();
             $table->string('firstPage')->nullable();
             $table->string('lastPage')->nullable();
+            $table->string('keywords')->nullable();
             $table->year('yearPublished')->nullable();
+            $table->string('month')->nullable();
             $table->string('funding')->nullable();
             $table->boolean('mainResearchers')->nullable();
             $table->boolean('associativeResearchers')->nullable();

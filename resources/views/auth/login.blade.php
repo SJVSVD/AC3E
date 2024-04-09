@@ -30,12 +30,15 @@
                                             <input id="passwordInput" placeholder="Password" type="password" name="password" class="form-control form-control-lg" aria-label="Password">
                                             @error('password') <p class="text-danger text-xs pt-1"> {{$message}} </p>@enderror
                                         </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" name="remember" type="checkbox" id="rememberMe">
-                                            <label class="form-check-label" for="rememberMe">Remember Me</label>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <input type="checkbox" class="form-check-input" id="passwordVisibility" onclick="myFunction()">
-                                            <label class="form-check-label" for="passwordVisibility">Show Password</label>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" @if(old('rememberMe')) checked @endif>
+                                                <label class="form-check-label" for="rememberMe">Remember Me</label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input type="checkbox" class="form-check-input" id="passwordVisibility" onclick="myFunction()">
+                                                <label class="form-check-label" for="passwordVisibility">Show Password</label>
+                                            </div>
                                         </div>
                                         <div class="text-center">
                                             <button class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Login</button>

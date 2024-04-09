@@ -7,12 +7,12 @@
             <div class="row" > 
               <div class="col-3">
                 <a class="btn btn-search-blue" @click="showIsiPublication = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
-                  Isi Publications
+                  ISI Publications
                 </a>
               </div>
               <div class="col-3">
                 <a class="btn btn-search-blue" @click="showNonIsiPublication = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
-                  Non Isi Publications
+                  Non ISI Publications
                 </a>
               </div>
               <div class="col-3">

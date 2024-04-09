@@ -3,18 +3,27 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Sc Collaboration {{ scCollaboration.collaborationStay }}
+                    Edit Sc Collaboration 
                 </slot>
                 <label for="">Progress year: {{ scCollaboration.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
+                  <select class="form-select" v-model="idResearcher">
+                    <option disabled value="">Select a researcher</option>
+                    <option v-for="researcher in researchers2" v-bind:key="researcher.id" v-bind:value="researcher.id">
+                      {{ researcher.name }}
+                    </option>
+                    </select>
+                  </label>
+                </label>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                      <div class="col-6">
+                      <div class="col-md-6">
                             <label for="">Activity Name:</label>
                             <label for="" style="color: orange;">*</label>
                             <Multiselect
@@ -24,14 +33,14 @@
                                 :searchable="true"
                                 :close-on-select="false"
                                 :createTag="true"
-                                :options="optionsTypeEvent"
+                                :options="activityNames"
                                 mode="tags"
                                 label="name"
                                 trackBy="name"
                                 :object="true"
                             />
                           </div>
-                          <div class="col-3">
+                          <div class="col-md-3">
                             <label for="">Collaboration Stay:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="scCollaboration.collaborationStay">
@@ -50,13 +59,12 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="scCollaboration.researcherInvolved"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -67,7 +75,7 @@
                           :object="true"
                         />
                       </div>
-                      <div class="col-6">
+                      <div class="col-md-6">
                         <label for="">Institution which the center collaborates:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -76,24 +84,14 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-5">
-                        <label for="">Name of AC3E member:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <select class="form-select" v-model="scCollaboration.nameOfAC3EMember">
-                        <option disabled :value="null">Select a member</option>
-                        <option v-for="researcher in researchers" v-bind:key="researcher.id" v-bind:value="researcher.id">
-                          {{ researcher }}
-                        </option>
-                        </select>
-                      </div>
-                      <div class="col-4">
+                      <div class="col-md-3">
                         <label v-if="scCollaboration.studentOrResearcher == 'Researcher'" for="">Name of external researcher:</label>
                         <label v-else for="">Name of external person:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.nameOfExternalResearcher">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                             <label for="">Student or Researcher:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -102,29 +100,41 @@
                               <option value="Student">Student</option>
                               <option value="Researcher">Researcher</option>
                               </select>
-                          </div>
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Beginning Date:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="date" class= "form-control" v-model="scCollaboration.beginningDate">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="">Ending Date:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="date" class= "form-control" v-model="scCollaboration.endingDate">
+                      </div>
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Country Origin:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.countryOrigin">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">City Origin:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.cityOrigin">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">Country Destination:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.countryDestination">
                       </div>
-                      <div class="col-3">
+                      <div class="col-md-3">
                         <label for="">City Destination:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
@@ -133,28 +143,7 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-3">
-                        <label for="">Beginning Date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="scCollaboration.beginningDate">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Ending Date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="scCollaboration.endingDate">
-                      </div>
-                      <div class="col-3">
-                        <label for="">Activity Type:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <select class="form-select" v-model="scCollaboration.activityType">
-                          <option disabled :value="null">Select a type</option>
-                          <option value="International congress">National</option>
-                          <option value="National congress">International</option>
-                          </select>
-                      </div>
-                      <div class="col-3">
+                      <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.comments">
@@ -197,7 +186,6 @@ export default {
     mixins: [mixin],
     data: () => ({
       scCollaboration:{
-        activityType: '',
         activityName: null,
         researcherInvolved: null,
         institutionCollaborates: '',
@@ -215,6 +203,8 @@ export default {
       draft: false,
       showModalProgress: false,
       researchers: '',
+      idResearcher: '',
+      researchers2: [],
       buttonDisable: false,
       activityNames: [
         "Visit in Chile (include students)",
@@ -229,14 +219,14 @@ export default {
     }),
     mounted(){
       this.getUsuarios();
+      this.getUsuarios2();
     },
     props:{
       collaboration1: Object,
     },
     created(){
       this.id = this.collaboration1.id;
-
-      this.scCollaboration.activityType = this.collaboration1.activityType;
+      this.idResearcher = this.collaboration1.idUsuario;
       this.scCollaboration.institutionCollaborates = this.collaboration1.institutionCollaborates;
       this.scCollaboration.countryOrigin = this.collaboration1.countryOrigin;
       this.scCollaboration.cityOrigin = this.collaboration1.cityOrigin;
@@ -244,7 +234,6 @@ export default {
       this.scCollaboration.cityDestination = this.collaboration1.cityDestination;
       this.scCollaboration.beginningDate = this.collaboration1.beginningDate;
       this.scCollaboration.endingDate = this.collaboration1.endingDate;
-      this.scCollaboration.nameOfAC3EMember = this.collaboration1.nameOfAC3EMember;
       this.scCollaboration.nameOfExternalResearcher = this.collaboration1.nameOfExternalResearcher;
       this.scCollaboration.comments = this.collaboration1.comments;
       this.scCollaboration.progressReport = this.collaboration1.progressReport;
@@ -283,6 +272,11 @@ export default {
       }
     },
     methods: {
+      getUsuarios2(){
+        axios.get('api/usuarios').then( response =>{
+            this.researchers2 = response.data;
+        }).catch(e=> console.log(e))
+      },
       handleFormSubmit1(year) {
         this.scCollaboration.progressReport = year;
       },
@@ -335,10 +329,17 @@ export default {
               type2 = this.scCollaboration.collaborationStay;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let scCollaboration = {
+              idUsuario: idUser1,
               status: 'Draft',
               moduleType: 0,
-              activityType: this.scCollaboration.activityType,
               institutionCollaborates: this.scCollaboration.institutionCollaborates,
               researcherInvolved: peopleInvolved1,
               studentOrResearcher: this.scCollaboration.studentOrResearcher,
@@ -374,10 +375,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -435,7 +503,6 @@ export default {
           id: this.id,
           idUsuario: idUser1,
           moduleType: 0,
-          activityType: this.scCollaboration.activityType,
           institutionCollaborates: this.scCollaboration.institutionCollaborates,
           researcherInvolved: peopleInvolved1,
           studentOrResearcher: this.scCollaboration.studentOrResearcher,
@@ -467,9 +534,7 @@ export default {
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
-            if(item == 'activityType'){
-              mensaje =   mensaje + "The field Activity Type is required" + "\n";
-            }else if(item == 'activityName'){
+            if(item == 'activityName'){
               mensaje =   mensaje + "The field Activity Name is required" + "\n";
             }else if(item == 'researcherInvolved'){
               mensaje =   mensaje + "The field Researcher Involved is required" + "\n";
@@ -517,7 +582,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Collaboration',
-            message: `¿Are you sure you want to edit this Sc Collaboration? This action cannot be undone.`,
+            message: `¿Are you sure you want to edit this Sc Collaboration?.`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })
@@ -556,10 +621,17 @@ export default {
               type2 = this.scCollaboration.collaborationStay;
             }
 
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
             let scCollaboration = {
+              idUsuario: idUser1,
               status: 'Finished',
               moduleType: 0,
-              activityType: this.scCollaboration.activityType,
               institutionCollaborates: this.scCollaboration.institutionCollaborates,
               researcherInvolved: peopleInvolved1,
               studentOrResearcher: this.scCollaboration.studentOrResearcher,
@@ -596,10 +668,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

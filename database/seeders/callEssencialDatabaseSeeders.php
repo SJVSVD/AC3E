@@ -17,6 +17,7 @@ class callEssencialDatabaseSeeders extends Seeder
             rolesSeeder::class,
             usersSeeder::class,
             extraSeeder::class,
+            universitySeeder::class,
         ]);
     }
 }

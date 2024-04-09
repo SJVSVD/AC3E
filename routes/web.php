@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth'], function () {
 			Route::get('/admin-roles', [PageController::class, 'adminRoles'])->name('admin-roles');
 			
 		});
+		Route::get('/indicators', [PageController::class, 'indicators'])->name('indicators');
 		Route::get('/power-bi', [PageController::class, 'powerBi'])->name('power-bi');
 		Route::get('/admin-usuarios', [PageController::class, 'adminUsuarios'])->name('admin-usuarios');
 		Route::get('/import-info', [PageController::class, 'importInfo'])->name('import-info');

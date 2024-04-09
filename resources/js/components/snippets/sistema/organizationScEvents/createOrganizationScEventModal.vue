@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container-s">
+            <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New Organization Sc Event
@@ -22,96 +22,13 @@
               </div>
               <div class="modal-body">
                 <slot name="body">
-                    <div class="row">
-                          <div class="col-3">
-                            <label for="">Type of Event:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="organizationSc.typeEvent">
-                              <option disabled value="">Select a type</option>
-                              <option value="International congress">International congress</option>
-                              <option value="National congress">National congress</option>
-                              <option value="Workshop">Workshop</option>
-                              <option value="Course">Course</option>
-                              <option value="Conference">Conference</option>
-                              <option value="Seminar">Seminar</option>
-                              <option value="Symposium">Symposium</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="organizationSc.typeEvent == 'Other'" class="col-3">
-                            <label for="">Other:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Event Name:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="organizationSc.eventName">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Country:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="organizationSc.country">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-3">
-                            <label for="">City:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="organizationSc.city">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Start Date:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="date" class= "form-control" v-model="organizationSc.startDate">
-                          </div>
-                          <div class="col-3">
-                            <label for="">Ending Date:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="date" class= "form-control" v-model="organizationSc.endingDate">
-                          </div>
-
-                          <div class="col-3">
-                            <label for="">Number of participants:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="number" class= "form-control" v-model="organizationSc.numberParticipants">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-5">
-                        <div class="form-group">
-                          <label for="archivo">File: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
-                        </div>
-                      </div>
-                      <div class="col-1 pt-2">
-                        <br>
-                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
-                      </div>
-                      <div class="col-6">
-                        <label for="">Comments:</label>
-                        <input type="text" class= "form-control" v-model="organizationSc.comments">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-6">
-                        <label for="">Researcher involved:</label>
+                  <div class="row">
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="organizationSc.researcherInvolved"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -121,6 +38,83 @@
                           trackBy="id"
                           :object="true"
                         />
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6">
+                            <label for="">Type of Event:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <Multiselect
+                                placeholder="Select the options"
+                                v-model="organizationSc.typeEvent"
+                                :searchable="true"
+                                :close-on-select="false"
+                                :createTag="true"
+                                :options="optionsTypeEvent"
+                                mode="tags"
+                                label="name"
+                                trackBy="name"
+                                :object="true"
+                            />
+                          </div>
+                          <div class="col-md-3">
+                            <label for="">Event Name:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="organizationSc.eventName">
+                          </div>
+                          <div class="col-md-3">
+                            <label for="">Country:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="organizationSc.country">
+                          </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
+                            <label for="">City:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="organizationSc.city">
+                          </div>
+                          <div class="col-md-3">
+                            <label for="">Start Date:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="date" class= "form-control" v-model="organizationSc.startDate">
+                          </div>
+                          <div class="col-md-3">
+                            <label for="">Ending Date:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="date" class= "form-control" v-model="organizationSc.endingDate">
+                          </div>
+
+                          <div class="col-md-3">
+                            <label for="">Number of participants:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="number" class= "form-control" v-model="organizationSc.numberParticipants">
+                          </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label for="archivo">File: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
+                        </div>
+                      </div>
+                      <div class="col-md-1 pt-2">
+                        <br>
+                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="">Comments:</label>
+                        <input type="text" class= "form-control" v-model="organizationSc.comments">
                       </div>
                     </div>
                   </slot>
@@ -160,7 +154,7 @@ export default {
     mixins: [mixin],
     data: () => ({
       organizationSc:{
-        typeEvent: '',
+        typeEvent: null,
         eventName: '',
         country: '',
         city: '',
@@ -172,7 +166,16 @@ export default {
         progressReport: '',
         comments: '',
       },
-      other: '',
+      optionsTypeEvent: [
+        "International congress",
+        "National congress",
+        "Workshop",
+        "Course",
+        "Conference",
+        "Seminar",
+        "Symposium",
+        "Other",
+      ],
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
@@ -200,7 +203,7 @@ export default {
       },
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
-            this.usuarios = response.data;
+            this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
       getProgressReport(){
@@ -222,23 +225,8 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var typeEvent = '';
-            var other = 0;
 
-            if(this.organizationSc.typeEvent == 'Other'){
-              typeEvent = this.other;
-              other = 1;
-            }else{
-              typeEvent = this.organizationSc.typeEvent;
-            }
-
-            var idUser1 = ''
-            if(this.idResearcher != ''){
-              idUser1 = this.idResearcher;
-            }else{
-              idUser1 = this.userID;
-            }
-
+          
             var peopleInvolved1 = "";
             if (this.organizationSc.researcherInvolved !== null){
               if (this.organizationSc.researcherInvolved.length !== 0) {
@@ -253,12 +241,34 @@ export default {
               }
             }
 
+            var typeEvent1 = "";
+            if (this.organizationSc.typeEvent !== null){
+              if (this.organizationSc.typeEvent.length !== 0) {
+                this.organizationSc.typeEvent.forEach((typeEvent, index) => {
+                  typeEvent1 += typeEvent.name;
+                  if (index === this.organizationSc.typeEvent.length - 1) {
+                    typeEvent1 += '.';
+                  } else {
+                    typeEvent1 += ', ';
+                  }
+                });
+              }
+            }
+            
+            var idUser1 = ''
+            if(this.idResearcher != ''){
+              idUser1 = this.idResearcher;
+            }else{
+              idUser1 = this.userID;
+            }
+
+            
+
             let organizationSc = {
+              idUsuario: idUser1,
               status: 'Draft',
               researcherInvolved: peopleInvolved1,
-              idUsuario: idUser1,
-              typeEvent: typeEvent,
-              other: other,
+              typeEvent: typeEvent1,
               eventName: this.organizationSc.eventName,
               country: this.organizationSc.country,
               city: this.organizationSc.city,
@@ -286,10 +296,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -328,9 +405,6 @@ export default {
             }
         }
 
-        if(this.organizationSc.typeEvent == 'Other' && this.other == ''){
-          this.errors.push('other');
-        }
 
         var idUser1 = ''
         if(this.idResearcher != ''){
@@ -344,8 +418,6 @@ export default {
         let organizationSc1 = {
           status: 'Finished',
           idUsuario: idUser1,
-          typeEvent: typeEvent,
-          other: other,
           eventName: this.organizationSc.eventName,
           country: this.organizationSc.country,
           city: this.organizationSc.city,
@@ -403,21 +475,11 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Organization',
-            message: `¿Are you sure you want to save this organization of sc event? This action cannot be undone.`,
+            message: `¿Are you sure you want to save this organization of sc event?.`,
             okButton: 'Save',
             cancelButton: 'Return'
           })
           if (ok) {
-
-            var typeEvent = '';
-            var other = 0;
-
-            if(this.organizationSc.typeEvent == 'Other'){
-              typeEvent = this.other;
-              other = 1;
-            }else{
-              typeEvent = this.organizationSc.typeEvent;
-            }
 
             var idUser1 = ''
             if(this.idResearcher != ''){
@@ -440,12 +502,25 @@ export default {
               }
             }
 
+            var typeEvent1 = "";
+            if (this.organizationSc.typeEvent !== null){
+              if (this.organizationSc.typeEvent.length !== 0) {
+                this.organizationSc.typeEvent.forEach((typeEvent, index) => {
+                  typeEvent1 += typeEvent.name;
+                  if (index === this.organizationSc.typeEvent.length - 1) {
+                    typeEvent1 += '.';
+                  } else {
+                    typeEvent1 += ', ';
+                  }
+                });
+              }
+            }
+
             let organizationSc = {
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
               idUsuario: idUser1,
-              typeEvent: typeEvent,
-              other: other,
+              typeEvent: typeEvent1,
               eventName: this.organizationSc.eventName,
               country: this.organizationSc.country,
               city: this.organizationSc.city,
@@ -473,10 +548,77 @@ export default {
               });
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
-            .catch((error)=> {
-              if (error.response.status == 422){
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
+            .catch((error) => {
+              if (error.response) {
+                // Si hay una respuesta del servidor
+                if (error.response.status === 422) {
+                  // Error de validación
+                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response.status === 404) {
+                  // Recurso no encontrado
+                  this.toast.error("Resource not found.", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else {
+                  // Otro tipo de error
+                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+              } else if (error.request) {
+                // Si la solicitud fue hecha pero no se recibió respuesta
+                this.toast.error("No response from server.", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+              } else {
+                // Otro tipo de error
+                this.toast.error(`An error occurred: ${error.message}`, {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,

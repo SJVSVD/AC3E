@@ -120,4 +120,9 @@ class PageController extends Controller
     {
         return view('pages.powerBi');
     }
+
+    public function indicators()
+    {
+        return view('pages.indicators');
+    }
 }

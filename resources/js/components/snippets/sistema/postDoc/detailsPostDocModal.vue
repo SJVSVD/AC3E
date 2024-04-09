@@ -21,6 +21,11 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
+                      <label>Personal Email: </label>
+                      <label v-if="postDoc1.personalEmail != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.personalEmail }}</label>
+                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                    </div>
+                    <div class="col-6 m-0 fs-8 pb-1">
                       <label>Name of Postdoc: </label>
                       <label v-if="postDoc1.nameOfPostdoc != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.nameOfPostdoc }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
@@ -133,11 +138,6 @@
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Progress Report: </label>
                       <label v-if="postDoc1.progressReport != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.progressReport }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Personal Email: </label>
-                      <label v-if="postDoc1.personalEmail != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.personalEmail }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">

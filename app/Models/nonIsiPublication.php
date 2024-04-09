@@ -23,6 +23,7 @@ class nonIsiPublication extends Model
         'firstPage',
         'lastPage',
         'yearPublished',
+        'month',
         'funding',
         'mainResearchers',
         'associativeResearchers',

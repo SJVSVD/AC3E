@@ -6831,6 +6831,10 @@ textarea.form-control-lg {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
+.active {
+  font-weight: bold; /* O cualquier otro estilo que desees */
+}
+
 .toast {
   width: 350px;
   max-width: 100%;

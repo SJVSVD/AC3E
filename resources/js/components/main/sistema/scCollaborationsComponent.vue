@@ -20,6 +20,7 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
@@ -27,7 +28,6 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Name of External Person</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Beggining Date</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -36,6 +36,15 @@
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ scCollaboration.id }}</p>
                                         </td>                                          
+                                        <td class="align-middle text-end">
+                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editCollaboration(scCollaboration)"><i class="fa fa-fw fa-edit"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-success btn-xs" title="Details" @click="verCollaboration(scCollaboration)"><i class="fa-regular fa-eye"></i></a>
+                                                &nbsp;
+                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteCollaboration(scCollaboration.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <p v-if="scCollaboration.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ scCollaboration.status }}</p>
                                             <p v-if="scCollaboration.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ scCollaboration.status }}</p>
@@ -62,15 +71,6 @@
                                         <td>
                                             <p v-if="scCollaboration.endingDate == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ scCollaboration.endingDate }}</p>
-                                        </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editCollaboration(scCollaboration)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verCollaboration(scCollaboration)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteCollaboration(scCollaboration.id)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -157,7 +157,7 @@ export default {
         async deleteCollaboration(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Collaboration',
-                message: `¿Are you sure you want to delete this Collaboration? This action cannot be undone.`,
+                message: `¿Are you sure you want to delete this Collaboration?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })

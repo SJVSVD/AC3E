@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('researcherInvolved')->nullable();
             $table->string('file')->nullable();
             $table->year('yearPublished')->nullable();
+            $table->string('month')->nullable();
             $table->string('funding')->nullable();
             $table->boolean('mainResearchers')->nullable();
             $table->boolean('associativeResearchers')->nullable();

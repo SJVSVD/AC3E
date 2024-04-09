@@ -38,7 +38,6 @@ return new class extends Migration
             $table->boolean('schoolTeachers')->nullable();
             $table->boolean('governmentOfficial')->nullable();
             $table->boolean('other')->nullable();
-            $table->string('nameOfTheMainResponsible')->nullable();
             $table->string('comments',1000)->nullable();
             $table->string('progressReport')->nullable();
             $table->softDeletes();

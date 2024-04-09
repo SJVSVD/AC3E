@@ -14,6 +14,7 @@ use App\Http\Controllers\conjointProjectController;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\extraTablesController;
 use App\Http\Controllers\fundingSourcesController;
+use App\Http\Controllers\indicatorsController;
 use App\Http\Controllers\organizationsScEventsController;
 use App\Http\Controllers\participationsScEventsController;
 use App\Http\Controllers\scCollaborationsController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\postDocController;
 use App\Http\Controllers\researchLineController;
 use App\Http\Controllers\roleUserController;
+use App\Http\Controllers\UniversitiesController;
 
 // Rutas Generales (SYS_)
 
@@ -126,6 +128,10 @@ Route::post('importFunding', [fundingSourcesController::class, 'importFunding'])
 Route::apiResource('roles', RolController::class);
 Route::apiResource('permisos', PermisosController::class);
 
+//Universities
+
+Route::apiResource('universities', UniversitiesController::class);
+
 //Exports
 
 Route::post('exportConsolidado', [exportsController::class, 'exportConsolidado']);
@@ -138,6 +144,11 @@ Route::post('exportStatistics', [exportsController::class, 'exportStatistics']);
 
 Route::post('editProgressReport', [extraTablesController::class, 'editProgressReport']);
 Route::get('showProgressReport' , [extraTablesController::class, 'showProgressReport']);
+
+//Indicators
+
+Route::get('getIndicators' , [indicatorsController::class, 'getIndicators']);
+Route::get('getIndicators/{id}' , [indicatorsController::class, 'getIndicatorsByProgressYear']);
 
 //Dashboard
 
