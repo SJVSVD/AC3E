@@ -746,6 +746,7 @@ export default {
               firstPage: this.nonIsiPublication.firstPage,
               lastPage: this.nonIsiPublication.lastPage,
               yearPublished: this.nonIsiPublication.yearPublished,
+              month: this.nonIsiPublication.month,
               funding: fundingsName1,
               comments: this.nonIsiPublication.comments,
               file: this.nonIsiPublication.file,

@@ -26,6 +26,8 @@ class postDoc extends Model
         'fundingSource',
         'startYear',
         'endingYear',
+        'startMonth',
+        'endMonth',
         'institutionName',
         'comments',
         'progressReport',

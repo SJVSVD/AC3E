@@ -43,13 +43,9 @@
                               <option disabled value="">Select a type</option>
                               <option value="Spin-off">Spin-off</option>
                               <option value="Licenses">Licenses</option>
-                              <option value="Technology transfer agreement">Technology transfer agreement</option>
-                              <option value="Services(mandatory for regional centers)">Services(mandatory for regional centers)</option>
+                              <option value="Technology Transfer Agreement">Technology transfer agreement</option>
+                              <option value="Services(Mandatory for Regional Centers)">Services(mandatory for regional centers)</option>
                               <option value="Sale of technology transfer product">Sale of technology transfer product</option>
-                              <option value="Public sector">Public sector</option>
-                              <option value="Small scale producers">Small scale producers</option>
-                              <option value="Community,Social-ONG">Community,Social-ONG</option>
-                              <option value="Technical professional sector">Technical professional sector</option>
                               <option value="Other">Other</option>
                               </select>
                       </div>
@@ -450,6 +446,10 @@ export default {
               mensaje =   mensaje + "The field Category of transfer is required" + "\n";
             }else if(item == 'typeOfTransfer'){
               mensaje =   mensaje + "The field Type of transfer is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researchers involved is required" + "\n";
+            }else if(item == 'nameOfInstitutionInvolved'){
+              mensaje =   mensaje + "The field Name of institution involved is required" + "\n";
             }else if(item == 'nameOfBeneficiary'){
               mensaje =   mensaje + "The field Name of beneficiary institution is required" + "\n";
             }else if(item == 'placeRegion'){

@@ -19,9 +19,9 @@ return new class extends Migration
             $table->foreign("idUsuario")->references("id")->on("users")->onDelete("cascade")->onUpdate("cascade");
             $table->string('status');
             $table->string('researcherInvolved')->nullable();
-            $table->string('authors', 1500)->nullable();
+            $table->string('authors', 3500)->nullable();
             $table->string('coauthor')->nullable();
-            $table->string('articleTitle')->nullable();
+            $table->string('articleTitle',400)->nullable();
             $table->string('journalName')->nullable();
             $table->string('doi')->nullable();
             $table->string('volume')->nullable();
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->boolean('thesisStudents')->nullable();
             $table->boolean('nationalExternalResearchers')->nullable();
             $table->boolean('internationalExternalResearchers')->nullable();
-            $table->string('comments')->nullable();
+            $table->string('comments',1500)->nullable();
             $table->string('progressReport')->nullable();
             $table->timestamps();
             $table->softDeletes();

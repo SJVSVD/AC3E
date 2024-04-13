@@ -23,45 +23,6 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-md-3">
-                            <label for="">Activity Name:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <select class="form-select" v-model="conjointProject.activityName">
-                              <option disabled :value="null">Select a type</option>
-                              <option value="Visit in Chile (include students)">Visit in Chile (include students)</option>
-                              <option value="Visit abroad (include students)">Visit abroad (include students)</option>
-                              <option value="Research Stay (Pasantia de investigacion) (include students)">Research Stay (Pasantia de investigacion) (include students)</option>
-                              <option value="Participation in R&D Projects directed by other Researcher (external)">Participation in R&D Projects directed by other Researcher (external)</option>
-                              <option value="Participation in R&D Projects directed by an AC3E Researcher">Participation in R&D Projects directed by an AC3E Researcher</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="conjointProject.activityName == 'Other'" class="col-3">
-                            <label for="">Other Activity:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other">
-                          </div>
-                          <div class="col-md-3">
-                            <label for="">Collaboration Stay:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="conjointProject.collaborationStay">
-                              <option disabled :value="null">Select a type</option>
-                              <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
-                              <option value="Long Visit (More than two weeks)">Long Visit (More than two weeks)</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="conjointProject.collaborationStay == 'Other'" class="col-3">
-                            <label for="">Other Stay:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other2">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-md-6">
                         <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
@@ -78,6 +39,43 @@
                           :object="true"
                         />
                       </div>
+                          <div class="col-md-3">
+                            <label for="">Collaboration Stay:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <select class="form-select" v-model="conjointProject.collaborationStay">
+                              <option disabled :value="null">Select a type</option>
+                              <option value="Short Visit (Up to two weeks)">Short Visit (Up to two weeks)</option>
+                              <option value="Long Visit (More than two weeks)">Long Visit (More than two weeks)</option>
+                              <option value="Other">Other</option>
+                              </select>
+                          </div>
+                          <div v-if="conjointProject.collaborationStay == 'Other'" class="col-md-3">
+                            <label for="">Other Stay:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="other2">
+                          </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-6">
+                            <label for="">Activity Name:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <Multiselect
+                                placeholder="Select the options"
+                                v-model="conjointProject.activityName"
+                                limit=8
+                                :searchable="true"
+                                :close-on-select="false"
+                                :createTag="true"
+                                :options="activityNames"
+                                mode="tags"
+                                label="name"
+                                trackBy="name"
+                                :object="true"
+                            />
+                          </div>
+
                       <div class="col-md-6">
                         <label for="">Institution which the center collaborates:</label>
                         <label for="" style="color: orange;">*</label>
@@ -158,7 +156,7 @@
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
                     v-model="draft"> Save as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="createCollaboration()" :disabled="buttonDisable">
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editConjoint()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
@@ -189,7 +187,7 @@ export default {
     mixins: [mixin],
     data: () => ({
       conjointProject:{
-        activityName: '',
+        activityName: null,
         researcherInvolved: null,
         institutionCollaborates: '',
         countryOrigin: '',
@@ -209,6 +207,14 @@ export default {
       researchers2: [],
       idResearcher: '',
       buttonDisable: false,
+      activityNames: [
+        "Visit in Chile (include students)",
+        "Visit abroad (include students)",
+        "Research Stay (Pasantia de investigacion) (include students)",
+        "Participation in R&D Projects directed by other Researcher (external)",
+        "Participation in R&D Projects directed by an AC3E Researcher",
+        "Other",
+      ],
       errors:[],
       buttonText:'Edit Project',
     }),
@@ -247,11 +253,16 @@ export default {
           });
       }
 
-      if(this.project1.otherActivity == true){
-        this.conjointProject.activityName = 'Other';
-        this.other = this.project1.activityName;
-      }else{
-        this.conjointProject.activityName = this.project1.activityName;
+      if (this.project1.activityName != null) {
+          const valoresSeparados1 = this.project1.activityName.split(",");
+          this.conjointProject.activityName = valoresSeparados1.map((valor, index) => {
+              valor = valor.trim();
+              if (valor.endsWith('.')) {
+                  valor = valor.slice(0, -1);
+              }
+
+              return { value: valor, name: valor };
+          });
       }
 
       if(this.project1.otherStay == true){
@@ -300,16 +311,21 @@ export default {
               }
             }
 
-            var type = '';
-            var other1 = 0;
             var type2 = '';
             var other2 = 0;
 
-            if(this.conjointProject.activityName == 'Other'){
-              type = this.other;
-              other1 = 1;
-            }else{
-              type = this.conjointProject.activityName;
+            var activityName1 = "";
+            if (this.conjointProject.activityName !== null){
+              if (this.conjointProject.activityName.length !== 0) {
+                this.conjointProject.activityName.forEach((activityName, index) => {
+                  activityName1 += activityName.name;
+                  if (index === this.conjointProject.activityName.length - 1) {
+                    activityName1 += '.';
+                  } else {
+                    activityName1 += ', ';
+                  }
+                });
+              }
             }
 
             if(this.conjointProject.collaborationStay == 'Other'){
@@ -333,8 +349,7 @@ export default {
               institutionCollaborates: this.conjointProject.institutionCollaborates,
               researcherInvolved: peopleInvolved1,
               studentOrResearcher: this.conjointProject.studentOrResearcher,
-              activityName: type,
-              otherActivity: other1,
+              activityName: activityName1,
               countryOrigin: this.conjointProject.countryOrigin,
               cityOrigin: this.conjointProject.cityOrigin,
               countryDestination: this.conjointProject.countryDestination,
@@ -343,7 +358,7 @@ export default {
               endingDate: this.conjointProject.endingDate,
               nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
               collaborationStay: type2,
-              otherStay: other1,
+              otherStay: other2,
               comments: this.conjointProject.comments,
               progressReport: this.conjointProject.progressReport,
             };
@@ -460,7 +475,7 @@ export default {
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async createCollaboration() {
+      async editConjoint() {
         this.errors = [];
         const itemsToSkip = [
           'comments'
@@ -473,9 +488,6 @@ export default {
             }
         }
 
-        if(this.conjointProject.activityName == 'Other' && this.other == ''){
-          this.errors.push('other');
-        }
 
         if(this.conjointProject.collaborationStay == 'Other' && this.other2 == ''){
           this.errors.push('other2');
@@ -496,8 +508,6 @@ export default {
           institutionCollaborates: this.conjointProject.institutionCollaborates,
           researcherInvolved: peopleInvolved1,
           studentOrResearcher: this.conjointProject.studentOrResearcher,
-          activityName: type,
-          otherActivity: other1,
           countryOrigin: this.conjointProject.countryOrigin,
           cityOrigin: this.conjointProject.cityOrigin,
           countryDestination: this.conjointProject.countryDestination,
@@ -506,7 +516,7 @@ export default {
           endingDate: this.conjointProject.endingDate,
           nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
           collaborationStay: type2,
-          otherStay: other1,
+          otherStay: other2,
           comments: this.conjointProject.comments,
           progressReport: this.conjointProject.progressReport,
         };
@@ -599,16 +609,21 @@ export default {
               }
             }
 
-            var type = '';
-            var other1 = 0;
             var type2 = '';
             var other2 = 0;
 
-            if(this.conjointProject.activityName == 'Other'){
-              type = this.other;
-              other1 = 1;
-            }else{
-              type = this.conjointProject.activityName;
+            var activityName1 = "";
+            if (this.conjointProject.activityName !== null){
+              if (this.conjointProject.activityName.length !== 0) {
+                this.conjointProject.activityName.forEach((activityName, index) => {
+                  activityName1 += activityName.name;
+                  if (index === this.conjointProject.activityName.length - 1) {
+                    activityName1 += '.';
+                  } else {
+                    activityName1 += ', ';
+                  }
+                });
+              }
             }
 
             if(this.conjointProject.collaborationStay == 'Other'){
@@ -618,6 +633,7 @@ export default {
               type2 = this.conjointProject.collaborationStay;
             }
 
+
             var idUser1 = ''
             if(this.idResearcher != ''){
               idUser1 = this.idResearcher;
@@ -626,14 +642,13 @@ export default {
             }
 
             let conjointProject = {
-              idUsuario: idUser1,
               status: 'Finished',
+              idUsuario: idUser1,
               moduleType: 1,
               institutionCollaborates: this.conjointProject.institutionCollaborates,
               researcherInvolved: peopleInvolved1,
               studentOrResearcher: this.conjointProject.studentOrResearcher,
-              activityName: type,
-              otherActivity: other1,
+              activityName: activityName1,
               countryOrigin: this.conjointProject.countryOrigin,
               cityOrigin: this.conjointProject.cityOrigin,
               countryDestination: this.conjointProject.countryDestination,
@@ -642,7 +657,7 @@ export default {
               endingDate: this.conjointProject.endingDate,
               nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
               collaborationStay: type2,
-              otherStay: other1,
+              otherStay: other2,
               comments: this.conjointProject.comments,
               progressReport: this.conjointProject.progressReport,
             };

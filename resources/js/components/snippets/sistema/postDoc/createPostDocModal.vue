@@ -121,7 +121,7 @@
                           </select>
                       </div>
                       <div class="col-md-3">
-                          <label for="selectMonth">End month:</label>
+                          <label for="selectMonth">Ending month:</label>
                           <label  for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="postDoc.endMonth">
@@ -149,7 +149,6 @@
                         <Multiselect
                           placeholder="Select the options"
                           v-model="postDoc.supervisorName"
-                          limit=4
                           :searchable="true"
                           :close-on-select="false"
                           :createTag="true"
@@ -599,26 +598,32 @@ export default {
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
-            if(item == 'nameOfPostDoc'){
-              mensaje =   mensaje + "The field Name of postdoc fellow is required" + "\n";
+            if(item == 'nameOfPostdoc'){
+              mensaje =   mensaje + "The field Name of postdoc is required" + "\n";
             }else if(item == 'researchTopic'){
               mensaje =   mensaje + "The field Research topic is required" + "\n";
             }else if(item == 'supervisorName'){
               mensaje =   mensaje + "The field Supervisor name is required" + "\n";
+            }else if(item == 'personalEmail'){
+              mensaje =   mensaje + "The field Personal Email is required" + "\n";
             }else if(item == 'resourcesProvided'){
               mensaje =   mensaje + "The field Resources provided is required" + "\n";
             }else if(item == 'fundingSource'){
               mensaje =   mensaje + "The field Funding source is required" + "\n";
+            }else if(item == 'invalidRut'){
+              mensaje =   mensaje + "The entered Run is invalid" + "\n";
             }else if(item == 'startYear'){
               mensaje =   mensaje + "The field Start year is required" + "\n";
+            }else if(item == 'startMonth'){
+              mensaje =   mensaje + "The field Start month is required" + "\n";
             }else if(item == 'endingYear'){
               mensaje =   mensaje + "The field Ending year is required" + "\n";
+            }else if(item == 'endMonth'){
+              mensaje =   mensaje + "The field Ending month is required" + "\n";
             }else if(item == 'institutionName'){
               mensaje =   mensaje + "The field Institution where it was inserted is required" + "\n";
             }else if(item == 'personalEmail'){
               mensaje =   mensaje + "The field Personal Email is required" + "\n";
-            }else if(item == 'nameOfPostdoc'){
-              mensaje =   mensaje + "The field Name of post doc is required" + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{

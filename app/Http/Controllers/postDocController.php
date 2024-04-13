@@ -70,18 +70,45 @@ class postDocController extends Controller
 
     public function importPostdoc(Request $request)
     {
+        // Arreglo de mapeo para los recursos proporcionados
+        $resourcesMapping = [
+            '1' => 'Equipment',
+            '2' => 'Information',
+            '3' => 'Infrastructure',
+            '4' => 'Other',
+        ];
+        
         $data = $request->input('data');
         foreach ($data as $rowData) {
+            // Convertir el valor del género a Male o Female
+            $gender = $rowData['Gender (M/F)'] === 'M' ? 'Male' : 'Female';
+            
+            // Convertir el valor de RUN / Passport a minúsculas
+            $identification = strtolower($rowData['Identification']);
+            
+            // Mapear el valor de los recursos proporcionados
+            $resourcesProvided = '';
+            if (isset($rowData['Resources provided by the Center'])) {
+                $resources = explode(',', $rowData['Resources provided by the Center']);
+                foreach ($resources as $resource) {
+                    $resource = trim($resource);
+                    if (isset($resourcesMapping[$resource])) {
+                        $resourcesProvided .= $resourcesMapping[$resource] . ', ';
+                    }
+                }
+                $resourcesProvided = rtrim($resourcesProvided, ', '); // Eliminar la última coma y espacio
+            }
+            
             $postDoc = postDoc::create([
                 'idUsuario' => $rowData['idUsuario'],
                 'status' => $rowData['Status'],
                 'nameOfPostdoc' => $rowData['Name of Postdoctoral Fellows'],
-                'identification' => $rowData['Identification'],
-                'runOrPassport' => $rowData['RUN / Passport'],
-                'gender' => $rowData['Gender (M/F)'],
+                'identification' => $identification,
+                'runOrPassport' => $rowData['RUN / Passport'], // Asignar el valor convertido a minúsculas
+                'gender' => $gender, // Asignar el valor convertido
                 'researchTopic' => $rowData['Research Topic'],
                 'supervisorName' => $rowData["Tutor's name"],
-                'resourcesProvided' => $rowData['Resources provided by the Center'],
+                'resourcesProvided' => $resourcesProvided, // Asignar los recursos proporcionados
                 'fundingSource' => $rowData['Funding Source'],
                 'startYear' => $rowData['Start Year'],
                 'endingYear' => $rowData['Ending Year'],
@@ -99,13 +126,13 @@ class postDocController extends Controller
                 'comments' => $rowData['Comentarios'],
                 'progressReport' => $rowData['Progress Report'],
                 'personalEmail' => $rowData['Personal E-mail'],
-
+    
             ]);
         }
         
-        return response()->json("Publicaciónes importadas");
+        return response()->json("Publicaciones importadas");
     }
-
+    
 
     public function destroy($id)
     {

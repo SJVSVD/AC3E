@@ -23,6 +23,7 @@ class technologyKnowledge extends Model
         'city',
         'placeRegion',
         'year',
+        'month',
         'nameOfResearch',
         'comments',
         'progressReport',

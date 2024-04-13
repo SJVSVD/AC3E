@@ -74,30 +74,46 @@ class outreachActivitiesController extends Controller
 
     public function importOutreach(Request $request)
     {
+        // Arreglo de mapeo para el tipo de actividad
+        $activityTypeMapping = [
+            '1' => 'Conference',
+            '2' => 'Seminar',
+            '3' => 'Forum',
+            '4' => 'Exhibition',
+            '5' => 'Workshop',
+            '6' => 'Competition',
+            '7' => 'Course',
+            '8' => 'Other (specify)',
+            '9' => 'Outreach Material',
+        ];
+    
         $data = $request->input('data');
         foreach ($data as $rowData) {
             // Obtén el valor de 'attendantsAmount' del $rowData
             $attendantsAmount = $rowData['Attendant Amount'];
-
+    
             // Verifica si el valor es un entero
             if (!is_numeric($attendantsAmount)) {
                 // Si no es un número, establece 'attendantsAmount' en 0
                 $attendantsAmount = 0;
             }
-
-            // Obtén el valor de 'attendantsAmount' del $rowData
+    
+            // Obtén el valor de 'duration' del $rowData
             $duration = $rowData['Duration [days]'];
-
+    
             // Verifica si el valor es un entero
             if (!is_numeric($duration)) {
                 // Si no es un número, establece 'duration' en 0
                 $duration = 0;
             }
-
+    
+            // Mapear el tipo de actividad
+            $activityType = isset($activityTypeMapping[$rowData['Type of Activity']]) ? $activityTypeMapping[$rowData['Type of Activity']] : '';
+    
             $outreachActivities = outreachActivities::create([
                 'idUsuario' => $rowData['idUsuario'],
                 'status' => $rowData['Status'],
-                'activityType' => $rowData['Type of Activity'],
+                'activityType' => $activityType, // Asignar el tipo de actividad mapeado
                 'activityName' => $rowData['Event Title'],
                 'activityDescription' => $rowData['Activity Description'],
                 'date' => $rowData['Date'],
@@ -117,13 +133,14 @@ class outreachActivitiesController extends Controller
                 'nameOfTheMainResponsible' => $rowData['Name of the main responsible'],
                 'progressReport' => $rowData['Progress Report'],
                 'researcherInvolved' => $rowData['Researcher Involved'],
-                'responsability' => $rowData['Responsibility'],
+                'responsibility' => $rowData['Responsibility'],
                 'comments' => $rowData['Comentarios'],
             ]);
         }
         
-        return response()->json("Publicaciónes importadas");
+        return response()->json("Publicaciones importadas");
     }
+    
 
 
     public function destroy($id)

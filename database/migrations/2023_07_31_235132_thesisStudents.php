@@ -37,6 +37,8 @@ return new class extends Migration
             $table->string('university')->nullable();
             $table->year('yearStart')->nullable();
             $table->year('yearThesisEnd')->nullable();
+            $table->string('monthEnd')->nullable();
+            $table->string('monthStart')->nullable();
             $table->string('resourcesCenter')->nullable();
             $table->string('posteriorArea')->nullable();
             $table->string('institutionPosteriorArea')->nullable();

@@ -52,7 +52,7 @@
                                             <p class="text-sm mb-0">{{ outreachActivity.usuario.name }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="outreachActivity.activityType == null" class="text-sm mb-0">---</p>
+                                            <p v-if="outreachActivity.activityType == null || outreachActivity.activityType == '' " class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ outreachActivity.activityType }}</p>
                                         </td>
                                         <td>

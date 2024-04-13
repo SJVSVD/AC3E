@@ -60,7 +60,7 @@
                                             <p v-else class="text-sm mb-0">{{ publicPrivate.nameOfOrganization }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="publicPrivate.typeOfConnection == null" class="text-sm mb-0">---</p>
+                                            <p v-if="publicPrivate.typeOfConnection == null || publicPrivate.typeOfConnection == ''" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ publicPrivate.typeOfConnection }}</p>
                                         </td>
                                         <td>

@@ -30,6 +30,8 @@ return new class extends Migration
             $table->string('fundingSource')->nullable();
             $table->year('startYear')->nullable();
             $table->year('endingYear')->nullable();
+            $table->string('startMonth')->nullable();
+            $table->string('endMonth')->nullable();
             $table->string('institutionName')->nullable();
             $table->string('comments')->nullable();
             $table->string('progressReport')->nullable();

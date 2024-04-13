@@ -17,11 +17,9 @@ class scCollaborationsController extends Controller
     public function verifyCollaboration(Request $request)
     {
         $query = scCollaborations::where('moduleType', 0)
-            ->where('nameOfAC3EMember', $request['nameOfAC3EMember'])
             ->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])
             ->where('beginningDate', $request['beginningDate'])
             ->whereNotNull('beginningDate')
-            ->whereNotNull('nameOfAC3EMember')
             ->whereNotNull('nameOfExternalResearcher');
     
         if ($request->has('id')) {
@@ -55,11 +53,11 @@ class scCollaborationsController extends Controller
         if($administrador == false){
             $userName = User::findOrFail($userID)->name;
             $scCollaborations = scCollaborations::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                $query->where('moduleType',0)->where('researcherInvolved', 'LIKE', "%{$userName}.%")
                       ->orWhere('idUsuario', $userID);
             })->with('usuario')->get();
         }else{
-            $scCollaborations = scCollaborations::with('usuario')->get();
+            $scCollaborations = scCollaborations::where('moduleType',0)->with('usuario')->get();
         }
         return $scCollaborations;
     }
@@ -77,9 +75,9 @@ class scCollaborationsController extends Controller
                 "5" => "Participation in R&D Projects directed by an AC3E Researcher",
                 "6" => "Other",
             ];
-
-           $activityName = '';
-
+            
+            $activityName = '';
+            $moduleType = 0;
             // Verificar si el campo 'Type of Event' está presente
             if (isset($rowData['Activity Name'])) {
                 // Separar el campo 'Type of Event' por comas
@@ -97,6 +95,12 @@ class scCollaborationsController extends Controller
                     if (isset($activityNameMapping[$event])) {
                         // Si es un número válido, asignar el valor correspondiente del mapeo
                         $event = $activityNameMapping[$event];
+                        
+                        // Verificar si el evento corresponde a los números 4 o 5
+                        if ($event === $activityNameMapping["4"] || $event === $activityNameMapping["5"]) {
+                            // Actualizar el moduleType a 1
+                            $moduleType = 1;
+                        }
                     } elseif ($event === '6') {
                         // Si el evento es '6', asignar el valor 'Other'
                         $event = 'Other';
@@ -110,7 +114,7 @@ class scCollaborationsController extends Controller
                 if (!empty($activityName)) {
                     $activityName .= '.';
                 }
-            }            
+            }          
 
             $collaborationStayMapping = [
                 "1" => "Short Visit (up to two weeks)",
@@ -169,7 +173,7 @@ class scCollaborationsController extends Controller
             $scCollaborations = scCollaborations::create([
                 'idUsuario' => $rowData['idUsuario'],
                 'status' => $rowData['Status'],
-                'moduleType' => 0,
+                'moduleType' => $moduleType,
                 'institutionCollaborates' => $rowData['Institution with which the Center collaborates'],
                 'researcherInvolved' => $rowData['Name of AC3E member'],
                 'studentOrResearcher' => $studentOrResearcher,

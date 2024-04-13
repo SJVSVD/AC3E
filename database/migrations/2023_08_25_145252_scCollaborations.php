@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('institutionCollaborates')->nullable();
             $table->string('researcherInvolved')->nullable();
             $table->string('studentOrResearcher')->nullable();
-            $table->string('activityName')->nullable();
+            $table->string('activityName',600)->nullable();
             $table->boolean('otherActivity')->nullable();
             $table->string('countryOrigin')->nullable();
             $table->string('cityOrigin')->nullable();

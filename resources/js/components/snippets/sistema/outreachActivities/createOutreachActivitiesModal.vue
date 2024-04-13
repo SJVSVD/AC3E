@@ -23,28 +23,23 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
-                          <div class="col-md-3">
-                            <label for="">Activity Type:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="outreachActivity.activityType">
-                              <option disabled value="">Select a type</option>
-                              <option value="Conference">Conference</option>
-                              <option value="Seminar">Seminar</option>
-                              <option value="Forum">Forum</option>
-                              <option value="Exhibition">Exhibition</option>
-                              <option value="Workshop">Workshop</option>
-                              <option value="Competition">Competition</option>
-                              <option value="Course">Course</option>
-                              <option value="Outreach Material">Outreach Material</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="outreachActivity.activityType == 'Other'" class="col-3">
-                            <label for="">Other:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other">
-                          </div>
+                      <div class="col-md-6">
+                        <label for="">AC3E researcher involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the researchers"
+                          v-model="outreachActivity.researcherInvolved"
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+
                           <div class="col-md-3">
                             <label for="">Activity Name:</label>
                             <label for="" style="color: orange;">*</label>
@@ -60,22 +55,28 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-md-6">
-                        <label for="">Researcher Involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the researchers"
-                          v-model="outreachActivity.researcherInvolved"
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
-                      </div>
+                      <div class="col-md-3">
+                            <label for="">Activity Type:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <select class="form-select" v-model="outreachActivity.activityType">
+                              <option disabled value="">Select a type</option>
+                              <option value="Conference">Conference</option>
+                              <option value="Seminar">Seminar</option>
+                              <option value="Forum">Forum</option>
+                              <option value="Exhibition">Exhibition</option>
+                              <option value="Workshop">Workshop</option>
+                              <option value="Competition">Competition</option>
+                              <option value="Course">Course</option>
+                              <option value="Outreach Material">Outreach Material</option>
+                              <option value="Other">Other</option>
+                              </select>
+                          </div>
+                          <div v-if="outreachActivity.activityType == 'Other'" class="col-md-3">
+                            <label for="">Other:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="other">
+                          </div>
                       <div class="col-md-3">
                         <label for="">Duration (Days):</label>
                         <label for="" style="color: orange;">*</label>

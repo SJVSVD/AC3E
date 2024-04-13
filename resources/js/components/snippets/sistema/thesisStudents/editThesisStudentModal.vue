@@ -765,22 +765,24 @@ export default {
       },
       async crearTesis() {
         this.errors = [];
-        var noTutor = false;
-        for (const item in this.thesisStudent){
-          if(this.thesisStudent[item] === "" || this.thesisStudent[item] === 0 || this.thesisStudent[item] === null){
-              if(item == 'yearThesisEnd' || item == 'posteriorArea' || item == 'institutionPosteriorArea' || item == 'comments' || item == 'monthEnd'){
-              }else if(this.thesisStudent.identification == '' && item == 'run' || this.thesisStudent.identification == '' && item == 'passport'){
-              }else if(this.thesisStudent.identification == 'Run' && item == 'passport'){
-              }else if(this.thesisStudent.identification == 'passport' && item == 'run'){
-              }else if(item == 'tutorName'||item == 'tutorInstitution'||item == 'cotutorName'||item == 'cotutorInstitution'||item == 'otherName'||item == 'otherInstitution'){
-                if((this.tutors.length == 0 && this.cotutors.length == 0 && this.others.length == 0) && noTutor == false){
-                  this.errors.push('noTutors');
-                  noTutor = true
-                }
-              }else{
-                this.errors.push(item);
-              }
-            }
+        const fieldsToExclude = ['yearThesisEnd', 'posteriorArea','institutionPosteriorArea','comments', 'monthEnd','run','passport','tutorName', 'tutorInstitution','cotutorName','cotutorInstitution','otherName','otherInstitution']; // Arreglo de campos a excluir
+
+        for (const item in this.thesisStudent) {
+          if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir
+            if (this.thesisStudent[item] === "" || this.thesisStudent[item] === 0 ||this.thesisStudent[item] == null || this.thesisStudent[item] == []){
+              this.errors.push(item);
+            } 
+          }
+        }
+
+        if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run == ""){
+          this.errors.push('run');
+        }else if(this.thesisStudent.identification == 'Passport' && this.thesisStudent.passport == ""){
+          this.errors.push('passport');
+        }
+
+        if(this.tutors.length == 0 && this.cotutors.length == 0 && this.others.length == 0){
+          this.errors.push('noTutors');
         }
 
         if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run != ""){
@@ -790,21 +792,22 @@ export default {
             }
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == null){
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
             this.errors.push('yearThesisEnd');
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == null){
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.monthEnd == ""){
+            this.errors.push('monthEnd');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
             this.errors.push('posteriorArea');
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == null){
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
             this.errors.push('institutionPosteriorArea');
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.file == null){
-          this.errors.push('file');
-        }
 
         var runOrPassport1 = '';
           if(this.thesisStudent.identification == 'Run'){
@@ -991,7 +994,7 @@ export default {
               comments: this.thesisStudent.comments,
               progressReport: this.thesisStudent.progressReport,
             };
-            axios.put(`api/thesisStudents/${this.id}`, thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
+            axios.put(`api/thesisStudents/${this.id}`, thesisStudent).then((result) => {
               this.buttonDisable = true;
               this.buttonText = 'Sending...';
               this.toast.success("Thesis send successfully!", {
@@ -1008,29 +1011,33 @@ export default {
                 icon: true,
                 rtl: false
               });
-              const formData = new FormData();
-              formData.append('id', this.id);
-              formData.append('file', this.file);
-              axios.post('api/thesisStudents/addFile', formData, {
-                  headers: { 'Content-Type' : 'multipart/form-data' }
-                }).then( response => {
-                  console.log(response.data);
-                this.toast.success("File added successfully!", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-                setTimeout(() => {this.cerrarModal();}, 1500);
-              })
+                if(this.file != null){
+                  const formData = new FormData();
+                  formData.append('id', this.id);
+                  formData.append('file', this.file);
+                  axios.post('api/thesisStudents/addFile', formData, {
+                      headers: { 'Content-Type' : 'multipart/form-data' }
+                    }).then( response => {
+                      console.log(response.data);
+                    this.toast.success("File added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  })
+                }else{
+                  setTimeout(() => {this.cerrarModal();}, 1500);
+                }
             })
             .catch((error) => {
               if (error.response) {

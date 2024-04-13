@@ -17,11 +17,9 @@ class conjointProjectController extends Controller
     public function verifyConjoint(Request $request)
     {
         $query = scCollaborations::where('moduleType', 1)
-            ->where('nameOfAC3EMember', $request['nameOfAC3EMember'])
             ->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])
             ->where('beginningDate', $request['beginningDate'])
             ->whereNotNull('beginningDate')
-            ->whereNotNull('nameOfAC3EMember')
             ->whereNotNull('nameOfExternalResearcher');
     
         // Si el request trae el campo 'id', agregamos una condición para excluir ese ID de la búsqueda
@@ -56,11 +54,11 @@ class conjointProjectController extends Controller
         if($administrador == false){
             $userName = User::findOrFail($userID)->name;
             $scCollaborations = scCollaborations::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+                $query->where('moduleType',1)->where('researcherInvolved', 'LIKE', "%{$userName}.%")
                       ->orWhere('idUsuario', $userID);
             })->with('usuario')->get();
         }else{
-            $scCollaborations = scCollaborations::with('usuario')->get();
+            $scCollaborations = scCollaborations::where('moduleType',1)->with('usuario')->get();
         }
         return $scCollaborations;
     }

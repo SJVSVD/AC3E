@@ -23,7 +23,40 @@
               <div class="modal-body">
                 <slot name="body">
                     <div class="row">
+                      <div class="col-md-6">
+                        <label for="">Researcher Involved:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <Multiselect
+                          placeholder="Select the researchers"
+                          v-model="outreachActivity.researcherInvolved"
+                          limit=4
+                          :searchable="true"
+                          :close-on-select="false"
+                          :createTag="true"
+                          :options="researchers"
+                          mode="tags"
+                          label="name"
+                          trackBy="id"
+                          :object="true"
+                        />
+                      </div>
+
                           <div class="col-md-3">
+                            <label for="">Activity Name:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="outreachActivity.activityName">
+                          </div>
+                          <div class="col-md-3">
+                            <label for="">Activity Description:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="outreachActivity.activityDescription">
+                          </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-3">
                             <label for="">Activity Type:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="outreachActivity.activityType">
@@ -45,38 +78,6 @@
                             <br>
                             <input type="text" class= "form-control" v-model="other">
                           </div>
-                          <div class="col-md-3">
-                            <label for="">Activity Name:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="outreachActivity.activityName">
-                          </div>
-                          <div class="col-md-3">
-                            <label for="">Activity Description:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="outreachActivity.activityDescription">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <label for="">Researcher Involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the researchers"
-                          v-model="outreachActivity.researcherInvolved"
-                          limit=4
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
-                      </div>
                       <div class="col-md-3">
                         <label for="">Duration (Days):</label>
                         <label for="" style="color: orange;">*</label>

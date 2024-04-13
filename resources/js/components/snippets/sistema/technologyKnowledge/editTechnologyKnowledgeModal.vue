@@ -43,13 +43,9 @@
                               <option disabled :value="null">Select a type</option>
                               <option value="Spin-off">Spin-off</option>
                               <option value="Licenses">Licenses</option>
-                              <option value="Technology transfer agreement">Technology transfer agreement</option>
-                              <option value="Services(mandatory for regional centers)">Services(mandatory for regional centers)</option>
+                              <option value="Technology Transfer Agreement">Technology transfer agreement</option>
+                              <option value="Services(Mandatory for Regional Centers)">Services(mandatory for regional centers)</option>
                               <option value="Sale of technology transfer product">Sale of technology transfer product</option>
-                              <option value="Public sector">Public sector</option>
-                              <option value="Small scale producers">Small scale producers</option>
-                              <option value="Community,Social-ONG">Community,Social-ONG</option>
-                              <option value="Technical professional sector">Technical professional sector</option>
                               <option value="Other">Other</option>
                               </select>
                       </div>
@@ -119,7 +115,7 @@
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectYear" v-model="technologyKnowledge.year">
-                          <option disabled value="">Select a year</option>
+                          <option disabled :value="null">Select a year</option>
                           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                           </select>
                       </div>
@@ -128,7 +124,7 @@
                           <label  for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="technologyKnowledge.month">
-                              <option disabled value="">Select a month</option>
+                              <option disabled :value="null">Select a month</option>
                               <option value="January">January</option>
                               <option value="February">February</option>
                               <option value="March">March</option>
@@ -496,6 +492,10 @@ export default {
               mensaje =   mensaje + "The field Name of beneficiary institution is required" + "\n";
             }else if(item == 'placeRegion'){
               mensaje =   mensaje + "The field Place/Region is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researchers involved is required" + "\n";
+            }else if(item == 'nameOfInstitutionInvolved'){
+              mensaje =   mensaje + "The field Name of institution involved is required" + "\n";
             }else if(item == 'nameOfResearch'){
               mensaje =   mensaje + "The field Name of research is required" + "\n";
             }else if(item == 'duplicated'){
@@ -563,6 +563,7 @@ export default {
               city: this.technologyKnowledge.city,
               placeRegion: this.technologyKnowledge.placeRegion,
               year: this.technologyKnowledge.year,
+              month: this.technologyKnowledge.month,
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };

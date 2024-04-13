@@ -30,7 +30,7 @@
                 <div class="modal-footer">
                     <slot name="footer">
                         <button class="btn btn-continue float-end" @click="newAutor()" :disabled="buttonDisable">
-                            {{ buttonText }}
+                            {{ buttonText1 }}
                         </button>
                     </slot>
                 </div>
@@ -53,7 +53,7 @@
       components: { modalconfirmacion, modalalerta },
       mixins: [mixin],
       data: () => ({
-          buttonText:'New',
+          buttonText1:'New',
           buttonDisable: false,
           autor:{
             name: '',

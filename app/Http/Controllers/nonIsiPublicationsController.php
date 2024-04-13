@@ -103,6 +103,23 @@ class nonIsiPublicationsController extends Controller
                     $funding .= ', ';
                 }
             }
+
+            $researchers = explode(';', $rowData['Researcher Involved']);
+            $formattedResearchers = array_map(function($name) {
+                // Eliminar espacios en blanco al principio y al final
+                $name = trim($name);
+                // Dividir el nombre en nombre(s) y apellido
+                $parts = explode(' ', $name);
+                // Obtener el apellido (última parte del nombre)
+                $apellido = array_pop($parts);
+                // Unir el/los nombre(s)
+                $nombres = implode(' ', $parts);
+                // Concatenar apellido y nombre(s) con coma y espacio
+                return "$nombres $apellido";
+            }, $researchers);
+            // Unir los nombres formateados en un solo string separado por coma y espacio
+            $formattedResearcherInvolved = implode(', ', $formattedResearchers);
+
             $nonIsiPublicacion = nonIsiPublication::create([
                 'status' => $rowData['Status'],
                 'idUsuario' => $rowData['idUsuario'],
@@ -121,7 +138,7 @@ class nonIsiPublicationsController extends Controller
                 'thesisStudents' => $rowData['Thesis Students'],
                 'nationalExternalResearchers' => $rowData['National External Researchers'],
                 'internationalExternalResearchers' => $rowData['International External Researchers'],
-                'researcherInvolved' => $rowData['Researcher Involved'],
+                'researcherInvolved' => $formattedResearcherInvolved,
                 'comments' => $rowData['Comentarios'],
                 'progressReport' => $rowData['Progress Report']
             ]);

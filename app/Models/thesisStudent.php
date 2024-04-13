@@ -34,6 +34,8 @@ class thesisStudent extends Model
         'university',
         'yearStart',
         'yearThesisEnd',
+        'monthEnd',
+        'monthStart',
         'resourcesCenter',
         'posteriorArea',
         'institutionPosteriorArea',

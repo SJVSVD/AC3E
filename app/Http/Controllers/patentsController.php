@@ -70,37 +70,89 @@ class patentsController extends Controller
 
     public function importPatent(Request $request)
     {
+        // Arreglo de mapeo para el estado de solicitud de aplicación
+        $applicationStatusMapping = [
+            '1' => 'Approved',
+            '2' => 'In progress',
+        ];
+    
+        // Arreglo de mapeo para el tipo de IP
+        $ipTypeMapping = [
+            '1' => 'Goods',
+            '2' => 'Services',
+            '3' => 'Commercial establishments',
+            '4' => 'Industrial establishments',
+            '5' => 'Slogans',
+            '6' => 'Collective trademarks',
+            '7' => 'Certification trademarks',
+            '8' => 'Invention patent',
+            '9' => 'Utility model',
+            '10' => 'Design (Industrial design and industrial drawing)',
+            '11' => 'Layout designs (Topographies) of integrated circuits',
+            '12' => 'Geographical indication (GI)',
+            '13' => 'Appelation of origin',
+            '14' => 'Collective Trademarks',
+            '15' => 'Certification Trademarks',
+            '16' => 'Copyright',
+            '17' => 'Plant varities',
+            '18' => 'Traditional knowledge and genetic resources',
+            '19' => 'Others',
+        ];
+    
+
         $data = $request->input('data');
         foreach ($data as $rowData) {
-            // Obtén el valor de 'attendantsAmount' del $rowData
+            // Obtén el valor de 'grantDate' del $rowData
             $grantDate = $rowData['Grant Date'];
-
+    
             // Verifica si el valor es un entero
             if (!is_numeric($grantDate)) {
-                // Si no es un número, establece 'grantDate' en 0
+                // Si no es un número, establece 'grantDate' en null
                 $grantDate = null;
             }
+    
+            // Mapear el estado de solicitud de aplicación
+            $applicationStatus = isset($applicationStatusMapping[$rowData['Application Status']]) ? $applicationStatusMapping[$rowData['Application Status']] : '';
+    
+            // Mapear el tipo de IP
+            $ipType = isset($ipTypeMapping[$rowData['IP Type']]) ? $ipTypeMapping[$rowData['IP Type']] : '';
 
+            $researchers = explode(';', $rowData['Researcher Involved']);
+            $formattedResearchers = array_map(function($name) {
+                // Eliminar espacios en blanco al principio y al final
+                $name = trim($name);
+                // Dividir el nombre en nombre(s) y apellido
+                $parts = explode(' ', $name);
+                // Obtener el apellido (última parte del nombre)
+                $apellido = array_pop($parts);
+                // Unir el/los nombre(s)
+                $nombres = implode(' ', $parts);
+                // Concatenar apellido y nombre(s) con coma y espacio
+                return "$nombres $apellido";
+            }, $researchers);
+            // Unir los nombres formateados en un solo string separado por coma y espacio
+            $formattedResearcherInvolved = implode(', ', $formattedResearchers);
             $patents = patents::create([
                 'idUsuario' => $rowData['idUsuario'],
                 'status' => $rowData['Status'],
-                'ipType' => $rowData['IP Type'],
+                'ipType' => $ipType, // Asignar el tipo de IP mapeado
                 'authors' => $rowData['Authors'],
                 'institutionOwner' => $rowData['Institution Owner(s)'],
                 'countryOfRegistration' => $rowData['Country of Registration'],
                 'applicationDate' => $rowData['Application Date'],
                 'grantDate' => $grantDate,
-                'applicationStatus' => $rowData['Application Status'],
+                'applicationStatus' => $applicationStatus, // Asignar el estado de solicitud de aplicación mapeado
                 'registrationNumber' => $rowData['Registration Number'],
                 'nameOfPatent' => $rowData['Name of Patent Applications'],
-                'researcherInvolved' => $rowData['Researcher Involved'],
+                'researcherInvolved' => $formattedResearcherInvolved,
                 'comments' => $rowData['Comentarios'],
                 'progressReport' => $rowData['Progress Report'],
             ]);
         }
         
-        return response()->json("Publicaciónes importadas");
+        return response()->json("Publicaciones importadas");
     }
+    
 
 
     public function destroy($id)

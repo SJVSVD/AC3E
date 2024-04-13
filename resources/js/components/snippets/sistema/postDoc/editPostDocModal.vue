@@ -96,7 +96,7 @@
                           <label  for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="postDoc.startMonth">
-                              <option disabled value="">Select a month</option>
+                              <option disabled :value="null">Select a month</option>
                               <option value="January">January</option>
                               <option value="February">February</option>
                               <option value="March">March</option>
@@ -124,8 +124,8 @@
                           <label for="selectMonth">End month:</label>
                           <label  for="selectMonth" style="color: orange;">*</label>
                           <br>
-                          <select class="form-select" id="selectMonth" v-model="postDoc.endingMonth">
-                              <option disabled value="">Select a month</option>
+                          <select class="form-select" id="selectMonth" v-model="postDoc.endMonth">
+                              <option disabled :value="null">Select a month</option>
                               <option value="January">January</option>
                               <option value="February">February</option>
                               <option value="March">March</option>
@@ -260,6 +260,8 @@ export default {
         resourcesProvided: null,
         fundingSource: null,
         startYear: '',
+        startMonth: '',
+        endMonth: '',
         endingYear: '',
         institutionName: '',
         comments: '',
@@ -308,7 +310,7 @@ export default {
       this.postDoc.startYear = this.postDoc1.startYear;
       this.postDoc.endingYear = this.postDoc1.endingYear;
       this.postDoc.startMonth = this.postDoc1.startMonth;
-      this.postDoc.endingMonth = this.postDoc1.endingMonth;
+      this.postDoc.endMonth = this.postDoc1.endMonth;
       this.postDoc.institutionName = this.postDoc1.institutionName;
       this.postDoc.comments = this.postDoc1.comments;
       this.postDoc.progressReport = this.postDoc1.progressReport;
@@ -495,7 +497,7 @@ export default {
               startYear: this.postDoc.startYear,
               endingYear: this.postDoc.endingYear,
               startMonth: this.postDoc.startMonth,
-              endingMonth: this.postDoc.endingMonth,
+              endMonth: this.postDoc.endMonth,
               institutionName: this.postDoc.institutionName,
               comments: this.postDoc.comments,
               progressReport: this.postDoc.progressReport,
@@ -655,7 +657,7 @@ export default {
           startYear: this.postDoc.startYear,
           endingYear: this.postDoc.endingYear,
           startMonth: this.postDoc.startMonth,
-          endingMonth: this.postDoc.endingMonth,
+          endMonth: this.postDoc.endMonth,
           institutionName: this.postDoc.institutionName,
           comments: this.postDoc.comments,
           progressReport: this.postDoc.progressReport,
@@ -673,20 +675,28 @@ export default {
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
-            if(item == 'nameOfPostDoc'){
-              mensaje =   mensaje + "The field Name of postdoc fellow is required" + "\n";
+            if(item == 'nameOfPostdoc'){
+              mensaje =   mensaje + "The field Name of postdoc is required" + "\n";
             }else if(item == 'researchTopic'){
               mensaje =   mensaje + "The field Research topic is required" + "\n";
             }else if(item == 'supervisorName'){
               mensaje =   mensaje + "The field Supervisor name is required" + "\n";
+            }else if(item == 'personalEmail'){
+              mensaje =   mensaje + "The field Personal email is required" + "\n";
             }else if(item == 'resourcesProvided'){
               mensaje =   mensaje + "The field Resources provided is required" + "\n";
+            }else if(item == 'invalidRut'){
+              mensaje =   mensaje + "The entered Run is invalid" + "\n";
             }else if(item == 'fundingSource'){
               mensaje =   mensaje + "The field Funding source is required" + "\n";
             }else if(item == 'startYear'){
               mensaje =   mensaje + "The field Start year is required" + "\n";
+            }else if(item == 'startMonth'){
+              mensaje =   mensaje + "The field Start month is required" + "\n";
             }else if(item == 'endingYear'){
               mensaje =   mensaje + "The field Ending year is required" + "\n";
+            }else if(item == 'endMonth'){
+              mensaje =   mensaje + "The field Ending month is required" + "\n";
             }else if(item == 'institutionName'){
               mensaje =   mensaje + "The field Institution where it was inserted is required" + "\n";
             }else if(item == 'duplicated'){
@@ -790,7 +800,7 @@ export default {
               startYear: this.postDoc.startYear,
               endingYear: this.postDoc.endingYear,
               startMonth: this.postDoc.startMonth,
-              endingMonth: this.postDoc.endingMonth,
+              endMonth: this.postDoc.endMonth,
               institutionName: this.postDoc.institutionName,
               comments: this.postDoc.comments,
               progressReport: this.postDoc.progressReport,

@@ -74,7 +74,7 @@ class isiPublicationsController extends Controller
     {
         $data = $request->input('data');
         foreach ($data as $rowData) {
-            // Dividir el valor de funding si contiene comas y convertir cada valor según corresponda
+            // Dividir el valor del campo researcherInvolved si contiene punto y coma y convertir cada valor según corresponda
             $fundingValues = explode('.', $rowData['Funding']);
             $funding = '';
             foreach ($fundingValues as $value) {
@@ -88,6 +88,23 @@ class isiPublicationsController extends Controller
                     $funding .= ', ';
                 }
             }
+            $researchers = explode(';', $rowData['Researcher Involved']);
+            $formattedResearchers = array_map(function($name) {
+                // Eliminar espacios en blanco al principio y al final
+                $name = trim($name);
+                // Dividir el nombre en nombre(s) y apellido
+                $parts = explode(' ', $name);
+                // Obtener el apellido (última parte del nombre)
+                $apellido = array_pop($parts);
+                // Unir el/los nombre(s)
+                $nombres = implode(' ', $parts);
+                // Concatenar apellido y nombre(s) con coma y espacio
+                return "$nombres $apellido";
+            }, $researchers);
+            // Unir los nombres formateados en un solo string separado por coma y espacio
+            $formattedResearcherInvolved = implode(', ', $formattedResearchers);
+        
+            // Aquí continúa tu lógica para crear o actualizar el modelo con el campo researcherInvolved formateado
             $isiPublicacion = isiPublication::create([
                 'status' => $rowData['Status'],
                 'idUsuario' => $rowData['idUsuario'],
@@ -104,6 +121,7 @@ class isiPublicationsController extends Controller
                 'mainResearchers' => $rowData['Main Researchers'],
                 'associativeResearchers' => $rowData['Associative Researcher'],
                 'postDoc' => $rowData['Postdoc.'],
+                'researcherInvolved' => $formattedResearcherInvolved,
                 'thesisStudents' => $rowData['Thesis Students'],
                 'nationalExternalResearchers' => $rowData['National External Researchers'],
                 'internationalExternalResearchers' => $rowData['International External Researchers'],

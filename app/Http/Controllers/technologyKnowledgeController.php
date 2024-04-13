@@ -75,13 +75,40 @@ class technologyKnowledgeController extends Controller
     public function importTecAndKnow(Request $request)
     {
         $data = $request->input('data');
+
+        
         foreach ($data as $rowData) {
+            $categoryOfTransfer = $rowData['Category of Transfer'];
+
+            $technologyTransfer = strpos($categoryOfTransfer, '1') !== 0;
+            $knowledgeTransfer = strpos($categoryOfTransfer, '2') !== 0;
+            $typeOfTransferMapping = [
+                "1" => "Spin-off",
+                "2" => "Licenses",
+                "3" => "Technology Transfer Agreement",
+                "4" => "Services",
+                "5" => "Sale of technology transfer product",
+                "6" => "Other",
+            ];
+            
+            $typeOfTransferMapping = [
+                "1" => "Spin-off",
+                "2" => "Licenses",
+                "3" => "Technology Transfer Agreement",
+                "4" => "Services",
+                "5" => "Sale of technology transfer product",
+                "6" => "Other",
+            ];
+            
+            // Verifica si el valor está presente en el mapeado
+            $typeOfTransfer = isset($typeOfTransferMapping[$rowData['Type of Transfer']]) ? $typeOfTransferMapping[$rowData['Type of Transfer']] : "";
+            
             $technologyKnowledge = technologyKnowledge::create([
                 'idUsuario' => $rowData['idUsuario'],
                 'status' => $rowData['Status'],
-                // 'technologyTransfer' => $rowData[''],
-                // 'knowledgeTransfer' => $rowData[''],
-                'typeOfTransfer' => $rowData['Type of Transfer'],
+                'technologyTransfer' => $technologyTransfer,
+                'knowledgeTransfer' => $knowledgeTransfer,
+                'typeOfTransfer' => $typeOfTransfer,
                 'nameOfBeneficiary' => $rowData['Name of Beneficiary'],
                 'country' => $rowData['Country'],
                 'city' => $rowData['City'],

@@ -190,7 +190,7 @@ class thesisStudentController extends Controller
                 'otherInstitution' => $rowData['Institution3'],
                 'university' => $rowData['University that gives the degree'],
                 'yearStart' => $rowData['Year in which thesis starts'],
-                // 'yearThesisEnd' => $rowData['Year in which thesis ends'],
+                'yearThesisEnd' => $rowData['Year in which thesis ends'],
                 'resourcesCenter' => $activityName,
                 'posteriorArea' => $posteriorArea,
                 'institutionPosteriorArea' => $rowData['Institution of Posterior working area'],

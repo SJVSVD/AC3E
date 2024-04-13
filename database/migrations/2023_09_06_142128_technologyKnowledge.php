@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('placeRegion')->nullable();
             $table->year('year')->nullable();
+            $table->string('month')->nullable();
             $table->string('nameOfResearch')->nullable();
             $table->string('comments')->nullable();
             $table->string('description',500)->nullable();

@@ -89,24 +89,17 @@ export default {
   },
   methods: {
     searchByProgressReport(){
-        if(this.selectedProgress == ''){
-            this.selectedProgress = this.actualProgressReport;
-        }
 
         axios.get(`api/getIndicators/${this.selectedProgress}`).then( response =>{
             console.log(response.data);
-            this.indicators = null;
-            if (this.table != null){
-                this.table.clear();
-                this.table.destroy();
-            }
             this.indicators = response.data;
-              this.crearTabla("#myTableIndicators");
+            this.recargarTabla('Search');
           }).catch(e=> console.log(e))
     },
     getProgressReport(){
         axios.get('api/showProgressReport').then(response => {
             this.actualProgressReport = response.data;
+            this.selectedProgress = this.actualProgressReport;
             this.progressNumbers = this.createNumberArray(response.data);
         }).catch(e => console.log(e))
     },
@@ -132,16 +125,6 @@ export default {
               }
               this.crearTabla("#myTableIndicators");
           }).catch(e=> console.log(e))
-      },
-      recargarTabla($tipoRecarga){
-          this.mostrarCarga = true;
-          if($tipoRecarga == 'General'){
-              this.indicators = null;
-              this.getIndicators();
-          }
-          else{
-              this.crearTabla("#myTableIndicators");
-          }
       },
   }
 }
