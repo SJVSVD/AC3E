@@ -42,7 +42,8 @@
 
         <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
         <!-- Js Files -->
-        @vite('resources/js/app.js')
+        <link rel="stylesheet" href="{{ asset('assets/js/app.js') }}">
+        <!-- @vite('resources/js/app.js') -->
 </head>
 
 <body style="zoom: 0.9; background-color:#d3d3d3;">
