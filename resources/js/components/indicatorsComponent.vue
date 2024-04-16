@@ -89,7 +89,6 @@ export default {
   },
   methods: {
     searchByProgressReport(){
-
         axios.get(`api/getIndicators/${this.selectedProgress}`).then( response =>{
             console.log(response.data);
             this.indicators = response.data;

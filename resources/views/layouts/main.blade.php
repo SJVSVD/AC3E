@@ -15,8 +15,8 @@
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/1bd7af15cd.js" crossorigin="anonymous"></script>
         <!-- CSS Files -->
-        @vite('resources/css/app.css')
-        @vite('resources/css/datatables.css')
+        <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
         <link id="pagestyle" href="{{asset('assets/css/argon-dashboard.css')}}" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
