@@ -23,7 +23,7 @@ La plataforma web para investigadores de AC3E es una aplicación diseñada para 
 - **Inicio de Sesión**: Los usuarios pueden iniciar sesión en la plataforma para acceder a sus datos y funcionalidades personalizadas.
 - **Paneles de Administración**: Los administradores tienen acceso a paneles de administración para gestionar usuarios, datos y configuraciones de la plataforma.
 - **Integración con Power BI**: La plataforma está integrada con Power BI para generar informes y visualizaciones de datos avanzados.
-- **Indicadores**: Proporciona indicadores clave de rendimiento (KPIs) para evaluar el desempeño y la productividad de los investigadores.
+- **Indicadores**: Proporciona indicadores para evaluar el desempeño y la productividad de los investigadores.
 - **Exportación a Excel**: Los usuarios pueden exportar datos consolidados y planillas individuales a archivos Excel para su análisis y referencia.
 
 ## Requisitos del Sistema
