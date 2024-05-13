@@ -85,7 +85,6 @@
                     </div>
                 </div>
             </div>
-            <modalfotoperfil v-if="showFotoPerfil" @close="showFotoPerfil = false"></modalfotoperfil>
             <modalconfirmacion ref="confirmation"></modalconfirmacion>
             <modalEditPassword v-bind:password1="passwordEdit" v-if="showEditPassword" @close="showEditPassword = false"></modalEditPassword>
             <modalalerta ref="alert"></modalalerta>
@@ -96,12 +95,11 @@
 import axios from 'axios'
 import modalconfirmacion from './snippets/sistema/alerts/confirmationModal.vue'
 import modalalerta from './snippets/sistema/alerts/alertModal.vue'
-import modalfotoperfil from './snippets/sistema/usuarios/profilePic.vue'
 import modalEditPassword from './snippets/sistema/usuarios/editPasswordModal.vue'
 import {mixin} from '../mixins.js'
 
 export default {
-    components: { modalconfirmacion, modalalerta, modalfotoperfil , modalEditPassword },
+    components: { modalconfirmacion, modalalerta , modalEditPassword },
     mixins: [mixin],
     data(){
         return{
