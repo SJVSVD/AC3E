@@ -1,1 +1,0 @@
-import{m as a,u as l,f as r}from"./main-1bb47543.js";a.locale("es");let s=document.head.querySelector('meta[name="user"]'),c=document.head.querySelector('meta[name="roles"]');l(),JSON.parse(s.content).name,JSON.parse(s.content).id,JSON.parse(s.content).email,JSON.parse(c.content);

@@ -109,19 +109,14 @@
         <div class="col-lg-4">
             <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="row p-3">
-                    <div class="col-4">
+                    <div class="col-6">
                         <a class="btn btn-primary" v-if="is('Administrator')" @click="exportConsolidado">
                             <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Consolidated
                         </a>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <a class="btn btn-primary" @click="exportIndividual">
                             <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Individual Return
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a class="btn btn-primary" @click="exportStatistics">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Indicators
                         </a>
                     </div>
                 </div>
@@ -240,7 +235,6 @@ export default {
         clearInterval(this.interval);
     },
     created() {
-        this.getUsuariosActivos();
         this.interval = setInterval(() => {
             options = {
                 year: 'numeric', month: 'numeric', day: 'numeric',
@@ -254,112 +248,143 @@ export default {
         this.getRegistros(this.cantidadRegistros);
     },
     methods: {
-        async processExcelFile(event) {
-        try {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-            const data = new Uint8Array(event.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        // Procesa un archivo Excel que se carga y realiza operaciones en sus datos.
+        // async processExcelFile(event) {
+        //     try {
+        //         const file = event.target.files[0];
+        //         const reader = new FileReader();
+        //         reader.onload = async (event) => {
+        //             const data = new Uint8Array(event.target.result);
+        //             const workbook = XLSX.read(data, { type: 'array' });
+        //             const sheetName = workbook.SheetNames[0];
+        //             const worksheet = workbook.Sheets[sheetName];
+        //             const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            // Procesar los datos
-            const totalRows = jsonData.length;
-            let processedCount = 0;
-            const processedData = await Promise.all(jsonData.map(async (row, index) => {
-                const doi = row[0]; // La primera columna es el DOI
-                const keyword = await this.getKeywordsFromDOI(doi);
-                processedCount++;
-                console.log(`Procesando fila ${index + 1}/${totalRows}. Faltan ${totalRows - processedCount} filas.`);
-                return {
-                doi: doi,
-                keyword: keyword
-                };
-            }));
+        //             const totalRows = jsonData.length;
+        //             let processedCount = 0;
+        //             const processedData = await Promise.all(jsonData.map(async (row, index) => {
+        //                 const doi = row[0]; // La primera columna es el DOI
+        //                 const keyword = await this.getKeywordsFromDOI(doi);
+        //                 processedCount++;
+        //                 console.log(`Procesando fila ${index + 1}/${totalRows}. Faltan ${totalRows - processedCount} filas.`);
+        //                 return {
+        //                     doi: doi,
+        //                     keyword: keyword
+        //                 };
+        //             }));
 
-            // Aquí puedes continuar con el procesamiento de los datos
-            console.log(processedData);
-            this.keywordObjects = processedData;
-            };
-            reader.readAsArrayBuffer(file);
-        } catch (error) {
-            console.error('Error al procesar el archivo xlsx:', error);
-        }
-        },
+        //             console.log(processedData);
+        //             this.keywordObjects = processedData;
+        //         };
+        //         reader.readAsArrayBuffer(file);
+        //     } catch (error) {
+        //         console.error('Error al procesar el archivo xlsx:', error);
+        //     }
+        // },
 
-        async getKeywordsFromDOI(doi) {
-            try {
-                const encodedDoi = encodeURIComponent(doi);
-                const response = await axios.post('api/useDoi', { doi: encodedDoi });
-                return response.data.Data[0].Keyword.Keywords;
-            } catch (error) {
-                console.error('Error al obtener las palabras clave:', error);
-                return ''; // Maneja el error como prefieras
-            }
-        },
+        // Obtiene palabras clave a partir de un DOI utilizando una solicitud a un servicio web.
+        // async getKeywordsFromDOI(doi) {
+        //     try {
+        //         const encodedDoi = encodeURIComponent(doi);
+        //         const response = await axios.post('api/useDoi', { doi: encodedDoi });
+        //         return response.data.Data[0].Keyword.Keywords;
+        //     } catch (error) {
+        //         console.error('Error al obtener las palabras clave:', error);
+        //         return ''; // Maneja el error como prefieras
+        //     }
+        // },
 
+        // Muestra los detalles de un proyecto conjunto.
         verConjointProjects(conjointProject) {
             this.conjointProjects = conjointProject;
             this.showDetailsConjointProjects = true;
         },
+
+        // Muestra los detalles de una fuente de financiamiento.
         verFundingSources(fundingSource) {
             this.fundingSources = fundingSource;
             this.showDetailsFundingSources = true;
         },
+
+        // Muestra los detalles de eventos científicos de una organización.
         verOrganizationScEvents(organizationScEvent) {
             this.organizationScEvents = organizationScEvent;
             this.showDetailsOrganizationScEvents = true;
         },
+
+        // Muestra los detalles de actividades de divulgación.
         verOutreachActivities(outreachActivity) {
             this.outreachActivities = outreachActivity;
             this.showDetailsOutreachActivities = true;
         },
+
+        // Muestra los detalles de la participación en eventos científicos.
         verParticipationScEvents(participationScEvent) {
             this.participationScEvents = participationScEvent;
             this.showDetailsParticipationScEvents = true;
         },
+
+        // Muestra los detalles de patentes.
         verPatents(patent) {
             this.patents = patent;
             this.showDetailsPatents = true;
         },
+
+        // Muestra los detalles de un postdoc.
         verPostDoc(postDoc) {
             this.postDoc = postDoc;
             this.showDetailsPostDoc = true;
         },
+
+        // Muestra los detalles de colaboraciones público-privadas.
         verPublicPrivate(publicPrivate) {
             this.publicPrivate = publicPrivate;
             this.showDetailsPublicPrivate = true;
         },
+
+        // Muestra los detalles de colaboraciones científicas.
         verScCollaborations(scCollaboration) {
             this.scCollaborations = scCollaboration;
             this.showDetailsScCollaborations = true;
         },
+
+        // Muestra los detalles de publicaciones no ISI.
         verNonIsiPublications(nonIsiPublication) {
             this.nonIsiPublications = nonIsiPublication;
             this.showDetailsNonIsiPublications = true;
         },
+
+        // Muestra los detalles de estudiantes de tesis.
         verThesisStudents(thesisStudent) {
             this.thesisStudents = thesisStudent;
             this.showDetailsThesisStudents = true;
         },
+
+        // Muestra los detalles de premios.
         verAwards(award) {
             this.awards = award;
             this.showDetailsAwards = true;
         },
+
+        // Muestra los detalles de libros.
         verBooks(book) {
             this.books = book;
             this.showDetailsBooks = true;
         },
+
+        // Muestra los detalles de conocimiento tecnológico.
         verTechnologyKnowledge(technologyKnowledge) {
             this.technologyKnowledge = technologyKnowledge;
             this.showDetailsTechnologyKnowledge = true;
         },
+
+        // Muestra los detalles de publicaciones ISI.
         verIsiPublication(isiPublication){
             this.isiPublication = isiPublication;
             this.showDetailsIsi = true;
         },
+
+        // Obtiene registros de una cantidad especificada y actualiza la tabla.
         getRegistros(cantidad){
             axios.get(`api/getRegistros/${cantidad}`).then( response =>{
                 this.registros = response.data;
@@ -371,6 +396,8 @@ export default {
                 this.table.buttons().remove();
             }).catch(e=> console.log(e))
         },
+
+        // Exporta un archivo consolidado.
         exportConsolidado(){
             var data = {
                 userID: this.userID,
@@ -389,6 +416,8 @@ export default {
                 link.click()
             })
         },
+
+        // Exporta un archivo individual.
         exportIndividual(){
             var data = {
                 userID: this.userID,
@@ -407,35 +436,9 @@ export default {
                 link.click()
             })
         },
-        exportStatistics(){
-            var data = {
-                userID: this.userID,
-            };
-            axios({
-                url: `api/exportStatistics`, data,
-                method: 'POST',
-                responseType: 'arraybuffer',
-            }).then((response) => {
-                let blob = new Blob([response.data], {
-                    type: 'application/xlsx'
-                })
-                let link = document.createElement('a')
-                link.href = window.URL.createObjectURL(blob)
-                link.download = 'Indicators.xlsx'
-                link.click()
-            })
-        },
-        carouselInterval(){
-            $('.carousel').carousel({
-                interval: 3000
-            });
-        },
-        getUsuariosActivos(){
-            axios.get('api/usuarios').then( response =>{
-                this.usuariosActivos = response.data;
-            }).catch(e=> console.log(e))
-        },
+
     }
+
 }
 </script>
 

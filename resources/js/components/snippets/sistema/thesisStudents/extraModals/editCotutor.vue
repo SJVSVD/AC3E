@@ -94,6 +94,7 @@
         editarDetalle(id){
           this.cotutors1[id].editing = true;
         },
+          // Capitaliza la primera letra de una cadena.
         capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         },

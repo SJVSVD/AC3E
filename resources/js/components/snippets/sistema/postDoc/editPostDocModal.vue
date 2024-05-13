@@ -359,14 +359,17 @@ export default {
       this.years.sort((a, b) => b - a);
     },
     methods: {
+      // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.postDoc.progressReport = year;
       },
+      // Función para obtener usuarios (investigadores) desde la API
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
         }).catch(e=> console.log(e))
       },
+      // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
@@ -416,6 +419,7 @@ export default {
         const startYear = currentYear - 20;
         this.years = Array.from({ length: 21 }, (_, index) => startYear + index);
       },
+      // Función para guardar un borrador 
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Edit draft',
@@ -607,14 +611,17 @@ export default {
             });
           }
       },
-      cerrarModal(){
+        // Cierra el modal y emite un evento de recarga.
+        cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();
       },
-      capitalizeFirstLetter(string) {
+        // Capitaliza la primera letra de una cadena.
+        capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
+      // Método para crear un registro
       async createPostDoc() {
         this.errors = [];
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class booksController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,6 +15,7 @@ class booksController extends Controller
         return response()->json("Libro Creada!");
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -45,7 +47,8 @@ class booksController extends Controller
         return $books;
     }
 
-    public function verifyBook(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyBook(Request $request)
     {
         $query = books::where('bookTitle', $request['bookTitle'])
             ->where('chapterTitle', $request['chapterTitle'])
@@ -61,6 +64,7 @@ class booksController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importBook(Request $request)
     {
         $data = $request->input('data');
@@ -114,6 +118,7 @@ class booksController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $books = books::find($id);
@@ -123,6 +128,7 @@ class booksController extends Controller
         return response()->json("Libro Editada");
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         books::find($id)->delete();

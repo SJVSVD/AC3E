@@ -72,13 +72,18 @@ export default {
         this.id = this.password1.id;
     },
     methods: {
+        // Cierra el modal.
         cerrarModal(){
             const elem = this.$refs.closeBtn;
             elem.click();
         },
+
+        // Capitaliza la primera letra de una cadena.
         capitalizeFirstLetter(string) {
-          return string.charAt(0).toUpperCase() + string.slice(1);
+            return string.charAt(0).toUpperCase() + string.slice(1);
         },
+
+        // Cambia la contraseña del usuario después de validar los campos.
         async changePassword() {
             this.errors = [];
             for (const item in this.edits){
@@ -91,39 +96,43 @@ export default {
                 this.errors.push('diferents');
             }
 
-            var mensaje = ""
+            var mensaje = "";
             if (this.errors.length != 0){
+                // Construye el mensaje de error
                 this.errors.forEach(item => {
                     if(item == 'confirmPassword'){
-                        mensaje =   mensaje + "The field Confirm Password is required" + "\n" 
-                    }else if(item == 'diferents'){
-                        mensaje =   mensaje + "The passwords entered do not match" + "\n" 
-                    }else{
-                        mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
+                        mensaje += "The field Confirm Password is required" + "\n"; 
+                    } else if(item == 'diferents'){
+                        mensaje += "The passwords entered do not match" + "\n"; 
+                    } else {
+                        mensaje += "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n"; 
                     }
                 });
+                // Muestra el mensaje de error
                 this.toast.warning( mensaje, {
-                position: "top-right",
-                timeout: 5000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
+                    position: "top-right",
+                    timeout: 5000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
                 });
             }
+
             if(this.errors.length === 0){
+                // Realiza el cambio de contraseña si no hay errores
                 const ok = await this.$refs.confirmation.show({
                     title: 'Change Password',
                     message: `Are you sure you want to change your password?.`,
                     okButton: 'Save',
                     cancelButton: 'Return'
-                })
+                });
                 if (ok) {
                     let usuario = {
                         password: this.edits.password,
@@ -132,6 +141,7 @@ export default {
                     axios.put(`api/changePassword/${id}`, usuario).then((result) => {
                         this.buttonText = 'Editing...';
                         this.buttonDisable = true;
+                        // Muestra un mensaje de éxito
                         this.toast.success("Profile edited successfully!", {
                             position: "top-right",
                             timeout: 3000,
@@ -150,6 +160,7 @@ export default {
                     })
                     .catch((error)=> {
                         if (error.response.status == 422){
+                            // Maneja los errores de validación del servidor
                             this.errors = error.response.data.errors;
                             this.toast.warning('Existe un valor inválido.', {
                                 position: "top-right",
@@ -171,6 +182,7 @@ export default {
             }
         }
     }
+
 }
 </script>
 

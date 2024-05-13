@@ -58,13 +58,19 @@ export default {
         errors:[],
     }),
     methods: {
+        // Cierra el modal.
         cerrarModal(){
             const elem = this.$refs.closeBtn;
             elem.click();
         },
+
+        // Capitaliza la primera letra de una cadena.
         capitalizeFirstLetter(string) {
-          return string.charAt(0).toUpperCase() + string.slice(1);
+            return string.charAt(0).toUpperCase() + string.slice(1);
         },
+
+        // Edita el año de reporte actual después de validar los campos.
+          // Edita el registro despues de validar
         async editProgress() {
             this.errors = [];
             for (const item in this.edits){
@@ -73,37 +79,41 @@ export default {
                 }
             }
 
-            var mensaje = ""
+            var mensaje = "";
             if (this.errors.length != 0){
+                // Construye el mensaje de error
                 this.errors.forEach(item => {
                     if(item == 'progressReport'){
-                        mensaje =   mensaje + "The field Progress report is required" + "\n" 
-                    }else{
-                        mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
+                        mensaje += "The field Progress report is required" + "\n"; 
+                    } else {
+                        mensaje += "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n"; 
                     }
                 });
+                // Muestra el mensaje de error
                 this.toast.warning( mensaje, {
-                position: "top-right",
-                timeout: 5000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
+                    position: "top-right",
+                    timeout: 5000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
                 });
             }
+
             if(this.errors.length === 0){
+                // Realiza la edición del informe de progreso si no hay errores
                 const ok = await this.$refs.confirmation.show({
                     title: 'Edit progress report',
                     message: `Are you sure you want to edit progress report year?.`,
                     okButton: 'Save',
                     cancelButton: 'Return'
-                })
+                });
                 if (ok) {
                     let data = {
                         value: this.edits.progressReport,
@@ -112,6 +122,7 @@ export default {
                     axios.post(`api/editProgressReport`, data).then((result) => {
                         this.buttonText = 'Editing...';
                         this.buttonDisable = true;
+                        // Muestra un mensaje de éxito
                         this.toast.success("Progress report edited successfully!", {
                             position: "top-right",
                             timeout: 3000,
@@ -130,6 +141,7 @@ export default {
                     })
                     .catch((error)=> {
                         if (error.response.status == 422){
+                            // Maneja los errores de validación del servidor
                             this.errors = error.response.data.errors;
                             this.toast.warning('Existe un valor inválido.', {
                                 position: "top-right",
@@ -151,6 +163,7 @@ export default {
             }
         }
     }
+
 }
 </script>
 

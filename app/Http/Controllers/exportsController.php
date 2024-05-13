@@ -23,13 +23,14 @@ use App\Models\isiPublication;
 
 class exportsController extends Controller
 {
+    //Funcion para exportar el consolidado general por excel
     public function exportConsolidado(Request $request)
     {
         $data = $request->all();
         $idUsuarioDescarga = $data['userID'];
         return Excel::download(new exportConsolidado($idUsuarioDescarga),'Consolidado.xlsx');
     }
-
+    //Funcion para exportar la planilla individual por excel
     public function exportIndividual(Request $request)
     {
         $data = $request->all();

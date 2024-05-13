@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class fundingSourcesController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class fundingSourcesController extends Controller
         return response()->json("Registro Creado!");
     }
 
-    public function verifyFunding(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyFunding(Request $request)
     {
         $query = fundingSources::where('programContest', $request['programContest'])
             ->whereNotNull('programContest')
@@ -30,6 +32,7 @@ class fundingSourcesController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -62,6 +65,7 @@ class fundingSourcesController extends Controller
     }
 
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $fundingSources = fundingSources::find($id);
@@ -70,6 +74,7 @@ class fundingSourcesController extends Controller
         return response()->json($input);
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importFunding(Request $request)
     {
         $data = $request->input('data');
@@ -94,6 +99,7 @@ class fundingSourcesController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         fundingSources::find($id)->delete();

@@ -21,6 +21,7 @@ use Illuminate\Support\Collection;
 
 class dashboardController extends Controller
 {
+    // Se sacan de la base de datos los ultimos 10 registros que se hayan cargado en la pagina
     public function getRegistros()
     {
         $modelos = [

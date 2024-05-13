@@ -146,33 +146,44 @@ export default {
         this.getUserRoles();
     },
     methods: {
+        // Obtiene las líneas de investigación.
         getResearchLines(){
             axios.get('api/researchLines').then( response =>{
-            this.researchLines = response.data;
+                this.researchLines = response.data;
             }).catch(e=> console.log(e))
         },
+
+        // Obtiene los roles de usuario.
         getUserRoles(){
             axios.get('api/rolesUser').then( response =>{
-            this.rolesUser = response.data;
+                this.rolesUser = response.data;
             }).catch(e=> console.log(e))
         },
+
+        // Cierra el modal y emite un evento de recarga.
         cerrarModal(){
-          const elem = this.$refs.closeBtn;
-          this.$emit('recarga');
-          elem.click();
+            const elem = this.$refs.closeBtn;
+            this.$emit('recarga');
+            elem.click();
         },
+
+        // Obtiene todos los roles y luego los roles del usuario específico.
         async getRoles(){
             await axios.get('api/roles').then( response =>{
                 this.roles = response.data;
             }).catch(e=> console.log(e))
             this.getRolesUsuario(this.id);
         },
+
+        // Obtiene los roles específicos de un usuario.
         async getRolesUsuario($id){
             await axios.get(`api/roles/${$id}`).then( response =>{
                 this.rolesUsuario = response.data;
             }).catch(e=> console.log(e))
             this.compararRoles();
         },
+
+        // Compara los roles del usuario con los roles disponibles.
         compararRoles(){
             if(this.revision == false){
                 this.roles.forEach(element => {
@@ -185,6 +196,8 @@ export default {
             }
             this.revision = true;
         },
+
+        // Marca todos los roles.
         marcarTodos(){
             if (this.marcados == false){
                 this.roles.forEach(rol => {
@@ -196,6 +209,9 @@ export default {
                 this.marcados = false;
             }
         },
+
+        // Edita el registro despues de validar
+          // Edita el registro despues de validar
         async editarUsuario() {
             this.errors = [];
             for (const item in this.user){
@@ -323,6 +339,7 @@ export default {
                 }
             }
         },
-    },
+    }
+
 }
 </script>

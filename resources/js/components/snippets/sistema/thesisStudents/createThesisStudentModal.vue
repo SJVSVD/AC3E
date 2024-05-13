@@ -397,8 +397,9 @@ export default {
       this.fetchData();
     },
     methods: {
+      // Función para obtener datos de universidades desde la API
       fetchData() {
-        axios.get('/api/universities') // Suponiendo que tienes una ruta en tu API para obtener las universidades
+        axios.get('/api/universities')
           .then(response => {
             this.universities = response.data;
           })
@@ -406,55 +407,66 @@ export default {
             console.error('Error fetching universities:', error);
           });
       },
+      // Función para obtener usuarios (investigadores) desde la API
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
         }).catch(e=> console.log(e))
       },
+      // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.thesisStudent.progressReport = year;
       },
+      // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
+      // Función para obtener el año de progreso desde la API
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.thesisStudent.progressReport = response.data;
         }).catch(e=> console.log(e))
       },
+      // Función para manejar el envío de un formulario
       handleFormSubmit1(formData) {
         this.tutors.push(formData);
       },
+      // Función para manejar el envío de un formulario
       handleFormSubmit2(formData) {
         this.cotutors.push(formData);
       },
+      // Función para manejar el envío de un formulario
       handleFormSubmit3(formData) {
         this.others.push(formData);
       },
+      // Función para manejar la entrada de un campo de año
       onInput1(event) {
         const input = event.target;
-        // Limitar el año a 4 dígitos
         this.thesisStudent.yearStart = input.value.slice(0, 4);
       },
+      // Función para manejar la entrada de un campo de año
       onInput2(event) {
         const input = event.target;
-        // Limitar el año a 4 dígitos
         this.thesisStudent.yearThesisEnd = input.value.slice(0, 4);
       },
+      // Función para limpiar la entrada de archivo
       clearFileInput() {
         this.file = null;
         this.$refs.fileInput.value = '';
       },
+      // Función para obtener el archivo seleccionado
       async getFile(e){
         this.file = e.target.files[0];
       },
+      // Función para calcular los años
       calculateYears() {
         const currentYear = new Date().getFullYear();
         const startYear = currentYear - 20;
         this.years = Array.from({ length: 21 }, (_, index) => startYear + index);
       },
+      // Función para verificar y formatear el RUN
       checkRut() {
         if (this.thesisStudent.run != ''){
           this.thesisStudent.run.replace('.','');
@@ -466,9 +478,11 @@ export default {
           this.thesisStudent.run = cuerpo + '-'+ dv;
         }
       },
+      // Función para validar la entrada
       validateInput() {
         this.thesisStudent.run = this.thesisStudent.run.replace(/[^0-9Kk\-]/g, '').replace(/(\-)\-+/g, '$1');
       },
+      // Función para permitir solo números o guiones
       isNumberOrDash(event) {
         const charCode = event.which ? event.which : event.keyCode;
         const isK = charCode === 107 || charCode === 75;
@@ -484,14 +498,17 @@ export default {
           event.preventDefault();
         }
       },
+      // Función para cerrar el modal y emitir un evento de recarga
       cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();
       },
+      // Función para capitalizar la primera letra de una cadena
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
+      // Función para guardar un borrador 
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
           title: 'Save draft',
@@ -640,6 +657,7 @@ export default {
           });
         }
       },
+      // Función para crear una nueva tesis
       async crearTesis() {
         this.errors = [];
 

@@ -9,6 +9,7 @@ use App\Notifications\ForgotPassword;
 class ResetPassword extends Controller
 {
     use Notifiable;
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show()
     {
         return view('auth.reset-password');

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class thesisStudentController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -17,7 +18,8 @@ class thesisStudentController extends Controller
         return response()->json("Thesis Creada!");
     }
 
-    public function verifyThesis(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyThesis(Request $request)
     {
         $query = thesisStudent::where('runOrPassport', $request['runOrPassport'])
             ->where('degreeDenomination', $request['degreeDenomination'])
@@ -34,6 +36,7 @@ class thesisStudentController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -86,6 +89,7 @@ class thesisStudentController extends Controller
         return response()->download($pathtoFile);
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $thesis = thesisStudent::find($id);
@@ -94,6 +98,7 @@ class thesisStudentController extends Controller
         return response()->json('se ha guardado');
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importThesis(Request $request)
     {
         $data = $request->input('data');
@@ -202,6 +207,7 @@ class thesisStudentController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         thesisStudent::find($id)->delete();

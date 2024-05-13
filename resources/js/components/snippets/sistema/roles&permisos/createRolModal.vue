@@ -69,7 +69,8 @@ export default {
         this.getPermisos();
     },
     methods: {
-      cerrarModal(){
+        // Cierra el modal y emite un evento de recarga.
+        cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();

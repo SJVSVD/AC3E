@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class nonIsiPublicationsController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -17,7 +18,8 @@ class nonIsiPublicationsController extends Controller
         return response()->json("Publicación Creada!");
     }
 
-    public function verifyNonIsi(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyNonIsi(Request $request)
     {
         $query = nonIsiPublication::where('articleTitle', $request['articleTitle'])
             ->where('journalName', $request['journalName'])
@@ -54,6 +56,7 @@ class nonIsiPublicationsController extends Controller
         return response()->json($nonIsi);
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -85,6 +88,7 @@ class nonIsiPublicationsController extends Controller
         return $nonIsiPublications;
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importNonIsi(Request $request)
     {
         $data = $request->input('data');
@@ -147,6 +151,7 @@ class nonIsiPublicationsController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $nonIsiPublication = nonIsiPublication::find($id);
@@ -156,6 +161,7 @@ class nonIsiPublicationsController extends Controller
         return response()->json("Publicación Editada");
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         nonIsiPublication::find($id)->delete();

@@ -1,28 +1,221 @@
 {
-  "_main-1bb47543.js": {
-    "file": "assets/main-1bb47543.js"
+  "__plugin-vue_export-helper-c27b6911.js": {
+    "file": "assets/_plugin-vue_export-helper-c27b6911.js"
+  },
+  "_alertModal-064cb8ca.js": {
+    "file": "assets/alertModal-064cb8ca.js",
+    "imports": [
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsAwardsModal-1f565c9b.js": {
+    "file": "assets/detailsAwardsModal-1f565c9b.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsBooksModal-a09597dc.js": {
+    "file": "assets/detailsBooksModal-a09597dc.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsConjointProjectsModal-6c17dcbe.js": {
+    "file": "assets/detailsConjointProjectsModal-6c17dcbe.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsFundingSourcesModal-1cbc9648.js": {
+    "file": "assets/detailsFundingSourcesModal-1cbc9648.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsIsiPublicationModal-d748b46c.js": {
+    "file": "assets/detailsIsiPublicationModal-d748b46c.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsNonIsiPublicationModal-cc69e8a1.js": {
+    "file": "assets/detailsNonIsiPublicationModal-cc69e8a1.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsOrganizationScEventsModal-325941da.js": {
+    "file": "assets/detailsOrganizationScEventsModal-325941da.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsOutreachActivitiesModal-a4dfe355.js": {
+    "file": "assets/detailsOutreachActivitiesModal-a4dfe355.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsParticipationScEventsModal-e30a2a42.js": {
+    "file": "assets/detailsParticipationScEventsModal-e30a2a42.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsPatentsModal-edf35ae2.js": {
+    "file": "assets/detailsPatentsModal-edf35ae2.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsPostDocModal-ef5370a4.js": {
+    "file": "assets/detailsPostDocModal-ef5370a4.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsPublicPrivateModal-53880b36.js": {
+    "file": "assets/detailsPublicPrivateModal-53880b36.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsScCollaborationsModal-f64e3cec.js": {
+    "file": "assets/detailsScCollaborationsModal-f64e3cec.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detailsTechnologyKnowledgeModal-6803884b.js": {
+    "file": "assets/detailsTechnologyKnowledgeModal-6803884b.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_detalleThesisModal-4b63e0ac.js": {
+    "file": "assets/detalleThesisModal-4b63e0ac.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "_index-a6b313c0.js": {
+    "file": "assets/index-a6b313c0.js"
+  },
+  "_main-a60f64cc.js": {
+    "file": "assets/main-a60f64cc.js"
+  },
+  "_mixins-00a35343.js": {
+    "file": "assets/mixins-00a35343.js",
+    "imports": [
+      "_main-a60f64cc.js",
+      "_index-a6b313c0.js"
+    ]
+  },
+  "_multiselect-040cdaf8.js": {
+    "file": "assets/multiselect-040cdaf8.js",
+    "imports": [
+      "_alertModal-064cb8ca.js",
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ]
+  },
+  "default.css": {
+    "file": "assets/default-0d9e816b.css",
+    "src": "default.css"
   },
   "resources/css/app.css": {
-    "file": "assets/app-6aacd894.css",
+    "file": "assets/app-0bbccb4f.css",
     "isEntry": true,
     "src": "resources/css/app.css"
   },
   "resources/css/datatables.css": {
-    "file": "assets/datatables-9658ac57.css",
+    "file": "assets/datatables-d32d72fd.css",
     "isEntry": true,
     "src": "resources/css/datatables.css"
   },
   "resources/js/app.css": {
-    "file": "assets/app-68d5c46d.css",
+    "file": "assets/app-fd0ab925.css",
     "src": "resources/js/app.css"
   },
   "resources/js/app.js": {
     "css": [
-      "assets/app-68d5c46d.css"
+      "assets/app-fd0ab925.css"
     ],
-    "file": "assets/app-c62b4c69.js",
+    "dynamicImports": [
+      "resources/js/components/dashboardComponent.vue",
+      "resources/js/components/main/sistema/adminUsuariosComponent.vue",
+      "resources/js/components/main/sistema/isiPublicationsComponent.vue",
+      "resources/js/components/main/sistema/nonIsiPublicationsComponent.vue",
+      "resources/js/components/main/sistema/booksComponent.vue",
+      "resources/js/components/main/sistema/awardsComponent.vue",
+      "resources/js/components/main/sistema/organizationScEventsComponent.vue",
+      "resources/js/components/main/sistema/participationScEventsComponent.vue",
+      "resources/js/components/main/sistema/scCollaborationsComponent.vue",
+      "resources/js/components/main/sistema/conjointProjectsComponent.vue",
+      "resources/js/components/main/sistema/thesisStudentsComponent.vue",
+      "resources/js/components/main/sistema/outreachActivitiesComponent.vue",
+      "resources/js/components/main/sistema/patentsComponent.vue",
+      "resources/js/components/main/sistema/publicPrivateComponent.vue",
+      "resources/js/components/main/sistema/technologyKnowledgeComponent.vue",
+      "resources/js/components/main/sistema/postDocComponent.vue",
+      "resources/js/components/main/sistema/fundingSourcesComponent.vue",
+      "resources/js/components/main/sistema/adminRolesComponent.vue",
+      "resources/js/components/userProfileComponent.vue",
+      "resources/js/components/powerBiComponent.vue",
+      "resources/js/components/importInfoComponent.vue",
+      "resources/js/components/errorComponent.vue",
+      "resources/js/components/indicatorsComponent.vue"
+    ],
+    "file": "assets/app-d6898a1a.js",
     "imports": [
-      "_main-1bb47543.js"
+      "_index-a6b313c0.js"
     ],
     "isEntry": true,
     "src": "resources/js/app.js"
@@ -32,21 +225,384 @@
     "isEntry": true,
     "src": "resources/js/bootstrap.js"
   },
+  "resources/js/components/dashboardComponent.vue": {
+    "file": "assets/dashboardComponent-b616c7ef.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_alertModal-064cb8ca.js",
+      "_detailsIsiPublicationModal-d748b46c.js",
+      "_detailsConjointProjectsModal-6c17dcbe.js",
+      "_detailsFundingSourcesModal-1cbc9648.js",
+      "_detailsOrganizationScEventsModal-325941da.js",
+      "_detailsOutreachActivitiesModal-a4dfe355.js",
+      "_detailsParticipationScEventsModal-e30a2a42.js",
+      "_detailsPatentsModal-edf35ae2.js",
+      "_detailsPostDocModal-ef5370a4.js",
+      "_detailsPublicPrivateModal-53880b36.js",
+      "_detailsScCollaborationsModal-f64e3cec.js",
+      "_detailsNonIsiPublicationModal-cc69e8a1.js",
+      "_detalleThesisModal-4b63e0ac.js",
+      "_detailsAwardsModal-1f565c9b.js",
+      "_detailsBooksModal-a09597dc.js",
+      "_detailsTechnologyKnowledgeModal-6803884b.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/dashboardComponent.vue"
+  },
+  "resources/js/components/errorComponent.vue": {
+    "file": "assets/errorComponent-3e2feaf5.js",
+    "imports": [
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/errorComponent.vue"
+  },
+  "resources/js/components/importInfoComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/importInfoComponent-7e93a7b0.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/importInfoComponent.vue"
+  },
+  "resources/js/components/indicatorsComponent.vue": {
+    "file": "assets/indicatorsComponent-ee5966e4.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_alertModal-064cb8ca.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/indicatorsComponent.vue"
+  },
+  "resources/js/components/main/sistema/adminRolesComponent.vue": {
+    "file": "assets/adminRolesComponent-7eed4242.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_alertModal-064cb8ca.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/adminRolesComponent.vue"
+  },
+  "resources/js/components/main/sistema/adminUsuariosComponent.vue": {
+    "file": "assets/adminUsuariosComponent-c28f2947.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_alertModal-064cb8ca.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/adminUsuariosComponent.vue"
+  },
+  "resources/js/components/main/sistema/awardsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/awardsComponent-5ca2742d.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsAwardsModal-1f565c9b.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/awardsComponent.vue"
+  },
+  "resources/js/components/main/sistema/booksComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/booksComponent-a3658b93.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsBooksModal-a09597dc.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/booksComponent.vue"
+  },
+  "resources/js/components/main/sistema/conjointProjectsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/conjointProjectsComponent-20b58996.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsConjointProjectsModal-6c17dcbe.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/conjointProjectsComponent.vue"
+  },
+  "resources/js/components/main/sistema/fundingSourcesComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/fundingSourcesComponent-378e5beb.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsFundingSourcesModal-1cbc9648.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/fundingSourcesComponent.vue"
+  },
+  "resources/js/components/main/sistema/isiPublicationsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/isiPublicationsComponent-9c821e46.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsIsiPublicationModal-d748b46c.js",
+      "_multiselect-040cdaf8.js",
+      "_alertModal-064cb8ca.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/isiPublicationsComponent.vue"
+  },
+  "resources/js/components/main/sistema/nonIsiPublicationsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/nonIsiPublicationsComponent-36e8db71.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsNonIsiPublicationModal-cc69e8a1.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/nonIsiPublicationsComponent.vue"
+  },
+  "resources/js/components/main/sistema/organizationScEventsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/organizationScEventsComponent-58b3613b.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsOrganizationScEventsModal-325941da.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/organizationScEventsComponent.vue"
+  },
+  "resources/js/components/main/sistema/outreachActivitiesComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/outreachActivitiesComponent-a426f687.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsOutreachActivitiesModal-a4dfe355.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/outreachActivitiesComponent.vue"
+  },
+  "resources/js/components/main/sistema/participationScEventsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/participationScEventsComponent-dfb0972b.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsParticipationScEventsModal-e30a2a42.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/participationScEventsComponent.vue"
+  },
+  "resources/js/components/main/sistema/patentsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/patentsComponent-a479cea6.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsPatentsModal-edf35ae2.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/patentsComponent.vue"
+  },
+  "resources/js/components/main/sistema/postDocComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/postDocComponent-8292aafa.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsPostDocModal-ef5370a4.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/postDocComponent.vue"
+  },
+  "resources/js/components/main/sistema/publicPrivateComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/publicPrivateComponent-be65a307.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsPublicPrivateModal-53880b36.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/publicPrivateComponent.vue"
+  },
+  "resources/js/components/main/sistema/scCollaborationsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/scCollaborationsComponent-d91fbd28.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsScCollaborationsModal-f64e3cec.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/scCollaborationsComponent.vue"
+  },
+  "resources/js/components/main/sistema/technologyKnowledgeComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/technologyKnowledgeComponent-8a0f30e4.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detailsTechnologyKnowledgeModal-6803884b.js",
+      "_alertModal-064cb8ca.js",
+      "_multiselect-040cdaf8.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/technologyKnowledgeComponent.vue"
+  },
+  "resources/js/components/main/sistema/thesisStudentsComponent.vue": {
+    "css": [
+      "assets/default-0d9e816b.css"
+    ],
+    "file": "assets/thesisStudentsComponent-8f0e7a71.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_detalleThesisModal-4b63e0ac.js",
+      "_alertModal-064cb8ca.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_multiselect-040cdaf8.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/main/sistema/thesisStudentsComponent.vue"
+  },
+  "resources/js/components/powerBiComponent.vue": {
+    "file": "assets/powerBiComponent-0284f85c.js",
+    "imports": [
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/powerBiComponent.vue"
+  },
+  "resources/js/components/userProfileComponent.vue": {
+    "file": "assets/userProfileComponent-28c9906d.js",
+    "imports": [
+      "_mixins-00a35343.js",
+      "_alertModal-064cb8ca.js",
+      "_index-a6b313c0.js",
+      "__plugin-vue_export-helper-c27b6911.js",
+      "_main-a60f64cc.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "resources/js/components/userProfileComponent.vue"
+  },
   "resources/js/custom.js": {
     "file": "assets/custom-1c1babe3.js",
     "isEntry": true,
     "src": "resources/js/custom.js"
   },
   "resources/js/mixins.js": {
-    "file": "assets/mixins-e52b120c.js",
+    "file": "assets/mixins-a2736760.js",
     "imports": [
-      "_main-1bb47543.js"
+      "_main-a60f64cc.js",
+      "_index-a6b313c0.js"
     ],
     "isEntry": true,
     "src": "resources/js/mixins.js"
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-bbd6a014.css",
+    "file": "assets/app-1bd03d06.css",
     "isEntry": true,
     "src": "resources/sass/app.scss"
   }

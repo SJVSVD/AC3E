@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class organizationsScEventsController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -17,7 +18,8 @@ class organizationsScEventsController extends Controller
         return response()->json("Organizacion Creada!");
     }
 
-    public function verifyOrganization(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyOrganization(Request $request)
     {
         $query = organizationsScEvents::where('eventName', $request['eventName'])
             ->where('startDate', $request['startDate'])
@@ -34,6 +36,7 @@ class organizationsScEventsController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -80,6 +83,7 @@ class organizationsScEventsController extends Controller
         return response()->json($organization);
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importOrganization(Request $request)
     {
         $data = $request->input('data');
@@ -182,6 +186,7 @@ class organizationsScEventsController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $organizationsScEvents = organizationsScEvents::find($id);
@@ -199,6 +204,7 @@ class organizationsScEventsController extends Controller
         return response()->download($pathtoFile);
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         organizationsScEvents::find($id)->delete();

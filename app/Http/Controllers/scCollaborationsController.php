@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class scCollaborationsController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class scCollaborationsController extends Controller
         return response()->json("Colaboracion Creada!");
     }
 
-    public function verifyCollaboration(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyCollaboration(Request $request)
     {
         $query = scCollaborations::where('moduleType', 0)
             ->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])
@@ -31,6 +33,7 @@ class scCollaborationsController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -62,6 +65,7 @@ class scCollaborationsController extends Controller
         return $scCollaborations;
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importCollaboration(Request $request)
     {
         $data = $request->input('data');
@@ -198,6 +202,7 @@ class scCollaborationsController extends Controller
     }
 
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $scCollaborations = scCollaborations::find($id);
@@ -207,6 +212,7 @@ class scCollaborationsController extends Controller
     }
 
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         scCollaborations::find($id)->delete();

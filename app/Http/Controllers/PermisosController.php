@@ -12,6 +12,7 @@ class PermisosController extends Controller
         return Permission::get();
     }
 
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $campos = [
@@ -26,6 +27,7 @@ class PermisosController extends Controller
         return response()->json("Permiso Creado!");
     }
     
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userId){
         $user = User::find($userId);
         $permissions = $user->permissions;

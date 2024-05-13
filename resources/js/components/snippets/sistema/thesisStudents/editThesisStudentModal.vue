@@ -285,7 +285,7 @@
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
                     v-model="draft"> Edit as a draft</label>
-                    <a v-if="draft == false" class="btn btn-continue float-end" @click="crearTesis()" :disabled="buttonDisable">
+                    <a v-if="draft == false" class="btn btn-continue float-end" @click="editarTesis()" :disabled="buttonDisable">
                       {{ buttonText }}
                     </a>
                     <a v-else class="btn btn-continue float-end" @click="guardarBorrador()" :disabled="buttonDisable">
@@ -482,7 +482,8 @@ export default {
     },
     methods: {
       fetchData() {
-        axios.get('/api/universities') // Suponiendo que tienes una ruta en tu API para obtener las universidades
+        // Función para obtener datos de universidades desde la API
+        axios.get('/api/universities')
           .then(response => {
             this.universities = response.data;
           })
@@ -491,73 +492,86 @@ export default {
           });
       },
       getUsuarios2(){
+        // Función para obtener usuarios desde otra ruta de la API
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
       getUsuarios(){
+        // Función para obtener usuarios (investigadores) desde la API
         axios.get('api/researchers').then( response =>{
             this.researchers = response.data;
         }).catch(e=> console.log(e))
       },
       handleFormSubmit1(year) {
+        // Función para manejar el envío de un formulario con un año
         this.thesisStudent.progressReport = year;
       },
       descargarExtracto(id,nombre){
-          axios({
-              url: `api/thesisDownload/${id}`,
-              method: 'GET',
-              responseType: 'arraybuffer',
-          }).then((response) => {
-            let blob = new Blob([response.data], {
-                    type: response.headers['content-type']
-                });
-                let link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                if (blob.type.includes('pdf')) {
-                    link.download = `Thesis-${nombre}.pdf`;
-                } else if (blob.type.includes('image')) {
-                    link.download = `Thesis-${nombre}.png`; // Cambia la extensión según el tipo de imagen
-                } else {
-                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
-                    console.error('Tipo de archivo no compatible');
-                    return;
-                }
-                link.click();
-          });
+        // Función para descargar un extracto de la tesis
+        axios({
+            url: `api/thesisDownload/${id}`,
+            method: 'GET',
+            responseType: 'arraybuffer',
+        }).then((response) => {
+          let blob = new Blob([response.data], {
+                  type: response.headers['content-type']
+              });
+              let link = document.createElement('a');
+              link.href = window.URL.createObjectURL(blob);
+              if (blob.type.includes('pdf')) {
+                  link.download = `Thesis-${nombre}.pdf`;
+              } else if (blob.type.includes('image')) {
+                  link.download = `Thesis-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+              } else {
+                  // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                  console.error('Tipo de archivo no compatible');
+                  return;
+              }
+              link.click();
+        });
       },
       handleFormSubmit1(formData) {
+        // Función para manejar el envío de un formulario
         this.tutors.push(formData);
       },
       handleFormSubmit2(formData) {
+        // Función para manejar el envío de un formulario
         this.cotutors.push(formData);
       },
       handleFormSubmit3(formData) {
+        // Función para manejar el envío de un formulario
         this.others.push(formData);
       },
       onInput1(event) {
+        // Función para manejar la entrada de un campo de año
         const input = event.target;
         // Limitar el año a 4 dígitos
         this.thesisStudent.yearStart = input.value.slice(0, 4);
       },
       onInput2(event) {
+        // Función para manejar la entrada de un campo de año
         const input = event.target;
         // Limitar el año a 4 dígitos
         this.thesisStudent.yearThesisEnd = input.value.slice(0, 4);
       },
       clearFileInput() {
+        // Función para limpiar la entrada de archivo
         this.file = null;
         this.$refs.fileInput.value = '';
       },
+      // Función para obtener el archivo seleccionado
       async getFile(e){
         this.file = e.target.files[0];
       },
       calculateYears() {
+        // Función para calcular los años
         const currentYear = new Date().getFullYear();
         const startYear = currentYear - 20;
         this.years = Array.from({ length: 21 }, (_, index) => startYear + index);
       },
       checkRut() {
+        // Función para verificar y formatear el RUN
         if (this.thesisStudent.run != ''){
           this.thesisStudent.run.replace('.','');
           var valor = this.thesisStudent.run.replace('.','');
@@ -569,9 +583,11 @@ export default {
         }
       },
       validateInput() {
+        // Función para validar la entrada
         this.thesisStudent.run = this.thesisStudent.run.replace(/[^0-9Kk\-]/g, '').replace(/(\-)\-+/g, '$1');
       },
       isNumberOrDash(event) {
+        // Función para permitir solo números o guiones
         const charCode = event.which ? event.which : event.keyCode;
         const isK = charCode === 107 || charCode === 75;
 
@@ -587,14 +603,17 @@ export default {
         }
       },
       cerrarModal(){
+        // Función para cerrar el modal y emitir un evento de recarga
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();
       },
       capitalizeFirstLetter(string) {
+        // Función para capitalizar la primera letra de una cadena
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
       async guardarBorrador(){
+        // Función para guardar un borrador de la tesis
         const ok = await this.$refs.confirmation.show({
           title: 'Edit draft',
             message: `¿Are you sure you want to edit this Thesis Student as a draft? this action cannot be undone.`,
@@ -763,7 +782,9 @@ export default {
           });
         }
       },
-      async crearTesis() {
+        // Edita el registro despues de validar
+        async editarTesis() {
+        // Función para editar una tesis
         this.errors = [];
         const fieldsToExclude = ['yearThesisEnd', 'posteriorArea','institutionPosteriorArea','comments', 'monthEnd','run','passport','tutorName', 'tutorInstitution','cotutorName','cotutorInstitution','otherName','otherInstitution']; // Arreglo de campos a excluir
 

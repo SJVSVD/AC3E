@@ -128,108 +128,88 @@ export default {
       this.getUserRoles();
     },
     methods: {
+      // Cierra el modal y emite un evento para recargar.
       cerrarModal(){
-        const elem = this.$refs.closeBtn;
-        this.$emit('recarga');
-        elem.click();
+          const elem = this.$refs.closeBtn;
+          this.$emit('recarga');
+          elem.click();
       },
+
+      // Obtiene las líneas de investigación del servidor.
       getResearchLines(){
-        axios.get('api/researchLines').then( response =>{
-          this.researchLines = response.data;
-        }).catch(e=> console.log(e))
+          axios.get('api/researchLines').then(response => {
+              this.researchLines = response.data;
+          }).catch(e => console.log(e))
       },
+
+      // Obtiene los roles de usuario del servidor.
       getUserRoles(){
-        axios.get('api/rolesUser').then( response =>{
-          this.rolesUser = response.data;
-        }).catch(e=> console.log(e))
+          axios.get('api/rolesUser').then(response => {
+              this.rolesUser = response.data;
+          }).catch(e => console.log(e))
       },
+
+      // Obtiene todos los roles del servidor.
       getRoles(){
-        axios.get('api/roles').then( response =>{
-          this.roles = response.data;
-        }).catch(e=> console.log(e))
+          axios.get('api/roles').then(response => {
+              this.roles = response.data;
+          }).catch(e => console.log(e))
       },
+
+      // Marca todos los roles como seleccionados o no seleccionados.
       marcarTodos(){
-        if (this.marcados == false){
-          this.roles.forEach(rol => {
-            this.selected.push(rol.id);
-          });
-          this.marcados = true;
-        }else{
-          this.selected = [];
-          this.marcados = false;
-        }
+          if (this.marcados == false){
+              this.roles.forEach(rol => {
+                  this.selected.push(rol.id);
+              });
+              this.marcados = true;
+          } else {
+              this.selected = [];
+              this.marcados = false;
+          }
       },
+
+      // Capitaliza la primera letra de una cadena.
       capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+          return string.charAt(0).toUpperCase() + string.slice(1);
       },
+
+      // Crea un nuevo usuario y realiza validaciones antes de enviar la solicitud al servidor.
       async crearUsuario() {
-        this.errors = [];
-        for (const item in this.user){
-          if(this.user[item] === "" || this.user[item] === 0){
-              this.errors.push(item);
-            }
-        }
+          this.errors = [];
+          for (const item in this.user){
+              if(this.user[item] === "" || this.user[item] === 0){
+                  this.errors.push(item);
+              }
+          }
 
-        if(this.user.password != this.user.confirmpassword){
-          this.errors.push('contraseñas diferentes');
-        }
+          if(this.user.password != this.user.confirmpassword){
+              this.errors.push('contraseñas diferentes');
+          }
 
-        var mensaje = ""
-        if (this.errors.length != 0){
-          this.errors.forEach(item => {
-            if(item == 'name'){
-              mensaje =   mensaje + "The Name field is required" + "\n";
-            }else if(item == 'email'){
-              mensaje =   mensaje + "The Email field is required" + "\n";
-            }else if(item == 'contraseñas diferentes'){
-              mensaje =   mensaje + "Passwords do not match" + "\n";
-            }else if(item == 'password'){
-              mensaje =   mensaje + "The Password field is required" + "\n";
-            }else if(item == 'confirmpassword'){
-              mensaje =   mensaje + "The Confirm password field is required" + "\n";
-            }else if(item == 'idRole'){
-              mensaje =   mensaje + "The Role user field is required" + "\n";
-            }else{
-              mensaje =   mensaje + "The" + this.capitalizeFirstLetter(item) + "field is required" + "\n" 
-            }
-          });
-          this.toast.warning( mensaje, {
-            position: "top-right",
-            timeout: 5000,
-            closeOnClick: true,
-            pauseOnFocusLoss: true,
-            pauseOnHover: true,
-            draggable: true,
-            draggablePercent: 0.6,
-            showCloseButtonOnHover: false,
-            hideProgressBar: true,
-            closeButton: "button",
-            icon: true,
-            rtl: false
-          });
-        }
-        if (this.errors.length === 0){
-          const ok = await this.$refs.confirmation.show({
-            title: 'Create User',
-            message: `¿Are you sure you want to create the user '${this.user.name}'?.`,
-            okButton: 'Create',
-            cancelButton: 'Return'
-          })
-          if (ok) {
-            let usuario = {
-              name: this.user.name,
-              email: this.user.email,
-              password: this.user.password,
-              confirmpassword: this.user.confirmpassword,
-              roles: this.selected,
-              idRole: this.user.idRole,
-              idResearchLine: this.user.idResearchLine,
-            };
-            await axios.post("api/usuarios", usuario ).then((result) => {
-              this.buttonDisable = true;
-              this.buttonText = 'Creating...';
-              if(result.data == 'email existente'){
-                this.toast.warning( 'There is already a user with the Email entered', {
+          var mensaje = ""
+          if (this.errors.length != 0){
+              // Construye el mensaje de error
+              this.errors.forEach(item => {
+                  if(item == 'name'){
+                      mensaje = mensaje + "The Name field is required" + "\n";
+                  } else if(item == 'email'){
+                      mensaje = mensaje + "The Email field is required" + "\n";
+                  } else if(item == 'contraseñas diferentes'){
+                      mensaje = mensaje + "Passwords do not match" + "\n";
+                  } else if(item == 'password'){
+                      mensaje = mensaje + "The Password field is required" + "\n";
+                  } else if(item == 'confirmpassword'){
+                      mensaje = mensaje + "The Confirm password field is required" + "\n";
+                  } else if(item == 'idRole'){
+                      mensaje = mensaje + "The Role user field is required" + "\n";
+                  } else {
+                      mensaje = mensaje + "The " + this.capitalizeFirstLetter(item) + " field is required" + "\n" 
+                  }
+              });
+
+              // Muestra el mensaje de error
+              this.toast.warning(mensaje, {
                   position: "top-right",
                   timeout: 5000,
                   closeOnClick: true,
@@ -242,116 +222,155 @@ export default {
                   closeButton: "button",
                   icon: true,
                   rtl: false
-                });
-                this.buttonDisable = false;
-                this.buttonText = 'Create User';
-              }else{
-                this.toast.success("User created successfully!", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-                setTimeout(() => {this.cerrarModal();}, 1500);
-              }
-            })
-            .catch((error) => {
-              if (error.response) {
-                // Si hay una respuesta del servidor
-                if (error.response.status === 422) {
-                  // Error de validación
-                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                } else if (error.response.status === 404) {
-                  // Recurso no encontrado
-                  this.toast.error("Resource not found.", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                } else {
-                  // Otro tipo de error
-                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                }
-              } else if (error.request) {
-                // Si la solicitud fue hecha pero no se recibió respuesta
-                this.toast.error("No response from server.", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-              } else {
-                // Otro tipo de error
-                this.toast.error(`An error occurred: ${error.message}`, {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-              }
-            });
+              });
           }
-        }
-      },
-    },
+
+          if (this.errors.length === 0){
+              // Realiza la creación del usuario si no hay errores
+              const ok = await this.$refs.confirmation.show({
+                  title: 'Create User',
+                  message: `¿Are you sure you want to create the user '${this.user.name}'?.`,
+                  okButton: 'Create',
+                  cancelButton: 'Return'
+              })
+              if (ok) {
+                  let usuario = {
+                      name: this.user.name,
+                      email: this.user.email,
+                      password: this.user.password,
+                      confirmpassword: this.user.confirmpassword,
+                      roles: this.selected,
+                      idRole: this.user.idRole,
+                      idResearchLine: this.user.idResearchLine,
+                  };
+                  await axios.post("api/usuarios", usuario ).then((result) => {
+                      // Muestra mensajes de éxito o error después de la creación del usuario
+                      this.buttonDisable = true;
+                      this.buttonText = 'Creating...';
+                      if(result.data == 'email existente'){
+                          this.toast.warning('There is already a user with the Email entered', {
+                              position: "top-right",
+                              timeout: 5000,
+                              closeOnClick: true,
+                              pauseOnFocusLoss: true,
+                              pauseOnHover: true,
+                              draggable: true,
+                              draggablePercent: 0.6,
+                              showCloseButtonOnHover: false,
+                              hideProgressBar: true,
+                              closeButton: "button",
+                              icon: true,
+                              rtl: false
+                          });
+                          this.buttonDisable = false;
+                          this.buttonText = 'Create User';
+                      } else {
+                          this.toast.success("User created successfully!", {
+                              position: "top-right",
+                              timeout: 3000,
+                              closeOnClick: true,
+                              pauseOnFocusLoss: true,
+                              pauseOnHover: true,
+                              draggable: true,
+                              draggablePercent: 0.6,
+                              showCloseButtonOnHover: false,
+                              hideProgressBar: true,
+                              closeButton: "button",
+                              icon: true,
+                              rtl: false
+                          });
+                          setTimeout(() => {this.cerrarModal();}, 1500);
+                      }
+                  }).catch((error) => {
+                      // Maneja los errores de la solicitud al servidor
+                      if (error.response) {
+                          // Si hay una respuesta del servidor
+                          if (error.response.status === 422) {
+                              // Error de validación
+                              this.toast.warning(`Validation error: ${error.response.data.message}`, {
+                                  position: "top-right",
+                                  timeout: 3000,
+                                  closeOnClick: true,
+                                  pauseOnFocusLoss: true,
+                                  pauseOnHover: true,
+                                  draggable: true,
+                                  draggablePercent: 0.6,
+                                  showCloseButtonOnHover: false,
+                                  hideProgressBar: true,
+                                  closeButton: "button",
+                                  icon: true,
+                                  rtl: false
+                              });
+                          } else if (error.response.status === 404) {
+                              // Recurso no encontrado
+                              this.toast.error("Resource not found.", {
+                                  position: "top-right",
+                                  timeout: 3000,
+                                  closeOnClick: true,
+                                  pauseOnFocusLoss: true,
+                                  pauseOnHover: true,
+                                  draggable: true,
+                                  draggablePercent: 0.6,
+                                  showCloseButtonOnHover: false,
+                                  hideProgressBar: true,
+                                  closeButton: "button",
+                                  icon: true,
+                                  rtl: false
+                              });
+                          } else {
+                              // Otro tipo de error
+                              this.toast.error(`An error occurred: ${error.response.data.message}`, {
+                                  position: "top-right",
+                                  timeout: 3000,
+                                  closeOnClick: true,
+                                  pauseOnFocusLoss: true,
+                                  pauseOnHover: true,
+                                  draggable: true,
+                                  draggablePercent: 0.6,
+                                  showCloseButtonOnHover: false,
+                                  hideProgressBar: true,
+                                  closeButton: "button",
+                                  icon: true,
+                                  rtl: false
+                              });
+                          }
+                      } else if (error.request) {
+                          // Si la solicitud fue hecha pero no se recibió respuesta
+                          this.toast.error("No response from server.", {
+                              position: "top-right",
+                              timeout: 3000,
+                              closeOnClick: true,
+                              pauseOnFocusLoss: true,
+                              pauseOnHover: true,
+                              draggable: true,
+                              draggablePercent: 0.6,
+                              showCloseButtonOnHover: false,
+                              hideProgressBar: true,
+                              closeButton: "button",
+                              icon: true,
+                              rtl: false
+                          });
+                      } else {
+                          // Otro tipo de error
+                          this.toast.error(`An error occurred: ${error.message}`, {
+                              position: "top-right",
+                              timeout: 3000,
+                              closeOnClick: true,
+                              pauseOnFocusLoss: true,
+                              pauseOnHover: true,
+                              draggable: true,
+                              draggablePercent: 0.6,
+                              showCloseButtonOnHover: false,
+                              hideProgressBar: true,
+                              closeButton: "button",
+                              icon: true,
+                              rtl: false
+                          });
+                      }
+                  });
+              }
+          }
+      }
+  }
 }
 </script>

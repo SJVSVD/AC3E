@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class isiPublicationsController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -15,7 +16,8 @@ class isiPublicationsController extends Controller
         return response()->json("Publicación Creada!");
     }
 
-    public function verifyIsi(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyIsi(Request $request)
     {
         $doi = $request['doi'];
         $query = isiPublication::where('doi', $doi)
@@ -30,6 +32,7 @@ class isiPublicationsController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -61,6 +64,7 @@ class isiPublicationsController extends Controller
         return $isiPublications;
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $isiPublication = isiPublication::find($id);
@@ -70,6 +74,7 @@ class isiPublicationsController extends Controller
         return response()->json("Publicación Editada");
     }
     
+    // Función para importar los registros que vienen desde excel
     public function importIsi(Request $request)
     {
         $data = $request->input('data');
@@ -133,6 +138,7 @@ class isiPublicationsController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         isiPublication::find($id)->delete();

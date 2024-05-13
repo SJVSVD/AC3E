@@ -33,6 +33,7 @@ class UniversitiesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         //
@@ -44,6 +45,7 @@ class UniversitiesController extends Controller
      * @param  \App\Models\universities  $universities
      * @return \Illuminate\Http\Response
      */
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show(universities $universities)
     {
         //
@@ -67,6 +69,7 @@ class UniversitiesController extends Controller
      * @param  \App\Models\universities  $universities
      * @return \Illuminate\Http\Response
      */
+     // Función para editar un registro
     public function update(Request $request, universities $universities)
     {
         //
@@ -78,6 +81,7 @@ class UniversitiesController extends Controller
      * @param  \App\Models\universities  $universities
      * @return \Illuminate\Http\Response
      */
+     // Función para eliminar un registro
     public function destroy(universities $universities)
     {
         //

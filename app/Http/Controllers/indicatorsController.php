@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 
 class indicatorsController extends Controller
 {
+    //Funcion para conseguir los indicadores de la pagina segun ciertos requisitos
     public function getIndicators()
     {
         $progressReport = extraTables::where('name', 'progressReport')->pluck('value');
@@ -70,7 +71,7 @@ class indicatorsController extends Controller
     
         return response()->json($data);
     }
-
+    //Funcion para conseguir los indicadores de la pagina de un año en especifico
     public function getIndicatorsByProgressYear($id)
     {
         $progressReport = $id;

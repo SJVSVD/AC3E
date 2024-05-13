@@ -72,60 +72,69 @@
         this.numeroConcatenado = this.progressYear.replace(/\./g, "");
       },
       methods: {  
+        // Elimina el último número de la cadena de números concatenados.
         eliminarNumero() {
-          const numerosArray = this.numeroConcatenado.split(',');
-          if (numerosArray.length > 0) {
-            numerosArray.pop();
-            this.numeroConcatenado = numerosArray.join(',');
-          }
-        },
-        agregarNumero() {
-          const nuevoNumero = parseInt(this.nuevoNumero);
-          if (!isNaN(nuevoNumero)) {
-            if (this.numeroConcatenado !== '') {
-              this.numeroConcatenado += ','; 
+            const numerosArray = this.numeroConcatenado.split(',');
+            if (numerosArray.length > 0) {
+                numerosArray.pop();
+                this.numeroConcatenado = numerosArray.join(',');
             }
-            this.numeroConcatenado += nuevoNumero;
-            this.nuevoNumero = '';
-          }
         },
+
+        // Agrega un nuevo número a la cadena de números concatenados.
+        agregarNumero() {
+            const nuevoNumero = parseInt(this.nuevoNumero);
+            if (!isNaN(nuevoNumero)) {
+                if (this.numeroConcatenado !== '') {
+                    this.numeroConcatenado += ','; 
+                }
+                this.numeroConcatenado += nuevoNumero;
+                this.nuevoNumero = '';
+            }
+        },
+
+        // Capitaliza la primera letra de una cadena.
+          // Capitaliza la primera letra de una cadena.
         capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         },
+
+        // Edita el año de reporte.
         editProgress() {
             this.errors = [];
 
             if(this.numeroConcatenado == ''){
-              this.errors.push('empty')
+                this.errors.push('empty')
             }
 
             if (this.errors.length != 0){
-              this.toast.warning( 'The progress report year cannot be empty.', {
-                position: "top-right",
-                timeout: 5000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
-              });
+                this.toast.warning( 'The progress report year cannot be empty.', {
+                    position: "top-right",
+                    timeout: 5000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
             }
 
             if (this.errors.length === 0){
                 const elem = this.$refs.closeBtn;
                 if(this.numeroConcatenado.length > 1){
-                  this.numeroConcatenado += '.';
+                    this.numeroConcatenado += '.';
                 }
                 this.$emit("submit", this.numeroConcatenado);
                 elem.click();
             }
         }
-      }
+    }
+
   }
   </script>
   

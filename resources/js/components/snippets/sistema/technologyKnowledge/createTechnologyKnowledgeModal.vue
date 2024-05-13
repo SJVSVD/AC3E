@@ -222,34 +222,41 @@ export default {
       this.years.sort((a, b) => b - a);
     },
     methods: {
+      // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.technologyKnowledge.progressReport = year;
       },
+      // Método para obtener el informe de progreso
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.technologyKnowledge.progressReport = response.data;
         }).catch(e=> console.log(e))
       },
+      // Método para obtener los usuarios
       getUsuarios(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
+      // Método para obtener los usuarios 2
       getUsuarios2(){
         axios.get('api/researchers').then( response =>{
             this.researchers2 = response.data;
         }).catch(e=> console.log(e))
       },
+      // Método para el evento de entrada
       onInput1(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
         this.technologyKnowledge.year = input.value.slice(0, 4);
       },
+      // Método para calcular los años
       calculateYears() {
         const currentYear = new Date().getFullYear();
         const startYear = currentYear - 20;
         this.years = Array.from({ length: 21 }, (_, index) => startYear + index);
       },
+      // Método para guardar un borrador
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Save draft',
@@ -403,14 +410,17 @@ export default {
             });
           }
       },
+      // Método para cerrar el modal
       cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();
       },
+      // Método para capitalizar la primera letra de una cadena
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
+      // Método para crear un registro
       async createTechnology() {
         this.errors = [];
         const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer']; // Arreglo de campos a excluir
@@ -630,6 +640,7 @@ export default {
         }
       },
     },
+
 }
 </script>
 

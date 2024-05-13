@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class participationsScEventsController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -17,7 +18,8 @@ class participationsScEventsController extends Controller
         return response()->json("Participacion Creada!");
     }
 
-    public function verifyParticipation(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyParticipation(Request $request)
     {
         $query = participationScEvents::where('eventName', $request['eventName'])
             ->where('startDate', $request['startDate'])
@@ -34,6 +36,7 @@ class participationsScEventsController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -65,6 +68,7 @@ class participationsScEventsController extends Controller
         return $participationScEvents;
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importParticipation(Request $request)
     {
         $data = $request->input('data');
@@ -212,6 +216,7 @@ class participationsScEventsController extends Controller
         return response()->json($participation);
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $participationScEvents = participationScEvents::find($id);
@@ -229,6 +234,7 @@ class participationsScEventsController extends Controller
         return response()->download($pathtoFile);
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         participationScEvents::find($id)->delete();

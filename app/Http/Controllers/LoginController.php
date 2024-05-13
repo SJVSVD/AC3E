@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Password;
 
 class LoginController extends Controller
 {
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show()
     {
         return view('auth.login');

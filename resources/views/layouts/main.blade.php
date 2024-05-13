@@ -4,6 +4,7 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="user" content="{{ Auth::user() }}">
+        <!-- Si es que el usuario esta logueado se sacan sus roles-->
         @if (Auth::check())
             <meta name="roles" content="{{ Auth::user()->roles->pluck('name') }}">
         @endif
@@ -15,8 +16,8 @@
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/1bd7af15cd.js" crossorigin="anonymous"></script>
         <!-- CSS Files -->
-        <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/css/datatables.css') }}">
+        @vite('resources/css/app.css')
+        @vite('resources/css/datatables.css')
         <link id="pagestyle" href="{{asset('assets/css/argon-dashboard.css')}}" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -42,9 +43,10 @@
 
         <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
         <!-- Js Files -->
-        <link rel="stylesheet" href="{{ asset('assets/js/app.js') }}">
-        <!-- @vite('resources/js/app.js') -->
+        @vite('resources/js/app.js')
 </head>
+
+<!-- Barra lateral -->
 
 <body style="zoom: 0.9; background-color:#d3d3d3;">
     <div class="sidebar close" id="sidebarMain">
@@ -97,38 +99,16 @@
                     <li><a href="/organization-sc-events">Organization of Sc events</a></li>
                     <li><a href="/participation-sc-events">Participation in Sc events</a></li>
                     <li><a href="/sc-collaborations">Sc Collaborations</a></li>
-
                     <li><a href="/conjoint-projects">Conjoint projects</a></li>
-
                     <li><a href="/thesis-students">Thesis students</a></li>
-
                     <li><a href="/post-doc">Postdoctoral fellows</a></li>
-
                     <li><a href="/outreach-activities">Outreach</a></li>
                     <li><a href="/patents">Patents</a></li>
                     <li><a href="/public-private">Public-private connections</a></li>
-                    
                     <li><a href="/technology-knowledge">Tec. and know. transfer</a></li>
-                    
                     <li><a href="/funding-sources">Funding sources</a></li>
                 </ul>
             </li>
-            <!-- @role('Super-Administrador')
-            <li>
-                <div class="iocn-link">
-                    <a href="#">
-                        <i class="fa-regular fa-window-restore"></i>
-                        <span class="link_name">Otras</span>
-                    </a>
-                    <i class="fa-solid fa-sort-down arrow"></i>
-                </div>
-                <ul class="sub-menu">
-                    <li><a class="link_name" href="#">Otras</a></li>
-                    <li><a href="/billing">Facturación</a></li>
-                    <li><a href="/tables">Tablas</a></li>
-                </ul>
-            </li>
-            @endrole -->
             <hr size="4" class="separador">
             <li>
                 <div class="iocn-link">
@@ -194,6 +174,8 @@
     <script src="{{asset('assets/js/core/bootstrap.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
+
+    <!-- Se pone en negrita el modulo seleccionado en el menu -->
 
     <script>
     $(document).ready(function(){

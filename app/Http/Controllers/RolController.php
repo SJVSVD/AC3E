@@ -10,6 +10,7 @@ use App\Models\User;
 class RolController extends Controller
 {
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userId)
     {
         $user = User::find($userId);
@@ -45,6 +46,7 @@ class RolController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $campos = [
@@ -85,6 +87,7 @@ class RolController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $this->validate($request, ['name'=> 'required'],['permission'=> 'required']);
@@ -104,6 +107,7 @@ class RolController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+     // Función para eliminar un registro
     public function destroy($id)
     {
         Role::find($id)->delete();

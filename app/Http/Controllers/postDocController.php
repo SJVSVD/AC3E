@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class postDocController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class postDocController extends Controller
         return response()->json("Registro Creado!");
     }
 
-    public function verifyPostdoc(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyPostdoc(Request $request)
     {
         $query = postDoc::where('identification', $request['identification'])
             ->whereNotNull('identification');
@@ -28,6 +30,7 @@ class postDocController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -60,6 +63,7 @@ class postDocController extends Controller
     }
 
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $postDoc = postDoc::find($id);
@@ -68,6 +72,7 @@ class postDocController extends Controller
         return response()->json($input);
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importPostdoc(Request $request)
     {
         // Arreglo de mapeo para los recursos proporcionados
@@ -134,6 +139,7 @@ class postDocController extends Controller
     }
     
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         postDoc::find($id)->delete();

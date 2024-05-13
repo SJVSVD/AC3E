@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class technologyKnowledgeController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class technologyKnowledgeController extends Controller
         return response()->json("Registro Creado!");
     }
 
-    public function verifyTechnology(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyTechnology(Request $request)
     {
         $query = technologyKnowledge::where('typeOfTransfer', $request['typeOfTransfer'])
             ->whereNotNull('typeOfTransfer')
@@ -32,6 +34,7 @@ class technologyKnowledgeController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -64,6 +67,7 @@ class technologyKnowledgeController extends Controller
     }
 
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $technologyKnowledge = technologyKnowledge::find($id);
@@ -72,6 +76,7 @@ class technologyKnowledgeController extends Controller
         return response()->json($input);
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importTecAndKnow(Request $request)
     {
         $data = $request->input('data');
@@ -127,6 +132,7 @@ class technologyKnowledgeController extends Controller
     }
 
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         technologyKnowledge::find($id)->delete();

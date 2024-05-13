@@ -88,6 +88,7 @@ export default {
       this.getProgressReport();
   },
   methods: {
+    // Realiza una solicitud para obtener indicadores según el año seleccionado y actualiza la tabla.
     searchByProgressReport(){
         axios.get(`api/getIndicators/${this.selectedProgress}`).then( response =>{
             console.log(response.data);
@@ -95,6 +96,8 @@ export default {
             this.recargarTabla('Search');
           }).catch(e=> console.log(e))
     },
+
+    // Obtiene el informe de año actual y prepara los números de progreso disponibles.
     getProgressReport(){
         axios.get('api/showProgressReport').then(response => {
             this.actualProgressReport = response.data;
@@ -102,29 +105,35 @@ export default {
             this.progressNumbers = this.createNumberArray(response.data);
         }).catch(e => console.log(e))
     },
+
+    // Crea un array de números hasta el valor dado.
     createNumberArray(progress) {
         return Array.from({length: progress}, (_, index) => index + 1);
     },
-      recargarTabla($tipoRecarga){
-          this.mostrarCarga = true;
-          if($tipoRecarga == 'General'){
-              this.indicators = null;
-              this.getIndicators();
-          }else{
-              this.table.destroy();
-              this.crearTabla('#myTableIndicators');
-          }
-      },
-      getIndicators(){
-          axios.get('api/getIndicators').then( response =>{
-              this.indicators = response.data;
-              if (this.table != null){
-                  this.table.clear();
-                  this.table.destroy();
-              }
-              this.crearTabla("#myTableIndicators");
-          }).catch(e=> console.log(e))
-      },
+
+    // Recarga la tabla dependiendo del tipo de recarga.
+    recargarTabla($tipoRecarga){
+        this.mostrarCarga = true;
+        if($tipoRecarga == 'General'){
+            this.indicators = null;
+            this.getIndicators();
+        }else{
+            this.table.destroy();
+            this.crearTabla('#myTableIndicators');
+        }
+    },
+
+    // Obtiene los indicadores y actualiza la tabla.
+    getIndicators(){
+        axios.get('api/getIndicators').then( response =>{
+            this.indicators = response.data;
+            if (this.table != null){
+                this.table.clear();
+                this.table.destroy();
+            }
+            this.crearTabla("#myTableIndicators");
+        }).catch(e=> console.log(e))
+    },
   }
 }
 </script>

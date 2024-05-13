@@ -250,30 +250,37 @@ export default {
       this.years.sort((a, b) => b - a);
     },
     methods: {
+      // Método para manejar el envío del formulario de año
       handleFormSubmit1(year) {
         this.technologyKnowledge.progressReport = year;
       },
+      // Método para obtener los usuarios investigadores
       getUsuarios2(){
         axios.get('api/researchers').then( response =>{
             this.researchers2 = response.data;
         }).catch(e=> console.log(e))
       },
+      // Método para obtener los usuarios
       getUsuarios(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
+      // Método para manejar el evento de entrada de datos
       onInput1(event) {
         const input = event.target;
         // Limitar el año a 4 dígitos
         this.technologyKnowledge.year = input.value.slice(0, 4);
       },
+      // Método para calcular los años
       calculateYears() {
         const currentYear = new Date().getFullYear();
         const startYear = currentYear - 20;
         this.years = Array.from({ length: 21 }, (_, index) => startYear + index);
       },
+      // Método para guardar un borrador
       async guardarBorrador(){
+        // Mostrar confirmación
         const ok = await this.$refs.confirmation.show({
             title: 'Edit draft',
             message: `¿Are you sure you want to edit this Technology knowledge tranfer as a draft? this action cannot be undone.`,
@@ -281,8 +288,9 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-
+            // Inicializar la variable researcherInvolved1
             var researcherInvolved1 = "";
+            // Construir la cadena de investigadores involucrados
             if (this.technologyKnowledge.researcherInvolved !== null){
               if (this.technologyKnowledge.researcherInvolved.length !== 0) {
                 this.technologyKnowledge.researcherInvolved.forEach((researcherInvolved, index) => {
@@ -296,13 +304,16 @@ export default {
               }
             }
 
+            // Inicializar idUser1
             var idUser1 = ''
+            // Determinar el id del usuario
             if(this.idResearcher != ''){
               idUser1 = this.idResearcher;
             }else{
               idUser1 = this.userID;
             }
 
+            // Construir el objeto technologyKnowledge
             let technologyKnowledge = {
               idUsuario: idUser1,
               status: 'Draft',
@@ -321,7 +332,9 @@ export default {
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };
+            // Enviar la solicitud de actualización al servidor
             axios.put(`api/technologyKnowledge/${this.id}`, technologyKnowledge ).then((result) => {
+              // Mostrar notificación de éxito
               this.toast.success("Draft edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -339,6 +352,7 @@ export default {
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
             .catch((error) => {
+              // Manejo de errores
               if (error.response) {
                 // Si hay una respuesta del servidor
                 if (error.response.status === 422) {
@@ -426,15 +440,19 @@ export default {
             });
           }
       },
+      // Método para cerrar el modal
       cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();
       },
+      // Método para capitalizar la primera letra de una cadena
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
-      async editTechnology() {
+      // Método para editar la tecnología
+        // Edita el registro despues de validar
+        async editTechnology() {
         this.errors = [];
         const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer']; // Arreglo de campos a excluir
 
@@ -446,6 +464,7 @@ export default {
           }
         }
 
+        // Validar si las categorías de transferencia están vacías
         if (
           (this.technologyKnowledge['technologyTransfer'] === "" || this.technologyKnowledge['technologyTransfer'] === 0 || this.technologyKnowledge['technologyTransfer'] == null || this.technologyKnowledge['technologyTransfer'] == []) &&
           (this.technologyKnowledge['knowledgeTransfer'] === "" || this.technologyKnowledge['knowledgeTransfer'] === 0 || this.technologyKnowledge['knowledgeTransfer'] == null || this.technologyKnowledge['knowledgeTransfer'] == [])
@@ -453,6 +472,7 @@ export default {
           this.errors.push('categoryTransfer');
         }
 
+        // Construir el objeto technologyKnowledge1
         let technologyKnowledge1 = {
           id: this.id,
           description: this.technologyKnowledge.description,
@@ -471,6 +491,7 @@ export default {
           progressReport: this.technologyKnowledge.progressReport,
         };
 
+        // Realizar la verificación de duplicados en el servidor
         var contador = await axios.post('../api/verifyTechnology', technologyKnowledge1).then(function(response) {
           return response.data;
         }.bind(this)).catch(function(e) {
@@ -480,7 +501,7 @@ export default {
           this.errors.push('duplicated');
         }
 
-
+        // Construir el mensaje de error
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -504,6 +525,7 @@ export default {
               mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
             }
           });
+          // Mostrar la notificación de advertencia
           this.toast.warning( mensaje, {
             position: "top-right",
             timeout: 5000,
@@ -519,7 +541,9 @@ export default {
             rtl: false
           });
         }
+        // Verificar si no hay errores
         if (this.errors.length === 0){
+          // Mostrar confirmación
           const ok = await this.$refs.confirmation.show({
             title: 'Edit Technology and knowledge transfer',
             message: `¿Are you sure you want to edit this Technology and knowledge transfer?.`,
@@ -567,7 +591,9 @@ export default {
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };
+            // Enviar la solicitud de actualización al servidor
             axios.put(`api/technologyKnowledge/${this.id}`, technologyKnowledge ).then((result) => {
+              // Mostrar notificación de éxito
               this.toast.success("Technology and knowledge transfer edited successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -585,6 +611,7 @@ export default {
               setTimeout(() => {this.cerrarModal();}, 1500);
             })
             .catch((error) => {
+              // Manejo de errores
               if (error.response) {
                 // Si hay una respuesta del servidor
                 if (error.response.status === 422) {
@@ -674,6 +701,7 @@ export default {
         }
       },
     },
+
 }
 </script>
 

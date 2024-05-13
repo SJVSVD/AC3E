@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class outreachActivitiesController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class outreachActivitiesController extends Controller
         return response()->json("Registro Creado!");
     }
 
-    public function verifyOutreach(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyOutreach(Request $request)
     {
         $query = outreachActivities::where('activityName', $request['activityName'])
             ->where('date', $request['date'])
@@ -32,6 +34,7 @@ class outreachActivitiesController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -64,6 +67,7 @@ class outreachActivitiesController extends Controller
     }
 
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $outreachActivities = outreachActivities::find($id);
@@ -72,6 +76,7 @@ class outreachActivitiesController extends Controller
         return response()->json($input);
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importOutreach(Request $request)
     {
         // Arreglo de mapeo para el tipo de actividad
@@ -143,6 +148,7 @@ class outreachActivitiesController extends Controller
     
 
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         outreachActivities::find($id)->delete();

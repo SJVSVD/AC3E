@@ -77,6 +77,7 @@ export default {
         this.getPermisosRol(this.id);
     },
     methods: {
+          // Cierra el modal y emite un evento de recarga.
         cerrarModal(){
           const elem = this.$refs.closeBtn;
           this.$emit('recarga');
@@ -107,6 +108,7 @@ export default {
             this.permisos = response.data;
             }).catch(e=> console.log(e))
         },
+          // Edita el registro despues de validar
         async editarRol() {
             const ok = await this.$refs.confirmation.show({
                 title: 'Editar Rol',

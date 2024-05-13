@@ -40,6 +40,7 @@ class UsuarioController extends Controller
         return User::with('roles')->with('permissions')->with('roleUser')->with('researchLine')->get();
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $input = $request->all();
@@ -87,12 +88,14 @@ class UsuarioController extends Controller
         return view('usuarios.create',compact('roles'));
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($id)
     {
         $user = User::with('roles')->with('permissions')->find($id);
         return $user;
     }
 
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -117,6 +120,7 @@ class UsuarioController extends Controller
         return view('usuarios.editar',compact('user','roles','userRole'));
     }
 
+     // Función para editar un registro
     public function updateUser(Request $request, $id)
     {
         $input = $request->all();
@@ -142,6 +146,7 @@ class UsuarioController extends Controller
         }
     }
     
+     // Función para eliminar un registro
     public function destroy($id)
     {
         User::find($id)->delete();

@@ -234,24 +234,29 @@ export default {
       this.getUsuarios();
     },
     methods: {
+      // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.publicPrivate.progressReport = year;
       },
+      // Función para obtener usuarios (investigadores) desde la API
       getUsuarios(){
         axios.get('api/usuarios').then( response =>{
             this.usuarios = response.data.sort((a, b) => a.name.localeCompare(b.name));;
         }).catch(e=> console.log(e))
       },
+      // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/researchers').then( response =>{
             this.researchers2 = response.data;
         }).catch(e=> console.log(e))
       },
+      // Función para obtener el año de progreso desde la API
       getProgressReport(){
         axios.get('api/showProgressReport').then( response =>{
             this.publicPrivate.progressReport = response.data;
         }).catch(e=> console.log(e))
       },
+      // Función para guardar un borrador 
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Save draft',
@@ -433,14 +438,17 @@ export default {
             });
           }
       },
-      cerrarModal(){
+        // Cierra el modal y emite un evento de recarga.
+        cerrarModal(){
         const elem = this.$refs.closeBtn;
         this.$emit('recarga');
         elem.click();
       },
-      capitalizeFirstLetter(string) {
+        // Capitaliza la primera letra de una cadena.
+        capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
+      // Método para crear un registro
       async createPublicPrivate() {
         this.errors = [];
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class conjointProjectController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class conjointProjectController extends Controller
         return response()->json("Colaboracion Creada!");
     }
 
-    public function verifyConjoint(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyConjoint(Request $request)
     {
         $query = scCollaborations::where('moduleType', 1)
             ->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])
@@ -32,6 +34,7 @@ class conjointProjectController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -64,6 +67,7 @@ class conjointProjectController extends Controller
     }
 
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $scCollaborations = scCollaborations::find($id);
@@ -73,6 +77,7 @@ class conjointProjectController extends Controller
     }
 
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         scCollaborations::find($id)->delete();

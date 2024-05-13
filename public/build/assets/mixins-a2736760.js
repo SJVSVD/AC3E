@@ -1,0 +1,1 @@
+import{m as a,a as r}from"./main-a60f64cc.js";import{u as l}from"./index-a6b313c0.js";a.locale("es");let s=document.head.querySelector('meta[name="user"]'),n=document.head.querySelector('meta[name="roles"]');l(),JSON.parse(s.content).name,JSON.parse(s.content).id,JSON.parse(s.content).email,JSON.parse(n.content);

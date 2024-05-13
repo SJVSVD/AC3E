@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class patentsController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class patentsController extends Controller
         return response()->json("Registro Creado!");
     }
 
-    public function verifyPatent(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyPatent(Request $request)
     {
         $query = patents::where('registrationNumber', $request['registrationNumber'])
             ->whereNotNull('registrationNumber');
@@ -28,6 +30,7 @@ class patentsController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -60,6 +63,7 @@ class patentsController extends Controller
     }
 
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $patents = patents::find($id);
@@ -68,6 +72,7 @@ class patentsController extends Controller
         return response()->json($input);
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importPatent(Request $request)
     {
         // Arreglo de mapeo para el estado de solicitud de aplicación
@@ -155,6 +160,7 @@ class patentsController extends Controller
     
 
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         patents::find($id)->delete();

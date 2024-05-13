@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class awardsController extends Controller
 {
+    // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {
         $input = $request->all();
@@ -14,7 +15,8 @@ class awardsController extends Controller
         return response()->json("Premio Creada!");
     }
 
-    public function verifyAward(Request $request)
+    // Función para detectar registros duplicados
+     public function verifyAward(Request $request)
     {
         $query = awards::where('awardName', $request['awardName'])
             ->where('institution', $request['institution'])
@@ -30,6 +32,7 @@ class awardsController extends Controller
         return response()->json($existentes); 
     }
 
+    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
         // Seleccionar datos relacionados con el usuario:
         $roles = [];
@@ -61,6 +64,7 @@ class awardsController extends Controller
         return $awards;
     }
 
+    // Función para importar los registros que vienen desde excel
     public function importAward(Request $request)
     {
         $data = $request->input('data');
@@ -100,6 +104,7 @@ class awardsController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+     // Función para editar un registro
     public function update(Request $request, $id)
     {
         $awards = awards::find($id);
@@ -109,6 +114,7 @@ class awardsController extends Controller
         return response()->json("Premio Editado");
     }
 
+     // Función para eliminar un registro
     public function destroy($id)
     {
         awards::find($id)->delete();
