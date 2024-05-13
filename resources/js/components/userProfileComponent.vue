@@ -169,7 +169,7 @@ export default {
         capitalizeFirstLetter(string) {
           return string.charAt(0).toUpperCase() + string.slice(1);
         },
-        // Guarda los cambios del perfil
+        // Guarda los cambios del perfil 
         async guardarPerfil(){
             this.errors = [];
             for (const item in this.editables){
