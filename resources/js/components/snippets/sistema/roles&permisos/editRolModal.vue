@@ -6,28 +6,28 @@
                     <div class="modal-container-xs">
                         <div class="modal-header fw-bold" style="color: #444444;">
                             <slot name="header">
-                                Editar Rol
+                                Edit Role
                             </slot>
                             <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
                         </div>
                         <div class="modal-body">
                         <slot name="body">
                             <div class="form-group">
-                                <label for="name">Nombre: </label>
+                                <label for="name">Role Name: </label>
                                 <br>
                                 <input type="text" class= "form-control" v-model="name">
                                 <div v-if="errors && errors.name" class="error">
                                     {{ errors.name[0] }}
                                 </div>
                             </div>
-                            <label for="">Permisos para este Rol: </label>
+                            <!-- <label for="">Permisos para este Rol: </label>
                             <br/>
                             <div v-for="permiso in permisos" :key="permiso.id" class="form-check">
                                 <label class="form-check-label">
                                     <input type="checkbox" class="form-check-input" v-bind:id="permiso.id" v-bind:value="permiso.id" v-model="permissions">
                                         &nbsp;{{ permiso.name }}
                                 </label>
-                            </div>
+                            </div> -->
                             <br/>
                             <div class="modal-footer">
                                 <slot name="footer">
@@ -57,7 +57,7 @@ export default {
     components: { modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
-        buttonText:'Editar Rol',
+        buttonText:'Edit Role',
         buttonDisable: false,
         name: "",
         id: "",
@@ -73,8 +73,8 @@ export default {
     created(){
         this.name = this.rol.name;
         this.id = this.rol.id;
-        this.getPermisos();
-        this.getPermisosRol(this.id);
+        //this.getPermisos();
+        //this.getPermisosRol(this.id);
     },
     methods: {
           // Cierra el modal y emite un evento de recarga.
@@ -111,21 +111,20 @@ export default {
           // Edita el registro despues de validar
         async editarRol() {
             const ok = await this.$refs.confirmation.show({
-                title: 'Editar Rol',
-                message: `¿Está seguro/a que desea editar al rol '${this.rol.name}'? Esta acción no puede ser desecha.`,
-                okButton: 'Editar',
-                cancelButton: 'Volver'
+                title: 'Edit Role',
+                message: `Are you sure you want to edit the role '${this.rol.name}'? This action cannot be undone.`,
+                okButton: 'Edit',
+                cancelButton: 'Go Back'
             })
             if (ok) {
                 let rol = {
                     name: this.name,
-                    permission: this.permissions
                 }
                 var id = this.id;
                 axios.put(`api/roles/${id}`, rol).then((result) => {
-                    this.buttonText = 'Guardando...';
                     this.buttonDisable = true;
-                    this.toast.success("Rol editado con éxito!", {
+                    this.buttonText = 'Saving...';
+                    this.toast.success("Role edited successfully!", {
                         position: "top-right",
                         timeout: 3000,
                         closeOnClick: true,
@@ -144,7 +143,7 @@ export default {
                 .catch((error)=> {
                     if (error.response.status == 422){
                         this.errors = error.response.data.errors;
-                        this.toast.warning('Existe un valor inválido.', {
+                        this.toast.warning('There is an invalid value.', {
                             position: "top-right",
                             closeOnClick: true,
                             pauseOnFocusLoss: true,

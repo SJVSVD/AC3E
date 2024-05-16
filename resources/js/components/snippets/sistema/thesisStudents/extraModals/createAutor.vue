@@ -14,6 +14,7 @@
                   <slot name="body">
                       <div class="form-group">
                         <label for="name">Name: </label>
+                        <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="autor.name">
                       </div>

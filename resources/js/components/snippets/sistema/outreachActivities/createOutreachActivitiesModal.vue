@@ -56,7 +56,7 @@
                     <br>
                     <div class="row">
                       <div class="col-md-3">
-                            <label for="">Activity Type:</label>
+                            <label for="">Type of Activity:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="outreachActivity.activityType">
                               <option disabled value="">Select a type</option>
@@ -101,6 +101,7 @@
                       <div class="col-md-3">
                         <label for="">Attendants Amount:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="It must be a numeric." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="number" class= "form-control" v-model="outreachActivity.attendantsAmount">
                       </div>

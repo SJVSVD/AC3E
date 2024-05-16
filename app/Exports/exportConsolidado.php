@@ -69,7 +69,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
         foreach($isiPublications as $isiPublication){
             // Añadir Nombre Usuario:
             $nombreUsuario = User::where('id',$isiPublication['idUsuario'])->get();
-            $isiPublication['idUsuario'] = $nombreUsuario[0]['name'];
+            $isiPublication['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
             
             if($isiPublication['mainResearchers'] == true){
                 $isiPublication['mainResearchers'] = 1;
@@ -214,7 +214,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($nonIsiPublications as $nonIsiPublication){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$nonIsiPublication['idUsuario'])->get();
-                    $nonIsiPublication['idUsuario'] = $nombreUsuario[0]['name'];
+                    $nonIsiPublication['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $nonIsis = [];
@@ -318,7 +318,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($books as $book){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$book['centerResearcher'])->get();
-                    $book['centerResearcher'] = $nombreUsuario[0]['name'];
+                    $book['centerResearcher'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $booksArray = [];
@@ -418,7 +418,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($awards as $award){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$award['awardeeName'])->get();
-                    $award['awardeeName'] = $nombreUsuario[0]['name'];
+                    $award['awardeeName'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $awardsArray = [];
@@ -514,7 +514,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($organizationsScEvents as $organization){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$organization['idUsuario'])->get();
-                    $organization['idUsuario'] = $nombreUsuario[0]['name'];
+                    $organization['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $organizationArray = [];
@@ -612,7 +612,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($participationScEvents as $participation){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$participation['idUsuario'])->get();
-                    $participation['idUsuario'] = $nombreUsuario[0]['name'];
+                    $participation['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $participationArray = [];
@@ -711,7 +711,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($collaborations as $collaboration){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$collaboration['idUsuario'])->get();
-                    $collaboration['idUsuario'] = $nombreUsuario[0]['name'];
+                    $collaboration['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $collaborationsArray = [];
@@ -811,7 +811,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($theses as $these){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$these['idUsuario'])->get();
-                    $these['idUsuario'] = $nombreUsuario[0]['name'];
+                    $these['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $thesisArray = [];
@@ -922,7 +922,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($postDocs as $postDoc){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$postDoc['idUsuario'])->get();
-                    $postDoc['idUsuario'] = $nombreUsuario[0]['name'];
+                    $postDoc['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $postDocArray = [];
@@ -1022,7 +1022,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($outreachs as $outreach){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$outreach['idUsuario'])->get();
-                    $outreach['idUsuario'] = $nombreUsuario[0]['name'];
+                    $outreach['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $outreachArray = [];
@@ -1128,7 +1128,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($patents as $patent){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$patent['idUsuario'])->get();
-                    $patent['idUsuario'] = $nombreUsuario[0]['name'];
+                    $patent['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $patentsArray = [];
@@ -1229,7 +1229,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($publicPrivates as $publicPrivate){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$publicPrivate['idUsuario'])->get();
-                    $publicPrivate['idUsuario'] = $nombreUsuario[0]['name'];
+                    $publicPrivate['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $publicPrivateArray = [];
@@ -1326,7 +1326,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($technologyKnowledges as $technologyKnowledge){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$technologyKnowledge['idUsuario'])->get();
-                    $technologyKnowledge['idUsuario'] = $nombreUsuario[0]['name'];
+                    $technologyKnowledge['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';
                 }
                 // Ordenar elementos de las facturas:
                 $technologyKnowledgeArray = [];
@@ -1423,7 +1423,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach($fundings as $funding){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$funding['idUsuario'])->get();
-                    $funding['idUsuario'] = $nombreUsuario[0]['name'];
+                    $funding['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $fundingArray = [];

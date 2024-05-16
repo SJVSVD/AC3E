@@ -69,6 +69,7 @@
                           <div class="col-md-6">
                             <label for="">Authors:</label>
                             <label for="" style="color: orange;">*</label>
+                            <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                             <br>
                             <input type="text" class= "form-control" v-model="patent.authors">
                           </div>
@@ -114,6 +115,7 @@
                       <div class="col-md-4">
                         <label for="">Application granted n.º:</label>
                         <label v-if="patent.applicationStatus == 'Approved'" for="" style="color: orange;">*</label>
+                        <label title="You must enter if approved." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="patent.applicationGranted">
                       </div>

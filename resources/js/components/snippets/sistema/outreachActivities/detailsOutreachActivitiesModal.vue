@@ -21,7 +21,7 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Activity Type: </label>
+                      <label>Type of Activity: </label>
                       <label v-if="activity1.activityType != null" class="fw-normal" style="font-size: 14px;">{{ activity1.activityType }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>

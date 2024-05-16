@@ -25,6 +25,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <label for="">AC3E researcher involved:</label>
+                        <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the participants"
@@ -89,12 +90,14 @@
                         <label v-if="scCollaboration.studentOrResearcher == 'Researcher'" for="">Name of external researcher:</label>
                         <label v-else for="">Name of external person:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.nameOfExternalResearcher">
                       </div>
                       <div class="col-md-3">
                             <label for="">Student or Researcher:</label>
                             <label for="" style="color: orange;">*</label>
+                            <label title="External Researcher is:" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                             <br>
                             <select class="form-select" v-model="scCollaboration.studentOrResearcher">
                               <option disabled value="">Select a type</option>

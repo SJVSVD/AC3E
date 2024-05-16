@@ -26,6 +26,7 @@
                     <div class="col-md-6">
                         <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="participationSc.researcherInvolved"
@@ -124,6 +125,7 @@
                       <div class="col-md-6">
                         <label for="">Name of participants:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="text" class= "form-control" v-model="participationSc.nameOfParticipants">
                       </div>
                       <div class="col-md-4">

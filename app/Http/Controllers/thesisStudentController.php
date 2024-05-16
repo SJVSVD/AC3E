@@ -174,34 +174,38 @@ class thesisStudentController extends Controller
             
             // Verificar si el campo 'options' está presente y es un valor válido en el mapeo
             $posteriorArea = isset($rowData['Posterior working area']) && isset($optionsMapping2[$rowData['Posterior working area']]);
-
-            $thesisStudent = thesisStudent::create([
-                'idUsuario' => $rowData['idUsuario'],
-                'status' => $rowData['Status'],
-                'identification' => $rowData['Identification'],
-                'studentName' => $rowData['Student Name'],
-                'runOrPassport' => $rowData['RUN or Passport'],
-                'gender' => $gender,
-                'studentMail' => $rowData['Student Mail'],
-                'thesisStatus' => $rowData['Thesis Status'],
-                'thesisTitle' => $rowData['Thesis Title'],
-                'academicDegree' => $academicDegree,
-                'degreeDenomination' => $rowData['Degree Denomination'],
-                'tutorName' => $rowData['Name1'],
-                'tutorInstitution' => $rowData['Institution1'],
-                'cotutorName' => $rowData['Name2'],
-                'cotutorInstitution' => $rowData['Institution2'],
-                'otherName' => $rowData['Name3'],
-                'otherInstitution' => $rowData['Institution3'],
-                'university' => $rowData['University that gives the degree'],
-                'yearStart' => $rowData['Year in which thesis starts'],
-                'yearThesisEnd' => $rowData['Year in which thesis ends'],
-                'resourcesCenter' => $activityName,
-                'posteriorArea' => $posteriorArea,
-                'institutionPosteriorArea' => $rowData['Institution of Posterior working area'],
-                'comments' => $rowData['Comentarios'],
-                'progressReport' => $rowData['Progress Report'],
-            ]);
+            if (isset($row['idUsuario']) && $row['idUsuario'] !== null) {
+                $thesisStudent = thesisStudent::create([
+                    'idUsuario' => $rowData['idUsuario'],
+                    'status' => $rowData['Status'],
+                    'identification' => $rowData['Identification'],
+                    'studentName' => $rowData['Student Name'],
+                    'runOrPassport' => $rowData['RUN or Passport'],
+                    'gender' => $gender,
+                    'studentMail' => $rowData['Student Mail'],
+                    'thesisStatus' => $rowData['Thesis Status'],
+                    'thesisTitle' => $rowData['Thesis Title'],
+                    'academicDegree' => $academicDegree,
+                    'degreeDenomination' => $rowData['Degree Denomination'],
+                    'tutorName' => $rowData['Name1'],
+                    'tutorInstitution' => $rowData['Institution1'],
+                    'cotutorName' => $rowData['Name2'],
+                    'cotutorInstitution' => $rowData['Institution2'],
+                    'otherName' => $rowData['Name3'],
+                    'otherInstitution' => $rowData['Institution3'],
+                    'university' => $rowData['University that gives the degree'],
+                    'yearStart' => $rowData['Year in which thesis starts'],
+                    'yearThesisEnd' => $rowData['Year in which thesis ends'],
+                    'resourcesCenter' => $activityName,
+                    'posteriorArea' => $posteriorArea,
+                    'institutionPosteriorArea' => $rowData['Institution of Posterior working area'],
+                    'comments' => $rowData['Comentarios'],
+                    'progressReport' => $rowData['Progress Report'],
+                ]);
+            } else {
+                // Si el registro no tiene 'idUsuario' o es nulo, lo saltamos
+                continue;
+            }
         }
         
         return response()->json("Publicaciónes importadas");

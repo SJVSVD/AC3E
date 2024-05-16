@@ -3,7 +3,7 @@
     <div name="modal">
       <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container">
+            <div class="modal-container-xl">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
                     New Conjoint Project
@@ -26,6 +26,7 @@
                       <div class="col-md-6">
                         <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="conjointProject.researcherInvolved"
@@ -89,12 +90,14 @@
                         <label v-if="conjointProject.studentOrResearcher == 'Researcher'" for="">Name of external researcher:</label>
                         <label v-else for="">Name of external person:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.nameOfExternalResearcher">
                       </div>
                       <div class="col-md-3">
                             <label for="">Student or Researcher:</label>
                             <label for="" style="color: orange;">*</label>
+                            <label title="External Researcher is:" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                             <br>
                             <select class="form-select" v-model="conjointProject.studentOrResearcher">
                               <option disabled value="">Select a type</option>

@@ -26,6 +26,7 @@
                       <div class="col-md-6">
                         <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="thesisStudent.researcherInvolved"
@@ -74,6 +75,7 @@
                         <div class="col-md-3">
                             <label for="">Student Name: </label>
                             <label for="" style="color: orange;">*</label>
+                            <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                             <br>
                             <input type="text" class= "form-control" v-model="thesisStudent.studentName">
                         </div>
@@ -116,6 +118,7 @@
                       <div class="col-md-3">
                             <label for="">Student Mail: </label>
                             <label for="" style="color: orange;">*</label>
+                            <label title="The format must be an email." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                             <br>
                             <input type="email" class= "form-control" v-model="thesisStudent.studentMail">
                       </div>
@@ -159,6 +162,7 @@
                         <div class="form-group">
                         <label for="archivo">File:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="You must upload a PDF file or image." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <label v-if="thesisStudent1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
                         </div>

@@ -33,7 +33,7 @@ class usersSeeder extends Seeder
             ['idResearchLine' => '4','idRole'=> '1','name' => 'Felipe Tobar', 'email' => 'ftobar@dim.uchile.cl','password' => bcrypt('ftobar890')],
             ['idResearchLine' => '4','idRole'=> '1','name' => 'María José Escobar', 'email' => 'mariajose.escobar@usm.cl','password' => bcrypt('mjescobar012')],
             ['idResearchLine' => '4','idRole'=> '2','name' => 'Sandy Bolufe', 'email' => 'sandy.bolufe@usm.cl','password' => bcrypt('sbolufe345')],
-            ['idResearchLine' => '5','idRole'=> '3','name' => 'Fernando Aut', 'email' => 'fernando.auat@usm.cl','password' => bcrypt('faut678')],
+            ['idResearchLine' => '5','idRole'=> '3','name' => 'Fernando Auat', 'email' => 'fernando.auat@usm.cl','password' => bcrypt('fauat678')],
             ['idResearchLine' => '5','idRole'=> '1','name' => 'Marcos Orchard', 'email' => 'morchard@ing.uchile.cl','password' => bcrypt('morchard901')],
             ['idResearchLine' => '5','idRole'=> '1','name' => 'Miguel Torres', 'email' => 'mtorrest@ing.puc.cl','password' => bcrypt('mtorres234')],
             ['idResearchLine' => '5','idRole'=> '1','name' => 'José Delpiano', 'email' => 'jfd@uandes.cl','password' => bcrypt('jdelpiano567')],

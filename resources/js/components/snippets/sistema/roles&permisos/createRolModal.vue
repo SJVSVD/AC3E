@@ -6,21 +6,21 @@
             <div class="modal-container-xs">
               <div class="modal-header fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Nuevo Rol
+                    New Role
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
               <div class="modal-body">
                 <slot name="body">
                     <div class="form-group">
-                      <label for="name">Nombre del Rol: </label>
+                      <label for="name">Role name: </label>
                       <br>
                       <input type="text" class= "form-control"  v-has-error="errors.name" v-model="name">
                       <div v-if="errors && errors.name" class="error">
                         {{ errors.name[0] }}
                       </div>
                     </div>
-                    <label for="">Permisos para este Rol: </label>
+                    <!-- <label for="">Permisos para este Rol: </label>
                       <br/>
                       <div v-for="permiso in permisos" :key="permiso.id" class="form-check">
                           <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:value="permiso.id"  v-model="permissions">
@@ -28,7 +28,7 @@
                       </div>
                       <div v-if="errors && errors.permission" class="error">
                         {{ errors.permission[0] }}
-                      </div>
+                      </div> -->
                       <br/>
                     <div class="modal-footer">
                       <slot name="footer">
@@ -58,7 +58,7 @@ export default {
     components: { modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
-        buttonText:'Guardar Rol',
+        buttonText:'Create Role',
         buttonDisable: false,
         name: '',
         errors:[],
@@ -66,7 +66,7 @@ export default {
         permissions:[],
     }),
     created(){
-        this.getPermisos();
+        //this.getPermisos();
     },
     methods: {
         // Cierra el modal y emite un evento de recarga.
@@ -82,20 +82,19 @@ export default {
         },
       async crearRol() {
         const ok = await this.$refs.confirmation.show({
-          title: 'Crear Rol',
-          message: `¿Está seguro/a que desea crear el rol '${this.name}'? Esta acción no puede ser desecha.`,
-          okButton: 'Crear',
-          cancelButton: 'Volver'
+          title: 'Create Role',
+          message: `Are you sure you want to create the role '${this.name}'? This action cannot be undone.`,
+          okButton: 'Create',
+          cancelButton: 'Go Back'
         })
         if (ok) {
           let rol = {
             name: this.name,
-            permission: this.permissions,
           };
           axios.post("api/roles", rol).then((result) => {
             this.buttonDisable = true;
-            this.buttonText = 'Guardando...';
-            this.toast.success("Rol guardado con éxito!", {
+            this.buttonText = 'Saving...';
+            this.toast.success("Role saved successfully!", {
               position: "top-right",
               timeout: 3000,
               closeOnClick: true,
@@ -114,7 +113,7 @@ export default {
           .catch((error)=> {
             if (error.response.status == 422){
               this.errors = error.response.data.errors;
-              this.toast.warning('Existe un valor inválido.', {
+              this.toast.warning('There is an invalid value.', {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,

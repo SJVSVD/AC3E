@@ -26,6 +26,7 @@
                       <div class="col-md-6">
                         <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="award.researcherInvolved"
@@ -72,6 +73,13 @@
                     <br>
                     <div class="row">
                           <div class="col-md-4">
+                            <label for="">Awardee Name:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                            <br>
+                            <input type="text" class= "form-control" v-model="award.awardeeName">
+                          </div>
+                          <div class="col-md-4">
                             <label for="">Award Name:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
@@ -84,22 +92,22 @@
                             <br>
                             <input type="text" class= "form-control" v-model="award.institution">
                           </div>
-                          <div class="col-md-4">
-                            <label for="">Country:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="award.country">
-                          </div>
-                    </div>
-                    <br>
-                    <div class="row">
+                        </div>
+                        <br>
+                        <div class="row">
+                      <div class="col-md-3">
+                        <label for="">Country:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="text" class= "form-control" v-model="award.country">
+                      </div>
                       <div class="col-md-6">
                           <label for="">Contribution of the awardee:</label>
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <textarea class= "form-control" v-model="award.contributionAwardee" style="resize: none;" cols="30" rows="5"></textarea>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-3">
                           <label for="">Comments:</label>
                           <br>
                           <input type="text" class= "form-control" v-model="award.comments">

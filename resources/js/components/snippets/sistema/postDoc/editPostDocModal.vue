@@ -26,6 +26,7 @@
                     <div class="col-md-6">
                         <label for="">Personal email:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="The format must be an email." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="postDoc.personalEmail">
                       </div>

@@ -5,10 +5,10 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-continue" id="show-modal1" @click="showCrearRol = true">Nuevo Rol</a>
+                            <a class="btn btn-continue" id="show-modal1" @click="showCrearRol = true">New Role</a>
                             &nbsp;
-                            <a class="btn btn-continue" id="show-modal1" @click="showCrearPermiso = true">Nuevo Permiso</a>
-                            &nbsp;
+                            <!-- <a class="btn btn-continue" id="show-modal1" @click="showCrearPermiso = true">Nuevo Permiso</a>
+                            &nbsp; -->
                             <a class="btn btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
@@ -30,9 +30,9 @@
                                 <thead>
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID-Rol</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Nombre</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Acciones</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Name</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -143,14 +143,14 @@ export default {
         },
         async deleteRole(id,Nombre) {
             const ok = await this.$refs.confirmation.show({
-                title: 'Borrar Rol',
-                message: `¿Está seguro/a que desea eliminar al rol '${Nombre}'? Esta acción no puede ser desecha.`,
-                okButton: 'Eliminar',
-                cancelButton: 'Volver'
+                title: 'Delete Role',
+                message: `Are you sure you want to delete the role '${Nombre}'? This action cannot be undone.`,
+                okButton: 'Delete',
+                cancelButton: 'Go Back'
             })
             if (ok) {
                 axios.delete(`api/roles/${id}`).then( response =>{
-                    this.toast.success("Rol eliminado con éxito!", {
+                    this.toast.success("Role deleted successfully!", {
                         position: "top-right",
                         timeout: 3000,
                         closeOnClick: true,

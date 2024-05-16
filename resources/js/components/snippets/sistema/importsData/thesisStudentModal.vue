@@ -100,7 +100,6 @@ export default {
           'Institution of Posterior working area',
           'Year of Information Report Working Area',
           'Comentarios',
-          'Co-autoria centro'
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
           if (missingHeaders.length > 0) {

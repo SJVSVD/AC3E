@@ -51,15 +51,13 @@ class RolController extends Controller
     {
         $campos = [
             'name'=> 'required',
-            'permission'=> 'required',
         ];
         $mensaje = [
             'name.required' => 'El campo "Nombre" es obligatorio.',
-            'permission.required' => 'El campo "Permiso" es obligatorio.',
         ];
         $this->validate($request, $campos, $mensaje);
         $role = Role::create(['name'=> $request ->input('name')]);
-        $role->syncPermissions($request->input('permission'));
+        //$role->syncPermissions($request->input('permission'));
 
         return response()->json("Rol Creado!");
     }

@@ -26,6 +26,7 @@
                       <div class="col-md-6">
                         <label for="">AC3E researcher involved:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="book.researcherInvolved"
@@ -112,18 +113,21 @@
                     <div class="row">
                       <div class="col-md-4">
                         <label for="">Editors:</label>
+                        <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.editors">
                       </div>
                       <div class="col-md-4">
                         <label for="">Book Authors:</label>
                         <label for="" style="color: orange;">*</label>
+                        <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.bookAuthors">
                       </div>
                       <div class="col-md-4">
                         <label for="">Chapter Authors:</label>
                         <label v-if="book.workType == 'Book Chapter'" for="" style="color: orange;">*</label>
+                        <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class= "form-control" v-model="book.chapterAuthors">
                       </div>
