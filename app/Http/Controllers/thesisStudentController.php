@@ -174,7 +174,7 @@ class thesisStudentController extends Controller
             
             // Verificar si el campo 'options' está presente y es un valor válido en el mapeo
             $posteriorArea = isset($rowData['Posterior working area']) && isset($optionsMapping2[$rowData['Posterior working area']]);
-            if (isset($row['idUsuario']) && $row['idUsuario'] !== null) {
+            if (isset($rowData['idUsuario']) && $rowData['idUsuario'] !== null) {
                 $thesisStudent = thesisStudent::create([
                     'idUsuario' => $rowData['idUsuario'],
                     'status' => $rowData['Status'],
