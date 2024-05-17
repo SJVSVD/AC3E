@@ -28,7 +28,7 @@ use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\postDocController;
 use App\Http\Controllers\researchLineController;
 use App\Http\Controllers\roleUserController;
-use App\Http\Controllers\UniversitiesController;
+use App\Http\Controllers\universitiesController;
 
 // Rutas Generales (SYS_)
 
@@ -130,7 +130,7 @@ Route::apiResource('permisos', PermisosController::class);
 
 //Universities
 
-Route::apiResource('universities', UniversitiesController::class);
+Route::apiResource('universities', universitiesController::class);
 
 //Exports
 
