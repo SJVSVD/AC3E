@@ -438,18 +438,19 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function collection()
             {
-                $awards = awards::where('status', 'Finished')->where('awardeeName',$this->idUsuarioDescarga)->get();
+                $awards = awards::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
                 // Convierte el array de objetos en una colección:
                 foreach($awards as $award){
                     // Añadir Nombre Usuario:
-                    $nombreUsuario = User::where('id',$award['awardeeName'])->get();
-                    $award['awardeeName'] = $nombreUsuario[0]['name'];
+                    $nombreUsuario = User::where('id',$award['idUsuario'])->get();
+                    $award['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
                 }
                 // Ordenar elementos de las facturas:
                 $awardsArray = [];
                 foreach ($awards as $award) {
                     $newAward = [
                         'Id' => $award['id'],
+                        'User' => $award['idUsuario'],
                         'Awardee Name' => $award['awardeeName'],
                         'Award Name' => $award['awardName'],
                         'Year' => $award['year'],
@@ -470,7 +471,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Awardee Name','Award Name','Constribution of the Awardee','Awarding Institution','Country','Comments'];
+                return ['Id','User', 'Awardee Name','Award Name','Year','Constribution of the Awardee','Awarding Institution','Country','Comments'];
             }
 
             public function defaultStyles(Style $defaultStyle)
@@ -493,7 +494,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function styles(Worksheet $sheet){
                 // Header:
-                $sheet->getStyle('A1:G1')->applyFromArray([
+                $sheet->getStyle('A1:I1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
@@ -518,7 +519,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:G1');
+                        $sheet->setAutoFilter('A1:I1');
                     },
                 ];
             }

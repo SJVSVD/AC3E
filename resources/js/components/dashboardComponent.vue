@@ -109,14 +109,14 @@
         <div class="col-lg-4">
             <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="row p-3">
-                    <div class="col-6">
-                        <a class="btn btn-primary" v-if="is('Administrator')" @click="exportConsolidado">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Consolidated
+                    <div class="col-md-6">
+                        <a class="btn btn-search-blue"  style="min-height: 120px; display: flex; justify-content: center; align-items: center;" v-if="is('Administrator')" @click="exportConsolidado">
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> {{ buttonText1 }}
                         </a>
                     </div>
-                    <div class="col-6">
-                        <a class="btn btn-primary" @click="exportIndividual">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> Export Individual Return
+                    <div class="col-md-6">
+                        <a class="btn btn-search-blue"  style="min-height: 120px; display: flex; justify-content: center; align-items: center;" @click="exportIndividual">
+                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> {{ buttonText2 }}
                         </a>
                     </div>
                 </div>
@@ -190,6 +190,8 @@ export default {
         return {
             cantidadRegistros: 10,
             registros: [],
+            buttonText1: 'Download Consolidated',
+            buttonText2: 'Download Individual Return',
             CLPRates: null,
             interval: null,
             time: null,
@@ -399,6 +401,7 @@ export default {
 
         // Exporta un archivo consolidado.
         exportConsolidado(){
+            this.buttonText1 = 'Downloading...';
             var data = {
                 userID: this.userID,
             };
@@ -414,6 +417,7 @@ export default {
                 link.href = window.URL.createObjectURL(blob)
                 link.download = 'Consolidated.xlsx'
                 link.click()
+                this.buttonText1 = 'Download Consolidated';
                 this.toast.success("Consolidated have been downloaded successfully!", {
                     position: "top-right",
                     timeout: 3000,
@@ -519,6 +523,7 @@ export default {
 
         // Exporta un archivo individual.
         exportIndividual(){
+            this.buttonText2 = 'Downloading...';
             var data = {
                 userID: this.userID,
             };
@@ -534,6 +539,7 @@ export default {
                 link.href = window.URL.createObjectURL(blob)
                 link.download = 'PlanillaIndividual.xlsx'
                 link.click()
+                this.buttonText2 = 'Download Individual Return';
                 this.toast.success("Individual return have been downloaded successfully!", {
                     position: "top-right",
                     timeout: 3000,
