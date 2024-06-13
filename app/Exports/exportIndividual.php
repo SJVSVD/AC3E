@@ -595,7 +595,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 ]);
         
                 // Establecer estilos para las celdas (excepto el encabezado)
-                $sheet->getStyle('A2:T'.$sheet->getHighestRow())->applyFromArray([
+                $sheet->getStyle('A2:K'.$sheet->getHighestRow())->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
@@ -786,8 +786,9 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                         'Progress report' => $participation['progressReport'],
                         'User' => $participation['idUsuario'],
                         'Type of event' => $participation['typeEvent'],
-                        'Name course/congress' => $participation['eventName'],
-                        'Number of participants' => $participation['numberParticipants'],
+                        'Type of participation' => $participation['typeOfParticipation'],
+                        'Event name' => $participation['eventName'],
+                        'Name of participants' => $participation['nameOfParticipants'],
                         'Country' => $participation['country'],
                         'City' => $participation['city'],
                         'Start Date' => $participation['startDate'],
@@ -805,7 +806,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress report','User','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Type of participation','Comments'];
+                return ['Id', 'Progress report','User','Type of event','Type of participation','Event name','Name of participants','Country','City','Start Date','Ending Date','Comments'];
             }
 
             public function columnWidths(): array

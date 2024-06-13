@@ -747,8 +747,9 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'Progress report' => $participation['progressReport'],
                         'User' => $participation['idUsuario'],
                         'Type of event' => $participation['typeEvent'],
-                        'Name course/congress' => $participation['eventName'],
-                        'Number of participants' => $participation['numberParticipants'],
+                        'Type of participation' => $participation['typeOfParticipation'],
+                        'Event name' => $participation['eventName'],
+                        'Name of participants' => $participation['nameOfParticipants'],
                         'Country' => $participation['country'],
                         'City' => $participation['city'],
                         'Start Date' => $participation['startDate'],
@@ -766,7 +767,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'Progress report','User','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Type of participation','Comments'];
+                return ['Id', 'Progress report','User','Type of event','Type of participation','Event name','Name of participants','Country','City','Start Date','Ending Date','Comments'];
             }
 
             public function columnWidths(): array
