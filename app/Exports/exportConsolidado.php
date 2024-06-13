@@ -572,7 +572,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 ]);
         
                 // Establecer estilos para las celdas (excepto el encabezado)
-                $sheet->getStyle('A2:T'.$sheet->getHighestRow())->applyFromArray([
+                $sheet->getStyle('A2:K'.$sheet->getHighestRow())->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
@@ -747,7 +747,6 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'Progress report' => $participation['progressReport'],
                         'User' => $participation['idUsuario'],
                         'Type of event' => $participation['typeEvent'],
-                        'Progress Report' => $participation['progressReport'],
                         'Name course/congress' => $participation['eventName'],
                         'Number of participants' => $participation['numberParticipants'],
                         'Country' => $participation['country'],
