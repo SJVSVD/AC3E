@@ -554,7 +554,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             public function styles(Worksheet $sheet)
             {
                 // Establecer estilos para el encabezado
-                $sheet->getStyle('A1:K')->applyFromArray([
+                $sheet->getStyle('A1:K1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
