@@ -502,8 +502,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($awards as $award) {
                     $newAward = [
                         'Id' => $award['id'],
-                        'User' => $award['idUsuario'],
                         'Progress Report' => $award['progressReport'],
+                        'User' => $award['idUsuario'],
                         'Awardee Name' => $award['awardeeName'],
                         'Award Name' => $award['awardName'],
                         'Year' => $award['year'],
@@ -623,8 +623,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($organizationsScEvents as $organization) {
                     $newOrganization = [
                         'Id' => $organization['id'],
-                        'User' => $organization['idUsuario'],
                         'Progress Report' => $organization['progressReport'],
+                        'User' => $organization['idUsuario'],
                         'Type of event' => $organization['typeEvent'],
                         'Name course/congress' => $organization['eventName'],
                         'Number of participants' => $organization['numberParticipants'],
@@ -744,8 +744,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($participationScEvents as $participation) {
                     $newParticipation = [
                         'Id' => $participation['id'],
-                        'User' => $participation['idUsuario'],
                         'Progress report' => $participation['progressReport'],
+                        'User' => $participation['idUsuario'],
                         'Type of event' => $participation['typeEvent'],
                         'Progress Report' => $participation['progressReport'],
                         'Name course/congress' => $participation['eventName'],
@@ -866,8 +866,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($collaborations as $collaboration) {
                     $newCollaboration = [
                         'Id' => $collaboration['id'],
-                        'User' => $collaboration['idUsuario'],
                         'Progress Report' => $collaboration['progressReport'],
+                        'User' => $collaboration['idUsuario'],
                         'Activity Name' => $collaboration['activityName'],
                         'Progress Report' => $collaboration['progressReport'],
                         'Country Origin' => $collaboration['countryOrigin'],
@@ -989,8 +989,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($theses as $these) {
                     $newThesis = [
                         'Id' => $these['id'],
-                        'User' => $these['idUsuario'],
                         'Progress Report' => $these['progressReport'],
+                        'User' => $these['idUsuario'],
                         'Student Name' => $these['studentName'],
                         'RUN or Passport' => $these['runOrPassport'],
                         'Gender' => $these['gender'],
@@ -1123,8 +1123,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($postDocs as $postDoc) {
                     $newPostDoc = [
                         'Id' => $postDoc['id'],
-                        'User' => $postDoc['idUsuario'],
                         'Progress Report' => $postDoc['progressReport'],
+                        'User' => $postDoc['idUsuario'],
                         'Name of Postdoctoral Fellows' => $postDoc['nameOfPostdoc'],
                         'RUN/Passport' => $postDoc['runOrPassport'],
                         'Gender' => $postDoc['gender'],
@@ -1247,8 +1247,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($outreachs as $outreach) {
                     $newOutreach = [
                         'Id' => $outreach['id'],
-                        'User' => $outreach['idUsuario'],
                         'Progress Report' => $outreach['progressReport'],
+                        'User' => $outreach['idUsuario'],
                         'Type of Activity' => $outreach['activityType'],
                         'Event Title' => $outreach['activityName'],
                         'Activity Description' => $outreach['activityDescription'],
@@ -1376,8 +1376,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($patents as $patent) {
                     $newPatent = [
                         'Id' => $patent['id'],
-                        'User' => $patent['idUsuario'],
                         'Progress Report' => $patent['progressReport'],
+                        'User' => $patent['idUsuario'],
                         'IP Type' => $patent['ipType'],
                         'Authors' => $patent['authors'],
                         'Institution Owner(s)' => $patent['institutionOwner'],
@@ -1500,9 +1500,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($publicPrivates as $publicPrivate) {
                     $newPublicPrivate = [
                         'Id' => $publicPrivate['id'],
+                        'Progress Report' => $publicPrivate['progressReport'],
                         'User' => $publicPrivate['idUsuario'],
-                        'Progress Report' => $publicPrivate['progressReport'],
-                        'Progress Report' => $publicPrivate['progressReport'],
                         'Name of Activity' => $publicPrivate['nameOfActivity'],
                         'Results/Goals' => $publicPrivate['resultsGoals'],
                         'Name Of Organization' => $publicPrivate['nameOfOrganization'],
@@ -1621,8 +1620,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($technologyKnowledges as $technologyKnowledge) {
                     $newTechnologyKnowledge = [
                         'Id' => $technologyKnowledge['id'],
-                        'User' => $technologyKnowledge['idUsuario'],
                         'Progress Report' => $technologyKnowledge['progressReport'],
+                        'User' => $technologyKnowledge['idUsuario'],
                         'Technology Transfer' => $technologyKnowledge['technologyTransfer'],
                         'Knowledge Transfer' => $technologyKnowledge['knowledgeTransfer'],
                         'Type of Transfer' => $technologyKnowledge['typeOfTransfer'],
@@ -1741,8 +1740,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($fundings as $funding) {
                     $newFunding = [
                         'Id' => $funding['id'],
-                        'User' => $funding['idUsuario'],
                         'Progress Report' => $funding['progressReport'],
+                        'User' => $funding['idUsuario'],
                         'Type Sources' => $funding['typeSources'],
                         'Name of the institution' => $funding['nameOfInstitution'],
                         'Program/contest' => $funding['programContest'],
