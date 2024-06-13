@@ -21,7 +21,9 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithProperties;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+
+use Maatwebsite\Excel\Concerns\WithColumnLimit;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -37,7 +39,7 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 use function Ramsey\Uuid\v1;
 
-class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEvents, WithStyles, FromCollection, WithHeadings, ShouldAutoSize, WithProperties, WithTitle
+class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEvents, WithStyles, FromCollection, WithHeadings, WithColumnWidths, WithProperties, WithTitle
 {
     public $idUsuarioDescarga;
 
@@ -113,6 +115,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
         foreach ($isiPublications as $isiPublication) {
             $newisiPublication = [
                 'Id' => $isiPublication['id'],
+                'Progress Report' => $isiPublication['progressReport'],
                 'User' => $isiPublication['idUsuario'],
                 'Authors' => $isiPublication['authors'],
                 'Article Title' => $isiPublication['articleTitle'],
@@ -122,6 +125,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 'First Page' => $isiPublication['firstPage'],
                 'Last Page' => $isiPublication['lastPage'],
                 'Funding' => $isiPublication['funding'],
+                'Year Published' => $isiPublication['yearPublished'],
+                'Month' => $isiPublication['month'],
                 'Main Researchers' => $isiPublication['mainResearchers'],
                 'Associative Researchers' => $isiPublication['associativeResearchers'],
                 'Post Doc' => $isiPublication['postDoc'],
@@ -141,7 +146,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
     public function headings(): array
     {
-        return ['No.','User','Authors','Article Title','Journal Name','Digital Object Identifier (DOI)','Volume','First Page', 'Last Page','Funding','Main Researchers','Associative Researchers','Postdoc','Thesis Students','National External Researchers','Internacional External Researchers','Comments'];
+        return ['No.','Progress Report','User','Authors','Article Title','Journal Name','Digital Object Identifier (DOI)','Volume','First Page', 'Last Page','Funding','Year','Month','Main Researchers','Associative Researchers','Postdoc','Thesis Students','National External Researchers','Internacional External Researchers','Comments'];
     }
 
     public function registerEvents(): array
@@ -151,9 +156,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 // Obtiene la hoja activa
                 $sheet = $event->sheet;
                 // Se le aplica autofilter al header
-                $sheet->setAutoFilter('A1:Q1');
+                $sheet->setAutoFilter('A1:T1');
             },
         ];
+    }
+
+    public function columnWidths(): array
+    {
+        // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+        $specificWidths = array_fill_keys(range('C', 'T'), 40);
+    
+        // Devolver el arreglo de anchos específicos
+        return $specificWidths;
     }
 
     public function defaultStyles(Style $defaultStyle)
@@ -168,27 +182,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
         $fill = $defaultStyle->getFill();
         $fill->setFillType(Fill::FILL_NONE);
         // $fill->getStartColor()->setARGB('FF0000');
-        // ALIGNMENT:
-        $alignment = $defaultStyle->getAlignment();
-        $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
         return $defaultStyle;
     }
 
-    public function styles(Worksheet $sheet){
-        // Header:
-        $sheet->getStyle('A1:Q1')->applyFromArray([
+    public function styles(Worksheet $sheet)
+    {
+        // Establecer estilos para el encabezado
+        $sheet->getStyle('A1:T1')->applyFromArray([
             'font' => [
                 'Calibri' => true,
                 'bold' => true,
                 'size' => 12,
                 'color' => [
-                    'rgb' => '000000',
+                    'rgb' => '000000', // Color blanco
                 ],
             ],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => [
-                    'rgb' => 'FFC000',
+                    'rgb' => 'ED8D1D', // Color naranja
+                ],
+            ],
+        ]);
+
+        // Establecer estilos para las celdas (excepto el encabezado)
+        $sheet->getStyle('A2:T'.$sheet->getHighestRow())->applyFromArray([
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => 'F2F2F2', // Color gris claro
+                ],
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'], // Color negro
                 ],
             ],
         ]);
@@ -206,7 +234,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             'A1 ISI PUBLICATIONS' => $this,
         ];
         // Agrega la segunda hoja con los nuevos datos
-        $sheets['A2 NON ISI PUBLICATIONS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A2 NON ISI PUBLICATIONS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles,WithColumnWidths  {
             public function collection()
             {
                 $nonIsiPublications = nonIsiPublication::where('status', 'Finished')->get();
@@ -221,8 +249,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($nonIsiPublications as $nonIsiPublication) {
                     $newNonIsiPublication = [
                         'Id' => $nonIsiPublication['id'],
+                        'Progress Report' => $nonIsiPublication['progressReport'],
                         'User' => $nonIsiPublication['idUsuario'],
-                        // 'Progress Report' => $nonIsiPublication['progressReport'],
                         'Authors' => $nonIsiPublication['authors'],
                         'Article Title' => $nonIsiPublication['articleTitle'],
                         'Journal Name' => $nonIsiPublication['journalName'],
@@ -230,6 +258,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'First Page' => $nonIsiPublication['firstPage'],
                         'Last Page' => $nonIsiPublication['lastPage'],
                         'Funding' => $nonIsiPublication['funding'],
+                        'Year Published' => $nonIsiPublication['yearPublished'],
+                        'Month' => $nonIsiPublication['month'],
                         'Main Researchers' => $nonIsiPublication['mainResearchers'],
                         'Associative Researchers' => $nonIsiPublication['associativeResearchers'],
                         'Post Doc' => $nonIsiPublication['postDoc'],
@@ -249,9 +279,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Authors','Article Title','Journal Name','Volume','First Page','Last Page','Funding','Main Researchers','Associative Researchers','Post Doc','Thesis Students','National External Researchers','International External Researchers','Comments'];
+                return ['Id','Progress Report','User','Authors','Article Title','Journal Name','Volume','First Page','Last Page','Funding','Year Published','Month','Main Researchers','Associative Researchers','Post Doc','Thesis Students','National External Researchers','International External Researchers','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'S'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -264,27 +303,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
-                $sheet->getStyle('A1:P1')->applyFromArray([
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
+                $sheet->getStyle('A1:S1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:S'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -297,7 +350,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:P1');
+                        $sheet->setAutoFilter('A1:S1');
                     },
                 ];
             }
@@ -310,7 +363,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A3 BOOKS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A3 BOOKS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $books = books::where('status', 'Finished')->get();
@@ -325,8 +378,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 foreach ($books as $book) {
                     $newBook = [
                         'Id' => $book['id'],
+                        'Progress Report' => $book['progressReport'],
                         'User' => $book['centerResearcher'],
-                        // 'Progress Report' => $book['progressReport'],
                         'Books Authors' => $book['bookAuthors'],
                         'Chapter Authors' => $book['chapterAuthors'],
                         'Title of the Book' => $book['bookTitle'],
@@ -334,7 +387,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'First Page' => $book['firstPage'],
                         'Last Page' => $book['lastPage'],
                         'Editorial/City/Country' => $book['editorialCityCountry'],
-                        'Date' => $book['year'],
+                        'Year' => $book['year'],
+                        'Month' => $book['month'],
                         'Comments' => $book['comments'],
                     ];
                     array_push($booksArray, $newBook);
@@ -348,9 +402,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Books Authors','Chapter Authors','Title of the Book','Chapter Title','First Page','Last Page','Editorial/City/Country','Date','Comments'];
+                return ['Id', 'Progress Report','User','Books Authors','Chapter Authors','Title of the Book','Chapter Title','First Page','Last Page','Editorial/City/Country','Year','Month','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'M'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -363,27 +426,163 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
-                $sheet->getStyle('A1:K1')->applyFromArray([
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
+                $sheet->getStyle('A1:M1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:M'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
+                        ],
+                    ],
+                ]);
+            }
+
+            public function registerEvents(): array
+            {
+                return [
+                    AfterSheet::class => function (AfterSheet $event) {
+                        // Obtiene la hoja activa
+                        $sheet = $event->sheet;
+                        // Se le aplica autofilter al header
+                        $sheet->setAutoFilter('A1:M1');
+                    },
+                ];
+            }
+
+            public function title(): string
+            {
+                return 'A3 BOOKS';
+            }
+
+            
+        };
+
+
+        $sheets['A4 AWARDS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
+            public function collection()
+            {
+                $awards = awards::where('status', 'Finished')->get();
+                // Convierte el array de objetos en una colección:
+                foreach($awards as $award){
+                    // Añadir Nombre Usuario:
+                    $nombreUsuario = User::where('id',$award['idUsuario'])->get();
+                    $award['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
+                }
+                // Ordenar elementos de las facturas:
+                $awardsArray = [];
+                foreach ($awards as $award) {
+                    $newAward = [
+                        'Id' => $award['id'],
+                        'User' => $award['idUsuario'],
+                        'Progress Report' => $award['progressReport'],
+                        'Awardee Name' => $award['awardeeName'],
+                        'Award Name' => $award['awardName'],
+                        'Year' => $award['year'],
+                        'Month' => $award['month'],
+                        'Constribution of the Awardee' => $award['contributionAwardee'],
+                        'Awarding Institution' => $award['institution'],
+                        'Country' => $award['country'],
+                        'Comments' => $award['comments'],
+                    ];
+                    array_push($awardsArray, $newAward);
+                }
+                // Convierte el array de objetos en una colección:
+                $colection = new Collection($awardsArray);
+                // Convierte la colección en modelos de Eloquent:
+                $model = User::hydrate($colection->toArray());
+                return $model;
+            }
+
+            public function headings(): array
+            {
+                return ['Id','Progress Report','User', 'Awardee Name','Award Name','Year','Month','Constribution of the Awardee','Awarding Institution','Country','Comments'];
+            }
+
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'K'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
+            public function defaultStyles(Style $defaultStyle)
+            {
+                // FONT:
+                $font = $defaultStyle->getFont();
+                $font->setSize(11);
+                $font->setName('Calibri');
+                $font->setBold(false);
+                $font->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK));
+                // FILL:
+                $fill = $defaultStyle->getFill();
+                $fill->setFillType(Fill::FILL_NONE);
+                // $fill->getStartColor()->setARGB('FF0000');
+                return $defaultStyle;
+            }
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
+                $sheet->getStyle('A1:K')->applyFromArray([
+                    'font' => [
+                        'Calibri' => true,
+                        'bold' => true,
+                        'size' => 12,
+                        'color' => [
+                            'rgb' => '000000', // Color blanco
+                        ],
+                    ],
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:T'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -403,111 +602,13 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function title(): string
             {
-                return 'A3 BOOKS';
-            }
-
-            
-        };
-
-
-        $sheets['A4 AWARDS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
-            public function collection()
-            {
-                $awards = awards::where('status', 'Finished')->get();
-                // Convierte el array de objetos en una colección:
-                foreach($awards as $award){
-                    // Añadir Nombre Usuario:
-                    $nombreUsuario = User::where('id',$award['idUsuario'])->get();
-                    $award['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
-                }
-                // Ordenar elementos de las facturas:
-                $awardsArray = [];
-                foreach ($awards as $award) {
-                    $newAward = [
-                        'Id' => $award['id'],
-                        'User' => $award['idUsuario'],
-                        'Awardee Name' => $award['awardeeName'],
-                        'Award Name' => $award['awardName'],
-                        'Year' => $award['year'],
-                        // 'Progress Report' => $award['progressReport'],
-                        'Constribution of the Awardee' => $award['contributionAwardee'],
-                        'Awarding Institution' => $award['institution'],
-                        'Country' => $award['country'],
-                        'Comments' => $award['comments'],
-                    ];
-                    array_push($awardsArray, $newAward);
-                }
-                // Convierte el array de objetos en una colección:
-                $colection = new Collection($awardsArray);
-                // Convierte la colección en modelos de Eloquent:
-                $model = User::hydrate($colection->toArray());
-                return $model;
-            }
-
-            public function headings(): array
-            {
-                return ['Id','User', 'Awardee Name','Award Name','Year','Constribution of the Awardee','Awarding Institution','Country','Comments'];
-            }
-
-            public function defaultStyles(Style $defaultStyle)
-            {
-                // FONT:
-                $font = $defaultStyle->getFont();
-                $font->setSize(11);
-                $font->setName('Calibri');
-                $font->setBold(false);
-                $font->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK));
-                // FILL:
-                $fill = $defaultStyle->getFill();
-                $fill->setFillType(Fill::FILL_NONE);
-                // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-                return $defaultStyle;
-            }
-
-            public function styles(Worksheet $sheet){
-                // Header:
-                $sheet->getStyle('A1:I1')->applyFromArray([
-                    'font' => [
-                        'Calibri' => true,
-                        'bold' => true,
-                        'size' => 12,
-                        'color' => [
-                            'rgb' => '000000',
-                        ],
-                    ],
-                    'fill' => [
-                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                        'startColor' => [
-                            'rgb' => 'FFC000',
-                        ],
-                    ],
-                ]);
-            }
-
-            public function registerEvents(): array
-            {
-                return [
-                    AfterSheet::class => function (AfterSheet $event) {
-                        // Obtiene la hoja activa
-                        $sheet = $event->sheet;
-                        // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:I1');
-                    },
-                ];
-            }
-
-            public function title(): string
-            {
                 return 'A4 AWARDS';
             }
 
             
         };
 
-        $sheets['A5 ORGANIZATION OF SC EVENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A5 ORGANIZATION OF SC EVENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $organizationsScEvents = organizationsScEvents::where('status', 'Finished')->get();
@@ -523,8 +624,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                     $newOrganization = [
                         'Id' => $organization['id'],
                         'User' => $organization['idUsuario'],
+                        'Progress Report' => $organization['progressReport'],
                         'Type of event' => $organization['typeEvent'],
-                        // 'Progress Report' => $organization['progressReport'],
                         'Name course/congress' => $organization['eventName'],
                         'Number of participants' => $organization['numberParticipants'],
                         'Country' => $organization['country'],
@@ -544,9 +645,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Comments'];
+                return ['Id', 'Progress Report','User','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'K'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -559,27 +669,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
-                $sheet->getStyle('A1:J1')->applyFromArray([
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
+                $sheet->getStyle('A1:K1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:K'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -592,7 +716,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:J1');
+                        $sheet->setAutoFilter('A1:K1');
                     },
                 ];
             }
@@ -605,7 +729,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A6 PARTICIPATION OF SC EVENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A6 PARTICIPATION OF SC EVENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $participationScEvents = participationScEvents::where('status', 'Finished')->get();
@@ -623,7 +747,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'User' => $participation['idUsuario'],
                         'Progress report' => $participation['progressReport'],
                         'Type of event' => $participation['typeEvent'],
-                        // 'Progress Report' => $participation['progressReport'],
+                        'Progress Report' => $participation['progressReport'],
                         'Name course/congress' => $participation['eventName'],
                         'Number of participants' => $participation['numberParticipants'],
                         'Country' => $participation['country'],
@@ -643,9 +767,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Progress report','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Type of participation','Comments'];
+                return ['Id', 'Progress report','User','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Type of participation','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'L'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -658,27 +791,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
                 $sheet->getStyle('A1:L1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:L'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -704,7 +851,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A7 COLLABORATION'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A7 COLLABORATION'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $collaborations = scCollaborations::where('status', 'Finished')->get();
@@ -722,7 +869,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'User' => $collaboration['idUsuario'],
                         'Progress Report' => $collaboration['progressReport'],
                         'Activity Name' => $collaboration['activityName'],
-                        // 'Progress Report' => $collaboration['progressReport'],
+                        'Progress Report' => $collaboration['progressReport'],
                         'Country Origin' => $collaboration['countryOrigin'],
                         'City Origin' => $collaboration['cityOrigin'],
                         'Country Destination' => $collaboration['countryDestination'],
@@ -743,9 +890,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Progress report','Activity Name','Country Origin','City Origin','Country Destination','City Destination','Institution with which the Center collaborates','Beginning Date','Ending Date','Comments'];
+                return ['Id', 'Progress report','User','Activity Name','Country Origin','City Origin','Country Destination','City Destination','Institution with which the Center collaborates','Beginning Date','Ending Date','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'L'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -758,27 +914,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
                 $sheet->getStyle('A1:L1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:L'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -804,7 +974,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A8 THESES-STUDENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A8 THESES-STUDENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $theses = thesisStudent::where('status', 'Finished')->get();
@@ -820,9 +990,9 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                     $newThesis = [
                         'Id' => $these['id'],
                         'User' => $these['idUsuario'],
+                        'Progress Report' => $these['progressReport'],
                         'Student Name' => $these['studentName'],
                         'RUN or Passport' => $these['runOrPassport'],
-                        // 'Progress Report' => $these['progressReport'],
                         'Gender' => $these['gender'],
                         'Student Mail' => $these['studentMail'],
                         'Thesis Status' => $these['thesisStatus'],
@@ -854,9 +1024,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Student Name','RUN or Passport','Gender','Student Mail','Thesis Status','Thesis Title','Academic Degree','Degree Denomination','Tutor Name','Tutor Institution','Cotutor Name','Cotutor Institution','Other Name','Other Institution','University that gives the degree','Year in which thesis starts','Year in which thesis starts','Resources provided by the Center','Posterior working area','Institution of Posterior working area','Comments'];
+                return ['Id', 'Progress Report','User','Student Name','RUN or Passport','Gender','Student Mail','Thesis Status','Thesis Title','Academic Degree','Degree Denomination','Tutor Name','Tutor Institution','Cotutor Name','Cotutor Institution','Other Name','Other Institution','University that gives the degree','Year in which thesis starts','Year in which thesis starts','Resources provided by the Center','Posterior working area','Institution of Posterior working area','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'X'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -869,27 +1048,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
-                $sheet->getStyle('A1:W1')->applyFromArray([
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
+                $sheet->getStyle('A1:X1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:X'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -902,7 +1095,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:W1');
+                        $sheet->setAutoFilter('A1:X1');
                     },
                 ];
             }
@@ -915,7 +1108,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A9 POSTDOCTORAL FELLOWS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A9 POSTDOCTORAL FELLOWS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $postDocs = postDoc::where('status', 'Finished')->get();
@@ -931,6 +1124,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                     $newPostDoc = [
                         'Id' => $postDoc['id'],
                         'User' => $postDoc['idUsuario'],
+                        'Progress Report' => $postDoc['progressReport'],
                         'Name of Postdoctoral Fellows' => $postDoc['nameOfPostdoc'],
                         'RUN/Passport' => $postDoc['runOrPassport'],
                         'Gender' => $postDoc['gender'],
@@ -954,9 +1148,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Name of Postdoctoral Fellows','RUN/Passport','Gender','Research Topic','Tutor name','Associated Institution','Funding Source','Starting Date','Ending Date','Resources provided by the Center','Comments'];
+                return ['Id', 'Progress Report','User','Name of Postdoctoral Fellows','RUN/Passport','Gender','Research Topic','Tutor name','Associated Institution','Funding Source','Starting Date','Ending Date','Resources provided by the Center','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'N'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -969,27 +1172,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
-                $sheet->getStyle('A1:M1')->applyFromArray([
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
+                $sheet->getStyle('A1:N1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:N'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -1002,7 +1219,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:M1');
+                        $sheet->setAutoFilter('A1:N1');
                     },
                 ];
             }
@@ -1015,7 +1232,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A10 OUTREACH'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A10 OUTREACH'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $outreachs = outreachActivities::where('status', 'Finished')->get();
@@ -1060,9 +1277,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Progress Report','Type of Activity','Event Title','Activity Description','Date','Attendant Amount','Duration (days)','Place Region','Undergraduate Students','Primary Education Students','Secondary Education Students','General Community','Companies,Industries,Services','School Teachers','Government Official','Other','Comments'];
+                return ['Id', 'Progress Report','User','Type of Activity','Event Title','Activity Description','Date','Attendant Amount','Duration (days)','Place Region','Undergraduate Students','Primary Education Students','Secondary Education Students','General Community','Companies,Industries,Services','School Teachers','Government Official','Other','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'S'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -1075,27 +1301,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
                 $sheet->getStyle('A1:S1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:S'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -1121,7 +1361,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A11 PATENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A11 PATENTS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $patents = patents::where('status', 'Finished')->get();
@@ -1161,9 +1401,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Progress Report','IP Type','Authors','Institution Owner(s)','Country of Registration','Application Date','Grant Date','Application Status','Registration Number','State','Researcher Involved','Comments'];
+                return ['Id', 'Progress Report','User','IP Type','Authors','Institution Owner(s)','Country of Registration','Application Date','Grant Date','Application Status','Registration Number','State','Researcher Involved','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'N'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -1176,27 +1425,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
                 $sheet->getStyle('A1:N1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:N'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -1222,7 +1485,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A12 PUBLIC-PRIVATE CONECTIONS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A12 PUBLIC-PRIVATE CONECTIONS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $publicPrivates = publicPrivate::where('status', 'Finished')->get();
@@ -1238,6 +1501,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                     $newPublicPrivate = [
                         'Id' => $publicPrivate['id'],
                         'User' => $publicPrivate['idUsuario'],
+                        'Progress Report' => $publicPrivate['progressReport'],
                         'Progress Report' => $publicPrivate['progressReport'],
                         'Name of Activity' => $publicPrivate['nameOfActivity'],
                         'Results/Goals' => $publicPrivate['resultsGoals'],
@@ -1258,9 +1522,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Progress Report','Name of Activity','Results/Goals','Name Of Organization','Country Origin','Start Date','Ending Date','Comments'];
+                return ['Id', 'Progress Report','User','Name of Activity','Results/Goals','Name Of Organization','Country Origin','Start Date','Ending Date','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'J'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -1273,27 +1546,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
                 $sheet->getStyle('A1:J1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:J'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -1319,7 +1606,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A13 TEC. AND KNOW. TRANSFER'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A13 TEC. AND KNOW. TRANSFER'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $technologyKnowledges = technologyKnowledge::where('status', 'Finished')->get();
@@ -1355,9 +1642,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Progress Report','Technology Transfer','Knowledge Transfer','Type of Transfer','Country','City','Date','Comments'];
+                return ['Id', 'Progress Report','User','Technology Transfer','Knowledge Transfer','Type of Transfer','Country','City','Date','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'J'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -1370,27 +1666,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
                 $sheet->getStyle('A1:J1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:J'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);
@@ -1416,7 +1726,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A14 FUNDING SOURCES'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, ShouldAutoSize {
+        $sheets['A14 FUNDING SOURCES'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $fundings = fundingSources::where('status', 'Finished')->get();
@@ -1456,9 +1766,18 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'User','Progress Report','Type Sources','Name of the institution','Program/contest','Project Title','Principal Researcher','Start','Finish','In Cash','Type of collaboration','State','Comments'];
+                return ['Id', 'Progress Report','User','Type Sources','Name of the institution','Program/contest','Project Title','Principal Researcher','Start','Finish','In Cash','Type of collaboration','State','Comments'];
             }
 
+            public function columnWidths(): array
+            {
+                // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
+                $specificWidths = array_fill_keys(range('C', 'N'), 40);
+            
+                // Devolver el arreglo de anchos específicos
+                return $specificWidths;
+            }
+        
             public function defaultStyles(Style $defaultStyle)
             {
                 // FONT:
@@ -1471,27 +1790,41 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 $fill = $defaultStyle->getFill();
                 $fill->setFillType(Fill::FILL_NONE);
                 // $fill->getStartColor()->setARGB('FF0000');
-                // ALIGNMENT:
-                $alignment = $defaultStyle->getAlignment();
-                $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
                 return $defaultStyle;
             }
-
-            public function styles(Worksheet $sheet){
-                // Header:
+        
+            public function styles(Worksheet $sheet)
+            {
+                // Establecer estilos para el encabezado
                 $sheet->getStyle('A1:N1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
                         'size' => 12,
                         'color' => [
-                            'rgb' => '000000',
+                            'rgb' => '000000', // Color blanco
                         ],
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => 'FFC000',
+                            'rgb' => 'ED8D1D', // Color naranja
+                        ],
+                    ],
+                ]);
+        
+                // Establecer estilos para las celdas (excepto el encabezado)
+                $sheet->getStyle('A2:N'.$sheet->getHighestRow())->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => [
+                            'rgb' => 'F2F2F2', // Color gris claro
+                        ],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'], // Color negro
                         ],
                     ],
                 ]);

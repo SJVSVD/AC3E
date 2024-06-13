@@ -55,7 +55,7 @@
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.authors == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ isiPublication.authors }}</p>
+                                            <p v-else class="text-sm mb-0 truncate-text" :title="isiPublication.authors" >{{ isiPublication.authors }}</p>
                                         </td>
                                         <td>
                                             <p v-if="isiPublication.doi == null" class="text-sm mb-0">---</p>

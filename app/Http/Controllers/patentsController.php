@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\patents;
 use App\Models\User;
+use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 
 class patentsController extends Controller
@@ -109,13 +111,7 @@ class patentsController extends Controller
         foreach ($data as $rowData) {
             // Obtén el valor de 'grantDate' del $rowData
             $grantDate = $rowData['Grant Date'];
-    
-            // Verifica si el valor es un entero
-            if (!is_numeric($grantDate)) {
-                // Si no es un número, establece 'grantDate' en null
-                $grantDate = null;
-            }
-    
+
             // Mapear el estado de solicitud de aplicación
             $applicationStatus = isset($applicationStatusMapping[$rowData['Application Status']]) ? $applicationStatusMapping[$rowData['Application Status']] : '';
     

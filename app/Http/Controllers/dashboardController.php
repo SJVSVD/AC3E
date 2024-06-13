@@ -61,4 +61,46 @@ class dashboardController extends Controller
         return $registros;
     }
     
+    public function getRegistrosUser($userId, $cantidad) {
+        $modelos = [
+            isiPublication::class,
+            nonIsiPublication::class,
+            books::class,
+            awards::class,
+            organizationsScEvents::class,
+            participationScEvents::class,
+            scCollaborations::class,
+            thesisStudent::class,
+            postDoc::class,
+            outreachActivities::class,
+            patents::class,
+            publicPrivate::class,
+            technologyKnowledge::class,
+            fundingSources::class,
+        ];
+    
+        $registros = new Collection();
+    
+        foreach ($modelos as $modelo) {
+            // Verificar si el modelo es 'books' y ajustar la consulta en consecuencia
+            if ($modelo === books::class) {
+                $registrosModelo = $modelo::where('centerResearcher', $userId)->with('usuario')->latest()->limit(10)->get();
+            } else {
+                $registrosModelo = $modelo::where('idUsuario', $userId)->with('usuario')->latest()->limit(10)->get();
+            }
+            
+            // Agregar el nombre del modelo como un atributo 'modulo'
+            $registrosModelo->each(function ($registro) use ($modelo) {
+                $registro->modulo = class_basename($modelo);
+            });
+    
+            $registros = $registros->concat($registrosModelo);
+        }
+    
+        // Ordenar los registros por fecha de creación
+        $registros = $registros->sortByDesc('created_at')->take(10);
+    
+        return $registros;
+    }
+    
 }

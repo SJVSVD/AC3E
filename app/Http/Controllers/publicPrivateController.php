@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\publicPrivate;
+use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 
 class publicPrivateController extends Controller
@@ -107,6 +109,30 @@ class publicPrivateController extends Controller
             '13' => 'International exchange networks',
         ];
 
+        // Función para verificar y convertir la fecha
+        function verifyAndConvertDate($date) {
+            // Verificar si la fecha está en formato "mes/día/año"
+            if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{2}$/', $date)) {
+                // Convertir el formato "mes/día/año" a "año-mes-día"
+                $date = date_create_from_format('m/d/y', $date)->format('Y-m-d');
+            }
+            
+            // Intentar crear un objeto DateTime desde la fecha proporcionada
+            $dateTime = date_create($date);
+            
+            // Verificar si el objeto DateTime se creó correctamente y si la fecha es válida
+            if ($dateTime && $dateTime->format('Y-m-d') === $date) {
+                // Si la fecha es válida, devolverla en formato "año-mes-día"
+                return $date;
+            } else {
+                // Si la fecha no es válida, imprimir un mensaje de error
+                echo "Error en la fecha: $date\n";
+            }
+
+            // Si la fecha no es válida, devolver null
+            return null;
+        }
+
         $data = $request->input('data');
         foreach ($data as $rowData) {
             // Verificar si el campo 'idUsuario' está vacío
@@ -130,26 +156,13 @@ class publicPrivateController extends Controller
             // Unir los nombres formateados en un solo string separado por coma y espacio
             $formattedResearcherInvolved = implode(', ', $formattedResearchers);
     
-            // Validar startDate y endDate como fechas válidas
-            $startDate = null;
 
-            // Verificar si la fecha es válida
-            if (strtotime($rowData['Start Date']) !== false) {
-                // Convertir la fecha al formato 'YYYY-MM-DD'
-                $startDate = date('Y-m-d', strtotime($rowData['Start Date']));
-            }
-            
-            $endDate = null;
-
-            // Verificar si la fecha es válida
-            if (strtotime($rowData['End Date']) !== false) {
-                // Convertir la fecha al formato 'YYYY-MM-DD'
-                $endDate = date('Y-m-d', strtotime($rowData['End Date']));
-            }
-    
             // Mapear el tipo de agente
             $agentType = isset($agentTypeMapping[$rowData['Agent Type']]) ? $agentTypeMapping[$rowData['Agent Type']] : '';
     
+            $startDate = verifyAndConvertDate($rowData['Start Date']);
+            $endDate = verifyAndConvertDate($rowData['End Date']);
+
             // Mapear el tipo de conexión
             $typeOfConnection = isset($typeOfConnectionMapping[$rowData['Type of Connection']]) ? $typeOfConnectionMapping[$rowData['Type of Connection']] : '';
             $internationalNational = $rowData['Internacional/Nacional'] == 1 ? 'International congress' : 'National congress';
@@ -164,7 +177,7 @@ class publicPrivateController extends Controller
                 'participationPublicPolicies'=> $rowData['Participation in definition of public policies'],
                 'researcherInvolved'=> $formattedResearcherInvolved,
                 'startDate'=> $startDate, // Asignar startDate si es una fecha válida
-                'endDate'=> $endDate, // Asignar endDate si es una fecha válida
+                'endingDate'=> $endDate, // Asignar endDate si es una fecha válida
                 'resultsGoals'=> $rowData['Results / Goals'],
                 'nameOfOrganization'=> $rowData['Name of Organization'],
                 'countryOrigin'=> $rowData['Country/City of origin'],

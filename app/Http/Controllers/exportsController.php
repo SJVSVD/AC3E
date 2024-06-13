@@ -35,6 +35,28 @@ class exportsController extends Controller
     {
         $data = $request->all();
         $idUsuarioDescarga = $data['userID'];
+
+        // Check if the user has any publications in any of the models
+        $hasPublications = FundingSources::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        TechnologyKnowledge::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        PublicPrivate::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        Patents::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        OutreachActivities::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        PostDoc::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        ThesisStudent::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        ScCollaborations::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        ParticipationScEvents::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        OrganizationsScEvents::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        Awards::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        Books::where('centerResearcher', $idUsuarioDescarga)->exists() ||
+        NonIsiPublication::where('idUsuario', $idUsuarioDescarga)->exists() ||
+        IsiPublication::where('idUsuario', $idUsuarioDescarga)->exists();
+
+        // If the user does not have any publications, return an error response
+        if (!$hasPublications) {
+            return response()->json('El usuario no tiene publicaciones asociadas.', 400);
+        }
+
         return Excel::download(new exportIndividual($idUsuarioDescarga),'PlanillaIndividual.xlsx');
     }
 

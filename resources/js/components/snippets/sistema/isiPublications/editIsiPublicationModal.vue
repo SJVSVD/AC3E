@@ -59,7 +59,7 @@
                       </div>
                       <div class="col-md-1 pt-2">
                         <br>
-                        <a class="btn btn-search-blue" @click="useDOI()"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        <a class="btn btn-search-blue" title="Enter the doi to automatically fill in information." @click="useDOI()"><i class="fa-solid fa-magnifying-glass"></i></a>
                       </div>
                       <div class="col-md-3">
                         <label for="">Year Published:</label>

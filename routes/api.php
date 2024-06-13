@@ -153,7 +153,7 @@ Route::get('getIndicators/{id}' , [indicatorsController::class, 'getIndicatorsBy
 //Dashboard
 
 Route::get('getRegistros/{cantidad}' , [dashboardController::class, 'getRegistros']);
-
+Route::get('getRegistrosUser/{userId}/{cantidad}' , [dashboardController::class, 'getRegistrosUser']);
 //Role User
 
 Route::apiResource('rolesUser', roleUserController::class);

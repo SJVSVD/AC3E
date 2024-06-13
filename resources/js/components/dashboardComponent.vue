@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="numbers" style="min-height: 80px; text-align: center; margin-top: 40px;">
-                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Welcome</p>
+                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Welcome {{ userRoles }}</p>
                                 <h5 style="color: #ffff;" class="fw-bolder">
                                     {{ userName }}
                                 </h5>
@@ -50,7 +50,7 @@
     </div>
     <div class="row mt-4">
         <div class="col-lg-8">
-            <div v-if="is('Administrator')" class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
+            <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="table-responsive p-4">
                     <div v-show="mostrarCarga" class="loader-sm"></div>
                     <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableRegistros">
@@ -388,15 +388,27 @@ export default {
 
         // Obtiene registros de una cantidad especificada y actualiza la tabla.
         getRegistros(cantidad){
-            axios.get(`api/getRegistros/${cantidad}`).then( response =>{
-                this.registros = response.data;
-                if (this.table != null){
-                    this.table.clear();
-                    this.table.destroy();
-                }
-                this.crearTabla('#myTableRegistros');
-                this.table.buttons().remove();
-            }).catch(e=> console.log(e))
+            if(this.userRoles.includes('Administrator')){
+                axios.get(`api/getRegistros/${cantidad}`).then( response =>{
+                    this.registros = response.data;
+                    if (this.table != null){
+                        this.table.clear();
+                        this.table.destroy();
+                    }
+                    this.crearTabla('#myTableRegistros');
+                    this.table.buttons().remove();
+                }).catch(e=> console.log(e))
+            }else{
+                axios.get(`api/getRegistrosUser/${this.userID}/${cantidad}`).then( response =>{
+                    this.registros = response.data;
+                    if (this.table != null){
+                        this.table.clear();
+                        this.table.destroy();
+                    }
+                    this.crearTabla('#myTableRegistros');
+                    this.table.buttons().remove();
+                }).catch(e=> console.log(e))
+            }
         },
 
         // Exporta un archivo consolidado.
@@ -590,7 +602,23 @@ export default {
                     icon: true,
                     rtl: false
                   });
-                } else {
+                }else if (error.response.status === 400) {
+                  // Recurso no encontrado
+                  this.toast.error(`An error occurred: The user has no associated publications.`, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }else {
                   // Otro tipo de error
                   this.toast.error(`An error occurred: ${error.response.data.message}`, {
                     position: "top-right",
@@ -641,6 +669,7 @@ export default {
                 });
               }
             });
+            this.buttonText2 = 'Download Individual Return';
         },
 
     }
