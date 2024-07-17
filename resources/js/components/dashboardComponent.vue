@@ -67,8 +67,8 @@
                             <tr v-for="(registro, index) in registros" :key="index">
                                 <td></td>
                                 <td>{{ thisDate(registro.created_at,true) }}</td>
-                                <td v-if="registro.modulo == 'isiPublication'">ISI Publications</td>
-                                <td v-else-if="registro.modulo == 'scCollaborations' && registro.moduleType == '1'">Conjoint Projects</td>
+                                <td v-if="registro.modulo == 'isiPublication'">WoS Publications</td>
+                                <td v-else-if="registro.modulo == 'scCollaborations' && registro.moduleType == '1'">Collaborative Projects</td>
                                 <td v-else-if="registro.modulo == 'fundingSources'">Funding Sources</td>
                                 <td v-else-if="registro.modulo == 'organizationsScEvents'">Organization Sc Events</td>
                                 <td v-else-if="registro.modulo == 'outreachActivities'">Outreach Activities</td>
@@ -77,7 +77,7 @@
                                 <td v-else-if="registro.modulo == 'postDoc'">Postdoctoral Fellows</td>
                                 <td v-else-if="registro.modulo == 'publicPrivate'">Public-Private Connections</td>
                                 <td v-else-if="registro.modulo == 'scCollaborations' && registro.moduleType == '0'">Sc Collaborations</td>
-                                <td v-else-if="registro.modulo == 'nonIsiPublication'">Non ISI Publications</td>
+                                <td v-else-if="registro.modulo == 'nonIsiPublication'">Non WoS Publications</td>
                                 <td v-else-if="registro.modulo == 'thesisStudent'">Thesis Students</td>
                                 <td v-else-if="registro.modulo == 'awards'">Awards</td>
                                 <td v-else-if="registro.modulo == 'books'">Books</td>
@@ -190,7 +190,7 @@ export default {
         return {
             cantidadRegistros: 10,
             registros: [],
-            buttonText1: 'Download Consolidated',
+            buttonText1: 'Download Database',
             buttonText2: 'Download Individual Return',
             CLPRates: null,
             interval: null,

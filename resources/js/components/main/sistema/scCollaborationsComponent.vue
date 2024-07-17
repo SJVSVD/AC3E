@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewCollaboration = true">New Collaboration</a>
+                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewCollaboration = true">New Publication</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
@@ -47,7 +47,7 @@
                                         </td>
                                         <td>
                                             <p v-if="scCollaboration.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ scCollaboration.status }}</p>
-                                            <p v-if="scCollaboration.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ scCollaboration.status }}</p>
+                                            <p v-if="scCollaboration.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ scCollaboration.usuario.name }}</p>
@@ -156,14 +156,14 @@ export default {
         },
         async deleteCollaboration(id) {
             const ok = await this.$refs.confirmation.show({
-                title: 'Delete Collaboration',
-                message: `¿Are you sure you want to delete this Collaboration?.`,
+                title: 'Delete Visits And Stays',
+                message: `¿Are you sure you want to delete this Publication?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })
             if (ok) {
                 axios.delete(`api/scCollaborations/${id}`).then( response =>{
-                    this.toast.success("Collaboration successfully removed!", {
+                    this.toast.success("Publication successfully removed!", {
                         position: "top-right",
                         timeout: 3000,
                         closeOnClick: true,

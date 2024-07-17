@@ -6,7 +6,7 @@
           <div class="modal-container">
             <div class="modal-header pb-1" style="font-weight: bold; color: #444444;">
               <slot name="header">
-                <label class="col-5 m-0" style="font-size: 17px;">Sc Collaboration Details</label>
+                <label class="col-5 m-0" style="font-size: 17px;">Visit And Stay Details</label>
               </slot>
               <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
             </div>

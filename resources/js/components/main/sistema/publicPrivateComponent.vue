@@ -46,7 +46,7 @@
                                         </td>
                                         <td>
                                             <p v-if="publicPrivate.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ publicPrivate.status }}</p>
-                                            <p v-if="publicPrivate.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ publicPrivate.status }}</p>
+                                            <p v-if="publicPrivate.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ publicPrivate.usuario.name }}</p>

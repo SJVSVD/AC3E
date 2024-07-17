@@ -132,7 +132,7 @@
                         <div class="form-group">
                         <label for="archivo">File: </label>
                         <label for="" style="color: orange;">*</label>
-                        <label title="You must upload a PDF file or image." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                        <label title="A document verifying event participation and containing relevant information about it must be uploaded. Suitable documents include conference programs, participation certificates, or confirmation emails from the organizers. Any one of these will suffice." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
                         </div>
                       </div>
@@ -272,7 +272,9 @@ export default {
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Save draft',
-            message: `¿Are you sure you want to save this Participation as a draft? this action cannot be undone.`,
+            message: `Are you sure you want to save the report as a draft?
+ By saving as a draft, the information will not be reported. However, you can modify the report's status at any time and submit it, as long as all mandatory information is completed.
+`,
             okButton: 'Save',
             cancelButton: 'Return'
           })

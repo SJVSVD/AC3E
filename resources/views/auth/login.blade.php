@@ -8,13 +8,16 @@
             </div>
         </div>
     </div>
-    <main class="main-content mt-0">
+    <main class="main-content mt-0" style="background: linear-gradient(rgba(128, 128, 128, 0.6), rgba(128, 128, 128, 0.6)), 
+                                                url('/img/AC3ELogin.Jpeg'); background-size: cover; background-position: center;">
+
         <section>
             <div class="page-header min-vh-100 ">
-                <div class="container" >
+                <div class="container"  >
                     <div class="row">
                         <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
-                            <div class="card card-plain" style="background-color:white; ">
+                        <div class="card card-plain" 
+                                style="background-color: white;">
                                 <div class="card-header pb-0 text-start">
                                     <h4 class="font-weight-bolder">Login</h4>
                                 </div>
@@ -41,7 +44,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center">
-                                            <button class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Login</button>
+                                            <button class="btn btn-lg btn-dark-grey btn-lg w-100 mt-4 mb-0">Login</button>
                                         </div>
                                     </form>
                                 </div>

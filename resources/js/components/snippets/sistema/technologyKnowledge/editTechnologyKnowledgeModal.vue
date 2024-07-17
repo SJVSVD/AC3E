@@ -283,7 +283,9 @@ export default {
         // Mostrar confirmación
         const ok = await this.$refs.confirmation.show({
             title: 'Edit draft',
-            message: `¿Are you sure you want to edit this Technology knowledge tranfer as a draft? this action cannot be undone.`,
+            message: `Are you sure you want to edit the report as a draft?
+ By saving as a draft, the information will not be reported. However, you can modify the report's status at any time and submit it, as long as all mandatory information is completed.
+`,
             okButton: 'Edit',
             cancelButton: 'Return'
           })

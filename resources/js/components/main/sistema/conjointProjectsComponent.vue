@@ -47,7 +47,7 @@
                                         </td>
                                         <td>
                                             <p v-if="conjointProject.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ conjointProject.status }}</p>
-                                            <p v-if="conjointProject.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ conjointProject.status }}</p>
+                                            <p v-if="conjointProject.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ conjointProject.usuario.name }}</p>
@@ -156,14 +156,14 @@ export default {
         },
         async deleteProject(id) {
             const ok = await this.$refs.confirmation.show({
-                title: 'Delete Conjoint project',
-                message: `¿Are you sure you want to delete this Conjoint project?.`,
+                title: 'Delete Collaborative project',
+                message: `¿Are you sure you want to delete this Collaborative project?.`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
             })
             if (ok) {
                 axios.delete(`api/conjointProjects/${id}`).then( response =>{
-                    this.toast.success("Conjoint project successfully removed!", {
+                    this.toast.success("Collaborative project successfully removed!", {
                         position: "top-right",
                         timeout: 3000,
                         closeOnClick: true,

@@ -6,7 +6,7 @@
             <div class="modal-container-xl">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Conjoint Project
+                    New Collaborative Project
                 </slot>
                 <label for="">Progress year: {{ conjointProject.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
@@ -265,7 +265,9 @@ export default {
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({
             title: 'Save draft',
-            message: `¿Are you sure you want to save this Conjoint Project as a draft? this action cannot be undone.`,
+            message: `Are you sure you want to save the report as a draft?
+ By saving as a draft, the information will not be reported. However, you can modify the report's status at any time and submit it, as long as all mandatory information is completed.
+`,
             okButton: 'Save',
             cancelButton: 'Return'
           })
@@ -556,7 +558,7 @@ export default {
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Project',
-            message: `¿Are you sure you want to save this Conjoint Project?.`,
+            message: `¿Are you sure you want to save this Collaborative Project?.`,
             okButton: 'Save',
             cancelButton: 'Return'
           })

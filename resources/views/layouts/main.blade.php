@@ -11,7 +11,7 @@
         {{-- @if (Auth::user() != null):
         @endif --}}
         <title>
-            AC3E - Reporting System
+            GESTIN
         </title>
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/1bd7af15cd.js" crossorigin="anonymous"></script>
@@ -52,7 +52,7 @@
     <div class="sidebar close" id="sidebarMain">
         <div class="logo-details">
             <i class="fa-solid fa-bars"></i>
-            <span class="logo_name"><img src="/img/AC3E.png" width="65"></span>
+            <span class="logo_name"><img src="/img/AC3E.png" width="150"></span>
         </div>
         <ul class="nav-links">
             <li>
@@ -92,14 +92,14 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Modules</a></li>
-                    <li><a href="/isi-publications">ISI publications</a></li>
-                    <li><a href="/non-isi-publications">Non ISI publications</a></li>
+                    <li><a href="/isi-publications">WoS publications</a></li>
+                    <li><a href="/non-isi-publications">Non WoS publications</a></li>
                     <li><a href="/books">Books</a></li>
                     <li><a href="/awards">Awards</a></li>
                     <li><a href="/organization-sc-events">Organization of Sc events</a></li>
                     <li><a href="/participation-sc-events">Participation in Sc events</a></li>
                     <li><a href="/sc-collaborations">Sc Collaborations</a></li>
-                    <li><a href="/conjoint-projects">Conjoint projects</a></li>
+                    <li><a href="/conjoint-projects">Collaborative projects</a></li>
                     <li><a href="/thesis-students">Thesis students</a></li>
                     <li><a href="/post-doc">Postdoctoral fellows</a></li>
                     <li><a href="/outreach-activities">Outreach</a></li>

@@ -7,12 +7,12 @@
             <div class="row" > 
               <div class="col-3">
                 <a class="btn btn-search-blue" @click="showIsiPublication = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
-                  ISI Publications
+                  WoS Publications
                 </a>
               </div>
               <div class="col-3">
                 <a class="btn btn-search-blue" @click="showNonIsiPublication = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
-                  Non ISI Publications
+                  Non WoS Publications
                 </a>
               </div>
               <div class="col-3">
@@ -40,7 +40,7 @@
               </div>
               <div class="col-3">
                 <a class="btn btn-search-blue" @click="showScCollaboration = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
-                  Sc Collaboration
+                  Visits And Stays
                 </a>
               </div>
               <div class="col-3">

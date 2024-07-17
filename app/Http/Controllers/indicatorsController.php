@@ -22,8 +22,8 @@ class indicatorsController extends Controller
         $progressReport = extraTables::where('name', 'progressReport')->pluck('value');
 
         $data = [
-            ['name' => 'Number of ISI Publications', 'value' => isiPublication::where('progressReport', $progressReport)->count()],
-            ['name' => 'Number of Non-ISI Publications', 'value' => nonIsiPublication::where('progressReport', $progressReport)->count()],
+            ['name' => 'Number of WoS Publications', 'value' => isiPublication::where('progressReport', $progressReport)->count()],
+            ['name' => 'Number of Non-WoS Publications', 'value' => nonIsiPublication::where('progressReport', $progressReport)->count()],
             ['name' => 'Number of Patent Applications', 'value' => patents::where('progressReport', $progressReport)->whereNotNull('applicationStatus')->where('applicationStatus', 'In Progress')->count()],
             ['name' => "Number of Patent Application's granted", 'value' => patents::where('progressReport', $progressReport)->whereNotNull('applicationStatus')->where('applicationStatus', 'Approved')->count()],
             ['name' => 'Number of Licenses and/or Technology Transfer Agreements applied and/or granted', 'value' => technologyKnowledge::where('progressReport', $progressReport)->count()],
@@ -62,8 +62,8 @@ class indicatorsController extends Controller
                 })
                 ->where('countryDestination', 'NOT LIKE', '%Chile%')
                 ->count()],
-            ['name' => 'Number of ISI Publications coauthored with international researchers', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('internationalExternalResearchers')->where('internationalExternalResearchers', 1)->count()],
-            ['name' => 'Number of ISI Publications written in co-authorship with national researchers from other institutions', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('nationalExternalResearchers')->where('nationalExternalResearchers', 1)->count()],
+            ['name' => 'Number of WoS Publications coauthored with international researchers', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('internationalExternalResearchers')->where('internationalExternalResearchers', 1)->count()],
+            ['name' => 'Number of WoS Publications written in co-authorship with national researchers from other institutions', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('nationalExternalResearchers')->where('nationalExternalResearchers', 1)->count()],
             ['name' => 'Number of Participations in projects led by other research teams', 'value' => scCollaborations::where('progressReport', $progressReport)->whereNotNull('activityName')->where('moduleType', 0)->where('activityName', 'LIKE', '%Participation in R&D Projects directed by other Researcher (external)%')->count()],
             ['name' => 'Number of outreach and/or extension activities', 'value' => outreachActivities::where('progressReport', $progressReport)->count()],
             ['name' => 'Total number of people attending at dissemination and/or outreach activities(workshops,talks,seminars)', 'value' => outreachActivities::where('progressReport', $progressReport)->sum('attendantsAmount')]
@@ -77,8 +77,8 @@ class indicatorsController extends Controller
         $progressReport = $id;
 
         $data = [
-            ['name' => 'Number of ISI Publications', 'value' => isiPublication::where('progressReport', $progressReport)->count()],
-            ['name' => 'Number of Non-ISI Publications', 'value' => nonIsiPublication::where('progressReport', $progressReport)->count()],
+            ['name' => 'Number of WoS Publications', 'value' => isiPublication::where('progressReport', $progressReport)->count()],
+            ['name' => 'Number of Non-WoS Publications', 'value' => nonIsiPublication::where('progressReport', $progressReport)->count()],
             ['name' => 'Number of Patent Applications', 'value' => patents::where('progressReport', $progressReport)->whereNotNull('applicationStatus')->where('applicationStatus', 'In Progress')->count()],
             ['name' => "Number of Patent Application's granted", 'value' => patents::where('progressReport', $progressReport)->whereNotNull('applicationStatus')->where('applicationStatus', 'Approved')->count()],
             ['name' => 'Number of Licenses and/or Technology Transfer Agreements applied and/or granted', 'value' => technologyKnowledge::where('progressReport', $progressReport)->count()],
@@ -117,8 +117,8 @@ class indicatorsController extends Controller
                 })
                 ->where('countryDestination', 'NOT LIKE', '%Chile%')
                 ->count()],
-            ['name' => 'Number of ISI Publications coauthored with international researchers', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('internationalExternalResearchers')->where('internationalExternalResearchers', 1)->count()],
-            ['name' => 'Number of ISI Publications written in co-authorship with national researchers from other institutions', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('nationalExternalResearchers')->where('nationalExternalResearchers', 1)->count()],
+            ['name' => 'Number of WoS Publications coauthored with international researchers', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('internationalExternalResearchers')->where('internationalExternalResearchers', 1)->count()],
+            ['name' => 'Number of WoS Publications written in co-authorship with national researchers from other institutions', 'value' => isiPublication::where('progressReport', $progressReport)->whereNotNull('nationalExternalResearchers')->where('nationalExternalResearchers', 1)->count()],
             ['name' => 'Number of Participations in projects led by other research teams', 'value' => scCollaborations::where('progressReport', $progressReport)->whereNotNull('activityName')->where('moduleType', 0)->where('activityName', 'LIKE', '%Participation in R&D Projects directed by other Researcher (external)%')->count()],
             ['name' => 'Number of outreach and/or extension activities', 'value' => outreachActivities::where('progressReport', $progressReport)->count()],
             ['name' => 'Total number of people attending at dissemination and/or outreach activities(workshops,talks,seminars)', 'value' => outreachActivities::where('progressReport', $progressReport)->sum('attendantsAmount')]

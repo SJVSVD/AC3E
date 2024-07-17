@@ -48,7 +48,7 @@
                                         </td>
                                         <td>
                                             <p v-if="participationScEvent.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ participationScEvent.status }}</p>
-                                            <p v-if="participationScEvent.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ participationScEvent.status }}</p>
+                                            <p v-if="participationScEvent.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ participationScEvent.usuario.name }}</p>

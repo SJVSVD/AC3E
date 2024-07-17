@@ -46,7 +46,7 @@
                                         </td>
                                         <td>
                                             <p v-if="outreachActivity.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ outreachActivity.status }}</p>
-                                            <p v-if="outreachActivity.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ outreachActivity.status }}</p>
+                                            <p v-if="outreachActivity.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ outreachActivity.usuario.name }}</p>

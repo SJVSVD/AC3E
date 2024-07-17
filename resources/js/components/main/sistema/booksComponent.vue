@@ -45,7 +45,7 @@
                                         </td>
                                         <td>
                                             <p v-if="book.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ book.status }}</p>
-                                            <p v-if="book.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">{{ book.status }}</p>
+                                            <p v-if="book.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ book.usuario.name }}</p>

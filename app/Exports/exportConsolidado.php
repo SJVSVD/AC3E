@@ -224,17 +224,17 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
     public function title(): string
     {
-        return 'A1 ISI PUBLICATIONS';
+        return 'A1 WoS PUBLICATIONS';
     }
 
     public function sheets(): array
     {
         // Crea la primera hoja con los datos actuales
         $sheets = [
-            'A1 ISI PUBLICATIONS' => $this,
+            'A1 WoS PUBLICATIONS' => $this,
         ];
         // Agrega la segunda hoja con los nuevos datos
-        $sheets['A2 NON ISI PUBLICATIONS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles,WithColumnWidths  {
+        $sheets['A2 NON WoS PUBLICATIONS'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles,WithColumnWidths  {
             public function collection()
             {
                 $nonIsiPublications = nonIsiPublication::where('status', 'Finished')->get();
@@ -357,7 +357,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function title(): string
             {
-                return 'A2 NON ISI PUBLICATIONS';
+                return 'A2 NON WoS PUBLICATIONS';
             }
 
             
@@ -851,7 +851,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             
         };
 
-        $sheets['A7 COLLABORATION'] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
+        $sheets['A7 VISITS AND STAYS '] = new class implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             public function collection()
             {
                 $collaborations = scCollaborations::where('status', 'Finished')->get();
@@ -968,7 +968,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function title(): string
             {
-                return 'A7 COLLABORATION';
+                return 'A7 VISITS AND STAYS';
             }
 
             

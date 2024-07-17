@@ -222,7 +222,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
     public function title(): string
     {
-        return 'A1 ISI PUBLICATIONS';
+        return 'A1 WoS PUBLICATIONS';
     }
 
     public function sheets(): array
@@ -230,10 +230,10 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
         $idUsuarioDescarga = $this->idUsuarioDescarga;
         // Crea la primera hoja con los datos actuales
         $sheets = [
-            'A1 ISI PUBLICATIONS' => $this,
+            'A1 WoS PUBLICATIONS' => $this,
         ];
         // Agrega la segunda hoja con los nuevos datos
-        $sheets['A2 NON ISI PUBLICATIONS'] = new class ($idUsuarioDescarga) implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
+        $sheets['A2 NON WoS PUBLICATIONS'] = new class ($idUsuarioDescarga) implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             
             private $idUsuarioDescarga;
 
@@ -364,7 +364,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function title(): string
             {
-                return 'A2 NON ISI PUBLICATIONS';
+                return 'A2 NON WoS PUBLICATIONS';
             }
 
             
@@ -890,7 +890,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
         };
 
-        $sheets['A7 COLLABORATION'] = new class ($idUsuarioDescarga) implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
+        $sheets['A7 VISITS AND STAYS'] = new class ($idUsuarioDescarga) implements FromCollection, WithHeadings, WithTitle, WithDefaultStyles, WithEvents, WithStyles, WithColumnWidths {
             
             private $idUsuarioDescarga;
 
@@ -1014,7 +1014,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function title(): string
             {
-                return 'A7 COLLABORATION';
+                return 'A7 VISITS AND STAYS';
             }
 
             

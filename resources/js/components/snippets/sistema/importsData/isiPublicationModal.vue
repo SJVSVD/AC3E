@@ -6,7 +6,7 @@
             <div class="modal-container-xs">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Import ISI Publications
+                    Import WoS Publications
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
