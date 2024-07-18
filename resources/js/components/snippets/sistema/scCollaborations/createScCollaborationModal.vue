@@ -217,8 +217,6 @@ export default {
         "Visit in Chile (include students)",
         "Visit abroad (include students)",
         "Research Stay (Pasantia de investigacion) (include students)",
-        "Participation in R&D Projects directed by other Researcher (external)",
-        "Participation in R&D Projects directed by an AC3E Researcher",
         "Other",
       ],
       buttonDisable: false,

@@ -110,19 +110,16 @@
                     <div class="row">
                       <div class="col-md-4">
                         <label for="">Volume:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.volume">
                       </div>
                       <div class="col-md-4">
                         <label for="">First Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.firstPage">
                       </div>
                       <div class="col-md-4">
                         <label for="">Last Page:</label>
-                        <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="isiPublication.lastPage">
                       </div>
@@ -740,6 +737,7 @@ export default {
               firstPage: this.isiPublication.firstPage,
               lastPage: this.isiPublication.lastPage,
               yearPublished: this.isiPublication.yearPublished,
+              month: this.isiPublication.month,
               funding: fundingsName1,
               mainResearchers: this.isiPublication.mainResearchers,
               associativeResearchers: this.isiPublication.associativeResearchers,
