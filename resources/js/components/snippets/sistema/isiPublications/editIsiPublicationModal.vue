@@ -600,6 +600,9 @@ export default {
         capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
+      isAnyCheckboxChecked() {
+        return this.isiPublication.mainResearchers || this.isiPublication.associativeResearchers || this.isiPublication.postDoc || this.isiPublication.thesisStudents || this.isiPublication.nationalExternalResearchers || this.isiPublication.internationalExternalResearchers;
+      },
         // Edita el registro despues de validar
         async editarPublicacion() {
         this.errors = [];
@@ -630,7 +633,23 @@ export default {
             }
         }
 
-        
+        if (!this.isAnyCheckboxChecked()) {
+            this.toast.warning( 'At least one checkbox must be checked.', {
+              position: "top-right",
+              timeout: 5000,
+              closeOnClick: true,
+              pauseOnFocusLoss: true,
+              pauseOnHover: true,
+              draggable: true,
+              draggablePercent: 0.6,
+              showCloseButtonOnHover: false,
+              hideProgressBar: true,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
+            return;
+        }
 
         let publication1 = {
           id: this.id,
@@ -667,6 +686,8 @@ export default {
           this.errors.forEach(item => {
             if(item == 'articleTitle'){
               mensaje =   mensaje + "The field Article Title is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field AC3E Researcher involved is required" + "\n";
             }else if(item == 'journalName'){
               mensaje =   mensaje + "The field Journal Name is required" + "\n";
             }else if(item == 'firstPage'){

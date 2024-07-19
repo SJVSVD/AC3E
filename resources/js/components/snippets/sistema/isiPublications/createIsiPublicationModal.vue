@@ -154,7 +154,7 @@
                     </div>
                     <hr size="3" class="separador">
                     <div class="row">
-                      <div class="text-uppercase pb-2">Participations:</div>
+                      <div class="text-uppercase pb-2">Participations:<label for="" style="color: orange;">*</label></div>
                       <div class="col-md-4">
                           <div class="form-check pt-2 ">
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
@@ -569,6 +569,9 @@ export default {
         capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
+      isAnyCheckboxChecked() {
+        return this.isiPublication.mainResearchers || this.isiPublication.associativeResearchers || this.isiPublication.postDoc || this.isiPublication.thesisStudents || this.isiPublication.nationalExternalResearchers || this.isiPublication.internationalExternalResearchers;
+      },
       async crearPublicacion() {
         this.errors = [];
         const itemsToSkip = [
@@ -607,11 +610,31 @@ export default {
           this.errors.push('duplicated');
         }
 
+        if (!this.isAnyCheckboxChecked()) {
+            this.toast.warning( 'At least one checkbox must be checked.', {
+              position: "top-right",
+              timeout: 5000,
+              closeOnClick: true,
+              pauseOnFocusLoss: true,
+              pauseOnHover: true,
+              draggable: true,
+              draggablePercent: 0.6,
+              showCloseButtonOnHover: false,
+              hideProgressBar: true,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
+            return;
+        }
+
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
             if(item == 'articleTitle'){
               mensaje =   mensaje + "The field Article Title is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field AC3E Researcher involved is required" + "\n";
             }else if(item == 'journalName'){
               mensaje =   mensaje + "The field Journal Name is required" + "\n";
             }else if(item == 'firstPage'){

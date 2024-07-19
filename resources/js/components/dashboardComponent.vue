@@ -191,7 +191,7 @@ export default {
             cantidadRegistros: 10,
             registros: [],
             buttonText1: 'Download Database',
-            buttonText2: 'Download Individual Return',
+            buttonText2: 'Export personal results',
             CLPRates: null,
             interval: null,
             time: null,
