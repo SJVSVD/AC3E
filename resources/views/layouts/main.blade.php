@@ -98,7 +98,7 @@
                     <li><a href="/awards">Awards</a></li>
                     <li><a href="/organization-sc-events">Organization of Sc events</a></li>
                     <li><a href="/participation-sc-events">Participation in Sc events</a></li>
-                    <li><a href="/sc-collaborations">Sc Collaborations</a></li>
+                    <li><a href="/sc-collaborations">Visits and Stays</a></li>
                     <li><a href="/conjoint-projects">Collaborative projects</a></li>
                     <li><a href="/thesis-students">Thesis students</a></li>
                     <li><a href="/post-doc">Postdoctoral fellows</a></li>
