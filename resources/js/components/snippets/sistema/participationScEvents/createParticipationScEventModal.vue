@@ -383,6 +383,21 @@ export default {
                     icon: true,
                     rtl: false
                   });
+                }else if (error.response && error.response.status === 400) {
+                this.toast.error(error.response.data.error, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
                 } else if (error.response.status === 404) {
                   // Recurso no encontrado
                   this.toast.error("Resource not found.", {
@@ -656,6 +671,21 @@ export default {
                     icon: true,
                     rtl: false
                   });
+                }else if (error.response && error.response.status === 400) {
+                this.toast.error(error.response.data.error, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
                 } else if (error.response.status === 404) {
                   // Recurso no encontrado
                   this.toast.error("Resource not found.", {

@@ -12,7 +12,13 @@ class participationsScEventsController extends Controller
     {
         $input = $request->all();
         if($request->hasFile('file')){
-            $input['file'] = $request->file('file')->store('participationScEvents','public');
+            $file = $request->file('file');
+            // Verificar el tamaño del archivo
+            if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+            }
+
+            $input['file'] = $file->store('participationScEvents','public');
         }
         $participationScEvents = participationScEvents::create($input);
         return response()->json("Participacion Creada!");
@@ -207,7 +213,13 @@ class participationsScEventsController extends Controller
         $participation = participationScEvents::where('id', $input['id'])->first();
         if(gettype($input['file']) == 'object'){
             if($request->hasFile('file')){
-                $input['file'] = $request->file('file')->store('participationScEvents','public');
+                $file = $request->file('file');
+                // Verificar el tamaño del archivo
+                if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+                    return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+                }
+    
+                $input['file'] = $file->store('participationScEvents','public');
             }
         }else if($input['file'] == 'null'){
             unset($input['file']);

@@ -457,7 +457,40 @@ export default {
                     rtl: false
                   });
                   setTimeout(() => {this.cerrarModal();}, 1500);
-                })
+                }).catch((error)=> {
+                if (error.response && error.response.status === 400) {
+                this.toast.error(error.response.data.error, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
+                }else if (error.response.status == 422){
+                  this.errors = error.response.data.errors;
+                  this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                  });
+                }
+              });
               }
             })
             .catch((error) => {
@@ -767,7 +800,40 @@ export default {
                     rtl: false
                   });
                   setTimeout(() => {this.cerrarModal();}, 1500);
-                })
+                })              .catch((error)=> {
+                if (error.response && error.response.status === 400) {
+                this.toast.error(error.response.data.error, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                });
+                }else if (error.response.status == 422){
+                  this.errors = error.response.data.errors;
+                  this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                  });
+                }
+              });
               }
             })
             .catch((error) => {

@@ -486,7 +486,22 @@ export default {
                   setTimeout(() => {this.cerrarModal();}, 1500);
                 })
                 .catch((error)=> {
-                  if (error.response.status == 422){
+                  if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response.status == 422){
                     this.errors = error.response.data.errors;
                     this.toast.warning('There is an invalid value.', {
                         position: "top-right",
@@ -503,6 +518,8 @@ export default {
                         rtl: false
                     });
                   }
+                  this.buttonDisable = false;
+                  this.buttonText = 'Edit Publication';
                 });
             })
             .catch((error) => {
@@ -590,6 +607,8 @@ export default {
                   rtl: false
                 });
               }
+              this.buttonDisable = false;
+              this.buttonText = 'Edit Publication';
             });
           }
       },
@@ -805,7 +824,22 @@ export default {
                 setTimeout(() => {this.cerrarModal();}, 1500);
               })
               .catch((error)=> {
-                if (error.response.status == 422){
+                if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                  } else if (error.response.status == 422){
                   this.errors = error.response.data.errors;
                   this.toast.warning('There is an invalid value.', {
                       position: "top-right",
@@ -822,6 +856,8 @@ export default {
                       rtl: false
                   });
                 }
+                this.buttonDisable = false;
+                this.buttonText = 'Edit Publication';
               });
             })
             .catch((error) => {
@@ -909,6 +945,8 @@ export default {
                   rtl: false
                 });
               }
+              this.buttonDisable = false;
+              this.buttonText = 'Edit Publication';
             });
           }
         }

@@ -12,7 +12,13 @@ class nonIsiPublicationsController extends Controller
     {
         $input = $request->all();
         if($request->hasFile('file')){
-            $input['file'] = $request->file('file')->store('nonIsiPublication','public');
+            $file = $request->file('file');
+            // Verificar el tamaño del archivo
+            if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+            }
+
+            $input['file'] = $file->store('nonIsiPublication','public');
         }
         $nonIsiPublication = nonIsiPublication::create($input);
         return response()->json("Publicación Creada!");
@@ -47,7 +53,13 @@ class nonIsiPublicationsController extends Controller
         $nonIsi = nonIsiPublication::where('id', $input['id'])->first();
         if(gettype($input['file']) == 'object'){
             if($request->hasFile('file')){
-                $input['file'] = $request->file('file')->store('nonIsiPublication','public');
+                $file = $request->file('file');
+                // Verificar el tamaño del archivo
+                if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+                    return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+                }
+    
+                $input['file'] = $file->store('nonIsiPublication','public');
             }
         }else if($input['file'] == 'null'){
             unset($input['file']);

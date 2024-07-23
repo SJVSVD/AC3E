@@ -11,9 +11,19 @@ class thesisStudentController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        if($request->hasFile('file')){
-            $input['file'] = $request->file('file')->store('thesisExtracts','public');
+    
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+    
+            // Verificar el tamaño del archivo
+            if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+            }
+    
+            // Guardar el archivo
+            $input['file'] = $file->store('thesisExtracts', 'public');
         }
+    
         $thesisStudent = thesisStudent::create($input);
         return response()->json("Thesis Creada!");
     }
@@ -72,13 +82,21 @@ class thesisStudentController extends Controller
         $input = $request->all();
         
         $thesis = thesisStudent::where('id', $input['id'])->first();
-        if(gettype($input['file']) == 'object'){
-            if($request->hasFile('file')){
-                $input['file'] = $request->file('file')->store('thesisExtracts','public');
+        
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            
+            // Verificar el tamaño del archivo
+            if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
             }
-        }else if($input['file'] == 'null'){
+            
+            // Guardar el archivo
+            $input['file'] = $file->store('thesisExtracts', 'public');
+        } else if ($input['file'] == 'null') {
             unset($input['file']);
         }
+        
         $thesis = thesisStudent::find($request['id'])->update($input);
         return response()->json($thesis);
     }
