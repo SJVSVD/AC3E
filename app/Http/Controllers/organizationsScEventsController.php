@@ -14,7 +14,7 @@ class organizationsScEventsController extends Controller
         if($request->hasFile('file')){
             $file = $request->file('file');
             // Verificar el tamaño del archivo
-            if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+            if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
                 return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
             }
 
@@ -82,7 +82,7 @@ class organizationsScEventsController extends Controller
             if($request->hasFile('file')){
                 $file = $request->file('file');
                 // Verificar el tamaño del archivo
-                if ($file->getSize() > 10480 * 1024) { // 20480 KB = 20 MB
+                if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
                     return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
                 }
     
