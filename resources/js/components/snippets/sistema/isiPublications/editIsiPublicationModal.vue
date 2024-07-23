@@ -746,10 +746,25 @@ export default {
               idUser1 = this.userID;
             }
 
+            var peopleInvolved1 = "";
+            if (this.isiPublication.researcherInvolved !== null){
+              if (this.isiPublication.researcherInvolved.length !== 0) {
+                this.isiPublication.researcherInvolved.forEach((researcherInvolved, index) => {
+                  peopleInvolved1 += researcherInvolved.name;
+                  if (index === this.isiPublication.researcherInvolved.length - 1) {
+                    peopleInvolved1 += '.';
+                  } else {
+                    peopleInvolved1 += ', ';
+                  }
+                });
+              }
+            }
+
             let publication = {
               status: 'Finished',
               idUsuario: idUser1,
               authors: this.isiPublication.authors,
+              researcherInvolved: peopleInvolved1,
               articleTitle: this.isiPublication.articleTitle,
               journalName: this.isiPublication.journalName,
               doi: this.isiPublication.doi,
