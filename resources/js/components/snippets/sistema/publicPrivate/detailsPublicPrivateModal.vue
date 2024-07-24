@@ -51,7 +51,7 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Researcher Involved: </label>
+                      <label>Researchers Involved: </label>
                       <label v-if="publicPrivate1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.researcherInvolved }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>

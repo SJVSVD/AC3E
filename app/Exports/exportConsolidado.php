@@ -1387,7 +1387,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'Application Status' => $patent['applicationStatus'],
                         'Registration Number' => $patent['registrationNumber'],
                         'State' => $patent['state'],
-                        'Researcher Involved' => $patent['researcherInvolved'],
+                        'Researchers Involved' => $patent['researcherInvolved'],
                         'Comments' => $patent['comments'],
                     ];
                     array_push($patentsArray, $newPatent);
@@ -1401,7 +1401,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','IP Type','Authors','Institution Owner(s)','Country of Registration','Application Date','Grant Date','Application Status','Registration Number','State','Researcher Involved','Comments'];
+                return ['Id', 'Progress Report','User','IP Type','Authors','Institution Owner(s)','Country of Registration','Application Date','Grant Date','Application Status','Registration Number','State','Researchers Involved','Comments'];
             }
 
             public function columnWidths(): array

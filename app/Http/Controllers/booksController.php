@@ -79,7 +79,7 @@ class booksController extends Controller
             $workType = isset($rowData['Work Type']) && isset($workTypeMapping[$rowData['Work Type']]) ? $workTypeMapping[$rowData['Work Type']] : '';
 
             // Obtener la cadena del campo 'Researcher Involved'
-            $researcherInvolvedString = $rowData['Researcher Involved'];
+            $researcherInvolvedString = $rowData['Researchers Involved'];
 
             // Dividir la cadena en partes usando el delimitador ';'
             $researchersArray = explode(';', $researcherInvolvedString);

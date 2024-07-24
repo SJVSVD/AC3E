@@ -158,7 +158,7 @@ class organizationsScEventsController extends Controller
             }
 
             // Obtener la cadena del campo 'Researcher Involved'
-            $researcherInvolvedString = $rowData['Researcher Involved'];
+            $researcherInvolvedString = $rowData['Researchers Involved'];
 
             // Dividir la cadena en partes usando el delimitador ';'
             $researchersArray = explode(';', $researcherInvolvedString);

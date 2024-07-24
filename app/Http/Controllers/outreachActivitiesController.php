@@ -137,7 +137,7 @@ class outreachActivitiesController extends Controller
                 // 'other' => $rowData[''],
                 'nameOfTheMainResponsible' => $rowData['Name of the main responsible'],
                 'progressReport' => $rowData['Progress Report'],
-                'researcherInvolved' => $rowData['Researcher Involved'],
+                'researcherInvolved' => $rowData['Researchers Involved'],
                 'responsibility' => $rowData['Responsibility'],
                 'comments' => $rowData['Comentarios'],
             ]);

@@ -118,7 +118,7 @@ class patentsController extends Controller
             // Mapear el tipo de IP
             $ipType = isset($ipTypeMapping[$rowData['IP Type']]) ? $ipTypeMapping[$rowData['IP Type']] : '';
 
-            $researchers = explode(';', $rowData['Researcher Involved']);
+            $researchers = explode(';', $rowData['Researchers Involved']);
             $formattedResearchers = array_map(function($name) {
                 // Eliminar espacios en blanco al principio y al final
                 $name = trim($name);

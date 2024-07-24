@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewCollaboration = true">New Publication</a>
+                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewCollaboration = true">New Entry</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
@@ -24,9 +24,9 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of AC3E Member</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Ac3e Researchers Involved</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Name of External Person</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Beggining Date</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Beginning Date</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
                                     </tr>
                                 </thead>
@@ -57,16 +57,16 @@
                                             <p v-else class="text-sm mb-0">{{ scCollaboration.activityName }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="scCollaboration.nameOfAC3EMember == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ scCollaboration.nameOfAC3EMember }}</p>
+                                            <p v-if="scCollaboration.researcherInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ scCollaboration.researcherInvolved }}</p>
                                         </td>
                                         <td>
                                             <p v-if="scCollaboration.nameOfExternalResearcher == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ scCollaboration.nameOfExternalResearcher }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="scCollaboration.begginingDate == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ scCollaboration.begginingDate }}</p>
+                                            <p v-if="scCollaboration.beginningDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ scCollaboration.beginningDate }}</p>
                                         </td>
                                         <td>
                                             <p v-if="scCollaboration.endingDate == null" class="text-sm mb-0">---</p>

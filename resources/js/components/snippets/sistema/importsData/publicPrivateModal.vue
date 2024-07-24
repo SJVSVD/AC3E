@@ -74,7 +74,7 @@ export default {
           const expectedHeaders = [
           "No.",	"idUsuario",	"Progress Report","Name of Activity",	"Number of Research Line",	"Results / Goals",	"Agent Type",	"Type of Connection",
           "State",	"Name of Organization",	"Country/City of origin", "Start Date",	"End Date", "Place(s) where activity was executed"
-          ,"Internacional/Nacional",	"Participation in definition of public policies","Researcher Involved",	"Comentarios"
+          ,"Internacional/Nacional",	"Participation in definition of public policies","Researchers Involved",	"Comentarios"
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
           if (missingHeaders.length > 0) {

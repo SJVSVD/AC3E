@@ -103,7 +103,7 @@
                     <li><a href="/thesis-students">Thesis students</a></li>
                     <li><a href="/post-doc">Postdoctoral fellows</a></li>
                     <li><a href="/outreach-activities">Outreach</a></li>
-                    <li><a href="/patents">Patents</a></li>
+                    <li><a href="/patents">Intellectual Property</a></li>
                     <li><a href="/public-private">Public-private connections</a></li>
                     <li><a href="/technology-knowledge">Tec. and know. transfer</a></li>
                     <li><a href="/funding-sources">Funding sources</a></li>

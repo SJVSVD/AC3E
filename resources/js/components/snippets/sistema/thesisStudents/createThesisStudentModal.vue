@@ -24,7 +24,7 @@
                 <slot name="body">
                   <div class="row">
                       <div class="col-md-6">
-                        <label for="">AC3E researcher involved:</label>
+                        <label for="">AC3E Researchers Involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect
@@ -755,7 +755,7 @@ export default {
             if(item == 'studentName'){
               mensaje =   mensaje + "The field Student Name is required" + "\n";
             }else if(item == 'researcherInvolved'){
-              mensaje =   mensaje + "The field Researcher Involved is required" + "\n";
+              mensaje =   mensaje + "The field Researchers Involved is required" + "\n";
             }else if(item == 'invalidRut'){
               mensaje =   mensaje + "The entered Run is invalid" + "\n";
             }else if(item == 'studentMail'){

@@ -80,20 +80,26 @@ class isiPublicationsController extends Controller
         $data = $request->input('data');
         foreach ($data as $rowData) {
             // Dividir el valor del campo researcherInvolved si contiene punto y coma y convertir cada valor según corresponda
-            $fundingValues = explode('.', $rowData['Funding']);
-            $funding = '';
+            $fundingValues = explode(',', $rowData['Funding']);
+            $funding = [];
+            
+            // Mapear los valores a sus textos correspondientes
+            $mapping = [
+                '0' => 'Basal Financing Program Funding',
+                '1' => 'Other sources'
+            ];
+            
+            // Reemplazar los valores por los textos correspondientes
             foreach ($fundingValues as $value) {
-                if ($value === '0') {
-                    $funding .= 'Basal Financing Program Funding';
-                } elseif ($value === '1') {
-                    $funding .= 'Other sources';
-                }
-                // Añadir una coma si hay más valores después
-                if (next($fundingValues)) {
-                    $funding .= ', ';
+                $trimmedValue = trim($value); // Eliminar espacios alrededor del valor
+                if (array_key_exists($trimmedValue, $mapping)) {
+                    $funding[] = $mapping[$trimmedValue];
                 }
             }
-            $researchers = explode(';', $rowData['Researcher Involved']);
+            
+            // Unir los textos con coma
+            $fundingString = implode(', ', $funding);
+            $researchers = explode(';', $rowData['Researchers Involved']);
             $formattedResearchers = array_map(function($name) {
                 // Eliminar espacios en blanco al principio y al final
                 $name = trim($name);
@@ -122,7 +128,7 @@ class isiPublicationsController extends Controller
                 'firstPage' => $rowData['First page'],
                 'lastPage' => $rowData['Last page'],
                 'yearPublished' => $rowData['Year Published'],
-                'funding' => $funding,
+                'funding' => $fundingString,
                 'mainResearchers' => $rowData['Main Researchers'],
                 'associativeResearchers' => $rowData['Associative Researcher'],
                 'postDoc' => $rowData['Postdoc.'],

@@ -73,10 +73,10 @@
                                 <td v-else-if="registro.modulo == 'organizationsScEvents'">Organization Sc Events</td>
                                 <td v-else-if="registro.modulo == 'outreachActivities'">Outreach Activities</td>
                                 <td v-else-if="registro.modulo == 'participationScEvents'">Participation Sc Events</td>
-                                <td v-else-if="registro.modulo == 'patents'">Patents</td>
+                                <td v-else-if="registro.modulo == 'patents'">Intellectual Property</td>
                                 <td v-else-if="registro.modulo == 'postDoc'">Postdoctoral Fellows</td>
                                 <td v-else-if="registro.modulo == 'publicPrivate'">Public-Private Connections</td>
-                                <td v-else-if="registro.modulo == 'scCollaborations' && registro.moduleType == '0'">Sc Collaborations</td>
+                                <td v-else-if="registro.modulo == 'scCollaborations' && registro.moduleType == '0'">Visits And Stays</td>
                                 <td v-else-if="registro.modulo == 'nonIsiPublication'">Non WoS Publications</td>
                                 <td v-else-if="registro.modulo == 'thesisStudent'">Thesis Students</td>
                                 <td v-else-if="registro.modulo == 'awards'">Awards</td>

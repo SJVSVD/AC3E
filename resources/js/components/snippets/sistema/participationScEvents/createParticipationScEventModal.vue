@@ -24,7 +24,7 @@
                 <slot name="body">
                     <div class="row">
                       <div class="col-md-6">
-                        <label for="">AC3E researcher involved:</label>
+                        <label for="">AC3E Researchers Involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect

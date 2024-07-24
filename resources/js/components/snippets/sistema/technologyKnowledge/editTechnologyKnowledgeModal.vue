@@ -53,7 +53,7 @@
                     <br>
                     <div class="row">
                       <div class="col-md-6">
-                        <label for="">AC3E researcher involved:</label>
+                        <label for="">AC3E Researchers Involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the options"

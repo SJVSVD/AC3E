@@ -87,7 +87,7 @@ export default {
           'Target Audience',
           'Research Line',
           'Name of the main responsible',
-          'Researcher Involved',
+          'Researchers Involved',
           'Responsibility',
           'Comentarios',
           'State',

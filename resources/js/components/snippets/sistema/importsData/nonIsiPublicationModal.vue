@@ -77,7 +77,7 @@ export default {
             "Last page", "Year Published", "Date", "Indexed By Scopus Scielo, etc",
             "State", "Funding", "Main Researchers", "Associative Researchers", "Postdoc.",
             "Thesis Students", "National External Researchers", "International External Researchers",
-            "Colaboracion", "Participacion nacional/internacional", "Researcher Involved", "Comentarios"
+            "Colaboracion", "Participacion nacional/internacional", "Researchers Involved", "Comentarios"
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
           if (missingHeaders.length > 0) {

@@ -24,7 +24,7 @@
                 <slot name="body">
                     <div class="row">
                       <div class="col-md-6">
-                        <label for="">Researcher Involved:</label>
+                        <label for="">Researchers Involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the researchers"

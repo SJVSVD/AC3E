@@ -24,7 +24,7 @@
                 <slot name="body">
                     <div class="row">
                       <div class="col-md-6">
-                          <label for="">AC3E researcher involved:</label>
+                          <label for="">AC3E Researchers Involved:</label>
                           <label for="" style="color: orange;">*</label>
                           <Multiselect
                             placeholder="Select the researchers"
@@ -47,22 +47,11 @@
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="patent.ipType">
                               <option disabled value="">Select a type</option>
-                              <option value="Goods">Goods</option>
-                              <option value="Services">Services</option>
-                              <option value="Commercial establishments">Commercial establishments</option>
-                              <option value="Industrial establishments">Industrial establishments</option>
-                              <option value="Slogans">Slogans</option>
-                              <option value="Collective trademarks">Collective trademarks</option>
-                              <option value="Certification trademarks">Certification trademarks</option>
                               <option value="Invention patent">Invention patent</option>
                               <option value="Utility model">Utility model</option>
                               <option value="Design (Industrial design and industrial drawing)">Design (Industrial design and industrial drawing)</option>
-                              <option value="Layout designs (Topographies) of integrated circuits">Layout designs (Topographies) of integrated circuits</option>
-                              <option value="Geographical indication (GI)">Geographical indication (GI)</option>
                               <option value="Appelation of origin">Appelation of origin</option>
                               <option value="Copyright">Copyright</option>
-                              <option value="Plant varieties">Plant varieties</option>
-                              <option value="Traditional knowledge and genetic resources">Traditional knowledge and genetic resources</option>
                               <option value="Others">Others</option>
                               </select>
                           </div>

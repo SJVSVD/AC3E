@@ -24,7 +24,7 @@
                 <slot name="body">
                     <div class="row">
                       <div class="col-md-6">
-                        <label for="">AC3E researcher involved:</label>
+                        <label for="">AC3E Researchers Involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the researchers"
@@ -549,7 +549,7 @@ export default {
             }else if(item == 'placeRegion'){
               mensaje =   mensaje + "The field Place/Region is required" + "\n";
             }else if(item == 'researcherInvolved'){
-              mensaje =   mensaje + "The field Researcher Involved is required" + "\n";
+              mensaje =   mensaje + "The field Researchers Involved is required" + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{

@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewTechnology = true">New Transfer</a>
+                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewTechnology = true">New Entry</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
@@ -26,7 +26,7 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Type of Transfer</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Description</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Institution Involved</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Researcher Involved</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Researchers Involved</th>
                                     </tr>
                                 </thead>
                                 <tbody>

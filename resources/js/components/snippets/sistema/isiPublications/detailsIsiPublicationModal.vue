@@ -17,7 +17,7 @@
                     <div class="row">
                       <div class="text-uppercase pb-4">General information:</div>
                       <label class="col-md-6 m-0 fs-8 pb-1"> Status: <label class="fw-normal" style="font-size: 14px;">{{ isiPublication1.status }}</label></label>
-                      <label class="col-md-10 m-0 fs-8 pb-1"> AC3E researcher involved: <label v-if="isiPublication1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.researcherInvolved }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
+                      <label class="col-md-10 m-0 fs-8 pb-1"> AC3E Researchers Involved: <label v-if="isiPublication1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.researcherInvolved }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
                       <label class="col-md-10 m-0 fs-8 pb-1"> Authors: <label v-if="isiPublication1.authors != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.authors }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
                       <label class="col-md-10 m-0 fs-8 pb-1"> Article Title: <label v-if="isiPublication1.articleTitle != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.articleTitle }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
                       <label class="col-md-10 m-0 fs-8 pb-1"> Journal Name: <label v-if="isiPublication1.journalName != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.journalName }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>

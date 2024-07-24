@@ -140,7 +140,7 @@ class publicPrivateController extends Controller
                 continue; // Saltar esta iteración y pasar a la siguiente fila de datos
             }
     
-            $researchers = explode(';', $rowData['Researcher Involved']);
+            $researchers = explode(';', $rowData['Researchers Involved']);
             $formattedResearchers = array_map(function($name) {
                 // Eliminar espacios en blanco al principio y al final
                 $name = trim($name);

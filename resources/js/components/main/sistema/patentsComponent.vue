@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-12">
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPatent = true">New Patent</a>
+                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPatent = true">New Entry</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
@@ -27,7 +27,7 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Name of Patent</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status Application</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Registration Number</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Researcher Involved</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Researchers Involved</th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -52,7 +52,7 @@
                     <br>
                     <div class="row">
                       <div class="col-md-6">
-                        <label for="">AC3E researcher involved:</label>
+                        <label for="">AC3E Researchers Involved:</label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="fundingSource.researcherInvolved"

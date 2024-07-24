@@ -88,7 +88,7 @@ export default {
             "Type of participation",
             "Comentarios",
             "State",
-            "Researcher Involved"
+            "Researchers Involved"
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
           if (missingHeaders.length > 0) {

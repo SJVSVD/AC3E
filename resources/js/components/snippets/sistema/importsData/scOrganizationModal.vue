@@ -74,7 +74,7 @@ export default {
           const expectedHeaders = [
             "idUsuario", "Status", "No.", "Progress Report", "Type of Event", "Number of Research Line",
             "Name course/congress", "Number of participants", "City/country", "Start Date", "End Date",
-            "State", "Researcher Involved", "Comentarios"
+            "State", "Researchers Involved", "Comentarios"
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
           if (missingHeaders.length > 0) {

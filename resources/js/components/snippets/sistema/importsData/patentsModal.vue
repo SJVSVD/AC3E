@@ -6,7 +6,7 @@
             <div class="modal-container-xs">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Import Patents
+                    Import Intellectual Property
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
@@ -85,7 +85,7 @@ export default {
           'Grant Date',
           'Application Status',
           'Registration Number',
-          'Researcher Involved',
+          'Researchers Involved',
           'Comentarios',
           'State'
           ];

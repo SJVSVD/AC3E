@@ -83,7 +83,7 @@ export default {
           "Ending Date",
           "Number of Research Line",
           "Name of AC3E member",
-          "Name of external researcher involved",
+          "Name of external Researchers Involved",
           "Collaboration stay",
           "Comentarios",	
           "External researcher is",	

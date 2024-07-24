@@ -75,7 +75,7 @@ export default {
             "idUsuario", "Status", "Work Type", "Book Authors", "Chapter Authors", "Book Title",
             "Chapter title", "Editors", "ISBN", "First page", "Last page", "Editorial/city/country",
             "Year", "Number of Research Line", "Progress Report", "Comentarios", "Date", "State",
-            "Researcher Involved"
+            "Researchers Involved"
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
           if (missingHeaders.length > 0) {

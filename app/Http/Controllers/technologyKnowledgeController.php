@@ -124,7 +124,7 @@ class technologyKnowledgeController extends Controller
                 'progressReport' => $rowData['Progress Report'],
                 'description' => $rowData['Description'],
                 'nameOfInstitutionInvolved' => $rowData['Name of the Institions Involved'],
-                'researcherInvolved' => $rowData['Researcher Involved'],
+                'researcherInvolved' => $rowData['Researchers Involved'],
             ]);
         }
         
