@@ -1,5 +1,5 @@
 @extends('layouts.main', ['class' => 'g-sidenav-show bg-gray-100'])
-
+@section('title', '- Technology and knowledge transfer')
 @section('content')
     @include('layouts.navbars.auth.topnav', ['title' => 'Technology and knowledge transfer'])
     <body class="antialiased">

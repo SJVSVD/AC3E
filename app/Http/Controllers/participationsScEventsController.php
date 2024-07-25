@@ -28,10 +28,10 @@ class participationsScEventsController extends Controller
      public function verifyParticipation(Request $request)
     {
         $query = participationScEvents::where('eventName', $request['eventName'])
-            ->where('startDate', $request['startDate'])
+            ->where('presentationTitle', $request['presentationTitle'])
             ->where('idUsuario', $request['idUsuario'])
             ->whereNotNull('eventName')
-            ->whereNotNull('startDate');
+            ->whereNotNull('presentationTitle');
     
         if ($request->has('id')) {
             $query->where('id', '!=', $request->input('id'));

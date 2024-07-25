@@ -191,7 +191,7 @@ class scCollaborationsController extends Controller
                 'endingDate' => $rowData['Ending Date'],
                 'progressReport' => $rowData['Progress Report'],
                 'nameOfAC3EMember' => $rowData['Name of AC3E member'],
-                'nameOfExternalResearcher' => $rowData['Name of external researcher involved'],
+                'nameOfExternalResearcher' => $rowData['Name of external Researchers Involved'],
                 'collaborationStay' => $collaborationStay,
                 'otherStay' => $otherStay,
                 'comments' => $rowData['Comentarios']

@@ -379,43 +379,49 @@
 }
 
 /* SIDENAV */
-/* General styles for sidebar */
+/* Estilos para la barra lateral */
 .sidebar {
     width: 350px;
     height: 100%;
     background: #111;
     position: fixed;
     top: 0;
-    left: -250px; /* Escondido fuera de la vista */
+    left: -350px; /* Escondido fuera de la vista */
     transition: left 0.3s;
     z-index: 100;
 }
 
-/* When the sidebar is open */
+/* Cuando la barra lateral está abierta */
 .sidebar.open {
     left: 0; /* Se despliega desde la izquierda */
 }
 
-/* Mobile-specific styles */
+/* Estilos específicos para móviles */
 @media (max-width: 768px) {
-    /* Adjustments for mobile */
     .sidebar {
         width: 250px;
         left: -250px; /* Escondido fuera de la vista */
     }
 
-    /* Sidebar open state */
+    /* Barra lateral abierta en móviles */
     .sidebar.open {
         left: 0;
     }
 
+    /* Ajustar el contenido para que no se solape */
     .home-section {
-        left: 0;
-        width: 100%;
-        z-index: 100;
+        margin-left: 250px; /* Asegúrate de que el contenido no se solape con la barra lateral */
+        transition: margin-left 0.3s;
     }
 
-    /* Logo and toggle button */
+    /* Ajustes para el botón de menú */
+    #menuButton {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 101;
+    }
+
     .sidebar .logo-details {
         display: flex;
         justify-content: space-between;
@@ -464,5 +470,16 @@
 
     .sidebar .nav-links li.active .sub-menu {
         display: block;
+    }
+    /* Estilos para el botón de menú en pantallas móviles */
+    #menuButton {
+        display: none; /* Oculta el botón por defecto */
+    }
+
+    /* Mostrar el botón en pantallas más grandes */
+    @media (min-width: 769px) {
+        #menuButton {
+            display: block; /* Muestra el botón en pantallas grandes */
+        }
     }
 }

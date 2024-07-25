@@ -10,9 +10,7 @@
         @endif
         {{-- @if (Auth::user() != null):
         @endif --}}
-        <title>
-            GESTIN
-        </title>
+        <title>GESTIN @yield('title')</title>
         <!-- Font Awesome Icons -->
         <script src="https://kit.fontawesome.com/1bd7af15cd.js" crossorigin="anonymous"></script>
         <!-- CSS Files -->
@@ -113,13 +111,13 @@
             <li>
                 <div class="iocn-link">
                     <a href="#">
-                        <i class="fa-solid fa-circle-info"></i>
-                        <span class="link_name">Help</span>
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span class="link_name">Power BI</span>
                     </a>
                     <i class="fa-solid fa-sort-down arrow" id="arrow3"></i>
                 </div>
                 <ul class="sub-menu">
-                    <li><a class="link_name" href="#">Help</a></li>
+                    <li><a class="link_name" href="#">Power BI</a></li>
                     <li><a href="/power-bi">Power BI</a></li>
                 </ul>
             </li>

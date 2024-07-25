@@ -1,5 +1,5 @@
 @extends('layouts.main', ['class' => 'g-sidenav-show bg-gray-100'])
-
+@section('title', '- Cumulative Results until April, 2024')
 @section('content')
     @include('layouts.navbars.auth.topnav', ['title' => 'Cumulative Results until April, 2024'])
         <div id="powerbi-component">

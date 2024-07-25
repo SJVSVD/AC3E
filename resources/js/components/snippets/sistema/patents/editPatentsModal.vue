@@ -85,7 +85,7 @@
                       </div>
                       <div class="col-md-3">
                         <label for="">Grant date:</label>
-                        <label for="" style="color: orange;">*</label>
+                        <label v-if="patent.applicationStatus == 'Approved'" for="" style="color: orange;">*</label>
                         <br>
                         <input type="date" class= "form-control" v-model="patent.grantDate">
                       </div>
@@ -422,6 +422,7 @@ export default {
         this.errors = [];
 
         const itemsToCheck = [
+          'grantDate',
           'applicationGranted',
           'comments'
         ];
@@ -438,6 +439,10 @@ export default {
 
         if(this.patent.applicationGranted == '' && this.patent.applicationStatus == 'Approved'){
           this.errors.push('application granted n.º')
+        }
+
+        if(this.patent.grantDate == '' && this.patent.applicationStatus == 'Approved'){
+          this.errors.push('grantDate')
         }
 
         let patent1 = {
