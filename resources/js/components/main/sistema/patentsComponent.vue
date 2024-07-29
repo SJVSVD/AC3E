@@ -3,8 +3,13 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="row pb-0 p-4">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-end">
+                    <div class="col-lg-10 col-md-12">
+                        <div class="info-box">
+                            Includes all forms of intellectual protection involving AC3E researchers among the authors, including applications and grants, during the current baseline year (Sep-present). If the intellectual property has been awarded, please add the award code/grant number.
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
+                        <div class="d-flex">
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPatent = true">New Entry</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>

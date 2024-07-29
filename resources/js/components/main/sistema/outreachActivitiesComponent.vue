@@ -3,8 +3,13 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="row pb-0 p-4">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-end">
+                    <div class="col-lg-10 col-md-12">
+                        <div class="info-box">
+                            Includes all non-scientific activities that promote and disseminate the work of AC3E and its members, executed during the current baseline year (Sep-present). Examples of outreach activities include: school talks, press notes, appearances in mass media, guided tours of facilities, publication of educational materials, etc.
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
+                        <div class="d-flex">
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewOutreach = true">New Entry</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
@@ -64,8 +69,8 @@
                                             <p v-else class="text-sm mb-0">{{ outreachActivity.date }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="outreachActivity.nameOfTheMainResponsible == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ outreachActivity.nameOfTheMainResponsible }}</p>
+                                            <p v-if="outreachActivity.researcherInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ outreachActivity.researcherInvolved }}</p>
                                         </td>
                                     </tr>
                                 </tbody>

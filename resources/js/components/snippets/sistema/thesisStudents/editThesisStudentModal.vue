@@ -6,7 +6,7 @@
             <div class="modal-container-xl ">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Thesis 
+                    Edit Thesis
                 </slot>
                 <label for="">Progress year: {{ thesisStudent.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
@@ -44,10 +44,12 @@
                         <label for="universitySelect">University that gives the Degree:</label>
                         <label for="universitySelect" style="color: orange;">*</label>
                         <br>
-                        <select id="universitySelect" class="form-select" v-model="thesisStudent.university">
+                        <select id="universitySelect" class="form-select" v-model="selectedUniversity" @change="checkIfOther">
                           <option value="">Select University</option>
-                          <option v-for="university in universities" :value="university.name">{{ university.name }}</option>
+                          <option v-for="university in universities" :key="university.name" :value="university.name">{{ university.name }}</option>
+                          <option value="other">Other</option>
                         </select>
+                        <input v-if="showOtherUniversityInput" type="text" class="form-control mt-2" v-model="thesisStudent.university" placeholder="Enter other university">
                       </div>
                       <div class="col-md-3">
                           <label for="">Resources provided by the Center: </label>
@@ -177,19 +179,16 @@
                     <hr size="3" class="separador">
                     <div class="row">
                       <div class="col-md-4 d-flex justify-content-center">
-                        <a v-if="tutors.length != 0" class="btn btn-continue" @click="showModalEditTutor = true">{{ tutors.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalAutor = true"><i class="fa-solid fa-plus"></i> Add Tutor </a>
+                        <a v-if="tutor1.name == '' && tutor1.institution == ''" class="btn btn-search-blue" @click="showModalAutor = true"><i class="fa-solid fa-plus"></i> Add Tutor </a>
+                        <a v-else class="btn btn-alert" @click="showModalEditTutor = true"><i class="fa fa-fw fa-edit"></i> Edit Tutor</a>
                       </div>
                       <div class="col-md-4 d-flex justify-content-center">
-                        <a v-if="cotutors.length != 0" class="btn btn-continue" @click="showModalEditCotutor = true">{{ cotutors.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalCoautor = true"><i class="fa-solid fa-plus"></i> Add Cotutor </a>
+                        <a v-if="cotutor1.name == '' && cotutor1.institution == ''" class="btn btn-search-blue" @click="showModalCoautor = true"><i class="fa-solid fa-plus"></i> Add Cotutor </a>
+                        <a v-else class="btn btn-alert" @click="showModalEditCotutor = true"><i class="fa fa-fw fa-edit"></i> Edit Cotutor</a>
                       </div>
                       <div class="col-md-4 d-flex justify-content-centerd-flex justify-content-center">
-                        <a v-if="others.length != 0" class="btn btn-continue" @click="showModalEditOther = true">{{ others.length }}</a>
-                        &nbsp;
-                        <a class="btn btn-search-blue" @click="showModalOther = true"><i class="fa-solid fa-plus"></i> Add Other </a>
+                        <a v-if="other1.name == '' && other1.institution == ''"class="btn btn-search-blue" @click="showModalOther = true"><i class="fa-solid fa-plus"></i> Add Other </a>
+                        <a v-else class="btn btn-alert" @click="showModalEditOther = true"><i class="fa fa-fw fa-edit"></i> Edit Other</a>
                       </div>
                     </div>
                     <hr size="3" class="separador">
@@ -228,7 +227,7 @@
                           <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectYear" v-model="thesisStudent.yearThesisEnd">
-                          <option disabled :value="null">Select a year</option>
+                          <option disabled value="">Select a year</option>
                           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                           </select>
                       </div>
@@ -237,7 +236,7 @@
                           <label v-if="thesisStudent.thesisStatus == 1" for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="thesisStudent.monthEnd">
-                              <option disabled :value="null">Select a month</option>
+                              <option disabled value="">Select a month</option>
                               <option value="January">January</option>
                               <option value="February">February</option>
                               <option value="March">March</option>
@@ -260,7 +259,7 @@
                           <label v-if="thesisStudent.thesisStatus == 1" for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" v-model="thesisStudent.posteriorArea">
-                            <option disabled :value="null">Select an area</option>
+                            <option disabled value="">Select an area</option>
                             <option value="Private Education">Private Education</option>
                             <option value="Business">Business</option>
                             <option value="Own entrepreneurship">Own entrepreneurship</option>
@@ -299,10 +298,10 @@
                 </div>
                 <modalOther v-if="showModalOther" @close="showModalOther = false" @submit="handleFormSubmit3"></modalOther>
                 <modalCoautor v-if="showModalCoautor" @close="showModalCoautor = false" @submit="handleFormSubmit2"></modalCoautor>
-                <modalAutor v-if="showModalAutor" @close="showModalAutor = false" @submit="handleFormSubmit1"></modalAutor>
-                <modalEditarTutor v-bind:tutors1="tutors" v-if="showModalEditTutor" @close="showModalEditTutor = false"></modalEditarTutor>
-                <modalEditarCotutor v-bind:cotutors1="cotutors" v-if="showModalEditCotutor" @close="showModalEditCotutor = false"></modalEditarCotutor>
-                <modalEditarOther v-bind:others1="others" v-if="showModalEditOther" @close="showModalEditOther = false"></modalEditarOther>
+                <modalAutor v-if="showModalAutor" @close="showModalAutor = false" @submit="handleFormSubmit4"></modalAutor>
+                <modalEditarTutor v-bind:tutors1="tutor1" v-if="showModalEditTutor" @close="showModalEditTutor = false"></modalEditarTutor>
+                <modalEditarCotutor v-bind:cotutors1="cotutor1" v-if="showModalEditCotutor" @close="showModalEditCotutor = false"></modalEditarCotutor>
+                <modalEditarOther v-bind:others1="other1" v-if="showModalEditOther" @close="showModalEditOther = false"></modalEditarOther>
                 <modalconfirmacion ref="confirmation"></modalconfirmacion>
                 <modalalerta ref="alert"></modalalerta>
                 <modalProgressYear v-bind:progressYear="thesisStudent.progressReport" v-if="showModalProgress" @close="showModalProgress = false" @submit="handleFormSubmit1"></modalProgressYear>
@@ -366,6 +365,8 @@ export default {
         'Infrastructure',
         'Other',
       ],
+      selectedUniversity: '',
+      showOtherUniversityInput: false,
       formData: null,
       showModalAutor: false,
       showModalCoautor: false,
@@ -377,9 +378,18 @@ export default {
       file: null,
       draft: false,
       showModalProgress: false,
-      tutors:[],
-      cotutors:[],
-      others:[],
+      tutor1:{
+        name: '',
+        institution: '',
+      },
+      cotutor1:{
+        name: '',
+        institution: '',
+      },
+      other1:{
+        name: '',
+        institution: '',
+      },
       errors:[],
       universities: [],
       id: '',
@@ -392,108 +402,105 @@ export default {
     }),
     mounted() {
       this.calculateYears();
-      this.fetchData();
+
     },
     props:{
       thesisStudent1: Object,
     },
-    created(){
-      this.getUsuarios();
-      this.getUsuarios2();
-      this.id = this.thesisStudent1.id;
-      this.idResearcher = this.thesisStudent1.idUsuario;
-      this.user = this.thesisStudent1.usuario.name;
-      this.thesisStudent.studentName = this.thesisStudent1.studentName;
-      this.thesisStudent.progressReport = this.thesisStudent1.progressReport;
-      this.thesisStudent.identification = this.thesisStudent1.identification;
-      this.thesisStudent.monthStart = this.thesisStudent1.monthStart;
-      this.thesisStudent.monthEnd = this.thesisStudent1.monthEnd;
-      if(this.thesisStudent1.identification == 'Run'){
-        this.thesisStudent.run = this.thesisStudent1.runOrPassport;
-      }else{
-        this.thesisStudent.passport = this.thesisStudent1.runOrPassport;
-      }
+    created() {
+        this.getUsuarios();
+        this.getUsuarios2();
+        this.id = this.thesisStudent1.id;
+        this.idResearcher = this.thesisStudent1.idUsuario;
+        this.user = this.thesisStudent1.usuario.name;
+        this.thesisStudent.studentName = this.thesisStudent1.studentName;
+        this.thesisStudent.progressReport = this.thesisStudent1.progressReport;
+        this.thesisStudent.identification = this.thesisStudent1.identification;
+        this.thesisStudent.monthStart = this.thesisStudent1.monthStart;
 
-      if(this.thesisStudent1.resourcesCenter != null && this.thesisStudent1.resourcesCenter != []){
-        const separatedValues = this.thesisStudent1.resourcesCenter.split(",");
-        this.thesisStudent.resourcesCenter = separatedValues.slice(0, -1).map(valor => {
-          return { value: valor, name: valor };
+        this.thesisStudent.monthEnd = this.thesisStudent1.monthEnd || "";
+        this.thesisStudent.yearThesisEnd = this.thesisStudent1.yearThesisEnd || "";
+        this.thesisStudent.posteriorArea = this.thesisStudent1.posteriorArea || "";
+        this.thesisStudent.institutionPosteriorArea = this.thesisStudent1.institutionPosteriorArea || "";
+
+        if (this.thesisStudent1.identification === 'Run') {
+            this.thesisStudent.run = this.thesisStudent1.runOrPassport;
+        } else {
+            this.thesisStudent.passport = this.thesisStudent1.runOrPassport;
+        }
+
+        if (this.thesisStudent1.resourcesCenter != null && this.thesisStudent1.resourcesCenter != []) {
+            const separatedValues = this.thesisStudent1.resourcesCenter.split(",");
+            this.thesisStudent.resourcesCenter = separatedValues.slice(0, -1).map(valor => {
+                return { value: valor, name: valor };
+            });
+        }
+
+        this.thesisStudent.thesisStatus = this.thesisStudent1.thesisStatus;
+        this.thesisStudent.gender = this.thesisStudent1.gender;
+        this.thesisStudent.studentMail = this.thesisStudent1.studentMail;
+        this.thesisStudent.thesisTitle = this.thesisStudent1.thesisTitle;
+        this.thesisStudent.academicDegree = this.thesisStudent1.academicDegree;
+        this.thesisStudent.degreeDenomination = this.thesisStudent1.degreeDenomination;
+
+        this.tutor1.name = this.thesisStudent1.tutorName || "";
+        this.tutor1.institution = this.thesisStudent1.tutorInstitution || "";
+        this.cotutor1.name = this.thesisStudent1.cotutorName || "";
+        this.cotutor1.institution = this.thesisStudent1.cotutorInstitution || "";
+        this.other1.name = this.thesisStudent1.otherName || "";
+        this.other1.institution = this.thesisStudent1.otherInstitution || "";
+
+        this.thesisStudent.tutorName = this.thesisStudent1.tutorName;
+        this.thesisStudent.tutorInstitution = this.thesisStudent1.tutorInstitution;
+        this.thesisStudent.cotutorName = this.thesisStudent1.cotutorName;
+        this.thesisStudent.cotutorInstitution = this.thesisStudent1.cotutorInstitution;
+        this.thesisStudent.otherName = this.thesisStudent1.otherName;
+        this.thesisStudent.otherInstitution = this.thesisStudent1.otherInstitution;
+
+        this.thesisStudent.university = this.thesisStudent1.university;
+        this.thesisStudent.yearStart = this.thesisStudent1.yearStart;
+        this.thesisStudent.comments = this.thesisStudent1.comments;
+
+        const currentYear = new Date().getFullYear();
+        const startYear = 2000;
+        const endYear = currentYear + 1;
+        this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+        this.selectedYear = currentYear;
+        this.years.sort((a, b) => b - a);
+
+        if (this.thesisStudent1.researcherInvolved != null) {
+            const valoresSeparados1 = this.thesisStudent1.researcherInvolved.split(",");
+            this.thesisStudent.researcherInvolved = valoresSeparados1.map((valor, index) => {
+                valor = valor.trim();
+                if (valor.endsWith('.')) {
+                    valor = valor.slice(0, -1);
+                }
+                return { value: valor, name: valor };
+            });
+        }
+
+        // Esperar a que las universidades se carguen antes de realizar la verificación
+        this.fetchData().then(() => {
+            if (!this.universities.some(univ => univ.name === this.thesisStudent1.university)) {
+                this.selectedUniversity = 'other';
+                this.thesisStudent.university = this.thesisStudent1.university;
+                this.showOtherUniversityInput = true;
+            } else {
+                this.selectedUniversity = this.thesisStudent1.university;
+                this.showOtherUniversityInput = false;
+            }
         });
-      }
-      if(this.thesisStudent1.tutorName != null){
-        const valoresSeparados1 = this.thesisStudent1.tutorName.split(",");
-        const nombresSeparados1 = this.thesisStudent1.tutorInstitution.split(",");
-        this.tutors = valoresSeparados1.slice(0, -1).map((valor, index) => {
-          return { name: valor, institution: nombresSeparados1[index] };
-        });
-      }
-
-      if(this.thesisStudent1.cotutorName != null){
-        const valoresSeparados2 = this.thesisStudent1.cotutorName.split(",");
-        const nombresSeparados2 = this.thesisStudent1.cotutorInstitution.split(",");
-        this.cotutors = valoresSeparados2.slice(0, -1).map((valor, index) => {
-          return { name: valor, institution: nombresSeparados2[index] };
-        });
-      }
-      if(this.thesisStudent1.otherName != null){
-        const valoresSeparados3 = this.thesisStudent1.otherName.split(",");
-        const nombresSeparados3 = this.thesisStudent1.otherInstitution
-        .split(",");
-        this.others = valoresSeparados3.slice(0, -1).map((valor, index) => {
-          return { name: valor, institution: nombresSeparados3[index] };
-        });
-      }
-
-
-
-      this.thesisStudent.thesisStatus = this.thesisStudent1.thesisStatus;
-      this.thesisStudent.gender = this.thesisStudent1.gender;
-      this.thesisStudent.studentMail = this.thesisStudent1.studentMail;
-      this.thesisStudent.thesisTitle = this.thesisStudent1.thesisTitle;
-      this.thesisStudent.academicDegree = this.thesisStudent1.academicDegree;
-      this.thesisStudent.degreeDenomination = this.thesisStudent1.degreeDenomination;
-      this.thesisStudent.tutorInstitution = this.thesisStudent1.tutorInstitution;
-      this.thesisStudent.cotutorName = this.thesisStudent1.cotutorName;
-      this.thesisStudent.cotutorInstitution = this.thesisStudent1.cotutorInstitution;
-      this.thesisStudent.otherName = this.thesisStudent1.otherName;
-      this.thesisStudent.otherInstitution = this.thesisStudent1.otherInstitution;
-      this.thesisStudent.university = this.thesisStudent1.university;
-      this.thesisStudent.yearStart = this.thesisStudent1.yearStart;
-      this.thesisStudent.yearThesisEnd = this.thesisStudent1.yearThesisEnd;
-      this.thesisStudent.posteriorArea = this.thesisStudent1.posteriorArea;
-      this.thesisStudent.institutionPosteriorArea = this.thesisStudent1.institutionPosteriorArea;
-      this.thesisStudent.comments = this.thesisStudent1.comments;
-
-      const currentYear = new Date().getFullYear();
-      const startYear = 2000;
-      const endYear = currentYear + 1;
-      this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
-      this.selectedYear = currentYear;
-      this.years.sort((a, b) => b - a);
-
-      if (this.thesisStudent1.researcherInvolved != null) {
-          const valoresSeparados1 = this.thesisStudent1.researcherInvolved.split(",");
-          this.thesisStudent.researcherInvolved = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
-
-              return { value: valor, name: valor };
-          });
-      }
-
     },
     methods: {
       fetchData() {
         // Función para obtener datos de universidades desde la API
-        axios.get('/api/universities')
-          .then(response => {
-            this.universities = response.data;
-          })
-          .catch(error => {
-            console.error('Error fetching universities:', error);
-          });
+        return axios.get('/api/universities')
+            .then(response => {
+                this.universities = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching universities:', error);
+            });
       },
       getUsuarios2(){
         // Función para obtener usuarios desde otra ruta de la API
@@ -535,17 +542,20 @@ export default {
               link.click();
         });
       },
-      handleFormSubmit1(formData) {
-        // Función para manejar el envío de un formulario
-        this.tutors.push(formData);
+      // Función para manejar el envío de un formulario
+      handleFormSubmit4(formData) {
+        this.tutor1.name = formData.name;
+        this.tutor1.institution = formData.institution;
       },
+      // Función para manejar el envío de un formulario
       handleFormSubmit2(formData) {
-        // Función para manejar el envío de un formulario
-        this.cotutors.push(formData);
+        this.cotutor1.name = formData.name;
+        this.cotutor1.institution = formData.institution;
       },
+      // Función para manejar el envío de un formulario
       handleFormSubmit3(formData) {
-        // Función para manejar el envío de un formulario
-        this.others.push(formData);
+        this.other1.name = formData.name;
+        this.other1.institution = formData.institution;
       },
       onInput1(event) {
         // Función para manejar la entrada de un campo de año
@@ -634,40 +644,8 @@ export default {
             runOrPassport1 = this.thesisStudent.passport;
           }
 
-          var tutorName1 = '';
-          var tutorInstitution1 = '';
-          var cotutorName1 = '';
-          var cotutorInstitution1 = '';
-          var otherName1 = '';
-          var otherInstitution1 = '';
           var resources1 = '';
 
-          if(this.tutors.length != 0){
-            this.tutors.forEach(tutor => {
-              tutorName1 += tutor.name + ',';
-            });
-            this.tutors.forEach(tutor => {
-              tutorInstitution1 += tutor.institution + ',';
-            });
-          }
-
-          if(this.cotutors.length != 0){
-            this.cotutors.forEach(cotutor => {
-              cotutorName1 += cotutor.name + ',';
-            });
-            this.cotutors.forEach(cotutor => {
-              cotutorInstitution1 += cotutor.institution + ',';
-            });
-          }
-
-          if(this.others.length != 0){
-            this.others.forEach(other => {
-              otherName1 += other.name + ',';
-            });
-            this.others.forEach(other => {
-              otherInstitution1 += other.institution + ',';
-            });
-          }
           if(this.thesisStudent.resourcesCenter != null && this.thesisStudent.resourcesCenter != []){
             this.thesisStudent.resourcesCenter.forEach(resource => {
               resources1 += resource.value + ',';
@@ -707,12 +685,12 @@ export default {
             thesisTitle: this.thesisStudent.thesisTitle,
             academicDegree: this.thesisStudent.academicDegree,
             degreeDenomination: this.thesisStudent.degreeDenomination,
-            tutorName: tutorName1,
-            tutorInstitution: tutorInstitution1,
-            cotutorName: cotutorName1,
-            cotutorInstitution: cotutorInstitution1,
-            otherName: otherName1,
-            otherInstitution: otherInstitution1,
+            tutorName: this.tutor1.name,
+            tutorInstitution: this.tutor1.institution,
+            cotutorName: this.cotutor1.name,
+            cotutorInstitution: this.cotutor1.institution,
+            otherName: this.other1.name,
+            otherInstitution: this.other1.institution,
             university: this.thesisStudent.university,
             yearStart: this.thesisStudent.yearStart,
             monthStart: this.thesisStudent.monthStart,
@@ -725,7 +703,7 @@ export default {
             progressReport: this.thesisStudent.progressReport,
           };
           console.log(thesisStudent);
-          axios.put(`api/thesisStudents/${this.id}`, thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
+          axios.put(`api/thesisStudents/${this.id}`, thesisStudent).then((result) => {
             this.buttonDisable = true;
             this.buttonText = 'Sending...';
             console.log(result.data);
@@ -843,7 +821,22 @@ export default {
           this.errors.push('passport');
         }
 
-        if(this.tutors.length == 0 && this.cotutors.length == 0 && this.others.length == 0){
+        // Validar que al menos uno de los conjuntos tenga ambos campos rellenados
+        let isValid = false;
+
+        if (this.tutor1.name !== '' && this.tutor1.institution !== '') {
+          isValid = true;
+        }
+
+        if (this.cotutor1.name !== '' && this.cotutor1.institution !== '') {
+          isValid = true;
+        }
+
+        if (this.other1.name !== '' && this.other1.institution !== '') {
+          isValid = true;
+        }
+
+        if (!isValid) {
           this.errors.push('noTutors');
         }
 
@@ -852,6 +845,9 @@ export default {
           if(validacion == false){
             this.errors.push('invalidRut');
             }
+        }
+        if(this.thesisStudent.thesisStatus == 1 && this.file == null){
+            this.errors.push('thesisExtract');
         }
 
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
@@ -862,15 +858,15 @@ export default {
             this.errors.push('monthEnd');
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.posteriorArea == ""){
             this.errors.push('posteriorArea');
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.institutionPosteriorArea == ""){
             this.errors.push('institutionPosteriorArea');
         }
 
-
+        console.log(this.errors);
         var runOrPassport1 = '';
           if(this.thesisStudent.identification == 'Run'){
             runOrPassport1 = this.formatoRut(this.thesisStudent.run);
@@ -898,6 +894,8 @@ export default {
           this.errors.forEach(item => {
             if(item == 'studentName'){
               mensaje =   mensaje + "The field Student Name is required" + "\n";
+            }else if(item == 'thesisExtract'){
+              mensaje =   mensaje + "The field Thesis Extract is required" + "\n";
             }else if(item == 'invalidRut'){
               mensaje =   mensaje + "The entered run is invalid" + "\n";
             }else if(item == 'studentMail'){
@@ -925,15 +923,19 @@ export default {
             }else if(item == 'academicDegree'){
               mensaje =   mensaje + "The field Academic Degree is required" + "\n";
             }else if(item == 'yearStart'){
-              mensaje =   mensaje + "The field Year when starts is required" + "\n";
+              mensaje =   mensaje + "The field Year in which student thesis starts is required" + "\n";
+            }else if(item == 'monthStart'){
+              mensaje =   mensaje + "The field Month in which student thesis starts is required" + "\n";
             }else if(item == 'yearThesisEnd'){
-              mensaje =   mensaje + "The field Year when thesis ends is required" + "\n";
+              mensaje =   mensaje + "The field Year which thesis ends is required" + "\n";
+            }else if(item == 'monthEnd'){
+              mensaje =   mensaje + "The field Month which thesis ends is required" + "\n";
             }else if(item == 'resourcesCenter'){
               mensaje =   mensaje + "The field Resources provided is required" + "\n";
             }else if(item == 'posteriorArea'){
               mensaje =   mensaje + "The field Posterior working area is required" + "\n";
             }else if(item == 'institutionPosteriorArea'){
-              mensaje =   mensaje + "The field Institution posterior area is required" + "\n";
+              mensaje =   mensaje + "The field Institution posterior working area is required" + "\n";
             }else if(item == 'noTutors'){
               mensaje =   mensaje + "A minimum of one tutor, co-tutor or other must enter" + "\n";
             }else if(item == 'duplicated'){
@@ -965,41 +967,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-
-            var tutorName1 = '';
-            var tutorInstitution1 = '';
-            var cotutorName1 = '';
-            var cotutorInstitution1 = '';
-            var otherName1 = '';
-            var otherInstitution1 = '';
             var resources1 = '';
-
-            if(this.tutors.length != 0){
-              this.tutors.forEach(tutor => {
-                tutorName1 += tutor.name + ',';
-              });
-              this.tutors.forEach(tutor => {
-                tutorInstitution1 += tutor.institution + ',';
-              });
-            }
-
-            if(this.cotutors.length != 0){
-              this.cotutors.forEach(cotutor => {
-                cotutorName1 += cotutor.name + ',';
-              });
-              this.cotutors.forEach(cotutor => {
-                cotutorInstitution1 += cotutor.institution + ',';
-              });
-            }
-
-            if(this.others.length != 0){
-              this.others.forEach(other => {
-                otherName1 += other.name + ',';
-              });
-              this.others.forEach(other => {
-                otherInstitution1 += other.institution + ',';
-              });
-            }
 
             this.thesisStudent.resourcesCenter.forEach(resource => {
               resources1 += resource.value + ',';
@@ -1039,12 +1007,12 @@ export default {
               thesisTitle: this.thesisStudent.thesisTitle,
               academicDegree: this.thesisStudent.academicDegree,
               degreeDenomination: this.thesisStudent.degreeDenomination,
-              tutorName: tutorName1,
-              tutorInstitution: tutorInstitution1,
-              cotutorName: cotutorName1,
-              cotutorInstitution: cotutorInstitution1,
-              otherName: otherName1,
-              otherInstitution: otherInstitution1,
+              tutorName: this.tutor1.name,
+              tutorInstitution: this.tutor1.institution,
+              cotutorName: this.cotutor1.name,
+              cotutorInstitution: this.cotutor1.institution,
+              otherName: this.other1.name,
+              otherInstitution: other1.institution,
               university: this.thesisStudent.university,
               yearStart: this.thesisStudent.yearStart,
               yearThesisEnd: this.thesisStudent.yearThesisEnd,

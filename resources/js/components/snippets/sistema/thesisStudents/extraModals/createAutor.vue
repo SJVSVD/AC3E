@@ -21,16 +21,18 @@
                       <div class="form-group">
                         <label for="institutionSelect">Institution:</label>
                         <br>
-                        <select id="institutionSelect" class="form-select" v-model="autor.institution">
+                        <select id="institutionSelect" class="form-select" v-model="selectedInstitution" @change="checkIfOther">
                           <option value="">Select Institution</option>
-                          <option v-for="institution in universities" :value="institution.name">{{ institution.name }}</option>
+                          <option v-for="university in universities" :key="university.name" :value="university.name">{{ university.name }}</option>
+                          <option value="other">Other</option>
                         </select>
+                        <input v-if="showOtherInstitutionInput" type="text" class="form-control mt-2" v-model="autor.institution" placeholder="Enter other university">
                       </div>
                   </slot>
                 </div>
                 <div class="modal-footer">
                     <slot name="footer">
-                        <button class="btn btn-continue float-end" @click="newAutor()" :disabled="buttonDisable">
+                        <button class="btn btn-continue float-end" @click="newTutor()" :disabled="buttonDisable">
                             {{ buttonText1 }}
                         </button>
                     </slot>
@@ -59,16 +61,26 @@
           autor:{
             name: '',
             institution: '',
-            editing: false,
           },
+          selectedInstitution: '',
+          showOtherInstitutionInput: false,
           errors:[],
       }),
       methods: {
-          // Capitaliza la primera letra de una cadena.
+        checkIfOther() {
+            if (this.selectedInstitution === 'other') {
+                this.showOtherInstitutionInput = true;
+                this.autor.institution = '';
+            } else {
+                this.showOtherInstitutionInput = false;
+                this.autor.institution = this.selectedInstitution;
+            }
+        },
+        // Capitaliza la primera letra de una cadena.
         capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         },
-        newAutor() {
+        newTutor() {
             this.errors = [];
             for (const item in this.autor){
             if(this.autor[item] === '' || this.autor[item] === 0){
@@ -99,6 +111,8 @@
 
             if (this.errors.length === 0){
                 const elem = this.$refs.closeBtn;
+                let universityToSubmit = this.selectedInstitution === 'other' ? this.autor.institution : this.selectedInstitution;
+                this.autor.institution = universityToSubmit 
                 this.$emit("submit", this.autor);
                 elem.click();
             }

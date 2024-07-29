@@ -3,8 +3,15 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="row pb-0 p-4">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-end">
+                    <div class="col-lg-10 col-md-12">
+                        <div class="info-box">
+                            Includes all articles presented/developed for conferences. Additionally, you can include publications indexed in Scopus, SciELO, Latindex, or any other type of indexation different from WoS. It is necessary to import the publication in PDF format, with a maximum of 20 MB.
+If you have presented the publication at a conference, please ensure it is also reported in the “Participation in Sc events” module.
+
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
+                        <div class="d-flex">
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewNonIsiPublication = true">New Entry</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>

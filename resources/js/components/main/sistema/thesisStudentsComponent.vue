@@ -3,8 +3,15 @@
         <div class="col-12">
             <div class="card mb-4">
                 <div class="row pb-0 p-4">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-end">
+                    <div class="col-lg-10 col-md-12">
+                        <div class="info-box">
+                            Includes all students who are working on or have completed their thesis under the supervision or co-supervision of AC3E researchers. If the thesis defense or presentation has been conducted, the “Thesis status” should be modified to “Finished” and the thesis should be attached in PDF format. If the document is larger than 20 MB, only the cover and abstract should be sent.
+It is important to add the current occupation for those students who have already graduated.
+
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
+                        <div class="d-flex">
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewThesisStudent = true">New Entry</a>
                             &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>

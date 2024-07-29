@@ -617,6 +617,30 @@
     font-size: 26px;
     font-weight: 600;
 }
+
+.info-box {
+    background-color: #ED8D1D;
+    color: white;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: justify;
+}
+
+.btn-spacing {
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .info-box {
+        margin-bottom: 15px;
+    }
+
+    .btn-spacing {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}
+
 @media (max-width: 300px) {
     .sidebar.close .nav-links li .sub-menu {
         display: none;

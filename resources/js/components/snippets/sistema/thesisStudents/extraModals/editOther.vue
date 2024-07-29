@@ -1,71 +1,50 @@
 <template>
-    <transition name="modalcrear">
-      <div name="modal">
-        <div class="modal-mask">
-            <div class="modal-wrapper">
-              <div class="modal-container-s">
-                <div class="modal-header pb-1 fw-bold" style="color: #444444;">
-                  <slot name="header">
-                      Edit cotutors
-                  </slot>
-                  <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
-                </div>
-                <div class="modal-body">
-                  <slot name="body">
-                    <div class="row">
-                      <table id="tableDesign" class="table align-items-center mb-0">
-                        <thead>
-                          <tr>
-                            <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                            <th class="text-uppercase text-xs font-weight-bolder">Name</th>
-                            <th class="text-uppercase text-xs font-weight-bolder">Institution</th>
-                            <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-if="others1.length == 0">
-                            <td colspan="10"> No information available. </td>
-                          </tr>
-                          <tr v-else v-for="(tutor, index) in others1" :key="index">
-                            <td><p class="text-sm mb-0"> {{ index + 1 }}  </p></td>
-                            <td v-if="tutor.editing"><p class="text-sm mb-0"><input type="text" class= "form-control" v-model="tutor.name"></p></td>
-                            <td v-else ><p class="text-sm mb-0"> {{ tutor.name }}  </p></td>
-                            <td v-if="tutor.editing">
-                              <p class="text-sm mb-0">
-                                <select class="form-select" v-model="tutor.institution">
-                                  <option value="">Select Institution</option>
-                                  <option v-for="institution in universities" :value="institution.name">{{ institution.name }}</option>
-                                </select>
-                              </p>
-                            </td>
-                            <td v-else ><p class="text-sm mb-0"> {{ tutor.institution }}  </p></td>
-                            <td><p class="text-sm mb-0">
-                            <a v-if="!tutor.editing" class="btn btn-alert btn-xs" title="Edit" @click="editarDetalle(index)"><i class="fa fa-fw fa-edit"></i></a>
-                            <a v-else class="btn btn-search-blue btn-xs" title="Confirm" @click="confirmarDetalle(index)"><i class="fa-solid fa-check"></i></a>
-                            &nbsp;
-                            <a class="btn btn-closed btn-xs" title="Delete" @click="eliminarDetalle(index)"><i class="fa fa-fw fa-trash"></i></a>
-                            </p></td>
-                          </tr>
-                        </tbody>
-                      </table>
+  <transition name="modalcrear">
+    <div name="modal">
+      <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container-xs">
+              <div class="modal-header pb-1 fw-bold" style="color: #444444;">
+                <slot name="header">
+                    Edit Other
+                </slot>
+                <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
+              </div>
+              <div class="modal-body">
+                <slot name="body">
+                    <div class="form-group">
+                      <label for="name">Name: </label>
+                      <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                      <br>
+                      <input type="text" class= "form-control" v-model="others1.name">
                     </div>
+                    <div class="form-group">
+                      <label for="institutionSelect">Institution:</label>
+                      <br>
+                      <select id="institutionSelect" class="form-select" v-model="selectedInstitution3" @change="checkIfOther">
+                        <option value="">Select Institution</option>
+                        <option v-for="university in universities" :key="university.name" :value="university.name">{{ university.name }}</option>
+                        <option value="other">Other</option>
+                      </select>
+                      <input v-if="showOtherInstitutionInput3" type="text" class="form-control mt-2" v-model="others1.institution" placeholder="Enter other university">
+                    </div>
+                </slot>
+              </div>
+              <div class="modal-footer">
+                  <slot name="footer">
+                      <button class="btn btn-continue float-end" @click="editTutor()" :disabled="buttonDisable">
+                          {{ buttonText1 }}
+                      </button>
                   </slot>
-                </div>
-                <div class="modal-footer">
-                    <slot name="footer">
-                        <button class="btn btn-continue float-end" @click="editCotutor()" :disabled="buttonDisable">
-                            {{ buttonText1 }}
-                        </button>
-                    </slot>
-                </div>
-                <modalconfirmacion ref="confirmation"></modalconfirmacion>
-                <modalalerta ref="alert"></modalalerta>
-            </div>
+              </div>
+              <modalconfirmacion ref="confirmation"></modalconfirmacion>
+              <modalalerta ref="alert"></modalalerta>
           </div>
         </div>
       </div>
-    </transition>
-  </template>
+    </div>
+  </transition>
+</template>
   
   <script>
   import axios from 'axios'
@@ -79,33 +58,41 @@
       data: () => ({
           buttonText1:'Edit',
           buttonDisable: false,
+          selectedInstitution3: '',
+          showOtherInstitutionInput3: false,
           errors:[],
       }),
       props:{
         others1: Object,
       },
+      created(){
+        if (!this.universities.some(univ => univ.name === this.others1.institution)) {
+              this.selectedInstitution3 = 'other';
+              this.others1.institution = this.others1.institution;
+              this.showOtherInstitutionInput3 = true;
+          } else {
+              this.selectedInstitution3 = this.others1.institution;
+              this.showOtherInstitutionInput3 = false;
+          }
+      },
       methods: {
-        eliminarDetalle(id){
-          this.others1.splice(id, 1);
+        checkIfOther() {
+            if (this.selectedInstitution3 === 'other') {
+                this.showOtherInstitutionInput3 = true;
+                this.others1.institution = '';
+            } else {
+                this.showOtherInstitutionInput3 = false;
+                this.others1.institution = this.selectedInstitution3;
+            }
         },
-        confirmarDetalle(id){
-          this.others1[id].editing = false;
-        },
-        editarDetalle(id){
-          this.others1[id].editing = true;
-        },
-          // Capitaliza la primera letra de una cadena.
+        // Capitaliza la primera letra de una cadena.
         capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         },
-        editCotutor() {
-          this.others1.forEach(item => {
-            item.editing = false;
-          });
+        editTutor() {
           const elem = this.$refs.closeBtn;
           elem.click();
         }
       }
   }
   </script>
-  
