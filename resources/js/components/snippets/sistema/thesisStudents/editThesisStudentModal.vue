@@ -846,7 +846,7 @@ export default {
             this.errors.push('invalidRut');
             }
         }
-        if(this.thesisStudent.thesisStatus == 1 && this.file == null){
+        if(this.thesisStudent.thesisStatus == 1 && (this.file == null && this.thesisStudent1.file == null)){
             this.errors.push('thesisExtract');
         }
 

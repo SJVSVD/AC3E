@@ -18,8 +18,8 @@ class postDocController extends Controller
     // Función para detectar registros duplicados
      public function verifyPostdoc(Request $request)
     {
-        $query = postDoc::where('identification', $request['identification'])
-            ->whereNotNull('identification');
+        $query = postDoc::where('runOrPassport', $request['runOrPassport'])
+            ->whereNotNull('runOrPassport');
     
         if ($request->has('id')) {
             $query->where('id', '!=', $request->input('id'));

@@ -838,7 +838,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-
+            var resources1 = '';
             this.thesisStudent.resourcesCenter.forEach(resource => {
               resources1 += resource.value + ',';
             });
@@ -884,7 +884,7 @@ export default {
               cotutorName: this.cotutor1.name,
               cotutorInstitution: this.cotutor1.institution,
               otherName: this.other1.name,
-              otherInstitution: other1.institution,
+              otherInstitution: this.other1.institution,
               university: universityToSubmit,
               yearStart: this.thesisStudent.yearStart,
               monthStart: this.thesisStudent.monthStart,
