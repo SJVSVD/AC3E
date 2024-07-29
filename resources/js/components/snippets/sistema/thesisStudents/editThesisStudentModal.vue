@@ -1012,7 +1012,7 @@ export default {
               cotutorName: this.cotutor1.name,
               cotutorInstitution: this.cotutor1.institution,
               otherName: this.other1.name,
-              otherInstitution: other1.institution,
+              otherInstitution: this.other1.institution,
               university: this.thesisStudent.university,
               yearStart: this.thesisStudent.yearStart,
               yearThesisEnd: this.thesisStudent.yearThesisEnd,
