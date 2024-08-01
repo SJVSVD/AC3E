@@ -64,16 +64,16 @@ The destination country and city correspond to the location of the project leade
                                             <p v-else class="text-sm mb-0">{{ conjointProject.activityName }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="conjointProject.nameOfAC3EMember == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ conjointProject.nameOfAC3EMember }}</p>
+                                            <p v-if="conjointProject.researcherInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ conjointProject.researcherInvolved }}</p>
                                         </td>
                                         <td>
                                             <p v-if="conjointProject.nameOfExternalResearcher == null" class="text-sm mb-0">---</p>
                                             <p v-else class="text-sm mb-0">{{ conjointProject.nameOfExternalResearcher }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="conjointProject.begginingDate == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ conjointProject.begginingDate }}</p>
+                                            <p v-if="conjointProject.beginningDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ conjointProject.beginningDate }}</p>
                                         </td>
                                         <td>
                                             <p v-if="conjointProject.endingDate == null" class="text-sm mb-0">---</p>
@@ -140,6 +140,7 @@ export default {
         getConjointProjects(id){
             axios.get(`api/conjointProjects/${id}`).then( response =>{
                 this.conjointProjects = response.data;
+                console.log(this.conjointProjects);
                 if (this.table != null){
                     this.table.clear();
                     this.table.destroy();

@@ -121,7 +121,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Month:</label>
-                          <label  for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="technologyKnowledge.month">
                               <option disabled :value="null">Select a month</option>
@@ -456,7 +455,7 @@ export default {
         // Edita el registro despues de validar
         async editTechnology() {
         this.errors = [];
-        const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer']; // Arreglo de campos a excluir
+        const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer','month']; // Arreglo de campos a excluir
 
         for (const item in this.technologyKnowledge) {
           if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir

@@ -94,7 +94,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Start month:</label>
-                          <label  for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="postDoc.startMonth">
                               <option disabled value="">Select a month</option>
@@ -123,7 +122,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Ending month:</label>
-                          <label  for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="postDoc.endMonth">
                               <option disabled value="">Select a month</option>
@@ -575,6 +573,8 @@ export default {
         const itemsToCheck = [
           'comments',
           'institutionName',
+          'startMonth',
+          'endMonth'
         ];
 
 

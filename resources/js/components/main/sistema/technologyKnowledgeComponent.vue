@@ -65,8 +65,8 @@
                                             <p v-else class="text-sm mb-0 truncate-text">{{ technology.description }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="technology.institutionInvolved == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ technology.institutionInvolved }}</p>
+                                            <p v-if="technology.nameOfInstitutionInvolved == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ technology.nameOfInstitutionInvolved }}</p>
                                         </td>
                                         <td>
                                             <p v-if="technology.researcherInvolved == null" class="text-sm mb-0">---</p>

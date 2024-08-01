@@ -90,7 +90,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Month:</label>
-                          <label for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="book.month">
                               <option disabled value="">Select a month</option>
@@ -434,7 +433,8 @@ export default {
           'chapterTitle',
           'chapterAuthors',
           'firstPage',
-          'lastPage'
+          'lastPage',
+          'month'
         ];
 
         for (const item in this.book) {

@@ -72,7 +72,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Month:</label>
-                          <label for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="isiPublication.month">
                               <option disabled :value="null">Select a month</option>
@@ -620,7 +619,8 @@ export default {
           'volume',
           'firstPage',
           'lastPage',
-          'keywords'
+          'keywords',
+          'month'
         ];
 
         for (const item in this.isiPublication) {

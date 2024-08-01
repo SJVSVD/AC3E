@@ -64,7 +64,6 @@
                           </div>
                           <div class="col-md-3">
                           <label for="selectMonth">Month:</label>
-                          <label for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="nonIsiPublication.month">
                               <option disabled :value="null">Select a month</option>
@@ -635,6 +634,7 @@ export default {
         'volume',
         'firstPage',
         'lastPage',
+        'month'
         ];
 
         for (const item in this.nonIsiPublication) {

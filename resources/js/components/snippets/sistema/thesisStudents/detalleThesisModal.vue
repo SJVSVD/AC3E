@@ -121,7 +121,7 @@
                         </label>
                       </label>
                       <label class="col-4 m-0 fs-8 pb-1">
-                        Year in which student starts program:
+                        Year in which thesis starts:
                         <label class="fw-normal" style="font-size: 14px;">
                           {{ thesisStudent1.yearStart || '---' }}
                         </label>

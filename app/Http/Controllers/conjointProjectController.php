@@ -56,8 +56,8 @@ class conjointProjectController extends Controller
         }
         if($administrador == false){
             $userName = User::findOrFail($userID)->name;
-            $scCollaborations = scCollaborations::where(function($query) use ($userName, $userID) {
-                $query->where('moduleType',1)->where('researcherInvolved', 'LIKE', "%{$userName}.%")
+            $scCollaborations = scCollaborations::where('moduleType',1)->where(function($query) use ($userName, $userID) {
+            $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
                       ->orWhere('idUsuario', $userID);
             })->with('usuario')->get();
         }else{

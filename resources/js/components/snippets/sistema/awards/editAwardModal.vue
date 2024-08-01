@@ -51,7 +51,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Month:</label>
-                          <label for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="award.month">
                               <option disabled :value="null">Select a month</option>
@@ -399,7 +398,9 @@ export default {
         this.errors = [];
         const itemsToSkip = [
           'awardeeName',
-          'comments'
+          'comments',
+          'month'
+          
         ];
         for (const item in this.award) {
             const skipItem = itemsToSkip.includes(item);

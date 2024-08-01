@@ -194,7 +194,7 @@
                     <hr size="3" class="separador">
                     <div class="row">
                       <div class="col-md-3">
-                          <label for="">Year in which student starts: </label>
+                          <label for="">Year in which thesis starts: </label>
                           <label for="" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectYear" v-model="thesisStudent.yearStart">
@@ -204,7 +204,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Month in which student starts:</label>
-                          <label for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="thesisStudent.monthStart">
                               <option disabled :value="null">Select a month</option>
@@ -233,7 +232,6 @@
                       </div>
                       <div class="col-md-3">
                           <label for="selectMonth">Month in which the thesis ends:</label>
-                          <label v-if="thesisStudent.thesisStatus == 1" for="selectMonth" style="color: orange;">*</label>
                           <br>
                           <select class="form-select" id="selectMonth" v-model="thesisStudent.monthEnd">
                               <option disabled value="">Select a month</option>
@@ -805,7 +803,7 @@ export default {
         async editarTesis() {
         // Función para editar una tesis
         this.errors = [];
-        const fieldsToExclude = ['yearThesisEnd', 'posteriorArea','institutionPosteriorArea','comments', 'monthEnd','run','passport','tutorName', 'tutorInstitution','cotutorName','cotutorInstitution','otherName','otherInstitution']; // Arreglo de campos a excluir
+        const fieldsToExclude = ['yearThesisEnd', 'posteriorArea','institutionPosteriorArea','comments', 'monthEnd','run','passport','tutorName', 'tutorInstitution','cotutorName','cotutorInstitution','otherName','otherInstitution','monthStart']; // Arreglo de campos a excluir
 
         for (const item in this.thesisStudent) {
           if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir
@@ -854,9 +852,6 @@ export default {
             this.errors.push('yearThesisEnd');
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.monthEnd == ""){
-            this.errors.push('monthEnd');
-        }
 
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.posteriorArea == ""){
             this.errors.push('posteriorArea');
