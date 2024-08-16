@@ -53,11 +53,31 @@ class isiPublicationsController extends Controller
             }
         }
         if($administrador == false){
-            $userName = User::findOrFail($userID)->name;
-            $isiPublications = IsiPublication::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
-                      ->orWhere('idUsuario', $userID);
-            })->with('usuario')->get();
+            function normalizeString($string) {
+                // Eliminar acentos y convertir a minúsculas
+                $string = strtolower($string);
+                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+                // Eliminar caracteres especiales
+                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+                // Eliminar espacios adicionales
+                $string = trim($string);
+                
+                return $string;
+            }
+            
+            $userName = normalizeString(User::findOrFail($userID)->name);
+            
+            // Obtener todas las publicaciones relacionadas con el usuario por ID o potencialmente relacionadas por nombre
+            $isiPublications = IsiPublication::where('idUsuario', $userID)
+                ->orWhere('researcherInvolved', 'LIKE', '%' . $userName . '%')
+                ->with('usuario')
+                ->get();
+            
+            // Filtrar resultados en PHP
+            $isiPublications = $isiPublications->filter(function($publication) use ($userName) {
+                $normalizedResearcher = normalizeString($publication->researcherInvolved);
+                return strpos($normalizedResearcher, $userName) !== false;
+            });
         }else{
             $isiPublications = isiPublication::with('usuario')->get();
         }
