@@ -99,6 +99,7 @@ export default {
           'Posterior working area',	
           'Institution of Posterior working area',
           'Year of Information Report Working Area',
+          'Researchers Involved',
           'Comentarios',
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));

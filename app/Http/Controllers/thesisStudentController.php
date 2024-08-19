@@ -189,6 +189,22 @@ class thesisStudentController extends Controller
                 '7' => "In the Center",
                 '8' => "None of the above"
             ];
+
+            $researchers = explode(';', $rowData['Researchers Involved']);
+            $formattedResearchers = array_map(function($name) {
+                // Eliminar espacios en blanco al principio y al final
+                $name = trim($name);
+                // Dividir el nombre en nombre(s) y apellido
+                $parts = explode(' ', $name);
+                // Obtener el apellido (última parte del nombre)
+                $apellido = array_pop($parts);
+                // Unir el/los nombre(s)
+                $nombres = implode(' ', $parts);
+                // Concatenar apellido y nombre(s) con coma y espacio
+                return "$nombres $apellido";
+            }, $researchers);
+            // Unir los nombres formateados en un solo string separado por coma y espacio
+            $formattedResearcherInvolved = implode(', ', $formattedResearchers);
             
             // Verificar si el campo 'options' está presente y es un valor válido en el mapeo
             $posteriorArea = isset($rowData['Posterior working area']) && isset($optionsMapping2[$rowData['Posterior working area']]);
@@ -196,6 +212,7 @@ class thesisStudentController extends Controller
                 $thesisStudent = thesisStudent::create([
                     'idUsuario' => $rowData['idUsuario'],
                     'status' => $rowData['Status'],
+                    'researcherInvolved' => $formattedResearcherInvolved,
                     'identification' => $rowData['Identification'],
                     'studentName' => $rowData['Student Name'],
                     'runOrPassport' => $rowData['RUN or Passport'],

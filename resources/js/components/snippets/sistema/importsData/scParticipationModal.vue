@@ -75,6 +75,7 @@ export default {
             "idUsuario",
             "Status",
             "Progress Report",
+            "Researchers Involved",
             "Number of Research Line",
             "Type of Event",
             "Name course/congress",
