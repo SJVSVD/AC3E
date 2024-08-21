@@ -28,6 +28,9 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Project title</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Start date</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Finish date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,6 +54,15 @@
                                         </td>                                          
                                         <td>
                                             <p class="text-sm mb-0">{{ fundingSource.usuario.name }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-sm mb-0">{{ fundingSource.projectTitle }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-sm mb-0">{{ fundingSource.startDate }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-sm mb-0">{{ fundingSource.finishDate }}</p>
                                         </td>
                                     </tr>
                                 </tbody>

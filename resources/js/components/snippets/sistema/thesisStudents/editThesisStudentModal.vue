@@ -719,64 +719,69 @@ export default {
               icon: true,
               rtl: false
             });
-            const formData = new FormData();
-            formData.append('id', this.id);
-            formData.append('file', this.file);
-            axios.post('api/thesisStudents/addFile', formData, {
-                headers: { 'Content-Type' : 'multipart/form-data' }
-              }).then( response => {
-                console.log(response.data);
-              this.toast.success("File added successfully!", {
-                position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
+            if(this.file != null){
+              const formData = new FormData();
+              formData.append('id', this.id);
+              formData.append('file', this.file);
+              axios.post('api/thesisStudents/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then( response => {
+                  console.log(response.data);
+                this.toast.success("File added successfully!", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              })
+              .catch(error => {
+                if (error.response && error.response.status === 400) {
+                  this.toast.error(error.response.data.error, {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                } else if (error.response && error.response.status === 422) {
+                  this.errors = error.response.data.errors;
+                  this.toast.warning('There is an invalid value.', {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                }
+                this.buttonDisable = false;
+                this.buttonText = 'Edit Thesis';
               });
+            }else{
               setTimeout(() => {this.cerrarModal();}, 1500);
-            }).catch(error => {
-              if (error.response && error.response.status === 400) {
-                this.toast.error(error.response.data.error, {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-              } else if (error.response && error.response.status === 422) {
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-              }
-              this.buttonDisable = false;
-              this.buttonText = 'Edit Thesis';
-            });
+            }
           })
           .catch((error)=> {
             if (error.response.status == 422){

@@ -116,8 +116,8 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             $newisiPublication = [
                 'Id' => $isiPublication['id'],
                 'Progress Report' => $isiPublication['progressReport'],
-                'Researchers Involved' => $isiPublication['researcherInvolved'],
                 'User' => $isiPublication['idUsuario'],
+                'Researchers Involved' => $isiPublication['researcherInvolved'],
                 'Authors' => $isiPublication['authors'],
                 'Article Title' => $isiPublication['articleTitle'],
                 'Journal Name' => $isiPublication['journalName'],
