@@ -166,7 +166,7 @@
                           <label for="archivo">Thesis Extract: </label>
                           <label for="" style="color: orange;">*</label>
                           <label title="You must upload a PDF file or image." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                          <input type="file" ref="fileInput" accept=".pdf" class= "form-control" @change="getFile">
+                          <input type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
                         </div>
                       </div>
                       <div v-if="thesisStudent.thesisStatus == '1'" class="col-1 pt-2">
@@ -481,9 +481,36 @@ export default {
         this.$refs.fileInput.value = '';
       },
       // Función para obtener el archivo seleccionado
-      async getFile(e){
+      async getFile(e) {
         this.file = e.target.files[0];
-      },
+
+        if (!this.file) return;
+
+        const fileType = this.file.type;
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+
+        // Verificar si el tipo de archivo está en la lista permitida
+        if (!allowedTypes.includes(fileType)) {
+            // Si el archivo no es PDF ni imagen permitida, mostrar mensaje de error
+            this.toast.error("Unsupported file type. Please upload a PDF or an image (JPG, JPEG, PNG).", {
+              position: "top-right",
+              timeout: 3000,
+              closeOnClick: true,
+              pauseOnFocusLoss: true,
+              pauseOnHover: true,
+              draggable: true,
+              draggablePercent: 0.6,
+              showCloseButtonOnHover: false,
+              hideProgressBar: true,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
+            // Limpiar el input de archivo
+            e.target.value = '';
+        }
+    },
+
       // Función para calcular los años
       calculateYears() {
         const currentYear = new Date().getFullYear();

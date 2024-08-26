@@ -431,6 +431,7 @@ export default {
               nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
               comments: this.isiPublication.comments,
+              progressReport: this.isiPublication.progressReport,
             };
             axios.put(`api/isiPublications/${this.id}`, publication ).then((result) => {
               this.toast.success("Draft edited successfully!", {
@@ -782,6 +783,7 @@ export default {
               nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
               comments: this.isiPublication.comments,
+              progressReport: this.isiPublication.progressReport,
             };
             axios.put(`api/isiPublications/${this.id}`, publication).then((result) => {
               this.buttonDisable = true;

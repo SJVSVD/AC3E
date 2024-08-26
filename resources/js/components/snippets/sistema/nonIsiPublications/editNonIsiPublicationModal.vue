@@ -352,9 +352,41 @@ export default {
         this.$refs.fileInput.value = '';
       },
       // Función para obtener el archivo seleccionado
-      async getFile(e){
-        this.nonIsiPublication.file = e.target.files[0];
+      async getFile(e) {
+          const file = e.target.files[0];
+
+          if (!file) return;
+
+          const fileType = file.type;
+          const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+
+          // Verificar si el tipo de archivo está en la lista permitida
+          if (!allowedTypes.includes(fileType)) {
+              // Si el archivo no es PDF ni imagen permitida, mostrar mensaje de error
+              this.toast.error("Unsupported file type. Please upload a PDF or an image (JPG, JPEG, PNG).", {
+              position: "top-right",
+              timeout: 3000,
+              closeOnClick: true,
+              pauseOnFocusLoss: true,
+              pauseOnHover: true,
+              draggable: true,
+              draggablePercent: 0.6,
+              showCloseButtonOnHover: false,
+              hideProgressBar: true,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
+              // Limpiar el input de archivo
+              e.target.value = '';
+              return;
+          }
+
+          // Asignar el archivo válido a la propiedad correspondiente
+          this.nonIsiPublication.file = file;
       },
+
+
       // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{

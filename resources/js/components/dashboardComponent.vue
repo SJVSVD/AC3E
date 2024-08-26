@@ -64,7 +64,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(registro, index) in registros" :key="index">
+                            <tr v-for="(registro, created_at) in registros" :key="created_at">
                                 <td></td>
                                 <td>{{ thisDate(registro.created_at,true) }}</td>
                                 <td v-if="registro.modulo == 'isiPublication'">WoS Publications</td>
@@ -409,6 +409,7 @@ export default {
                     this.table.buttons().remove();
                 }).catch(e=> console.log(e))
             }
+            
         },
 
         // Exporta un archivo consolidado.

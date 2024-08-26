@@ -254,10 +254,6 @@ export default {
       clearFileInput() {
         this.$refs.fileInput.value = '';
       },
-      // Función para obtener el archivo seleccionado
-      async getFile(e){
-        this.participationSc.file = e.target.files[0];
-      },
       // Función para guardar un borrador 
       async guardarBorrador(){
         const ok = await this.$refs.confirmation.show({

@@ -41,25 +41,32 @@ class dashboardController extends Controller
             fundingSources::class,
         ];
     
-        $registros = new Collection();
+        // Crear una colección vacía
+        $registros = collect();
     
         foreach ($modelos as $modelo) {
-            // Ajustar la consulta para obtener los últimos 10 registros más nuevos para cada modelo
+            // Obtener los últimos 100 registros de cada modelo
             $registrosModelo = $modelo::latest()->with('usuario')->limit(100)->get();
-            
+    
             // Agregar el nombre del modelo como un atributo 'modulo'
             $registrosModelo->each(function ($registro) use ($modelo) {
                 $registro->modulo = class_basename($modelo);
             });
     
+            // Concatenar los registros a la colección principal
             $registros = $registros->concat($registrosModelo);
         }
     
-        // Ordenar los registros por fecha de creación
-        $registros = $registros->sortByDesc('created_at')->take(100);
+        // Ordenar todos los registros por la fecha de creación de manera descendente
+        $registros = $registros->sortByDesc(function($registro) {
+            return $registro->created_at;
+        })->take(100);
     
         return $registros;
     }
+    
+    
+    
     
     public function getRegistrosUser($userId, $cantidad) {
         $modelos = [
@@ -84,9 +91,11 @@ class dashboardController extends Controller
         foreach ($modelos as $modelo) {
             // Verificar si el modelo es 'books' y ajustar la consulta en consecuencia
             if ($modelo === books::class) {
-                $registrosModelo = $modelo::where('centerResearcher', $userId)->with('usuario')->latest()->limit(100)->get();
+                $registrosModelo = $modelo::where('centerResearcher', $userId)
+                    ->with('usuario')->latest()->limit(100)->get();
             } else {
-                $registrosModelo = $modelo::where('idUsuario', $userId)->with('usuario')->latest()->limit(100)->get();
+                $registrosModelo = $modelo::where('idUsuario', $userId)
+                    ->with('usuario')->latest()->limit(100)->get();
             }
             
             // Agregar el nombre del modelo como un atributo 'modulo'
@@ -94,13 +103,15 @@ class dashboardController extends Controller
                 $registro->modulo = class_basename($modelo);
             });
     
+            // Concatenar los registros a la colección principal
             $registros = $registros->concat($registrosModelo);
         }
     
-        // Ordenar los registros por fecha de creación
+        // Ordenar todos los registros por la fecha de creación de manera descendente
         $registros = $registros->sortByDesc('created_at')->take(100);
     
         return $registros;
     }
+    
     
 }

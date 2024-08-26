@@ -573,8 +573,34 @@ export default {
         this.$refs.fileInput.value = '';
       },
       // Función para obtener el archivo seleccionado
-      async getFile(e){
-        this.file = e.target.files[0];
+      async getFile(e) {
+          this.file = e.target.files[0];
+
+          if (!this.file) return;
+
+          const fileType = this.file.type;
+          const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+
+          // Verificar si el tipo de archivo está en la lista permitida
+          if (!allowedTypes.includes(fileType)) {
+              // Si el archivo no es PDF ni imagen permitida, mostrar mensaje de error
+              this.toast.error("Unsupported file type. Please upload a PDF or an image (JPG, JPEG, PNG).", {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+              });
+              // Limpiar el input de archivo
+              e.target.value = '';
+          }
       },
       calculateYears() {
         // Función para calcular los años
