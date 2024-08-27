@@ -89,11 +89,33 @@ class nonIsiPublicationsController extends Controller
             }
         }
         if($administrador == false){
-            $userName = User::findOrFail($userID)->name;
+            function normalizeString($string) {
+                // Eliminar acentos y convertir a minúsculas
+                $string = strtolower($string);
+                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+                // Eliminar caracteres especiales
+                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+                // Eliminar espacios adicionales
+                $string = trim($string);
+                
+                return $string;
+            }
+            
+            // Normaliza el nombre del usuario
+            $userName = normalizeString(User::findOrFail($userID)->name);
+            
+            // Obtén las publicaciones no ISI relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $nonIsiPublications = nonIsiPublication::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
-                      ->orWhere('idUsuario', $userID);
+                $query->where('idUsuario', $userID)
+                      ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
             })->with('usuario')->get();
+            
+            // Filtra los resultados en PHP si es necesario
+            $nonIsiPublications = $nonIsiPublications->filter(function($publication) use ($userName, $userID) {
+                $normalizedResearcher = normalizeString($publication->researcherInvolved);
+                // Verifica si coincide por nombre normalizado o por ID
+                return $publication->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+            });
         }else{
             $nonIsiPublications = nonIsiPublication::with('usuario')->get();
         }

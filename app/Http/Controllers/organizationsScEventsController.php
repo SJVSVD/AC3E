@@ -63,11 +63,31 @@ class organizationsScEventsController extends Controller
             }
         }
         if($administrador == false){
-            $userName = User::findOrFail($userID)->name;
+            function normalizeString($string) {
+                // Eliminar acentos y convertir a minúsculas
+                $string = strtolower($string);
+                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+                // Eliminar caracteres especiales
+                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+                // Eliminar espacios adicionales
+                $string = trim($string);
+                
+                return $string;
+            }
+            // Obtén el nombre del usuario y normalízalo
+            $userName = normalizeString(User::findOrFail($userID)->name);
+
+            // Obtén los eventos SC relacionados con el usuario por ID o potencialmente relacionados por nombre
             $organizationsScEvents = organizationsScEvents::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
-                      ->orWhere('idUsuario', $userID);
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                    ->orWhere('idUsuario', $userID);
             })->with('usuario')->get();
+
+            // Filtra los resultados en PHP si es necesario
+            $organizationsScEvents = $organizationsScEvents->filter(function($event) use ($userName,$userID) {
+                $normalizedResearcher = normalizeString($event->researcherInvolved);
+                return $event->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+            });
         }else{
             $organizationsScEvents = organizationsScEvents::with('usuario')->get();
         }

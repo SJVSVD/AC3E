@@ -55,11 +55,31 @@ class outreachActivitiesController extends Controller
             }
         }
         if($administrador == false){
-            $userName = User::findOrFail($userID)->name;
+            function normalizeString($string) {
+                // Eliminar acentos y convertir a minúsculas
+                $string = strtolower($string);
+                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+                // Eliminar caracteres especiales
+                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+                // Eliminar espacios adicionales
+                $string = trim($string);
+                
+                return $string;
+            }
+            // Normaliza el nombre del usuario
+            $userName = normalizeString(User::findOrFail($userID)->name);
+
+            // Obtén las actividades de divulgación relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $outreachActivities = outreachActivities::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
-                      ->orWhere('idUsuario', $userID);
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                    ->orWhere('idUsuario', $userID);
             })->with('usuario')->get();
+
+            // Filtra los resultados en PHP si es necesario
+            $outreachActivities = $outreachActivities->filter(function($activity) use ($userName, $userID) {
+                $normalizedResearcher = normalizeString($activity->researcherInvolved);
+                return $activity->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+            });
         }else{
             $outreachActivities = outreachActivities::with('usuario')->get();
         }

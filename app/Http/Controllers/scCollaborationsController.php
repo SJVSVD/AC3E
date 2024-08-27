@@ -54,11 +54,31 @@ class scCollaborationsController extends Controller
             }
         }
         if($administrador == false){
-            $userName = User::findOrFail($userID)->name;
-            $scCollaborations = scCollaborations::where('moduleType',0)->where(function($query) use ($userName, $userID) {
-            $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
-                      ->orWhere('idUsuario', $userID);
+            function normalizeString($string) {
+                // Eliminar acentos y convertir a minúsculas
+                $string = strtolower($string);
+                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+                // Eliminar caracteres especiales
+                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+                // Eliminar espacios adicionales
+                $string = trim($string);
+                
+                return $string;
+            }
+            // Normaliza el nombre del usuario
+            $userName = normalizeString(User::findOrFail($userID)->name);
+
+            // Obtén las colaboraciones SC relacionadas con el usuario por ID o potencialmente relacionadas por nombre
+            $scCollaborations = scCollaborations::where('moduleType', 0)->where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                    ->orWhere('idUsuario', $userID);
             })->with('usuario')->get();
+
+            // Filtra los resultados en PHP si es necesario
+            $scCollaborations = $scCollaborations->filter(function($collaboration) use ($userName,$userID) {
+                $normalizedResearcher = normalizeString($collaboration->researcherInvolved);
+                return $collaboration->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+            });
         }else{
             $scCollaborations = scCollaborations::where('moduleType',0)->with('usuario')->get();
         }

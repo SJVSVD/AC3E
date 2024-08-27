@@ -74,9 +74,10 @@ class isiPublicationsController extends Controller
                 ->get();
             
             // Filtrar resultados en PHP
-            $isiPublications = $isiPublications->filter(function($publication) use ($userName) {
+            $isiPublications = $isiPublications->filter(function($publication) use ($userName, $userID) {
                 $normalizedResearcher = normalizeString($publication->researcherInvolved);
-                return strpos($normalizedResearcher, $userName) !== false;
+                // Verificar si coincide por nombre normalizado o por ID
+                return $publication->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
             });
         }else{
             $isiPublications = isiPublication::with('usuario')->get();

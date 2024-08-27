@@ -53,11 +53,31 @@ class patentsController extends Controller
             }
         }
         if($administrador == false){
-            $userName = User::findOrFail($userID)->name;
+            function normalizeString($string) {
+                // Eliminar acentos y convertir a minúsculas
+                $string = strtolower($string);
+                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+                // Eliminar caracteres especiales
+                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+                // Eliminar espacios adicionales
+                $string = trim($string);
+                
+                return $string;
+            }
+            // Normaliza el nombre del usuario
+            $userName = normalizeString(User::findOrFail($userID)->name);
+
+            // Obtén las patentes relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $patents = patents::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}.%")
-                      ->orWhere('idUsuario', $userID);
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                    ->orWhere('idUsuario', $userID);
             })->with('usuario')->get();
+
+            // Filtra los resultados en PHP si es necesario
+            $patents = $patents->filter(function($patent) use ($userName, $userID) {
+                $normalizedResearcher = normalizeString($patent->researcherInvolved);
+                return $patent->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+            });
         }else{
             $patents = patents::with('usuario')->get();
         }
