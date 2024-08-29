@@ -62,9 +62,26 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
         ];
     }
 
+    
+
     public function collection()
     {
-        $isiPublications = isiPublication::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+        function normalizeString($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            $string = trim($string);
+            
+            return $string;
+        }
+        
+        $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+        $isiPublications = isiPublication::where('status', 'Finished')
+        ->where('idUsuario', $this->idUsuarioDescarga)
+        ->orWhere(function($query) use ($userName) {
+            $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+        })
+        ->get();
         // Convierte el array de objetos en una colección:
         foreach($isiPublications as $isiPublication){
             // Añadir Nombre Usuario:
@@ -247,7 +264,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             public function collection()
             {
                 // Convierte el array de objetos en una colección:
-                $nonIsiPublications = nonIsiPublication::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $nonIsiPublications = nonIsiPublication::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 foreach($nonIsiPublications as $nonIsiPublication){
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$nonIsiPublication['idUsuario'])->get();
@@ -384,7 +407,14 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function collection()
             {
-                $books = books::where('status', 'Finished')->where('centerResearcher',$this->idUsuarioDescarga)->get();
+                
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $books = books::where('status', 'Finished')
+                    ->where('centerResearcher', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($books as $book){
                     // Añadir Nombre Usuario:
@@ -517,7 +547,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function collection()
             {
-                $awards = awards::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $awards = awards::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($awards as $award){
                     // Añadir Nombre Usuario:
@@ -647,7 +683,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $organizationsScEvents = organizationsScEvents::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $organizationsScEvents = organizationsScEvents::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($organizationsScEvents as $organization){
                     // Añadir Nombre Usuario:
@@ -777,7 +819,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $participationScEvents = participationScEvents::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $participationScEvents = participationScEvents::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($participationScEvents as $participation){
                     // Añadir Nombre Usuario:
@@ -908,7 +956,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function collection()
             {
-                $collaborations = scCollaborations::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $collaborations = scCollaborations::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($collaborations as $collaboration){
                     // Añadir Nombre Usuario:
@@ -1039,7 +1093,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $theses = thesisStudent::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $theses = thesisStudent::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($theses as $these){
                     // Añadir Nombre Usuario:
@@ -1182,7 +1242,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $postDocs = postDoc::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $postDocs = postDoc::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($postDocs as $postDoc){
                     // Añadir Nombre Usuario:
@@ -1315,7 +1381,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $outreachs = outreachActivities::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $outreachs = outreachActivities::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($outreachs as $outreach){
                     // Añadir Nombre Usuario:
@@ -1453,7 +1525,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $patents = patents::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $patents = patents::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($patents as $patent){
                     // Añadir Nombre Usuario:
@@ -1585,7 +1663,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $publicPrivates = publicPrivate::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $publicPrivates = publicPrivate::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($publicPrivates as $publicPrivate){
                     // Añadir Nombre Usuario:
@@ -1714,7 +1798,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $technologyKnowledges = technologyKnowledge::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $technologyKnowledges = technologyKnowledge::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($technologyKnowledges as $technologyKnowledge){
                     // Añadir Nombre Usuario:
@@ -1843,7 +1933,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             
             public function collection()
             {
-                $fundings = fundingSources::where('status', 'Finished')->where('idUsuario',$this->idUsuarioDescarga)->get();
+                $userName = normalizeString(User::findOrFail($this->idUsuarioDescarga)->name);
+                $fundings = fundingSources::where('status', 'Finished')
+                    ->where('idUsuario', $this->idUsuarioDescarga)
+                    ->orWhere(function($query) use ($userName) {
+                        $query->where('researcherInvolved', 'LIKE', "%{$userName}%");
+                    })
+                    ->get();
                 // Convierte el array de objetos en una colección:
                 foreach($fundings as $funding){
                     // Añadir Nombre Usuario:

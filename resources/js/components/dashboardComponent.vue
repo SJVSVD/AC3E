@@ -552,8 +552,8 @@ export default {
                 link.href = window.URL.createObjectURL(blob)
                 link.download = 'PlanillaIndividual.xlsx'
                 link.click()
-                this.buttonText2 = 'Download Individual Return';
-                this.toast.success("Individual return have been downloaded successfully!", {
+                this.buttonText2 = 'Export personal results';
+                this.toast.success("Personal results have been downloaded successfully!", {
                     position: "top-right",
                     timeout: 3000,
                     closeOnClick: true,
@@ -670,7 +670,7 @@ export default {
                 });
               }
             });
-            this.buttonText2 = 'Download Individual Return';
+            this.buttonText2 = 'Export personal results';
         },
 
     }
