@@ -8,6 +8,25 @@ use Illuminate\Support\Facades\Http;
 
 class isiPublicationsController extends Controller
 {
+    public function index(Request $request)
+    {
+        // Obtener la clave secreta desde el archivo .env
+        $secretKey = env('API_SECRET_KEY');
+    
+        // Obtener la clave enviada en la solicitud
+        $providedKey = $request->input('key');
+    
+        // Verificar si la clave proporcionada coincide con la clave secreta
+        if ($providedKey !== $secretKey) {
+            return response()->json(['error' => 'Clave incorrecta'], 403);
+        }
+    
+        // Si la clave es correcta, devolver todas las publicaciones
+        $isiPublications = IsiPublication::with('usuario')->get();
+    
+        return response()->json($isiPublications);
+    }
+
     // Función para almacenar un nuevo registro.
     public function store(Request $request)
     {

@@ -18,8 +18,8 @@ class technologyKnowledgeController extends Controller
     // Función para detectar registros duplicados
      public function verifyTechnology(Request $request)
     {
-        $query = technologyKnowledge::where('typeOfTransfer', $request['typeOfTransfer'])
-            ->whereNotNull('typeOfTransfer')
+        $query = technologyKnowledge::where('description', $request['description'])
+            ->whereNotNull('description')
             ->where('nameOfInstitutionInvolved', $request['nameOfInstitutionInvolved'])
             ->whereNotNull('nameOfInstitutionInvolved')
             ->where('year', $request['year'])
