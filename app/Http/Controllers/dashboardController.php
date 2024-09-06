@@ -15,9 +15,10 @@ use App\Models\patents;
 use App\Models\publicPrivate;
 use App\Models\technologyKnowledge;
 use App\Models\fundingSources;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-
+use Illuminate\Support\Facades\Schema;
 
 class dashboardController extends Controller
 {
@@ -69,6 +70,19 @@ class dashboardController extends Controller
     
     
     public function getRegistrosUser($userId, $cantidad) {
+
+        function normalizeString($string) {
+            // Eliminar acentos y convertir a minúsculas
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            // Eliminar caracteres especiales
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            // Eliminar espacios adicionales
+            $string = trim($string);
+        
+            return $string;
+        }
+
         $modelos = [
             isiPublication::class,
             nonIsiPublication::class,
@@ -86,18 +100,35 @@ class dashboardController extends Controller
             fundingSources::class,
         ];
     
+        // Normalizar el nombre del usuario
+        $userName = normalizeString(User::findOrFail($userId)->name);
+    
         $registros = new Collection();
     
         foreach ($modelos as $modelo) {
+            // Crear una instancia del modelo para usar métodos no estáticos
+            $modeloInstance = new $modelo;
+    
             // Verificar si el modelo es 'books' y ajustar la consulta en consecuencia
             if ($modelo === books::class) {
+                // Buscar por centerResearcher y agregar registros
                 $registrosModelo = $modelo::where('centerResearcher', $userId)
                     ->with('usuario')->latest()->limit(100)->get();
             } else {
+                // Buscar por idUsuario
                 $registrosModelo = $modelo::where('idUsuario', $userId)
                     ->with('usuario')->latest()->limit(100)->get();
             }
-            
+    
+            // Si el modelo tiene el campo researcherInvolved, buscar también por nombre normalizado
+            if (Schema::hasColumn($modeloInstance->getTable(), 'researcherInvolved')) {
+                $additionalRegistros = $modelo::where('researcherInvolved', 'LIKE', '%' . $userName . '%')
+                    ->with('usuario')->latest()->limit(100)->get();
+                
+                // Concatenar los resultados encontrados por researcherInvolved
+                $registrosModelo = $registrosModelo->concat($additionalRegistros);
+            }
+    
             // Agregar el nombre del modelo como un atributo 'modulo'
             $registrosModelo->each(function ($registro) use ($modelo) {
                 $registro->modulo = class_basename($modelo);
@@ -108,7 +139,7 @@ class dashboardController extends Controller
         }
     
         // Ordenar todos los registros por la fecha de creación de manera descendente
-        $registros = $registros->sortByDesc('created_at')->take(100);
+        $registros = $registros->sortByDesc('created_at')->take($cantidad);
     
         return $registros;
     }

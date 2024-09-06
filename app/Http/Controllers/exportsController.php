@@ -20,6 +20,7 @@ use App\Models\awards;
 use App\Models\books;
 use App\Models\nonIsiPublication;
 use App\Models\isiPublication;
+use App\Models\User;
 
 class exportsController extends Controller
 {
@@ -30,14 +31,49 @@ class exportsController extends Controller
         $idUsuarioDescarga = $data['userID'];
         return Excel::download(new exportConsolidado($idUsuarioDescarga),'Consolidado.xlsx');
     }
-    //Funcion para exportar la planilla individual por excel
-    public function exportIndividual(Request $request)
-    {
-        $data = $request->all();
-        $idUsuarioDescarga = $data['userID'];
 
-        // Check if the user has any publications in any of the models
-        $hasPublications = FundingSources::where('idUsuario', $idUsuarioDescarga)->exists() ||
+
+// Función para exportar la planilla individual por Excel
+public function exportIndividual(Request $request)
+{
+        // Función para normalizar strings (nombres)
+    function normalizeString($string) {
+        // Eliminar acentos y convertir a minúsculas
+        $string = strtolower($string);
+        $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+        // Eliminar caracteres especiales
+        $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+        // Eliminar espacios adicionales
+        $string = trim($string);
+
+        return $string;
+    }
+
+    $data = $request->all();
+    $idUsuarioDescarga = $data['userID'];
+
+    // Normalizar el nombre del usuario
+    $userName = normalizeString(User::findOrFail($idUsuarioDescarga)->name);
+
+    // Definir los modelos que pueden tener el campo researcherInvolved
+    $modelsWithResearcherInvolved = [
+        IsiPublication::class,
+        NonIsiPublication::class,
+        Books::class,
+        ThesisStudent::class,
+        ScCollaborations::class,
+        ParticipationScEvents::class,
+        OrganizationsScEvents::class,
+        OutreachActivities::class,
+        PostDoc::class,
+        Patents::class,
+        PublicPrivate::class,
+        TechnologyKnowledge::class,
+        FundingSources::class
+    ];
+
+    // Verificar si el usuario tiene publicaciones asociadas con idUsuario
+    $hasPublicationsByID = FundingSources::where('idUsuario', $idUsuarioDescarga)->exists() ||
         TechnologyKnowledge::where('idUsuario', $idUsuarioDescarga)->exists() ||
         PublicPrivate::where('idUsuario', $idUsuarioDescarga)->exists() ||
         Patents::where('idUsuario', $idUsuarioDescarga)->exists() ||
@@ -52,13 +88,36 @@ class exportsController extends Controller
         NonIsiPublication::where('idUsuario', $idUsuarioDescarga)->exists() ||
         IsiPublication::where('idUsuario', $idUsuarioDescarga)->exists();
 
-        // If the user does not have any publications, return an error response
-        if (!$hasPublications) {
-            return response()->json('El usuario no tiene publicaciones asociadas.', 400);
-        }
+    // Verificar si el usuario está involucrado por nombre normalizado en el campo researcherInvolved
+    $hasPublicationsByResearcherInvolved = false;
 
-        return Excel::download(new exportIndividual($idUsuarioDescarga),'PlanillaIndividual.xlsx');
+    foreach ($modelsWithResearcherInvolved as $model) {
+        $publications = $model::all()->filter(function($publication) use ($userName) {
+            // Verificar si la publicación tiene el campo researcherInvolved
+            if (isset($publication->researcherInvolved)) {
+                $normalizedResearcher = normalizeString($publication->researcherInvolved);
+                // Verificar si el nombre normalizado del usuario está en el campo
+                return strpos($normalizedResearcher, $userName) !== false;
+            }
+            return false;
+        });
+
+        // Si encontramos alguna publicación en el campo researcherInvolved, cambiamos a true
+        if (!$publications->isEmpty()) {
+            $hasPublicationsByResearcherInvolved = true;
+            break;
+        }
     }
+
+    // Si no hay publicaciones por ID o por el campo researcherInvolved, retornar error
+    if (!$hasPublicationsByID && !$hasPublicationsByResearcherInvolved) {
+        return response()->json('El usuario no tiene publicaciones asociadas.', 400);
+    }
+
+    // Retornar el archivo de Excel con la información exportada
+    return Excel::download(new exportIndividual($idUsuarioDescarga), 'PlanillaIndividual.xlsx');
+}
+
 
     public function exportStatistics(Request $request)
     {
