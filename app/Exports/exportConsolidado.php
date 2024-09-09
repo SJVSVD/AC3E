@@ -1779,7 +1779,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Researchers Involved','Type Sources','Name of the institution','Program/contest','Project Title','Principal Researcher','Start','Finish','In Cash','Type of collaboration','State','Comments'];
+                return ['Id', 'Progress Report','User','Researchers Involved','Type Sources','Name of the institution','Program/contest','Project Title','Principal Researcher','Start','Finish','In Cash','Type of collaboration','State','Comments'];
             }
 
             public function columnWidths(): array
