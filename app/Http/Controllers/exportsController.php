@@ -30,7 +30,7 @@ class exportsController extends Controller
         ini_set('memory_limit', '512M');
         $data = $request->all();
         $idUsuarioDescarga = $data['userID'];
-        return Excel::download(new exportConsolidado($idUsuarioDescarga),'Consolidado.xlsx')->queue();
+        return Excel::download(new exportConsolidado($idUsuarioDescarga),'Consolidado.xlsx');
     }
 
 
@@ -117,7 +117,7 @@ public function exportIndividual(Request $request)
     }
 
     // Retornar el archivo de Excel con la información exportada
-    return Excel::download(new exportIndividual($idUsuarioDescarga), 'PlanillaIndividual.xlsx')->queue();
+    return Excel::download(new exportIndividual($idUsuarioDescarga), 'PlanillaIndividual.xlsx');
 }
 
 
