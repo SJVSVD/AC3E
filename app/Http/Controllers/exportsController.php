@@ -27,6 +27,7 @@ class exportsController extends Controller
     //Funcion para exportar el consolidado general por excel
     public function exportConsolidado(Request $request)
     {
+        ini_set('memory_limit', '512M');
         $data = $request->all();
         $idUsuarioDescarga = $data['userID'];
         return Excel::download(new exportConsolidado($idUsuarioDescarga),'Consolidado.xlsx')->queue();
@@ -36,6 +37,7 @@ class exportsController extends Controller
 // Función para exportar la planilla individual por Excel
 public function exportIndividual(Request $request)
 {
+    ini_set('memory_limit', '512M');
         // Función para normalizar strings (nombres)
     function normalizeString($string) {
         // Eliminar acentos y convertir a minúsculas
