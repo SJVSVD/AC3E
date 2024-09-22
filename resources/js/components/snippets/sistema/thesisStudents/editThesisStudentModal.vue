@@ -490,6 +490,15 @@ export default {
         });
     },
     methods: {
+      checkIfOther() {
+          if (this.selectedUniversity === 'other') {
+              this.showOtherUniversityInput = true;
+              this.thesisStudent.university = '';
+          } else {
+              this.showOtherUniversityInput = false;
+              this.thesisStudent.university = this.selectedUniversity;
+          }
+      },
       fetchData() {
         // Función para obtener datos de universidades desde la API
         return axios.get('/api/universities')

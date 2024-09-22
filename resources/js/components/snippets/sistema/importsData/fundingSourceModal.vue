@@ -73,8 +73,7 @@ export default {
           // Verificar si las cabeceras coinciden con las esperadas
           const expectedHeaders = [
           "No.",	"idUsuario",	"Progress Report",	"Research Line",	"Type Sources",	"Name of the Institution",	"Program / Contest",	"Project Code"
-          ,"Project title",	"Principal Researcher",	"Start",	"Finish",	"In Cash",	"In Kind",	"Type of collaboration",	"State",	"Comentarios"
-
+          ,"Project title",	"Principal Researcher",	"Start",	"Finish",	"In Cash",	"In Kind",	"Type of collaboration",	"State","Researchers Involved",	"Comentarios"
 
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));

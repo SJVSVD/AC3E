@@ -76,7 +76,7 @@ class isiPublicationsController extends Controller
                 // Eliminar acentos y convertir a minúsculas
                 $string = strtolower($string);
                 $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
+                // Eliminar caracteres especiales (pero dejar los espacios)
                 $string = preg_replace('/[^a-z0-9\s]/', '', $string);
                 // Eliminar espacios adicionales
                 $string = trim($string);
@@ -84,7 +84,7 @@ class isiPublicationsController extends Controller
                 return $string;
             }
             
-            $userName = normalizeString(User::findOrFail($userID)->name);
+            $userName = normalizeString(User::findOrFail($userID)->name); // Por ejemplo: "wael elderedy"
             
             // Obtener todas las publicaciones relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $isiPublications = IsiPublication::where('idUsuario', $userID)
@@ -94,9 +94,11 @@ class isiPublicationsController extends Controller
             
             // Filtrar resultados en PHP
             $isiPublications = $isiPublications->filter(function($publication) use ($userName, $userID) {
-                $normalizedResearcher = normalizeString($publication->researcherInvolved);
-                // Verificar si coincide por nombre normalizado o por ID
-                return $publication->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+                // Normalizar todo el campo `researcherInvolved`
+                $normalizedResearcherField = normalizeString($publication->researcherInvolved); // Ejemplo: "alejandro weinstein patricio orio grace whitaker wael elderedy"
+                
+                // Verificar si el nombre normalizado del usuario está dentro del campo normalizado
+                return $publication->idUsuario == $userID || strpos($normalizedResearcherField, $userName) !== false;
             });
         }else{
             $isiPublications = isiPublication::with('usuario')->get();
