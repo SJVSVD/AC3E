@@ -76,30 +76,30 @@ class isiPublicationsController extends Controller
                 // Eliminar acentos y convertir a minúsculas
                 $string = strtolower($string);
                 $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales (pero dejar los espacios)
+                // Eliminar caracteres especiales
                 $string = preg_replace('/[^a-z0-9\s]/', '', $string);
                 // Eliminar espacios adicionales
                 $string = trim($string);
                 
                 return $string;
             }
-            
-            $userName = normalizeString(User::findOrFail($userID)->name); // Por ejemplo: "wael elderedy"
-            
-            // Obtener todas las publicaciones relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-            $isiPublications = IsiPublication::where('idUsuario', $userID)
-                ->orWhere('researcherInvolved', 'LIKE', '%' . $userName . '%')
-                ->with('usuario')
-                ->get();
-            
-            // Filtrar resultados en PHP
-            $isiPublications = $isiPublications->filter(function($publication) use ($userName, $userID) {
-                // Normalizar todo el campo `researcherInvolved`
-                $normalizedResearcherField = normalizeString($publication->researcherInvolved); // Ejemplo: "alejandro weinstein patricio orio grace whitaker wael elderedy"
-                
-                // Verificar si el nombre normalizado del usuario está dentro del campo normalizado
-                return $publication->idUsuario == $userID || strpos($normalizedResearcherField, $userName) !== false;
+            // Obtén el nombre del usuario y normalízalo
+            $userName = normalizeString(User::findOrFail($userID)->name);
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
+            // Obtén los eventos SC relacionados con el usuario por ID o potencialmente relacionados por nombre
+            $isiPublications = IsiPublication::where(function($query) use ($userName, $userID) {
+                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                    ->orWhere('idUsuario', $userID);
+            })->with('usuario')->get();
+
+            // Filtra los resultados en PHP si es necesario
+            $isiPublications = $isiPublications->filter(function($event) use ($userName,$userID) {
+                $normalizedResearcher = normalizeString($event->researcherInvolved);
+                return $event->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
             });
+
         }else{
             $isiPublications = isiPublication::with('usuario')->get();
         }

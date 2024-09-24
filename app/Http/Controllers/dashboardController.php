@@ -102,6 +102,9 @@ class dashboardController extends Controller
     
         // Normalizar el nombre del usuario
         $userName = normalizeString(User::findOrFail($userId)->name);
+        if($userName == 'wael elderedy'){
+            $userName = 'wael';
+        }
     
         $registros = new Collection();
     

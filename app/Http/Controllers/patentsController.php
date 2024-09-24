@@ -66,7 +66,9 @@ class patentsController extends Controller
             }
             // Normaliza el nombre del usuario
             $userName = normalizeString(User::findOrFail($userID)->name);
-
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
             // Obtén las patentes relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $patents = patents::where(function($query) use ($userName, $userID) {
                 $query->where('researcherInvolved', 'LIKE', "%{$userName}%")

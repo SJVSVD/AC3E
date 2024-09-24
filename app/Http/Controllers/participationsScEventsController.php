@@ -76,7 +76,9 @@ class participationsScEventsController extends Controller
             }
             // Normaliza el nombre del usuario
             $userName = normalizeString(User::findOrFail($userID)->name);
-
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
             // Obtén las participaciones en eventos SC relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $participationScEvents = participationScEvents::where(function($query) use ($userName, $userID) {
                 $query->where('researcherInvolved', 'LIKE', "%{$userName}%")

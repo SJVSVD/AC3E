@@ -67,7 +67,9 @@ class scCollaborationsController extends Controller
             }
             // Normaliza el nombre del usuario
             $userName = normalizeString(User::findOrFail($userID)->name);
-
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
             // Obtén las colaboraciones SC relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $scCollaborations = scCollaborations::where('moduleType', 0)->where(function($query) use ($userName, $userID) {
                 $query->where('researcherInvolved', 'LIKE', "%{$userName}%")

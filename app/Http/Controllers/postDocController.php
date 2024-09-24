@@ -64,7 +64,9 @@ class postDocController extends Controller
             }
             // Normaliza el nombre del usuario
             $userName = normalizeString(User::findOrFail($userID)->name);
-
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
             // Obtén los postdocs relacionados con el usuario por ID o potencialmente relacionados por nombre
             $postDoc = postDoc::where(function($query) use ($userName, $userID) {
                 $query->where('researcherInvolved', 'LIKE', "%{$userName}%")

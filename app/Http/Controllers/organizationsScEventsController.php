@@ -76,7 +76,9 @@ class organizationsScEventsController extends Controller
             }
             // Obtén el nombre del usuario y normalízalo
             $userName = normalizeString(User::findOrFail($userID)->name);
-
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
             // Obtén los eventos SC relacionados con el usuario por ID o potencialmente relacionados por nombre
             $organizationsScEvents = organizationsScEvents::where(function($query) use ($userName, $userID) {
                 $query->where('researcherInvolved', 'LIKE', "%{$userName}%")

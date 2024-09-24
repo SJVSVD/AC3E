@@ -103,7 +103,9 @@ class nonIsiPublicationsController extends Controller
             
             // Normaliza el nombre del usuario
             $userName = normalizeString(User::findOrFail($userID)->name);
-            
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
             // Obtén las publicaciones no ISI relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $nonIsiPublications = nonIsiPublication::where(function($query) use ($userName, $userID) {
                 $query->where('idUsuario', $userID)

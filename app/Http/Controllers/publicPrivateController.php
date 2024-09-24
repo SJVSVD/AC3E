@@ -70,7 +70,9 @@ class publicPrivateController extends Controller
             }
             // Normaliza el nombre del usuario
             $userName = normalizeString(User::findOrFail($userID)->name);
-
+            if($userName == 'wael elderedy'){
+                $userName = 'wael';
+            }
             // Obtén las publicaciones públicas y privadas relacionadas con el usuario por ID o potencialmente relacionadas por nombre
             $publicPrivate = publicPrivate::where(function($query) use ($userName, $userID) {
                 $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
