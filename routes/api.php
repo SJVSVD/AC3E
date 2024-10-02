@@ -127,7 +127,7 @@ Route::post('importFunding', [fundingSourcesController::class, 'importFunding'])
 
 Route::apiResource('roles', RolController::class);
 Route::apiResource('permisos', PermisosController::class);
-
+Route::post('updateRecords', [thesisStudentController::class, 'updateRecords']);
 //Universities
 
 Route::apiResource('universities', universitiesController::class);

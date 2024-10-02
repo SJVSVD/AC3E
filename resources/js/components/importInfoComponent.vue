@@ -69,19 +69,24 @@
             </div>
             <br>
             <div class="row" > 
-              <div class="col-4">
+              <div class="col-3">
                 <a class="btn btn-search-blue" @click="showPublicPrivate = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
                   Public-Private Connection
                 </a>
               </div>
-              <div class="col-4">
+              <div class="col-3">
                 <a class="btn btn-search-blue" @click="showTecKnowTransfer = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
                   Tec and know. transfer
                 </a>
               </div>
-              <div class="col-4">
+              <div class="col-3">
                 <a class="btn btn-search-blue" @click="showFundingSource = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
                   Funding Source
+                </a>
+              </div>
+              <div class="col-3">
+                <a class="btn btn-search-blue" @click="showUpdateRecords = true" :disabled="buttonDisable" style="min-height: 120px; display: flex; justify-content: center; align-items: center;">
+                  Update records
                 </a>
               </div>
             </div>
@@ -106,6 +111,7 @@
   <modalPublicPrivate v-if="showPublicPrivate" @close="showPublicPrivate = false" ></modalPublicPrivate>
   <modalTecAndKnow v-if="showTecKnowTransfer" @close="showTecKnowTransfer = false" ></modalTecAndKnow>
   <modalFundingSource v-if="showFundingSource" @close="showFundingSource = false" ></modalFundingSource>
+  <modalUpdateRecord v-if="showUpdateRecords" @close="showUpdateRecords = false" ></modalUpdateRecord>
 </template>
 
 <script>
@@ -126,9 +132,9 @@ import modalPatents from './snippets/sistema/importsData/patentsModal.vue'
 import modalPublicPrivate from './snippets/sistema/importsData/publicPrivateModal.vue'
 import modalTecAndKnow from './snippets/sistema/importsData/tecAndKnowModal.vue'
 import modalFundingSource from './snippets/sistema/importsData/fundingSourceModal.vue'
-
+import modalUpdateRecord from './snippets/sistema/importsData/updateRecordsModal.vue'
 export default {
-  components: { modalIsiPublication, modalNonIsiPublication, modalBook, modalAward, modalScOrganization, modalScParticipation, modalScCollaboration, modalThesisStudent, modalPostDoc, modalOutreach, modalPatents, modalPublicPrivate, modalTecAndKnow, modalFundingSource},
+  components: { modalUpdateRecord,modalIsiPublication, modalNonIsiPublication, modalBook, modalAward, modalScOrganization, modalScParticipation, modalScCollaboration, modalThesisStudent, modalPostDoc, modalOutreach, modalPatents, modalPublicPrivate, modalTecAndKnow, modalFundingSource},
   mixins: [mixin],
   data() {
     return {
@@ -146,6 +152,7 @@ export default {
       showPublicPrivate: false,
       showTecKnowTransfer: false,
       showFundingSource: false,
+      showUpdateRecords: false,
     };
   },
   methods: {

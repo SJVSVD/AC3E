@@ -288,6 +288,28 @@ class thesisStudentController extends Controller
         return response()->json("Publicaciónes importadas");
     }
 
+    public function updateRecords(Request $request)
+    {
+        // Verificamos que se hayan enviado registros
+        if ($request->has('records') && is_array($request->records)) {
+            foreach ($request->records as $record) {
+                // Buscamos el registro en thesisStudents por ID
+                $thesisStudent = ThesisStudent::find($record['Id']);
+    
+                if ($thesisStudent) {
+                    // Actualizamos el campo posteriorArea
+                    $thesisStudent->posteriorArea = $record['Posterior working area'];
+                    $thesisStudent->save();
+                }
+            }
+    
+            return response()->json(['message' => 'Registros actualizados con éxito'], 200);
+        }
+    
+        return response()->json(['message' => 'No se enviaron registros válidos'], 400);
+    }
+    
+
      // Función para eliminar un registro
     public function destroy($id)
     {
