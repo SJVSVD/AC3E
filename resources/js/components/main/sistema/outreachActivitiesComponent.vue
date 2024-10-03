@@ -31,7 +31,7 @@
                                         <th class="text-uppercase text-xs font-weight-bolder">Activity Type</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Date</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Main Responsible</th>
+                                        <th class="text-uppercase text-xs font-weight-bolder">Researchers Involved</th>
                                     </tr>
                                 </thead>
                                 <tbody>

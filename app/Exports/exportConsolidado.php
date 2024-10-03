@@ -415,7 +415,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             public function columnWidths(): array
             {
                 // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
-                $specificWidths = array_fill_keys(range('C', 'O'), 40);
+                $specificWidths = array_fill_keys(range('C', 'P'), 40);
             
                 // Devolver el arreglo de anchos específicos
                 return $specificWidths;
@@ -439,7 +439,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
             public function styles(Worksheet $sheet)
             {
                 // Establecer estilos para el encabezado
-                $sheet->getStyle('A1:O1')->applyFromArray([
+                $sheet->getStyle('A1:P1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
@@ -457,7 +457,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 ]);
         
                 // Establecer estilos para las celdas (excepto el encabezado)
-                $sheet->getStyle('A2:O'.$sheet->getHighestRow())->applyFromArray([
+                $sheet->getStyle('A2:P'.$sheet->getHighestRow())->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
@@ -480,7 +480,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:O1');
+                        $sheet->setAutoFilter('A1:P1');
                     },
                 ];
             }
@@ -1001,6 +1001,12 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                 // Ordenar elementos de las facturas:
                 $thesisArray = [];
                 foreach ($theses as $these) {
+                    if($these['thesisStatus'] == 1){
+                        $these['thesisStatus'] = "Finished";
+                    }
+                    if($these['thesisStatus'] == 2){
+                        $these['thesisStatus'] = "In progress";
+                    }
                     $newThesis = [
                         'Id' => $these['id'],
                         'Progress Report' => $these['progressReport'],

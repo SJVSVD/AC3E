@@ -24,7 +24,7 @@
                 <slot name="body">
                     <div class="row">
                       <div class="col-md-6">
-                        <label for="">Researchers Involved:</label>
+                        <label for="">AC3E Researchers Involved:</label>
                         <label for="" style="color: orange;">*</label>
                         <Multiselect
                           placeholder="Select the researchers"
@@ -42,7 +42,7 @@
                       </div>
 
                           <div class="col-md-3">
-                            <label for="">Type of Activity:</label>
+                            <label for="">Activity name:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="outreachActivity.activityName">
