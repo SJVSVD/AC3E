@@ -13,7 +13,11 @@ class PageController extends Controller
         return abort(404);
     }
 
-    // Función para importar los registros que vienen desde excel
+    public function recycleBin()
+    {
+        return view('pages.recycleBin');
+    }
+
     public function importInfo()
     {
         return view('pages.importInfo');

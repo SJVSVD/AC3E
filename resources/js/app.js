@@ -33,6 +33,7 @@ const adminRolesComponent = defineAsyncComponent(() => import('@/components/main
 const userProfileComponent = defineAsyncComponent(() => import('@/components/userProfileComponent.vue'));
 const powerBiComponent = defineAsyncComponent(() => import('@/components/powerBiComponent.vue'));
 const importInfoComponent = defineAsyncComponent(() => import('@/components/importInfoComponent.vue'));
+const recycleBinComponent = defineAsyncComponent(() => import('@/components/recycleBinComponent.vue'));
 const error = defineAsyncComponent(() => import('@/components/errorComponent.vue'));
 const indicatorsComponent = defineAsyncComponent(() => import('@/components/indicatorsComponent.vue'));
 
@@ -98,6 +99,9 @@ app.mount("#powerbi-component");
 
 app.component("import-info", importInfoComponent);
 app.mount("#import-info");
+
+app.component("recycle-bin", recycleBinComponent);
+app.mount("#recycle-bin");
 
 app.component("indicators-component", indicatorsComponent);
 app.mount("#indicators-component");

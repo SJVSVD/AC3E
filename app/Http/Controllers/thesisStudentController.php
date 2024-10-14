@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\scCollaborations;
 use App\Models\thesisStudent;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,8 +24,8 @@ class thesisStudentController extends Controller
         }
     
         // Si la clave es correcta, devolver todas las publicaciones
-        $thesisStudent = thesisStudent::with('usuario')->get();
-    
+        $thesisStudent = thesisStudent::with('usuario')->where('status','Finished')->get();
+        
         return response()->json($thesisStudent);
     }
 
@@ -294,12 +296,21 @@ class thesisStudentController extends Controller
         if ($request->has('records') && is_array($request->records)) {
             foreach ($request->records as $record) {
                 // Buscamos el registro en thesisStudents por ID
-                $thesisStudent = ThesisStudent::find($record['Id']);
+                $recordsss = scCollaborations::find($record['ID']);
     
-                if ($thesisStudent) {
+                if ($recordsss) {
+                    $cityCountry = explode(', ', $record['Country/City of destination']);
+
+                    // Verificar si el formato es distinto al esperado
+                    if (count($cityCountry) === 2) {
+                        // Asignar la ciudad y el país a las variables correspondientes
+                        $city = $cityCountry[1];
+                        $country = $cityCountry[0];
+                    }
                     // Actualizamos el campo posteriorArea
-                    $thesisStudent->posteriorArea = $record['Posterior working area'];
-                    $thesisStudent->save();
+                    $recordsss->countryDestination = $country;
+                    $recordsss->cityDestination = $city;
+                    $recordsss->save();
                 }
             }
     

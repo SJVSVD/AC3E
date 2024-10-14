@@ -6,7 +6,7 @@
           <div class="modal-container">
             <div class="modal-header pb-1" style="font-weight: bold; color: #444444;">
               <slot name="header">
-                <label class="col-5 m-0" style="font-size: 17px;">Patent Details</label>
+                <label class="col-5 m-0" style="font-size: 17px;">Intellectual Property Details</label>
               </slot>
               <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
             </div>
@@ -42,12 +42,12 @@
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Application Date: </label>
-                      <label v-if="patent1.applicationDate != null" class="fw-normal" style="font-size: 14px;">{{ patent1.applicationDate }}</label>
+                      <label v-if="patent1.applicationDate != null" class="fw-normal" style="font-size: 14px;">{{ this.thisDate(patent1.applicationDate) }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Grant Date: </label>
-                      <label v-if="patent1.grantDate != null" class="fw-normal" style="font-size: 14px;">{{ patent1.grantDate }}</label>
+                      <label v-if="patent1.grantDate != null" class="fw-normal" style="font-size: 14px;">{{ this.thisDate(patent1.grantDate) }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">

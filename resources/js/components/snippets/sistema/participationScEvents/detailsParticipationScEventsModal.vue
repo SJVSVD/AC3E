@@ -57,12 +57,12 @@
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Start Date: </label>
-                      <label v-if="participation1.startDate != null" class="fw-normal" style="font-size: 14px;">{{ participation1.startDate }}</label>
+                      <label v-if="participation1.startDate != null" class="fw-normal" style="font-size: 14px;">{{ this.thisDate(participation1.startDate) }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Ending Date: </label>
-                      <label v-if="participation1.endingDate != null" class="fw-normal" style="font-size: 14px;">{{ participation1.endingDate }}</label>
+                      <label v-if="participation1.endingDate != null" class="fw-normal" style="font-size: 14px;">{{ this.thisDate(participation1.endingDate) }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">

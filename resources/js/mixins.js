@@ -50,45 +50,35 @@ export const mixin = {
             return Object.keys(object).length === 0;
         },
         crearTabla(nombreTabla) {
-            setTimeout(
-                function () {
-                    this.table = $(nombreTabla).DataTable({});
-                    this.mostrarCarga = false;
-                    this.mostrarTabla = true;
-                    $("a.toggle-vis").on("click", function (e) {
-                        e.preventDefault();
-                        var column = this.table.column(
-                            $(this).attr("data-column")
-                        );
-                        column.visible(!column.visible());
-                    });
-                    this.table
-                        .on("click", "th.select-checkbox", function () {
-                            if ($("th.select-checkbox").hasClass("selected")) {
-                                this.table.rows().deselect();
-                                $("th.select-checkbox").removeClass("selected");
-                            } else {
-                                this.table.rows().select();
-                                $("th.select-checkbox").addClass("selected");
-                            }
-                        })
-                        .on("select deselect", function () {
-                            ("Some selection or deselection going on");
-                            if (
-                                this.table
-                                    .rows({
-                                        selected: true,
-                                    })
-                                    .count() !== this.table.rows().count()
-                            ) {
-                                $("th.select-checkbox").removeClass("selected");
-                            } else {
-                                $("th.select-checkbox").addClass("selected");
-                            }
-                        });
-                }.bind(this),
-                100
-            );
+            setTimeout(() => {
+                this.table = $(nombreTabla).DataTable({});
+                this.mostrarCarga = false;
+                this.mostrarTabla = true;
+                
+                // Para el manejo de columnas visibles
+                $("a.toggle-vis").on("click", (e) => {
+                    e.preventDefault();
+                    var column = this.table.column($(e.target).attr("data-column"));
+                    column.visible(!column.visible());
+                });
+        
+                // Checkbox para seleccionar filas
+                this.table.on("click", "th.select-checkbox", () => {
+                    if ($("th.select-checkbox").hasClass("selected")) {
+                        this.table.rows().deselect();
+                        $("th.select-checkbox").removeClass("selected");
+                    } else {
+                        this.table.rows().select();
+                        $("th.select-checkbox").addClass("selected");
+                    }
+                }).on("select deselect", () => {
+                    if (this.table.rows({ selected: true }).count() !== this.table.rows().count()) {
+                        $("th.select-checkbox").removeClass("selected");
+                    } else {
+                        $("th.select-checkbox").addClass("selected");
+                    }
+                });
+            }, 100);
         },
         validarRut(value) {
             var validado = validateRut(value);
@@ -106,7 +96,7 @@ export const mixin = {
         },
         thisDate($fecha, $tipoOrden) {
             if ($fecha == null) {
-                return "Sin ingreso.";
+                return "---";
             } else {
                 if ($tipoOrden) {
                     return moment($fecha).format("YYYY-MM-DD"); // Ordenar por año, mes, día

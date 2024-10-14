@@ -6,7 +6,7 @@
             <div class="modal-container">
               <div class="modal-header pb-1" style="font-weight: bold; color: #444444;">
                 <slot name="header">
-                  <label class="col-5 m-0" style="font-size: 17px;">ISI Publication Details:</label>
+                  <label class="col-5 m-0" style="font-size: 17px;">WoS Publication Details:</label>
                   <label class="col-5 m-0 fs-8"> User: <label class="fw-normal" style="font-size: 14px;"></label>{{ isiPublication1.usuario.name }}</label>
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>

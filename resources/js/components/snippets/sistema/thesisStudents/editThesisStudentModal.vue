@@ -8,7 +8,7 @@
                 <slot name="header">
                     Edit Thesis
                 </slot>
-                <label for="">Progress year: {{ thesisStudent.progressReport }} &nbsp;&nbsp; <a class="btn" @click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label for="">Progress year: {{ thesisStudent.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -589,27 +589,53 @@ export default {
 
           const fileType = this.file.type;
           const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+          const maxSizeMB = 20; // Tamaño máximo permitido en MB
+          const maxSizeBytes = maxSizeMB * 1024 * 1024; // Convertir MB a bytes
 
           // Verificar si el tipo de archivo está en la lista permitida
           if (!allowedTypes.includes(fileType)) {
               // Si el archivo no es PDF ni imagen permitida, mostrar mensaje de error
               this.toast.error("Unsupported file type. Please upload a PDF or an image (JPG, JPEG, PNG).", {
-                position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
               });
               // Limpiar el input de archivo
               e.target.value = '';
+              return;
           }
+
+          // Verificar si el tamaño del archivo supera el máximo permitido
+          if (this.file.size > maxSizeBytes) {
+              // Mostrar mensaje de error si el archivo es demasiado grande
+              this.toast.error(`File is too large. Maximum size allowed is ${maxSizeMB} MB.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+              // Limpiar el input de archivo
+              e.target.value = '';
+              return;
+          }
+
       },
       calculateYears() {
         // Función para calcular los años

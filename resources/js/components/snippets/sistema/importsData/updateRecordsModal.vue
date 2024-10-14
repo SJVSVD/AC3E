@@ -75,31 +75,12 @@ export default {
       this.headers = jsonData[0];
       // Verificar si las cabeceras coinciden con las esperadas
       const expectedHeaders = [
-        "Id",
-        "Progress Report",
-        "User",
-        "Researchers Involved",
-        "Student Name",
-        "RUN or Passport",
-        "Gender",
-        "Student Mail",
-        "Thesis Status",
-        "Thesis Title",
-        "Academic Degree",
-        "Degree Denomination",
-        "Tutor Name",
-        "Tutor Institution",
-        "Cotutor Name",
-        "Cotutor Institution",
-        "Other Name",
-        "Other Institution",
-        "University that gives the degree",
-        "Year in which thesis starts",
-        "Year in which thesis ends",
-        "Resources provided by the Center",
-        "Posterior working area",
-        "Institution of Posterior working area",
-        "Comments"
+        "ID",	"idUsuario",	"Status"	,"Progress Report","Institution with which the Center collaborates",	
+        "Activity Name",	"Country Origin",	"City Origin",	"Beginning Date",	"Ending Date",	
+        "Number of Research Line",	"Name of AC3E member",	"Name of external Researchers Involved",
+        "Collaboration stay",	"Comentarios",	"External researcher is"	,"Country/City of destination",
+        "State","Colaboracion internacional"
+
       ];
       const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
       if (missingHeaders.length > 0) {

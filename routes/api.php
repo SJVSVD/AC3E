@@ -29,8 +29,15 @@ use App\Http\Controllers\postDocController;
 use App\Http\Controllers\researchLineController;
 use App\Http\Controllers\roleUserController;
 use App\Http\Controllers\universitiesController;
+use App\Http\Controllers\recycleBinController;
 
 // Rutas Generales (SYS_)
+
+Route::group(['prefix' => 'recycle-bin'], function() {
+    Route::get('/', [recycleBinController::class, 'index']); // Lista los registros eliminados
+    Route::post('/restore', [recycleBinController::class, 'restore']);
+    Route::post('/delete', [recycleBinController::class, 'forceDelete']);
+});
 
 // Users
 Route::apiResource('usuarios', UsuarioController::class);
@@ -144,6 +151,7 @@ Route::post('exportStatistics', [exportsController::class, 'exportStatistics']);
 
 Route::post('editProgressReport', [extraTablesController::class, 'editProgressReport']);
 Route::get('showProgressReport' , [extraTablesController::class, 'showProgressReport']);
+Route::post('delete-records', [extraTablesController::class, 'deleteRecords']);
 
 //Indicators
 

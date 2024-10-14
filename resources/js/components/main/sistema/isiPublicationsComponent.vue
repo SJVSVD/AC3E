@@ -12,6 +12,7 @@
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
+                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewIsiPublication = true">New Entry</a>
                             <a class="btn btn-spacing btn-search-blue ml-2" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
@@ -84,12 +85,13 @@
                             </table>
                             <div class="row">
                                 <div class="col-3">
-                                    <label style="font-weight: 500">
+                                <label style="font-weight: 500">
                                     These buttons use the elements selected in the table, if none exist, it will select all the records. </label>
                                 </div>
                                 <div class="col-auto">
                                     <label title="To select a single record from the table, just do &#013; Click on the box in the first column to select &#013; several consecutive hold SHIFT, to select several &#013; non-consecutive hold CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -162,6 +164,41 @@ export default {
             this.isiPublicationEdit = isiPublication;
             this.showEditIsiPublication = true;
         },
+        async deleteSelected() {
+            // Obtener las filas seleccionadas
+            let selectedData = this.table.rows({ selected: true }).data().toArray();
+            let selectedIds = selectedData.map(row => {
+                // Supongamos que el ID está en la segunda columna (índice 1)
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = row[1]; // Cambia el índice según dónde esté el ID
+                return tempDiv.textContent.trim(); // Obtener el contenido de texto que es el ID
+            });
+            let module = 'wos-publications'; // Cambia este valor dinámicamente según el módulo
+            if (selectedIds.length === 0) {
+                this.toast.error("No records selected.");
+                return;
+            }
+            const ok = await this.$refs.confirmation.show({
+                title: 'Delete Multiple',
+                message: `¿Are you sure you want to delete `+selectedIds.length+` records?.`,
+                okButton: 'Delete',
+                cancelButton: 'Return'
+            })
+            if (ok) { 
+                axios.post('api/delete-records', {
+                    module: module,
+                    ids: selectedIds
+                })
+                .then(response => {
+                    this.toast.success(response.data.success);
+                    this.recargarTabla('General');
+                })
+                .catch(error => {
+                    this.toast.error("An error occurred.");
+                });
+            }
+        },
+
         async deletePublication(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Publication',

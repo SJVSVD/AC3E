@@ -42,12 +42,12 @@
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Start Date: </label>
-                      <label v-if="organization1.startDate != null" class="fw-normal" style="font-size: 14px;">{{ organization1.startDate }}</label>
+                      <label v-if="organization1.startDate != null" class="fw-normal" style="font-size: 14px;">{{ this.thisDate(organization1.startDate) }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Ending Date: </label>
-                      <label v-if="organization1.endingDate != null" class="fw-normal" style="font-size: 14px;">{{ organization1.endingDate }}</label>
+                      <label v-if="organization1.endingDate != null" class="fw-normal" style="font-size: 14px;">{{ this.thisDate(organization1.endingDate) }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">

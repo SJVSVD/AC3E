@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::get('/indicators', [PageController::class, 'indicators'])->name('indicators');
 		Route::get('/power-bi', [PageController::class, 'powerBi'])->name('power-bi');
 		Route::get('/admin-usuarios', [PageController::class, 'adminUsuarios'])->name('admin-usuarios');
+		Route::get('/recycle-bin', [PageController::class, 'recycleBin'])->name('recycle-bin');
 		Route::get('/import-info', [PageController::class, 'importInfo'])->name('import-info');
 		Route::get('/isi-publications', [PageController::class, 'isiPublications'])->name('isi-publications');
 		Route::get('/non-isi-publications', [PageController::class, 'nonIsiPublications'])->name('non-isi-publications');

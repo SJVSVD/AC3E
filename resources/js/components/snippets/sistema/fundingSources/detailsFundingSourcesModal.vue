@@ -20,8 +20,8 @@
                     <label class="col-6 m-0 fs-8 pb-1">Program Contest: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.programContest || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Project Title: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.projectTitle || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Principal Researcher: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.principalResearcher || '---' }}</label></label>
-                    <label class="col-6 m-0 fs-8 pb-1">Start Date: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.startDate || '---' }}</label></label>
-                    <label class="col-6 m-0 fs-8 pb-1">Finish Date: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.finishDate || '---' }}</label></label>
+                    <label class="col-6 m-0 fs-8 pb-1">Start Date: <label class="fw-normal" style="font-size: 14px;">{{ this.thisDate(fundingSource1.startDate) || '---' }}</label></label>
+                    <label class="col-6 m-0 fs-8 pb-1">Finish Date: <label class="fw-normal" style="font-size: 14px;">{{ this.thisDate(fundingSource1.finishDate) || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Comments: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.comments || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">In Cash: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.inCash || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Type of Collaboration: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.typeOfCollaboration || '---' }}</label></label>

@@ -12,8 +12,8 @@ It is important to add the current occupation for those students who have alread
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
+                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
                             <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewThesisStudent = true">New Entry</a>
-                            &nbsp;
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
@@ -132,6 +132,40 @@ export default {
         this.getThesisStudents(this.userID);
     },
     methods: {
+        async deleteSelected() {
+            // Obtener las filas seleccionadas
+            let selectedData = this.table.rows({ selected: true }).data().toArray();
+            let selectedIds = selectedData.map(row => {
+                // Supongamos que el ID está en la segunda columna (índice 1)
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = row[1]; // Cambia el índice según dónde esté el ID
+                return tempDiv.textContent.trim(); // Obtener el contenido de texto que es el ID
+            });
+            let module = 'thesis'; // Cambia este valor dinámicamente según el módulo
+            if (selectedIds.length === 0) {
+                this.toast.error("No records selected.");
+                return;
+            }
+            const ok = await this.$refs.confirmation.show({
+                title: 'Delete Multiple',
+                message: `¿Are you sure you want to delete `+selectedIds.length+` records?.`,
+                okButton: 'Delete',
+                cancelButton: 'Return'
+            })
+            if (ok) { 
+                axios.post('api/delete-records', {
+                    module: module,
+                    ids: selectedIds
+                })
+                .then(response => {
+                    this.toast.success(response.data.success);
+                    this.recargarTabla('General');
+                })
+                .catch(error => {
+                    this.toast.error("An error occurred.");
+                });
+            }
+        },
         descargarExtracto(id,nombre){
             axios({
                 url: `api/thesisDownload/${id}`,
