@@ -119,23 +119,20 @@
                     <br>
                     <div class="row">                        
                       <div class="col-md-6">
-                          <label for="">Fundings: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <div>
-                            <Multiselect
-                                placeholder="Select the options"
-                                v-model="nonIsiPublication.fundings"
-                                limit=4
-                                :searchable="true"
-                                :close-on-select="false"
-                                :createTag="true"
-                                :options="options1"
-                                mode="tags"
-                                label="name"
-                                trackBy="name"
-                                :object="true"
-                            />
+                        <label for="">Fundings: </label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <div class="form-check pt-2">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" v-model="fundingSources.basal">
+                            Basal Financing Program Funding
+                          </label>
+                        </div>
+                        <div class="form-check pt-2">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" v-model="fundingSources.other">
+                            Other sources
+                          </label>
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -146,6 +143,32 @@
                     </div>
                     <br>
                     <div class="row">
+                      <div :class="{'col-md-4': !isLink, 'col-md-6': isLink}">
+                        <div class="form-group">
+                          <label v-if="isLink" for="archivo">Link: </label>
+                          <label v-else for="archivo">File: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <label title="A document verifying event participation and containing relevant information about it must be uploaded. Suitable documents include conference programs, participation certificates, or confirmation emails from the organizers. Any one of these will suffice." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                          <!-- Input para archivo (solo si isLink es false) -->
+                          <input v-if="!isLink" type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+    
+                          <!-- Input para el link (solo si isLink es true) -->
+                          <input v-if="isLink" type="text" v-model="link" placeholder="Enter the link" class="form-control">
+                          <!-- Checkbox para alternar entre subir archivo o ingresar un link -->
+                          <div class="form-check pt-2">
+                            <input type="checkbox" id="isLink" v-model="isLink" class="form-check-input">
+                            <label for="isLink" class="form-check-label">Upload Link instead of File</label>
+                          </div>
+                          <label v-if="nonIsiPublication1.file != null && nonIsiPublication1.is_link == 0" >Current file: {{ fileName }}</label>
+                          <label v-if="nonIsiPublication1.file != null && nonIsiPublication1.is_link == 1" >Current link: {{ nonIsiPublication1.file }}</label>
+                        </div>
+                      </div>
+                      <div v-if="nonIsiPublication1.file != null && !isLink" class="col-md-2 pt-2">
+                        <br>
+                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                        &nbsp;
+                        <a class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,nonIsiPublication1.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                      </div>
                       <div class="col-md-6">
                           <label for="">Indexed by: </label>
                           <label for="" style="color: orange;">*</label>
@@ -165,19 +188,6 @@
                                 :object="true"
                             />
                         </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                        <label for="archivo">File:</label>
-                        <label v-if="nonIsiPublication1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
-                        </div>
-                      </div>
-                      <div class="col-md-2 pt-2">
-                        <br>
-                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
-                        &nbsp;
-                        <a v-if="nonIsiPublication1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,nonIsiPublication1.usuario.name)"><i class="fa-solid fa-download"></i></a>
                       </div>
                     </div>
                   </slot>
@@ -217,6 +227,10 @@ export default {
     components: { modalProgressYear,modalconfirmacion, modalalerta, Multiselect },
     mixins: [mixin],
     data: () => ({
+      fundingSources: {
+        basal: false,
+        other: false,
+      },
       nonIsiPublication:{
         authors: "",
         articleTitle: "",
@@ -243,6 +257,8 @@ export default {
         'Conference',
         'Other',
       ],
+      isLink: false, // Controla si es un link o un archivo
+      link: '',
       id: null,
       draft: false,
       idResearcher: '',
@@ -273,16 +289,26 @@ export default {
       this.nonIsiPublication.lastPage = this.nonIsiPublication1.lastPage;
       this.nonIsiPublication.yearPublished = this.nonIsiPublication1.yearPublished;
       this.nonIsiPublication.month = this.nonIsiPublication1.month;
-      if (this.nonIsiPublication1.funding != null) {
-          const valoresSeparados1 = this.nonIsiPublication1.funding.split(",");
-          this.nonIsiPublication.fundings = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
+      this.link = this.nonIsiPublication1.is_link === 1 ? this.nonIsiPublication1.file : null; // Si es un link, se almacena el valor en `link`
+      this.isLink = this.nonIsiPublication1.is_link === 1 ? true : false;
 
-              return { value: valor, name: valor };
-          });
+      if (this.nonIsiPublication1.funding != null) {
+        const valoresSeparados1 = this.nonIsiPublication1.funding.split(",");
+
+        valoresSeparados1.forEach((valor) => {
+          valor = valor.trim();
+          if (valor.endsWith('.')) {
+            valor = valor.slice(0, -1); // Elimina el punto final
+          }
+
+          // Chequea los valores existentes y marca los checkboxes correspondientes
+          if (valor === 'Basal Financing Program Funding') {
+            this.fundingSources.basal = true;
+          }
+          if (valor === 'Other sources') {
+            this.fundingSources.other = true;
+          }
+        });
       }
 
       if (this.nonIsiPublication1.indexedBy != null) {
@@ -318,6 +344,12 @@ export default {
       this.years = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
       this.selectedYear = currentYear;
       this.years.sort((a, b) => b - a); 
+    },  
+    computed: {
+      fileName() {
+        // Extraer solo el nombre del archivo
+        return this.nonIsiPublication1.file.split('/').pop();
+      }
     },
     methods: {
       // Función para manejar el envío de un formulario con un año
@@ -434,18 +466,21 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var fundingsName1 = "";
-            if (this.nonIsiPublication.fundings !== null){
-              if (this.nonIsiPublication.fundings.length !== 0) {
-                this.nonIsiPublication.fundings.forEach((fundings, index) => {
-                  fundingsName1 += fundings.name;
-                  if (index === this.nonIsiPublication.fundings.length - 1) {
-                    fundingsName1 += '.';
-                  } else {
-                    fundingsName1 += ', ';
-                  }
-                });
+            let fundingsName1 = "";
+
+            if (this.fundingSources.basal) {
+              fundingsName1 += "Basal Financing Program Funding";
+            }
+
+            if (this.fundingSources.other) {
+              if (fundingsName1) {
+                fundingsName1 += ", "; // Agregar coma si hay más de un valor
               }
+              fundingsName1 += "Other sources";
+            }
+
+            if (fundingsName1) {
+              fundingsName1 += "."; // Agregar punto final al string
             }
 
             var indexedBy1 = "";
@@ -517,16 +552,134 @@ export default {
                 icon: true,
                 rtl: false
               });
+              if(this.nonIsiPublication.file != null || this.link != '') {
+                const formData = new FormData();
+                formData.append('id', this.id);
+                console.log(this.nonIsiPublication.file);
 
-              if(this.file != null){
-              const formData = new FormData();
-              formData.append('id', this.id);
-              formData.append('file', this.nonIsiPublication.file);
-              axios.post('api/nonIsi/addFile', formData, {
-                  headers: { 'Content-Type' : 'multipart/form-data' }
-                }).then( response => {
-                  console.log(response.data);
-                this.toast.success("File added successfully!", {
+                if(this.nonIsiPublication.file != null && !this.isLink) {
+                  // Si el archivo es proporcionado
+                  formData.append('file', this.nonIsiPublication.file);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  console.log(this.nonIsiPublication.file);
+                  axios.post('api/nonIsiPublications/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    this.toast.success("File added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                } else if(this.link != '') {
+                  console.log("aaa");
+                  // Si solo el link es proporcionado
+                  formData.append('file', this.link);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  axios.post('api/nonIsiPublications/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    console.log(response.data);
+                    this.toast.success("Link added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                }
+              } else if(this.nonIsiPublication1.file == null) {
+                // Si ni archivo ni link fueron proporcionados
+                this.toast.error('Please upload a file or provide a link.', {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -540,47 +693,10 @@ export default {
                   icon: true,
                   rtl: false
                 });
-                setTimeout(() => {this.cerrarModal();}, 1500);
-              })
-              .catch(error => {
-                if (error.response && error.response.status === 400) {
-                  this.toast.error(error.response.data.error, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                } else if (error.response && error.response.status === 422) {
-                  this.errors = error.response.data.errors;
-                  this.toast.warning('There is an invalid value.', {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                }
                 this.buttonDisable = false;
-                this.buttonText = 'Edit Publication';
-              });
-            }else{
-              setTimeout(() => {this.cerrarModal();}, 1500);
-            }
+              }else{
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              }
             })
             .catch((error) => {
               if (error.response) {
@@ -695,7 +811,9 @@ export default {
         'volume',
         'firstPage',
         'lastPage',
-        'month'
+        'month',
+        'fundings',
+        'file'
         ];
 
         for (const item in this.nonIsiPublication) {
@@ -703,6 +821,18 @@ export default {
             if (!skipItem && (this.nonIsiPublication[item] === "" || this.nonIsiPublication[item] === 0 || this.nonIsiPublication[item] == null)) {
                 this.errors.push(item);
             }
+        }
+
+        if((this.nonIsiPublication.file == null && this.nonIsiPublication1.file == null) && this.isLink == false){
+            this.errors.push('file');
+        }
+
+        if(this.link == '' && this.isLink == true){
+            this.errors.push('link');
+        }
+
+        if (!this.fundingSources.basal && !this.fundingSources.other) {
+          this.errors.push("fundings");
         }
 
         let publication1 = {
@@ -716,7 +846,6 @@ export default {
             firstPage: this.nonIsiPublication.firstPage,
             lastPage: this.nonIsiPublication.lastPage,
             yearPublished: this.nonIsiPublication.yearPublished,
-            funding: fundingsName1,
             comments: this.nonIsiPublication.comments,
             file: this.nonIsiPublication.file,
             progressReport: this.nonIsiPublication.progressReport,
@@ -738,6 +867,8 @@ export default {
               mensaje =   mensaje + "The field Article Title is required" + "\n";
             }else if(item == 'journalName'){
               mensaje =   mensaje + "The field Journal Name is required" + "\n";
+            }else if(item == 'fundings'){
+              mensaje =   mensaje + "At least one funding source must be selected." + "\n";
             }else if(item == 'firstPage'){
               mensaje =   mensaje + "The field First Page is required" + "\n";
             }else if(item == 'lastPage'){
@@ -777,18 +908,21 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var fundingsName1 = "";
-            if (this.nonIsiPublication.fundings !== null){
-              if (this.nonIsiPublication.fundings.length !== 0) {
-                this.nonIsiPublication.fundings.forEach((fundings, index) => {
-                  fundingsName1 += fundings.name;
-                  if (index === this.nonIsiPublication.fundings.length - 1) {
-                    fundingsName1 += '.';
-                  } else {
-                    fundingsName1 += ', ';
-                  }
-                });
+            let fundingsName1 = "";
+
+            if (this.fundingSources.basal) {
+              fundingsName1 += "Basal Financing Program Funding";
+            }
+
+            if (this.fundingSources.other) {
+              if (fundingsName1) {
+                fundingsName1 += ", "; // Agregar coma si hay más de un valor
               }
+              fundingsName1 += "Other sources";
+            }
+
+            if (fundingsName1) {
+              fundingsName1 += "."; // Agregar punto final al string
             }
 
             var indexedBy1 = "";
@@ -826,6 +960,9 @@ export default {
               idUser1 = this.userID;
             }
 
+            let fileOrLink = this.isLink ? this.link : this.participationSc.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
+
             let publication = {
               idUsuario: idUser1,
               status: 'Finished',
@@ -841,7 +978,8 @@ export default {
               month: this.nonIsiPublication.month,
               funding: fundingsName1,
               comments: this.nonIsiPublication.comments,
-              file: this.nonIsiPublication.file,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag,   
               progressReport: this.nonIsiPublication.progressReport,
             };
             await axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
@@ -861,31 +999,37 @@ export default {
                 icon: true,
                 rtl: false
               });
-              const formData = new FormData();
-              formData.append('id', this.id);
-              formData.append('file', this.nonIsiPublication.file);
-              axios.post('api/nonIsi/addFile', formData, {
-                  headers: { 'Content-Type' : 'multipart/form-data' }
-                }).then( response => {
-                  console.log(response.data);
-                this.toast.success("File added successfully!", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-                setTimeout(() => {this.cerrarModal();}, 1500);
-              })
-              .catch((error)=> {
-                if (error.response && error.response.status === 400) {
+              if(this.nonIsiPublication.file != null || this.link != '') {
+                const formData = new FormData();
+                formData.append('id', this.id);
+                console.log(this.nonIsiPublication.file);
+
+                if(this.nonIsiPublication.file != null && !this.isLink) {
+                  // Si el archivo es proporcionado
+                  formData.append('file', this.nonIsiPublication.file);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  console.log(this.nonIsiPublication.file);
+                  axios.post('api/nonIsiPublications/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    this.toast.success("File added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
                       this.toast.error(error.response.data.error, {
                         position: "top-right",
                         timeout: 3000,
@@ -900,9 +1044,36 @@ export default {
                         icon: true,
                         rtl: false
                       });
-                  } else if (error.response.status == 422){
-                  this.errors = error.response.data.errors;
-                  this.toast.warning('There is an invalid value.', {
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                } else if(this.link != '') {
+                  console.log("aaa");
+                  // Si solo el link es proporcionado
+                  formData.append('file', this.link);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  axios.post('api/nonIsiPublications/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    console.log(response.data);
+                    this.toast.success("Link added successfully!", {
                       position: "top-right",
                       timeout: 3000,
                       closeOnClick: true,
@@ -915,11 +1086,64 @@ export default {
                       closeButton: "button",
                       icon: true,
                       rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
                   });
                 }
+              } else if(this.nonIsiPublication1.file == null) {
+                // Si ni archivo ni link fueron proporcionados
+                this.toast.error('Please upload a file or provide a link.', {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
                 this.buttonDisable = false;
-                this.buttonText = 'Edit Publication';
-              });
+              }else{
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              }
             })
             .catch((error) => {
               if (error.response) {

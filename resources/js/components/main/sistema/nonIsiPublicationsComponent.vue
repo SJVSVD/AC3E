@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-lg-10 col-md-12">
                         <div class="info-box">
-                            Includes all articles presented/developed for conferences. Additionally, you can include publications indexed in Scopus, SciELO, Latindex, or any other type of indexation different from WoS. It is necessary to import the publication in PDF format, with a maximum of 20 MB.
+                            Includes all articles presented/developed for conferences. Additionally, you can include publications indexed in Scopus, SciELO, Latindex, or any other type of indexation different from WoS. It is necessary to <strong>import the publication</strong> in PDF format, with a maximum of 20 MB.
 If you have presented the publication at a conference, please ensure it is also reported in the “Participation in Sc events” module.
 
                         </div>
@@ -45,7 +45,14 @@ If you have presented the publication at a conference, please ensure it is also 
                                         </td>       
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="nonIsiPublication.file != null" class="btn btn-search-blue btn-xs" title="Download File" @click="descargarExtracto(nonIsiPublication.id, nonIsiPublication.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-if="nonIsiPublication.file != null && nonIsiPublication.is_link == 0" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(nonIsiPublication.id, nonIsiPublication.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-else-if="nonIsiPublication.is_link == 1" 
+                                                :href="nonIsiPublication.file" 
+                                                class="btn btn-search-blue btn-xs" 
+                                                title="Redirect" 
+                                                target="_blank">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                </a>
                                                 <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(nonIsiPublication)"><i class="fa fa-fw fa-edit"></i></a>

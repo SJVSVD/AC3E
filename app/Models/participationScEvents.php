@@ -29,6 +29,7 @@ class participationScEvents extends Model
         'nameOfParticipants',
         'progressReport',
         'file',
+        'is_link',
         'comments',
     ];
 

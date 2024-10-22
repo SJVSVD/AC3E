@@ -81,16 +81,28 @@
                             <input type="text" class= "form-control" v-model="organizationSc.city">
                           </div>
                           <div class="col-md-3">
-                            <label for="">Start Date:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="date" class= "form-control" v-model="organizationSc.startDate">
+                          <label for="">Start Date:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input 
+                            type="date" 
+                            class="form-control" 
+                            v-model="organizationSc.startDate" 
+                            :max="maxStartDate"
+                            @change="validateDates"
+                          >
                           </div>
                           <div class="col-md-3">
                             <label for="">Ending Date:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
-                            <input type="date" class= "form-control" v-model="organizationSc.endingDate">
+                            <input 
+                              type="date" 
+                              class="form-control" 
+                              v-model="organizationSc.endingDate" 
+                              :min="minEndDate"
+                              @change="validateDates"
+                            >
                           </div>
                           <div class="col-md-3">
                             <label for="">Number of participants:</label>
@@ -102,18 +114,31 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-md-4">
+                      <div :class="{'col-md-4': !isLink, 'col-md-6': isLink}">
                         <div class="form-group">
-                        <label for="archivo">File:</label>
-                        <label v-if="organization1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
+                          <label v-if="isLink" for="archivo">Link: </label>
+                          <label v-else for="archivo">File: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <label title="You must upload a PDF file or image." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                          <!-- Input para archivo (solo si isLink es false) -->
+                          <input v-if="!isLink" type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+    
+                          <!-- Input para el link (solo si isLink es true) -->
+                          <input v-if="isLink" type="text" v-model="link" placeholder="Enter the link" class="form-control">
+                          <!-- Checkbox para alternar entre subir archivo o ingresar un link -->
+                          <div class="form-check pt-2">
+                            <input type="checkbox" id="isLink" v-model="isLink" class="form-check-input">
+                            <label for="isLink" class="form-check-label">Upload Link instead of File</label>
+                          </div>
+                          <label v-if="organization1.file != null && organization1.is_link == 0" >Current file: {{ fileName }}</label>
+                          <label v-if="organization1.file != null && organization1.is_link == 1" >Current link: {{ organization1.file }}</label>
                         </div>
                       </div>
-                      <div class="col-md-2 pt-2">
+                      <div v-if="organization1.file != null && !isLink" class="col-md-2 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                         &nbsp;
-                        <a v-if="organization1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
+                        <a  class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
                       </div>
                       <div class="col-md-6">
                         <label for="">Comments:</label>
@@ -168,10 +193,12 @@ export default {
         endingDate: '',
         researcherInvolved: null,
         numberParticipants: '',
-        file: '',
+        file: null,
         comments: '',
         progressReport: '',
       },
+      isLink: false, // Controla si es un link o un archivo
+      link: '',
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
@@ -215,6 +242,8 @@ export default {
       this.organizationSc.file = this.organization1.file;
       this.organizationSc.comments = this.organization1.comments;
       this.organizationSc.progressReport = this.organization1.progressReport;
+      this.link = this.organization1.is_link === 1 ? this.organization1.file : null; // Si es un link, se almacena el valor en `link`
+      this.isLink = this.organization1.is_link === 1 ? true : false;
 
       if (this.organization1.researcherInvolved != null) {
           const valoresSeparados1 = this.organization1.researcherInvolved.split(",");
@@ -240,7 +269,45 @@ export default {
           });
       }
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.organizationSc.endingDate ? this.organizationSc.endingDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.organizationSc.startDate ? this.organizationSc.startDate : null;
+      },
+      fileName() {
+        // Extraer solo el nombre del archivo
+        return this.organization1.file.split('/').pop();
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const startDate = new Date(this.organizationSc.startDate);
+        const endDate = new Date(this.organizationSc.endingDate);
+        
+        if (this.organizationSc.startDate && this.organizationSc.endingDate) {
+          if (startDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
@@ -418,33 +485,21 @@ export default {
                 icon: true,
                 rtl: false
               });
-              if(this.organizationSc.file != null){
+              if(this.organizationSc.file != null || this.link != '') {
                 const formData = new FormData();
                 formData.append('id', this.id);
-                formData.append('file', this.organizationSc.file);
-                axios.post('api/organizationScEvents/addFile', formData, {
+                console.log(this.organizationSc.file);
+
+                if(this.organizationSc.file != null && !this.isLink) {
+                  // Si el archivo es proporcionado
+                  formData.append('file', this.organizationSc.file);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  console.log(this.organizationSc.file);
+                  axios.post('api/organizationScEvents/addFile', formData, {
                     headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then( response => {
-                    console.log(response.data);
-                  this.toast.success("File added successfully!", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                  setTimeout(() => {this.cerrarModal();}, 1500);
-                })
-                .catch((error)=> {
-                  if (error.response && error.response.status === 400) {
-                  this.toast.error(error.response.data.error, {
+                  }).then(response => {
+                    this.toast.success("File added successfully!", {
                       position: "top-right",
                       timeout: 3000,
                       closeOnClick: true,
@@ -457,10 +512,11 @@ export default {
                       closeButton: "button",
                       icon: true,
                       rtl: false
-                  });
-                  }else if (error.response.status == 422){
-                    this.errors = error.response.data.errors;
-                    this.toast.warning('There is an invalid value.', {
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
                         position: "top-right",
                         timeout: 3000,
                         closeOnClick: true,
@@ -473,9 +529,106 @@ export default {
                         closeButton: "button",
                         icon: true,
                         rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                } else if(this.link != '') {
+                  console.log("aaa");
+                  // Si solo el link es proporcionado
+                  formData.append('file', this.link);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  axios.post('api/organizationScEvents/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    console.log(response.data);
+                    this.toast.success("Link added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
                     });
-                  }
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                }
+              } else if(this.organization1.file == null) {
+                // Si ni archivo ni link fueron proporcionados
+                this.toast.error('Please upload a file or provide a link.', {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
                 });
+                this.buttonDisable = false;
+              }else{
+                setTimeout(() => {this.cerrarModal();}, 1500);
               }
             })
             .catch((error) => {
@@ -591,6 +744,13 @@ export default {
             }
         }
 
+        if((this.organizationSc.file == null && this.organization1.file == null) && this.isLink == false){
+            this.errors.push('file');
+        }
+
+        if(this.link == '' && this.isLink == true){
+            this.errors.push('link');
+        }
 
         var idUser1 = ''
         if(this.idResearcher != ''){
@@ -608,7 +768,6 @@ export default {
           startDate: this.organizationSc.startDate,
           endingDate: this.organizationSc.endingDate,
           numberParticipants: this.organizationSc.numberParticipants,
-          file: this.organizationSc.file,
           comments: this.organizationSc.comments,
           progressReport: this.organizationSc.progressReport,
         };
@@ -627,6 +786,8 @@ export default {
           this.errors.forEach(item => {
             if(item == 'typeEvent'){
               mensaje =   mensaje + "The field Type Event is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researchers involved is required" + "\n";
             }else if(item == 'eventName'){
               mensaje =   mensaje + "The field Event Name is required" + "\n";
             }else if(item == 'startDate'){
@@ -730,14 +891,134 @@ export default {
                 icon: true,
                 rtl: false
               });
-              const formData = new FormData();
-              formData.append('id', this.id);
-              formData.append('file', this.organizationSc.file);
-              axios.post('api/organizationScEvents/addFile', formData, {
-                  headers: { 'Content-Type' : 'multipart/form-data' }
-                }).then( response => {
-                  console.log(response.data);
-                this.toast.success("File added successfully!", {
+              if(this.organizationSc.file != null || this.link != '') {
+                const formData = new FormData();
+                formData.append('id', this.id);
+                console.log(this.organizationSc.file);
+
+                if(this.organizationSc.file != null && !this.isLink) {
+                  // Si el archivo es proporcionado
+                  formData.append('file', this.organizationSc.file);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  console.log(this.organizationSc.file);
+                  axios.post('api/organizationScEvents/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    this.toast.success("File added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                } else if(this.link != '') {
+                  console.log("aaa");
+                  // Si solo el link es proporcionado
+                  formData.append('file', this.link);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  axios.post('api/organizationScEvents/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    console.log(response.data);
+                    this.toast.success("Link added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                }
+              } else if(this.organization1.file == null) {
+                // Si ni archivo ni link fueron proporcionados
+                this.toast.error('Please upload a file or provide a link.', {
                   position: "top-right",
                   timeout: 3000,
                   closeOnClick: true,
@@ -751,42 +1032,10 @@ export default {
                   icon: true,
                   rtl: false
                 });
+                this.buttonDisable = false;
+              }else{
                 setTimeout(() => {this.cerrarModal();}, 1500);
-              })
-              .catch((error)=> {
-                if (error.response && error.response.status === 400) {
-                this.toast.error(error.response.data.error, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-                }else if (error.response.status == 422){
-                  this.errors = error.response.data.errors;
-                  this.toast.warning('There is an invalid value.', {
-                      position: "top-right",
-                      timeout: 3000,
-                      closeOnClick: true,
-                      pauseOnFocusLoss: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      draggablePercent: 0.6,
-                      showCloseButtonOnHover: false,
-                      hideProgressBar: true,
-                      closeButton: "button",
-                      icon: true,
-                      rtl: false
-                  });
-                }
-              });
+              }
             })
             .catch((error) => {
               if (error.response) {

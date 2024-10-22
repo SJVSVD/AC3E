@@ -105,17 +105,30 @@
                               <option value="Researcher">Researcher</option>
                               </select>
                       </div>
+
                       <div class="col-md-3">
                         <label for="">Beginning Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="scCollaboration.beginningDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="scCollaboration.beginningDate" 
+                          :max="maxStartDate"
+                          @change="validateDates"
+                        >
                       </div>
                       <div class="col-md-3">
                         <label for="">Ending Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="scCollaboration.endingDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="scCollaboration.endingDate" 
+                          :min="minEndDate"
+                          @change="validateDates"
+                        >
                       </div>
                     </div>
                     <br>
@@ -229,7 +242,41 @@ export default {
       this.getUsuarios2();
       this.getProgressReport();
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.scCollaboration.endingDate ? this.scCollaboration.endingDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.scCollaboration.beginningDate ? this.scCollaboration.beginningDate : null;
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const beginningDate = new Date(this.scCollaboration.beginningDate);
+        const endDate = new Date(this.scCollaboration.endingDate);
+        
+        if (this.scCollaboration.beginningDate && this.scCollaboration.endingDate) {
+          if (beginningDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.scCollaboration.progressReport = year;

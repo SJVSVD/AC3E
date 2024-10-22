@@ -59,7 +59,7 @@ Route::post('importIsi', [isiPublicationsController::class, 'importIsi']);
 //nonIsiPublications
 Route::apiResource('nonIsiPublications', nonIsiPublicationsController::class);
 Route::get('nonIsiDownload/{id}' , [nonIsiPublicationsController::class, 'nonIsiDownload']);
-Route::post('nonIsi/addFile', [nonIsiPublicationsController::class, 'addFile']);
+Route::post('nonIsiPublications/addFile', [nonIsiPublicationsController::class, 'addFile']);
 Route::post('verifyNonIsi', [nonIsiPublicationsController::class, 'verifyNonIsi']);
 Route::post('importNonIsi', [nonIsiPublicationsController::class, 'importNonIsi']);
 
@@ -89,12 +89,14 @@ Route::post('importParticipation', [participationsScEventsController::class, 'im
 
 //scCollaborations
 Route::apiResource('scCollaborations', scCollaborationsController::class);
+Route::get('scCollaborationsActive/{id}', [scCollaborationsController::class, 'scCollaborationsActive']);
 Route::post('verifyCollaboration', [scCollaborationsController::class, 'verifyCollaboration']);
 Route::post('importCollaboration', [scCollaborationsController::class, 'importCollaboration']);
 
 //conjointProjects
 Route::apiResource('conjointProjects', conjointProjectController::class);
 Route::post('verifyConjoint', [conjointProjectController::class, 'verifyConjoint']);
+Route::get('conjointProjectsActive/{id}', [conjointProjectController::class, 'conjointProjectsActive']);
 
 //thesisStudents
 Route::apiResource('thesisStudents', thesisStudentController::class);
@@ -131,6 +133,7 @@ Route::post('importTecAndKnow', [technologyKnowledgeController::class, 'importTe
 Route::apiResource('fundingSources', fundingSourcesController::class);
 Route::post('verifyFunding', [fundingSourcesController::class, 'verifyFunding']);
 Route::post('importFunding', [fundingSourcesController::class, 'importFunding']);
+Route::get('fundingSourcesActive/{id}', [fundingSourcesController::class, 'fundingSourcesActive']);
 
 Route::apiResource('roles', RolController::class);
 Route::apiResource('permisos', PermisosController::class);

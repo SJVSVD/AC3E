@@ -42,6 +42,7 @@ class thesisStudent extends Model
         'comments',
         'progressReport',
         'file',
+        'is_link'
     ];
 
     public function usuario(){

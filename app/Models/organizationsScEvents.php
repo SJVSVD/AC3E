@@ -25,6 +25,7 @@ class organizationsScEvents extends Model
         'endingDate',
         'numberParticipants',
         'file',
+        'is_link',
         'comments',
         'progressReport',
     ];

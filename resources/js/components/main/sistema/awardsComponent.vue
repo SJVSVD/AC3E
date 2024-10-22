@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-lg-10 col-md-12">
                         <div class="info-box">
-                            Includes all awards or recognitions received by AC3E researchers, during the current baseline year (Sep-present).
+                            Includes all awards or recognitions <strong>received by AC3E researchers</strong>, during the current baseline year (Sep-present).
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">

@@ -33,6 +33,7 @@ class nonIsiPublication extends Model
         'internationalExternalResearchers',
         'researcherInvolved',
         'file',
+        'is_link',
         'comments',
         'progressReport'
     ];

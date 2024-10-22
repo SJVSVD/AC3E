@@ -5,9 +5,9 @@
                 <div class="row pb-0 p-4">
                     <div class="col-lg-10 col-md-12">
                         <div class="info-box">
-                            Includes all articles published in scientific journals indexed in the Web of Science, during the current baseline year (Sep-present). By entering the DOI, most of the fields will be filled automatically; if not, please manually enter the required information.
+                            Includes all articles <strong>published</strong> in scientific journals indexed in the Web of Science, during the current baseline year (Sep-present). By entering the DOI, most of the fields will be filled automatically; if not, please manually enter the required information.
                             In the table below, you have the option to search for a publication to check if it has already been reported. It is recommended to filter by year of publication for the review.
-                            Articles published in periods prior to the current baseline year will NOT be considered in the report and individual results evaluation.
+                            Articles published in periods prior to the current baseline year <strong>will NOT be considered</strong>  in the report and individual results evaluation.
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">

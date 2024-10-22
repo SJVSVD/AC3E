@@ -6,7 +6,7 @@
             <div class="modal-container-xl ">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Thesis
+                    Edit Thesis 
                 </slot>
                 <label for="">Progress year: {{ thesisStudent.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
@@ -160,21 +160,47 @@
                             <option value="2">In progress</option>
                           </select>
                       </div>
-                      <div v-if="thesisStudent.thesisStatus == 1" class="col-md-3">
+                      <div v-if="thesisStudent.thesisStatus == 1" :class="{'col-md-3': !isLink, 'col-md-5': isLink}">
                         <div class="form-group">
-                        <label for="archivo">File:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <label title="You must upload a PDF file or image." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <label v-if="thesisStudent1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
+                          <label for="archivo">Thesis Extract:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <label v-if="thesisStudent1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;">
+                            <i class="fa-solid fa-circle-info"></i>
+                          </label>
+
+
+
+                          <!-- Mostrar campo de archivo si no es link -->
+                          <div v-if="!isLink">
+                            <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class="form-control" @change="getFile">
+                          </div>
+
+                          <!-- Mostrar campo de link si es link -->
+                          <div v-else>
+                            <input type="text" v-model="link" class="form-control" placeholder="Enter the link here">
+                          </div>
+
+
+                          <!-- Checkbox para seleccionar entre archivo o link -->
+                          <div class="form-check pt-2">
+                            <input class="form-check-input" type="checkbox" id="isLink" v-model="isLink">
+                            <label class="form-check-label" for="isLink">Use Link Instead of File</label>
+                          </div>
+
+                          <label v-if="thesisStudent1.file != null && thesisStudent1.is_link == 0" >Current file: {{ fileName }}</label>
+                          <label v-if="thesisStudent1.file != null && thesisStudent1.is_link == 1" >Current link: {{ thesisStudent1.file }}</label>
                         </div>
                       </div>
-                      <div v-if="thesisStudent.thesisStatus == 1" class="col-md-2 pt-2">
+
+                      <div v-if="thesisStudent.thesisStatus == 1 && !isLink" class="col-md-2 pt-2">
                         <br>
-                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                        <a class="btn btn-closed" title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                         &nbsp;
-                        <a v-if="thesisStudent1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
+                        <a v-if="thesisStudent1.file != null && !isLink" class="btn btn-search-blue" title="Download" @click="descargarExtracto(id,user)">
+                          <i class="fa-solid fa-download"></i>
+                        </a>
                       </div>
+
                     </div>
                     <hr size="3" class="separador">
                     <div class="row">
@@ -363,6 +389,8 @@ export default {
         'Infrastructure',
         'Other',
       ],
+      isLink: false, // Controla si es un link o un archivo
+      link: '',
       selectedUniversity: '',
       showOtherUniversityInput: false,
       formData: null,
@@ -415,6 +443,9 @@ export default {
         this.thesisStudent.progressReport = this.thesisStudent1.progressReport;
         this.thesisStudent.identification = this.thesisStudent1.identification;
         this.thesisStudent.monthStart = this.thesisStudent1.monthStart;
+        this.link = this.thesisStudent1.is_link === 1 ? this.thesisStudent1.file : ''; // Si es un link, se almacena el valor en `link`
+        this.isLink = this.thesisStudent1.is_link === 1 ? true : false; // Configurar `isLink` como booleano (true si es link, false si es archivo)
+
 
         this.thesisStudent.monthEnd = this.thesisStudent1.monthEnd || "";
         this.thesisStudent.yearThesisEnd = this.thesisStudent1.yearThesisEnd || "";
@@ -488,6 +519,13 @@ export default {
                 this.showOtherUniversityInput = false;
             }
         });
+    },
+    computed: {
+      fileName() {
+        // Extraer solo el nombre del archivo
+        return this.thesisStudent1.file.split('/').pop();
+      }
+      
     },
     methods: {
       checkIfOther() {
@@ -730,7 +768,9 @@ export default {
           }else{
             idUser1 = this.userID;
           }
-          
+
+          let universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
+
           let thesisStudent = {
             idUsuario: idUser1,
             status: 'Draft',
@@ -750,7 +790,7 @@ export default {
             cotutorInstitution: this.cotutor1.institution,
             otherName: this.other1.name,
             otherInstitution: this.other1.institution,
-            university: this.thesisStudent.university,
+            university: universityToSubmit,
             yearStart: this.thesisStudent.yearStart,
             monthStart: this.thesisStudent.monthStart,
             monthEnd: this.thesisStudent.monthEnd,
@@ -780,33 +820,80 @@ export default {
               icon: true,
               rtl: false
             });
-            if(this.file != null){
+            if(this.file != null || this.link != '') {
               const formData = new FormData();
               formData.append('id', this.id);
-              formData.append('file', this.file);
-              axios.post('api/thesisStudents/addFile', formData, {
+
+              if(this.file != null) {
+                // Si el archivo es proporcionado
+                formData.append('file', this.file);
+                let isLinkFlag = this.isLink ? 1 : 0;
+                formData.append('is_link', isLinkFlag);
+                axios.post('api/thesisStudents/addFile', formData, {
                   headers: { 'Content-Type' : 'multipart/form-data' }
-                }).then( response => {
+                }).then(response => {
                   console.log(response.data);
-                this.toast.success("File added successfully!", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
+                  this.toast.success("File added successfully!", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
+                  });
+                  setTimeout(() => {this.cerrarModal();}, 1500);
+                }).catch(error => {
+                  if (error.response && error.response.status === 400) {
+                    this.toast.error(error.response.data.error, {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                  } else if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                    this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                  }
+                  this.buttonDisable = false;
+                  this.buttonText = 'Edit Thesis';
                 });
-                setTimeout(() => {this.cerrarModal();}, 1500);
-              })
-              .catch(error => {
-                if (error.response && error.response.status === 400) {
-                  this.toast.error(error.response.data.error, {
+              } else if(this.link != '') {
+                // Si solo el link es proporcionado
+                formData.append('file', this.link);
+                let isLinkFlag = this.isLink ? 1 : 0;
+                formData.append('is_link', isLinkFlag);
+                axios.post('api/thesisStudents/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then(response => {
+                  console.log(response.data);
+                  this.toast.success("Link added successfully!", {
                     position: "top-right",
                     timeout: 3000,
                     closeOnClick: true,
@@ -820,29 +907,64 @@ export default {
                     icon: true,
                     rtl: false
                   });
-                } else if (error.response && error.response.status === 422) {
-                  this.errors = error.response.data.errors;
-                  this.toast.warning('There is an invalid value.', {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                }
-                this.buttonDisable = false;
-                this.buttonText = 'Edit Thesis';
+                  setTimeout(() => {this.cerrarModal();}, 1500);
+                }).catch(error => {
+                  if (error.response && error.response.status === 400) {
+                    this.toast.error(error.response.data.error, {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                  } else if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                    this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                  }
+                  this.buttonDisable = false;
+                  this.buttonText = 'Edit Thesis';
+                });
+              }
+            } else {
+              // Si ni archivo ni link fueron proporcionados
+              this.toast.error('Please upload a file or provide a link.', {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
               });
-            }else{
-              setTimeout(() => {this.cerrarModal();}, 1500);
+              this.buttonDisable = false;
+              this.buttonText = 'Edit Thesis';
             }
+
           })
           .catch((error)=> {
             if (error.response.status == 422){
@@ -910,8 +1032,13 @@ export default {
             this.errors.push('invalidRut');
             }
         }
-        if(this.thesisStudent.thesisStatus == 1 && (this.file == null && this.thesisStudent1.file == null)){
+
+        if(this.thesisStudent.thesisStatus == 1 && (this.file == null && this.thesisStudent1.file == null) && this.isLink == false){
             this.errors.push('thesisExtract');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.link == '' && this.isLink == true){
+            this.errors.push('link');
         }
 
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
@@ -1055,6 +1182,8 @@ export default {
               idUser1 = this.userID;
             }
             
+            let universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
+
             let thesisStudent = {
               idUsuario: idUser1,
               status: 'Finished',
@@ -1074,11 +1203,11 @@ export default {
               cotutorInstitution: this.cotutor1.institution,
               otherName: this.other1.name,
               otherInstitution: this.other1.institution,
-              university: this.thesisStudent.university,
+              university: universityToSubmit,
               yearStart: this.thesisStudent.yearStart,
-              yearThesisEnd: this.thesisStudent.yearThesisEnd,
               monthStart: this.thesisStudent.monthStart,
               monthEnd: this.thesisStudent.monthEnd,
+              yearThesisEnd: this.thesisStudent.yearThesisEnd,
               resourcesCenter: resources1,
               posteriorArea: this.thesisStudent.posteriorArea,
               institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
@@ -1102,14 +1231,19 @@ export default {
                 icon: true,
                 rtl: false
               });
-                if(this.file != null){
-                  const formData = new FormData();
-                  formData.append('id', this.id);
+              if(this.file != null || this.link != '') {
+                const formData = new FormData();
+                formData.append('id', this.id);
+
+                if(this.file != null) {
+                  // Si el archivo es proporcionado
                   formData.append('file', this.file);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
                   axios.post('api/thesisStudents/addFile', formData, {
-                      headers: { 'Content-Type' : 'multipart/form-data' }
-                    }).then( response => {
-                      console.log(response.data);
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    console.log(response.data);
                     this.toast.success("File added successfully!", {
                       position: "top-right",
                       timeout: 3000,
@@ -1125,8 +1259,7 @@ export default {
                       rtl: false
                     });
                     setTimeout(() => {this.cerrarModal();}, 1500);
-                  })
-                  .catch(error => {
+                  }).catch(error => {
                     if (error.response && error.response.status === 400) {
                       this.toast.error(error.response.data.error, {
                         position: "top-right",
@@ -1162,9 +1295,88 @@ export default {
                     this.buttonDisable = false;
                     this.buttonText = 'Edit Thesis';
                   });
-                }else{
-                  setTimeout(() => {this.cerrarModal();}, 1500);
+                } else if(this.link != '') {
+                  // Si solo el link es proporcionado
+                  formData.append('file', this.link);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  axios.post('api/thesisStudents/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    console.log(response.data);
+                    this.toast.success("Link added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                    this.buttonText = 'Edit Thesis';
+                  });
                 }
+              } else if(this.thesisStudent1.file == null) {
+                // Si ni archivo ni link fueron proporcionados
+                this.toast.error('Please upload a file or provide a link.', {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                this.buttonDisable = false;
+                this.buttonText = 'Edit Thesis';
+              }else{
+                setTimeout(() => {this.cerrarModal();}, 1500);
+              }
             })
             .catch((error) => {
               if (error.response) {

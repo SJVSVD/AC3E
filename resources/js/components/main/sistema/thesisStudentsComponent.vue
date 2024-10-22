@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-lg-10 col-md-12">
                         <div class="info-box">
-                            Includes all students who are working on or have completed their thesis under the supervision or co-supervision of AC3E researchers. If the thesis defense or presentation has been conducted, the “Thesis status” should be modified to “Finished” and the thesis should be attached in PDF format. If the document is larger than 20 MB, only the cover and abstract should be sent.
+                            Includes all students who are <strong>working on or have completed</strong> their thesis under the supervision or co-supervision of AC3E researchers. If the thesis defense or presentation has been conducted, the “Thesis status” should be modified to “Finished” and the thesis should be attached in PDF format. If the document is larger than 20 MB, only the cover and abstract should be sent.
 It is important to add the current occupation for those students who have already graduated.
 
                         </div>
@@ -45,7 +45,14 @@ It is important to add the current occupation for those students who have alread
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="thesisStudent.file != null" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(thesisStudent.id, thesisStudent.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-if="thesisStudent.file != null && thesisStudent.is_link == 0" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(thesisStudent.id, thesisStudent.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-else-if="thesisStudent.is_link == 1" 
+                                                :href="thesisStudent.file" 
+                                                class="btn btn-search-blue btn-xs" 
+                                                title="Redirect" 
+                                                target="_blank">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                </a>
                                                 <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verThesis(thesisStudent)"><i class="fa-regular fa-eye"></i></a>

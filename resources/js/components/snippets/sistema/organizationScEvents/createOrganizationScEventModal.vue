@@ -84,13 +84,25 @@
                             <label for="">Start Date:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
-                            <input type="date" class= "form-control" v-model="organizationSc.startDate">
+                            <input 
+                              type="date" 
+                              class="form-control" 
+                              v-model="organizationSc.startDate" 
+                              :max="maxStartDate"
+                              @change="validateDates"
+                            >
                           </div>
                           <div class="col-md-3">
                             <label for="">Ending Date:</label>
                             <label for="" style="color: orange;">*</label>
                             <br>
-                            <input type="date" class= "form-control" v-model="organizationSc.endingDate">
+                            <input 
+                              type="date" 
+                              class="form-control" 
+                              v-model="organizationSc.endingDate" 
+                              :min="minEndDate"
+                              @change="validateDates"
+                            >
                           </div>
 
                           <div class="col-md-3">
@@ -105,11 +117,22 @@
                     <div class="row">
                       <div class="col-md-5">
                         <div class="form-group">
-                          <label for="archivo">File: </label>
+                          <label for="archivo" v-if="isLink">Link: </label>
+                          <label for="archivo" v-else>File: </label>
                           <label for="" style="color: orange;">*</label>
                           <label title="You must upload a PDF file or image." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                          <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
+                          <!-- Input para archivo (solo si isLink es false) -->
+                          <input v-if="!isLink" type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+    
+                          <!-- Input para el link (solo si isLink es true) -->
+                          <input v-if="isLink" type="text" v-model="link" placeholder="Enter the link" class="form-control">
+                          <!-- Checkbox para alternar entre subir archivo o ingresar un link -->
+                          <div class="form-check pt-2">
+                            <input type="checkbox" id="isLink" v-model="isLink" class="form-check-input">
+                            <label for="isLink" class="form-check-label">Upload Link instead of File</label>
+                          </div>
                         </div>
+                        
                       </div>
                       <div class="col-md-1 pt-2">
                         <br>
@@ -179,6 +202,8 @@ export default {
         "Symposium",
         "Other",
       ],
+      isLink: 0, // Controla si es un link o un archivo
+      link: '',
       currentYear: new Date().getFullYear(),
       coauthor: false,
       draft: false,
@@ -195,7 +220,41 @@ export default {
       this.getUsuarios2();
       this.getUsuarios();
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.organizationSc.endingDate ? this.organizationSc.endingDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.organizationSc.startDate ? this.organizationSc.startDate : null;
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const startDate = new Date(this.organizationSc.startDate);
+        const endDate = new Date(this.organizationSc.endingDate);
+        
+        if (this.organizationSc.startDate && this.organizationSc.endingDate) {
+          if (startDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para obtener usuarios (investigadores) desde la API
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
@@ -329,7 +388,8 @@ export default {
               idUser1 = this.userID;
             }
 
-            
+            let fileOrLink = this.isLink ? this.link : this.organizationSc.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
 
             let organizationSc = {
               idUsuario: idUser1,
@@ -342,7 +402,8 @@ export default {
               startDate: this.organizationSc.startDate,
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
-              file: this.organizationSc.file,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag,      
               comments: this.organizationSc.comments,
               progressReport: this.organizationSc.progressReport,
             };
@@ -480,7 +541,8 @@ export default {
       async createOrganization() {
         this.errors = [];
         const itemsToSkip = [
-        'comments'
+        'comments',
+        'file'
         ];
 
         for (const item in this.organizationSc) {
@@ -488,6 +550,14 @@ export default {
             if (!skipItem && (this.organizationSc[item] === "" || this.organizationSc[item] === 0 || this.organizationSc[item] == null)) {
               this.errors.push(item);
             }
+        }
+
+        if(this.organizationSc.file == null && this.isLink == false){
+            this.errors.push('file');
+        }
+
+        if(this.link == '' && this.isLink == true){
+            this.errors.push('link');
         }
 
 
@@ -509,7 +579,6 @@ export default {
           startDate: this.organizationSc.startDate,
           endingDate: this.organizationSc.endingDate,
           numberParticipants: this.organizationSc.numberParticipants,
-          file: this.organizationSc.file,
           comments: this.organizationSc.comments,
           progressReport: this.organizationSc.progressReport,
         };
@@ -601,6 +670,9 @@ export default {
               }
             }
 
+            let fileOrLink = this.isLink ? this.link : this.organizationSc.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
+
             let organizationSc = {
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
@@ -613,6 +685,8 @@ export default {
               endingDate: this.organizationSc.endingDate,
               numberParticipants: this.organizationSc.numberParticipants,
               file: this.organizationSc.file,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag, 
               comments: this.organizationSc.comments,
               progressReport: this.organizationSc.progressReport,
             };

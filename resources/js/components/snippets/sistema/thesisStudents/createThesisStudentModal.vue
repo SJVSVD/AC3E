@@ -165,13 +165,29 @@
                         <div class="form-group">
                           <label for="archivo">Thesis Extract: </label>
                           <label for="" style="color: orange;">*</label>
-                          <label title="You must upload a PDF file or image." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                          <input type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+                          <label title="You must upload a PDF file or image." style="color: #0A95FF;">
+                            <i class="fa-solid fa-circle-info"></i>
+                          </label>
+
+
+                          <!-- Input para archivo (solo si isLink es false) -->
+                          <input v-if="!isLink" type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+
+                          <!-- Input para el link (solo si isLink es true) -->
+                          <input v-if="isLink" type="text" v-model="link" placeholder="Enter the link" class="form-control">
+                          
+                          <!-- Checkbox para alternar entre subir archivo o ingresar un link -->
+                          <div class="form-check pt-2">
+                            <input type="checkbox" id="isLink" v-model="isLink" class="form-check-input">
+                            <label for="isLink" class="form-check-label">Upload Link instead of File</label>
+                          </div>
                         </div>
                       </div>
-                      <div v-if="thesisStudent.thesisStatus == '1'" class="col-1 pt-2">
+
+                      <!-- Botón para limpiar el input, funciona para archivo o link -->
+                      <div v-if="thesisStudent.thesisStatus == '1' && !isLink" class="col-1 pt-2">
                         <br>
-                        <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
+                        <a class="btn btn-closed" title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                       </div>
                     </div>
                     <hr size="3" class="separador">
@@ -362,6 +378,8 @@ export default {
         'Infrastructure',
         'Other',
       ],
+      isLink: 0, // Controla si es un link o un archivo
+      link: '',
       selectedUniversity: '',
       showOtherUniversityInput: false,
       formData: null,
@@ -634,6 +652,9 @@ export default {
           
           let universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
 
+          let fileOrLink = this.isLink ? this.link : this.file;
+          let isLinkFlag = this.isLink ? 1 : 0;
+
           let thesisStudent = {
             idUsuario: idUser1,
             status: 'Draft',
@@ -663,7 +684,8 @@ export default {
             institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
             comments: this.thesisStudent.comments,
             progressReport: this.thesisStudent.progressReport,
-            file: this.file,
+            file: fileOrLink,         // Enviar archivo o link
+            isLink: isLinkFlag         // Enviar la bandera que indica si es link
           };
           axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
             this.buttonDisable = true;
@@ -726,7 +748,18 @@ export default {
       async crearTesis() {
         this.errors = [];
 
-        const fieldsToExclude = ['yearThesisEnd', 'posteriorArea','institutionPosteriorArea','comments', 'monthEnd','run','passport','tutorName', 'tutorInstitution','cotutorName','cotutorInstitution','otherName','otherInstitution','monthStart']; // Arreglo de campos a excluir
+        const fieldsToExclude = ['yearThesisEnd', 
+        'posteriorArea',
+        'institutionPosteriorArea',
+        'comments', 
+        'monthEnd',
+        'run',
+        'passport',
+        'tutorName', 
+        'tutorInstitution',
+        'cotutorName',
+        'cotutorInstitution',
+        'otherName','otherInstitution','monthStart']; // Arreglo de campos a excluir
 
         for (const item in this.thesisStudent) {
           if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir
@@ -768,8 +801,12 @@ export default {
             }
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && this.file == null){
+        if(this.thesisStudent.thesisStatus == 1 && this.file == null && this.isLink == false){
             this.errors.push('thesisExtract');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.link == '' && this.isLink == true){
+            this.errors.push('link');
         }
 
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
@@ -915,6 +952,9 @@ export default {
 
             let universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
 
+            let fileOrLink = this.isLink ? this.link : this.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
+
             let thesisStudent = {
               idUsuario: idUser1,
               status: 'Finished',
@@ -944,7 +984,8 @@ export default {
               institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
               comments: this.thesisStudent.comments,
               progressReport: this.thesisStudent.progressReport,
-              file: this.file,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag         // Enviar la bandera que indica si es link
             };
             axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.buttonDisable = true;

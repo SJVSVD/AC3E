@@ -201,7 +201,6 @@
             }
             try {
                 await axios.post("/api/recycle-bin/restore", { registros });
-                alert("Registros restaurados con éxito.");
                 this.toast.success("Records restored successfully.");
                 this.recargarTabla("General");
             } catch (error) {

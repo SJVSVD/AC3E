@@ -15,6 +15,14 @@
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="form-check pt-2 ">
+                        <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                v-model="showActiveOnly"> Show active only</label>
+                                &nbsp;
+                                <a class="btn btn-xs btn-search-blue" @click="recargarTabla('Active')"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px">
                     <div class="container">
@@ -166,13 +174,30 @@ export default {
                 this.crearTabla('#myTableFunding');
             }).catch(e=> console.log(e))
         },
+        getActiveFunding(id){
+            axios.get(`api/fundingSourcesActive/${id}`).then( response =>{
+                this.fundingSources = response.data;
+                if (this.table != null){
+                    this.table.clear();
+                    this.table.destroy();
+                }
+                this.crearTabla('#myTableFunding');
+            }).catch(e=> console.log(e))
+        },
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;
             if($tipoRecarga == 'General'){
+                this.showActiveOnly = false;
                 this.fundingSources = null;
                 this.getFundingSources(this.userID);
-            }
-            else{
+            }else if($tipoRecarga == 'Active'){
+                if (this.showActiveOnly) {
+                    this.fundingSources = null;
+                    this.getActiveFunding(this.userID);
+                }else{
+                    this.recargarTabla('General');
+                }
+            }else{
                 this.crearTabla("#myTableFunding");
             }
         },

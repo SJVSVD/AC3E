@@ -6,7 +6,7 @@
             <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    Edit Participation Sc Event
+                    Edit Participation Sc Event 
                 </slot>
                 <label for="">Progress year: {{ participationSc.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
@@ -111,13 +111,25 @@
                         <label for="">Start Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="participationSc.startDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="participationSc.startDate" 
+                          :max="maxStartDate"
+                          @change="validateDates"
+                        >
                       </div>
                       <div class="col-md-3">
                         <label for="">Ending Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="participationSc.endingDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="participationSc.endingDate" 
+                          :min="minEndDate"
+                          @change="validateDates"
+                        >
                       </div>
                     </div>
                     <br>
@@ -128,19 +140,31 @@
                         <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="text" class= "form-control" v-model="participationSc.nameOfParticipants">
                       </div>
-                      <div class="col-md-4">
+                      <div :class="{'col-md-4': !isLink, 'col-md-6': isLink}">
                         <div class="form-group">
-                        <label for="archivo">File:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <label v-if="participation1.file != null" title="This record already has a file, if you want to change add a new one, otherwise leave this field empty." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
+                          <label v-if="isLink" for="archivo">Link: </label>
+                          <label v-else for="archivo">File: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <label title="A document verifying event participation and containing relevant information about it must be uploaded. Suitable documents include conference programs, participation certificates, or confirmation emails from the organizers. Any one of these will suffice." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                          <!-- Input para archivo (solo si isLink es false) -->
+                          <input v-if="!isLink" type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+    
+                          <!-- Input para el link (solo si isLink es true) -->
+                          <input v-if="isLink" type="text" v-model="link" placeholder="Enter the link" class="form-control">
+                          <!-- Checkbox para alternar entre subir archivo o ingresar un link -->
+                          <div class="form-check pt-2">
+                            <input type="checkbox" id="isLink" v-model="isLink" class="form-check-input">
+                            <label for="isLink" class="form-check-label">Upload Link instead of File</label>
+                          </div>
+                          <label v-if="participation1.file != null && participation1.is_link == 0" >Current file: {{ fileName }}</label>
+                          <label v-if="participation1.file != null && participation1.is_link == 1" >Current link: {{ participation1.file }}</label>
                         </div>
                       </div>
-                      <div class="col-md-2 pt-2">
+                      <div v-if="participation1.file != null && !isLink" class="col-md-2 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                         &nbsp;
-                        <a v-if="participation1.file != null" class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
+                        <a class="btn btn-search-blue " title="Download" @click="descargarExtracto(id,user)"><i class="fa-solid fa-download"></i></a>
                       </div>
                     </div>
                     <br>
@@ -200,7 +224,7 @@ export default {
         endingDate: '',
         nameOfParticipants: '',
         progressReport: '',
-        file: '',
+        file: null,
         comments: '',
       },
       optionsTypeEvent: [
@@ -221,6 +245,8 @@ export default {
         "Just assistance",
         "Other",
       ],
+      isLink: false, // Controla si es un link o un archivo
+      link: '',
       other: '',
       other2: '',
       draft: false,
@@ -255,6 +281,8 @@ export default {
       this.participationSc.endingDate = this.participation1.endingDate;
       this.participationSc.comments = this.participation1.comments;
       this.participationSc.nameOfParticipants = this.participation1.nameOfParticipants;
+      this.link = this.participation1.is_link === 1 ? this.participation1.file : ''; // Si es un link, se almacena el valor en `link`
+      this.isLink = this.participation1.is_link === 1 ? true : false;
 
       if (this.participation1.researcherInvolved != null) {
           const valoresSeparados1 = this.participation1.researcherInvolved.split(",");
@@ -293,7 +321,45 @@ export default {
       }
 
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.participationSc.endingDate ? this.participationSc.endingDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.participationSc.startDate ? this.participationSc.startDate : null;
+      },
+      fileName() {
+        // Extraer solo el nombre del archivo
+        return this.participation1.file.split('/').pop();
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const startDate = new Date(this.participationSc.startDate);
+        const endDate = new Date(this.participationSc.endingDate);
+        
+        if (this.participationSc.startDate && this.participationSc.endingDate) {
+          if (startDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
@@ -473,7 +539,6 @@ export default {
               nameOfParticipants: this.participationSc.nameOfParticipants,
               comments: this.participationSc.comments,
             };
-
             await axios.put(`api/participationScEvents/${this.id}`, participationSc ).then((result) => {
               this.toast.success("Draft edited successfully!", {
                 position: "top-right",
@@ -489,14 +554,21 @@ export default {
                 icon: true,
                 rtl: false
               });
-              if(this.participationSc.file != null){
-                const formData = new FormData();
-                formData.append('id', this.id);
+
+              if(this.participationSc.file != null || this.link != '') {
+              const formData = new FormData();
+              formData.append('id', this.id);
+              console.log(this.participationSc.file);
+
+              if(this.participationSc.file != null) {
+                // Si el archivo es proporcionado
                 formData.append('file', this.participationSc.file);
+                let isLinkFlag = this.isLink ? 1 : 0;
+                formData.append('is_link', isLinkFlag);
+                console.log("aaa");
                 axios.post('api/participationScEvents/addFile', formData, {
-                    headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then( response => {
-                    console.log(response.data);
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then(response => {
                   this.toast.success("File added successfully!", {
                     position: "top-right",
                     timeout: 3000,
@@ -512,25 +584,9 @@ export default {
                     rtl: false
                   });
                   setTimeout(() => {this.cerrarModal();}, 1500);
-                }).catch((error)=> {
-                if (error.response && error.response.status === 400) {
-                this.toast.error(error.response.data.error, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-                }else if (error.response.status == 422){
-                  this.errors = error.response.data.errors;
-                  this.toast.warning('There is an invalid value.', {
+                }).catch(error => {
+                  if (error.response && error.response.status === 400) {
+                    this.toast.error(error.response.data.error, {
                       position: "top-right",
                       timeout: 3000,
                       closeOnClick: true,
@@ -543,10 +599,108 @@ export default {
                       closeButton: "button",
                       icon: true,
                       rtl: false
+                    });
+                  } else if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                    this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                  }
+                  this.buttonDisable = false;
+                });
+              } else if(this.link != '') {
+                console.log("aaa");
+                // Si solo el link es proporcionado
+                formData.append('file', this.link);
+                let isLinkFlag = this.isLink ? 1 : 0;
+                formData.append('is_link', isLinkFlag);
+                axios.post('api/participationScEvents/addFile', formData, {
+                  headers: { 'Content-Type' : 'multipart/form-data' }
+                }).then(response => {
+                  console.log(response.data);
+                  this.toast.success("Link added successfully!", {
+                    position: "top-right",
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: "button",
+                    icon: true,
+                    rtl: false
                   });
-                }
-              });
+                  setTimeout(() => {this.cerrarModal();}, 1500);
+                }).catch(error => {
+                  if (error.response && error.response.status === 400) {
+                    this.toast.error(error.response.data.error, {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                  } else if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                    this.toast.warning('There is an invalid value.', {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                  }
+                  this.buttonDisable = false;
+                });
               }
+            } else if(this.participation1.file == null) {
+              // Si ni archivo ni link fueron proporcionados
+              this.toast.error('Please upload a file or provide a link.', {
+                position: "top-right",
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+              });
+              this.buttonDisable = false;
+            }else{
+              setTimeout(() => {this.cerrarModal();}, 1500);
+            }
+
             })
             .catch((error) => {
               if (error.response) {
@@ -659,6 +813,14 @@ export default {
             if (!skipItem && (this.participationSc[item] === "" || this.participationSc[item] === 0 || this.participationSc[item] == null)) {
               this.errors.push(item);
             }
+        }
+
+        if((this.participationSc.file == null && this.participation1.file == null) && this.isLink == false){
+            this.errors.push('file');
+        }
+
+        if(this.link == '' && this.isLink == true){
+            this.errors.push('link');
         }
 
         var idUser1 = ''
@@ -832,48 +994,21 @@ export default {
                 icon: true,
                 rtl: false
               });
-              if(this.participationSc.file != null){
+              if(this.participationSc.file != null || this.link != '') {
                 const formData = new FormData();
                 formData.append('id', this.id);
-                formData.append('file', this.participationSc.file);
-                axios.post('api/participationScEvents/addFile', formData, {
+                console.log(this.participationSc.file);
+
+                if(this.participationSc.file != null) {
+                  // Si el archivo es proporcionado
+                  formData.append('file', this.participationSc.file);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  console.log("aaa");
+                  axios.post('api/participationScEvents/addFile', formData, {
                     headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then( response => {
-                    console.log(response.data);
-                  this.toast.success("File added successfully!", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                  setTimeout(() => {this.cerrarModal();}, 1500);
-                })              .catch((error)=> {
-                if (error.response && error.response.status === 400) {
-                this.toast.error(error.response.data.error, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-                }else if (error.response.status == 422){
-                  this.errors = error.response.data.errors;
-                  this.toast.warning('There is an invalid value.', {
+                  }).then(response => {
+                    this.toast.success("File added successfully!", {
                       position: "top-right",
                       timeout: 3000,
                       closeOnClick: true,
@@ -886,9 +1021,123 @@ export default {
                       closeButton: "button",
                       icon: true,
                       rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
+                  });
+                } else if(this.link != '') {
+                  console.log("aaa");
+                  // Si solo el link es proporcionado
+                  formData.append('file', this.link);
+                  let isLinkFlag = this.isLink ? 1 : 0;
+                  formData.append('is_link', isLinkFlag);
+                  axios.post('api/participationScEvents/addFile', formData, {
+                    headers: { 'Content-Type' : 'multipart/form-data' }
+                  }).then(response => {
+                    console.log(response.data);
+                    this.toast.success("Link added successfully!", {
+                      position: "top-right",
+                      timeout: 3000,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      draggablePercent: 0.6,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: true,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                    });
+                    setTimeout(() => {this.cerrarModal();}, 1500);
+                  }).catch(error => {
+                    if (error.response && error.response.status === 400) {
+                      this.toast.error(error.response.data.error, {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    } else if (error.response && error.response.status === 422) {
+                      this.errors = error.response.data.errors;
+                      this.toast.warning('There is an invalid value.', {
+                        position: "top-right",
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: "button",
+                        icon: true,
+                        rtl: false
+                      });
+                    }
+                    this.buttonDisable = false;
                   });
                 }
-              });
+              } else if(this.participation1.file == null) {
+                // Si ni archivo ni link fueron proporcionados
+                this.toast.error('Please upload a file or provide a link.', {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                });
+                this.buttonDisable = false;
+              }else{
+                setTimeout(() => {this.cerrarModal();}, 1500);
               }
             })
             .catch((error) => {

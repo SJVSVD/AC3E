@@ -43,7 +43,15 @@ If you participated by presenting a paper, ensure it is also reported in the “
                                         </td>                                          
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="participationScEvent.file != null" class="btn btn-search-blue btn-xs" title="Download File" @click="descargarExtracto(participationScEvent.id, participationScEvent.usuario.name)"><i class="fa-solid fa-download"></i></a>
+
+                                                <a v-if="participationScEvent.file != null && participationScEvent.is_link == 0" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(participationScEvent.id, participationScEvent.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                                <a v-else-if="participationScEvent.is_link == 1" 
+                                                :href="participationScEvent.file" 
+                                                class="btn btn-search-blue btn-xs" 
+                                                title="Redirect" 
+                                                target="_blank">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                </a>
                                                 <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-alert btn-xs" title="Edit" @click="editParticipation(participationScEvent)"><i class="fa fa-fw fa-edit"></i></a>

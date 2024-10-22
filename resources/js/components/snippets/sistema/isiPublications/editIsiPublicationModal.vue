@@ -127,24 +127,21 @@
                     <br>
                     <div class="row">                        
                       <div class="col-md-6">
-                          <label for="">Fundings: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <div>
-                            <Multiselect
-                                placeholder="Select the options"
-                                v-model="isiPublication.fundings"
-                                limit=4
-                                :searchable="true"
-                                :close-on-select="false"
-                                :createTag="true"
-                                :options="options1"
-                                mode="tags"
-                                label="name"
-                                trackBy="name"
-                                :object="true"
-                            />
-                          </div>
+                        <label for="">Fundings: </label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <div class="form-check pt-2">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" v-model="fundingSources.basal">
+                            Basal Financing Program Funding
+                          </label>
+                        </div>
+                        <div class="form-check pt-2">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" v-model="fundingSources.other">
+                            Other sources
+                          </label>
+                        </div>
                       </div>
                       <div class="col-md-6">
                         <label for="">Comments:</label>
@@ -231,6 +228,10 @@ export default {
     components: { modalProgressYear,modalconfirmacion, modalalerta, Multiselect },
     mixins: [mixin],
     data: () => ({
+      fundingSources: {
+        basal: false,
+        other: false,
+      },
       isiPublication:{
         authors: "",
         articleTitle: "",
@@ -253,10 +254,6 @@ export default {
         comments: "",
         progressReport: "",
       },
-      options1: [
-        'Basal Financing Program Funding',
-        'Other sources',
-      ],
       id: null,
       draft: false,
       idResearcher: '',
@@ -296,15 +293,22 @@ export default {
       this.isiPublication.keywords = this.isiPublication1.keywords;
 
       if (this.isiPublication1.funding != null) {
-          const valoresSeparados1 = this.isiPublication1.funding.split(",");
-          this.isiPublication.fundings = valoresSeparados1.map((valor, index) => {
-              valor = valor.trim();
-              if (valor.endsWith('.')) {
-                  valor = valor.slice(0, -1);
-              }
+        const valoresSeparados1 = this.isiPublication1.funding.split(",");
 
-              return { value: valor, name: valor };
-          });
+        valoresSeparados1.forEach((valor) => {
+          valor = valor.trim();
+          if (valor.endsWith('.')) {
+            valor = valor.slice(0, -1); // Elimina el punto final
+          }
+
+          // Chequea los valores existentes y marca los checkboxes correspondientes
+          if (valor === 'Basal Financing Program Funding') {
+            this.fundingSources.basal = true;
+          }
+          if (valor === 'Other sources') {
+            this.fundingSources.other = true;
+          }
+        });
       }
 
       if (this.isiPublication1.researcherInvolved != null) {
@@ -374,18 +378,21 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var fundingsName1 = "";
-            if (this.isiPublication.fundings !== null){
-              if (this.isiPublication.fundings.length !== 0) {
-                this.isiPublication.fundings.forEach((fundings, index) => {
-                  fundingsName1 += fundings.name;
-                  if (index === this.isiPublication.fundings.length - 1) {
-                    fundingsName1 += '.';
-                  } else {
-                    fundingsName1 += ', ';
-                  }
-                });
+            let fundingsName1 = "";
+
+            if (this.fundingSources.basal) {
+              fundingsName1 += "Basal Financing Program Funding";
+            }
+
+            if (this.fundingSources.other) {
+              if (fundingsName1) {
+                fundingsName1 += ", "; // Agregar coma si hay más de un valor
               }
+              fundingsName1 += "Other sources";
+            }
+
+            if (fundingsName1) {
+              fundingsName1 += "."; // Agregar punto final al string
             }
 
             var idUser1 = ''
@@ -621,7 +628,8 @@ export default {
           'firstPage',
           'lastPage',
           'keywords',
-          'month'
+          'month',
+          'fundings'
         ];
 
         for (const item in this.isiPublication) {
@@ -632,6 +640,10 @@ export default {
                     this.errors.push(item);
                 }
             }
+        }
+
+        if (!this.fundingSources.basal && !this.fundingSources.other) {
+          this.errors.push("fundings");
         }
 
         if (!this.isAnyCheckboxChecked()) {
@@ -663,7 +675,6 @@ export default {
           lastPage: this.isiPublication.lastPage,
           yearPublished: this.isiPublication.yearPublished,
           month: this.isiPublication.month,
-          funding: fundingsName1,
           mainResearchers: this.isiPublication.mainResearchers,
           associativeResearchers: this.isiPublication.associativeResearchers,
           postDoc: this.isiPublication.postDoc,
@@ -682,6 +693,7 @@ export default {
           this.errors.push('duplicated');
         }
 
+        
         var mensaje = ""
         if (this.errors.length != 0){
           this.errors.forEach(item => {
@@ -697,6 +709,8 @@ export default {
               mensaje =   mensaje + "The field Last Page is required" + "\n";
             }else if(item == 'yearPublished'){
               mensaje =   mensaje + "The field Year Published is required" + "\n";
+            }else if(item == 'fundings'){
+              mensaje =   mensaje + "At least one funding source must be selected." + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
@@ -726,18 +740,21 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-            var fundingsName1 = "";
-            if (this.isiPublication.fundings !== null){
-              if (this.isiPublication.fundings.length !== 0) {
-                this.isiPublication.fundings.forEach((fundings, index) => {
-                  fundingsName1 += fundings.name;
-                  if (index === this.isiPublication.fundings.length - 1) {
-                    fundingsName1 += '.';
-                  } else {
-                    fundingsName1 += ', ';
-                  }
-                });
+            let fundingsName1 = "";
+
+            if (this.fundingSources.basal) {
+              fundingsName1 += "Basal Financing Program Funding";
+            }
+
+            if (this.fundingSources.other) {
+              if (fundingsName1) {
+                fundingsName1 += ", "; // Agregar coma si hay más de un valor
               }
+              fundingsName1 += "Other sources";
+            }
+
+            if (fundingsName1) {
+              fundingsName1 += "."; // Agregar punto final al string
             }
 
             var idUser1 = ''

@@ -68,14 +68,28 @@
                         />
                       </div>
                       <div class="col-md-3">
-                        <label for="">Start date:</label>
+                        <label for="">Start Date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="fundingSource.startDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="fundingSource.startDate" 
+                          :max="maxStartDate"
+                          @change="validateDates"
+                        >
                       </div>
                       <div class="col-md-3">
-                        <label for="">Finish date:</label>
+                        <label for="">Finish Date:</label>
+                        <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="fundingSource.finishDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="fundingSource.finishDate" 
+                          :min="minEndDate"
+                          @change="validateDates"
+                        >
                       </div>
                     </div>
                     <br>
@@ -175,7 +189,41 @@ export default {
       this.getUsuarios2();
       this.getProgressReport();
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.fundingSource.finishDate ? this.fundingSource.finishDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.fundingSource.startDate ? this.fundingSource.startDate : null;
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const startDate = new Date(this.fundingSource.startDate);
+        const endDate = new Date(this.fundingSource.finishDate);
+        
+        if (this.fundingSource.startDate && this.fundingSource.finishDate) {
+          if (startDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.fundingSource.progressReport = year;

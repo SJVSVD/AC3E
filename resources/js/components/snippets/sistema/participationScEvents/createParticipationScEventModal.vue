@@ -111,13 +111,25 @@
                         <label for="">Start Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="participationSc.startDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="participationSc.startDate" 
+                          :max="maxStartDate"
+                          @change="validateDates"
+                        >
                       </div>
                       <div class="col-md-3">
                         <label for="">Ending Date:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
-                        <input type="date" class= "form-control" v-model="participationSc.endingDate">
+                        <input 
+                          type="date" 
+                          class="form-control" 
+                          v-model="participationSc.endingDate" 
+                          :min="minEndDate"
+                          @change="validateDates"
+                        >
                       </div>
                     </div>
                     <br>
@@ -130,12 +142,26 @@
                       </div>
                       <div class="col-md-5">
                         <div class="form-group">
-                        <label for="archivo">File: </label>
-                        <label for="" style="color: orange;">*</label>
-                        <label title="A document verifying event participation and containing relevant information about it must be uploaded. Suitable documents include conference programs, participation certificates, or confirmation emails from the organizers. Any one of these will suffice." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <input type="file" ref="fileInput" accept=".pdf, .jpg, .jpeg, .png," class= "form-control" @change="getFile">
+                          <label for="archivo" v-if="isLink">Link: </label>
+                          <label for="archivo" v-else>File: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <label title="A document verifying event participation and containing relevant information about it must be uploaded. Suitable documents include conference programs, participation certificates, or confirmation emails from the organizers. Any one of these will suffice." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                          <!-- Input para archivo (solo si isLink es false) -->
+                          <input v-if="!isLink" type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+    
+                          <!-- Input para el link (solo si isLink es true) -->
+                          <input v-if="isLink" type="text" v-model="link" placeholder="Enter the link" class="form-control">
+                          <!-- Checkbox para alternar entre subir archivo o ingresar un link -->
+                          <div class="form-check pt-2">
+                            <input type="checkbox" id="isLink" v-model="isLink" class="form-check-input">
+                            <label for="isLink" class="form-check-label">Upload Link instead of File</label>
+                          </div>
                         </div>
+                        
                       </div>
+
+      
+
                       <div class="col-md-1 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
@@ -201,6 +227,8 @@ export default {
         file: '',
         comments: '',
       },
+      isLink: 0, // Controla si es un link o un archivo
+      link: '',
       other: '',
       other2: '',
       draft: false,
@@ -237,7 +265,41 @@ export default {
     created(){
       this.getProgressReport();
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.participationSc.endingDate ? this.participationSc.endingDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.participationSc.startDate ? this.participationSc.startDate : null;
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const startDate = new Date(this.participationSc.startDate);
+        const endDate = new Date(this.participationSc.endingDate);
+        
+        if (this.participationSc.startDate && this.participationSc.endingDate) {
+          if (startDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.participationSc.progressReport = year;
@@ -384,6 +446,9 @@ export default {
               idUser1 = this.userID;
             }
 
+            let fileOrLink = this.isLink ? this.link : this.participationSc.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
+
             let participationSc = {
               idUsuario: idUser1,
               status: 'Draft',
@@ -398,7 +463,8 @@ export default {
               endingDate: this.participationSc.endingDate,
               progressReport: this.participationSc.progressReport,
               nameOfParticipants: this.participationSc.nameOfParticipants,
-              file: this.participationSc.file,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag,      
               comments: this.participationSc.comments,
             };
             axios.post("api/participationScEvents", participationSc, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
@@ -535,7 +601,8 @@ export default {
       async createParticipation() {
         this.errors = [];
         const itemsToSkip = [
-        'comments'
+        'comments',
+        'file'
         ];
 
         for (const item in this.participationSc) {
@@ -543,6 +610,14 @@ export default {
             if (!skipItem && (this.participationSc[item] === "" || this.participationSc[item] === 0 || this.participationSc[item] == null)) {
               this.errors.push(item);
             }
+        }
+
+        if(this.participationSc.file == null && this.isLink == false){
+            this.errors.push('file');
+        }
+
+        if(this.link == '' && this.isLink == true){
+            this.errors.push('link');
         }
 
 
@@ -564,7 +639,6 @@ export default {
           endingDate: this.participationSc.endingDate,
           progressReport: this.participationSc.progressReport,
           nameOfParticipants: this.participationSc.nameOfParticipants,
-          file: this.participationSc.file,
           comments: this.participationSc.comments,
         };
 
@@ -672,6 +746,9 @@ export default {
               }
             }
 
+            let fileOrLink = this.isLink ? this.link : this.participationSc.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
+
             let participationSc = {
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
@@ -686,7 +763,8 @@ export default {
               endingDate: this.participationSc.endingDate,
               progressReport: this.participationSc.progressReport,
               nameOfParticipants: this.participationSc.nameOfParticipants,
-              file: this.participationSc.file,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag,   
               comments: this.participationSc.comments,
             };
             axios.post("api/participationScEvents", participationSc, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {

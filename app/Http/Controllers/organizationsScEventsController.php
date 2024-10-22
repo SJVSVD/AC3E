@@ -11,18 +11,36 @@ class organizationsScEventsController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        if($request->hasFile('file')){
+    
+        // Manejar carga de archivo si se envía un archivo
+        if ($request->hasFile('file')) {
             $file = $request->file('file');
-            // Verificar el tamaño del archivo
+    
+            // Verificar el tamaño del archivo (máximo 20 MB)
             if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
                 return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
             }
-
-            $input['file'] = $file->store('organizationsScEvents','public');
+    
+            // Guardar el archivo con su nombre original en la carpeta organizationsScEvents
+            $filename = $file->getClientOriginalName();
+            $input['file'] = $file->storeAs('organizationsScEvents', $filename, 'public');
+    
+            // Establecer is_link en 0 ya que se está subiendo un archivo
+            $input['is_link'] = 0;
+        } elseif (!empty($input['file'])) {
+            // Si se proporciona un link en lugar de un archivo
+            $input['is_link'] = 1;
+        } else {
+            // Si no se proporciona ni archivo ni link
+            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
         }
+    
+        // Crear el registro en la base de datos
         $organizationsScEvents = organizationsScEvents::create($input);
-        return response()->json("Organizacion Creada!");
+    
+        return response()->json("Participacion Creada!");
     }
+
 
     // Función para detectar registros duplicados
      public function verifyOrganization(Request $request)
@@ -96,26 +114,41 @@ class organizationsScEventsController extends Controller
         return $organizationsScEvents;
     }
 
-    public function addFile(Request $request){
+    public function addFile(Request $request)
+    {
         $input = $request->all();
-        
-        $organization = organizationsScEvents::where('id', $input['id'])->first();
-        if(gettype($input['file']) == 'object'){
-            if($request->hasFile('file')){
-                $file = $request->file('file');
-                // Verificar el tamaño del archivo
-                if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
-                    return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
-                }
     
-                $input['file'] = $file->store('organizationsScEvents','public');
+        $organizationsScEvents = organizationsScEvents::where('id', $input['id'])->first();
+    
+        // Verificar si se envía un archivo o un link
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+    
+            // Verificar el tamaño del archivo
+            if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
+                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
             }
-        }else if($input['file'] == 'null'){
-            unset($input['file']);
+    
+            // Guardar el archivo con su nombre original
+            $filename = $file->getClientOriginalName();
+            $input['file'] = $file->storeAs('organizationsScEvents', $filename, 'public');
+    
+            // Establecer is_link en 0 ya que se está subiendo un archivo
+            $input['is_link'] = 0;
+        } elseif (!empty($input['file']) && $input['is_link']) {
+            // Si se proporciona un link en lugar de un archivo y el campo is_link es true
+            $input['is_link'] = 1;
+        } else {
+            // Si no se proporciona ni archivo ni link
+            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
         }
-        $organization = organizationsScEvents::find($request['id'])->update($input);
-        return response()->json($organization);
-    }
+    
+        // Actualizar el registro en la base de datos
+        $organizationsScEvents->update($input);
+    
+        return response()->json("File or link added successfully!");
+    }    
+    
 
     // Función para importar los registros que vienen desde excel
     public function importOrganization(Request $request)

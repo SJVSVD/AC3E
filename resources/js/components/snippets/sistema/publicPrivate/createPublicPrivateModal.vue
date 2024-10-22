@@ -104,17 +104,29 @@
                     <br>
                     <div class="row">
                       <div class="col-md-3">
-                        <label for="">Start date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="publicPrivate.startDate">
-                      </div>
-                      <div class="col-md-3">
-                        <label for="">Ending date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="publicPrivate.endingDate">
-                      </div>
+                            <label for="">Start Date:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input 
+                              type="date" 
+                              class="form-control" 
+                              v-model="publicPrivate.startDate" 
+                              :max="maxStartDate"
+                              @change="validateDates"
+                            >
+                          </div>
+                          <div class="col-md-3">
+                            <label for="">Ending Date:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input 
+                              type="date" 
+                              class="form-control" 
+                              v-model="publicPrivate.endingDate" 
+                              :min="minEndDate"
+                              @change="validateDates"
+                            >
+                          </div>
                       <div class="col-md-6">
                         <label for="">Agent type:</label>
                         <label for="" style="color: orange;">*</label>
@@ -233,7 +245,41 @@ export default {
       this.getUsuarios2();
       this.getUsuarios();
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.publicPrivate.endingDate ? this.publicPrivate.endingDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.publicPrivate.startDate ? this.publicPrivate.startDate : null;
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const startDate = new Date(this.publicPrivate.startDate);
+        const endDate = new Date(this.publicPrivate.endingDate);
+        
+        if (this.publicPrivate.startDate && this.publicPrivate.endingDate) {
+          if (startDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para manejar el envío de un formulario con un año
       handleFormSubmit1(year) {
         this.publicPrivate.progressReport = year;

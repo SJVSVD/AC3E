@@ -33,22 +33,34 @@ class thesisStudentController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-    
+
+        // Manejar carga de archivo si se envía un archivo
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-    
+
             // Verificar el tamaño del archivo
             if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
                 return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
             }
-    
-            // Guardar el archivo
-            $input['file'] = $file->store('thesisExtracts', 'public');
+
+            // Guardar el archivo con su nombre original
+            $filename = $file->getClientOriginalName();
+            $input['file'] = $file->storeAs('thesisExtracts', $filename, 'public');
+
+            // Establecer is_link en 0 ya que se está subiendo un archivo
+            $input['is_link'] = 0;
+        } elseif (!empty($input['file'])) {
+            // Si se proporciona un link en lugar de un archivo
+            $input['is_link'] = 1;
+        } else {
+            // Si no se proporciona ni archivo ni link
+            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
         }
-    
+
         $thesisStudent = thesisStudent::create($input);
         return response()->json("Thesis Creada!");
     }
+
 
     // Función para detectar registros duplicados
      public function verifyThesis(Request $request)
@@ -122,28 +134,43 @@ class thesisStudentController extends Controller
         return $thesisStudents;
     }
 
-    public function addFile(Request $request){
+    public function addFile(Request $request)
+    {
         $input = $request->all();
-        
+    
+        // Buscar la tesis correspondiente
         $thesis = thesisStudent::where('id', $input['id'])->first();
         
+        // Verificar si se envía un archivo o un link
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            
+    
             // Verificar el tamaño del archivo
             if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
                 return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
             }
-            
-            // Guardar el archivo
-            $input['file'] = $file->store('thesisExtracts', 'public');
-        } else if ($input['file'] == 'null') {
-            unset($input['file']);
+    
+            // Guardar el archivo con su nombre original
+            $filename = $file->getClientOriginalName();
+            $input['file'] = $file->storeAs('thesisExtracts', $filename, 'public');
+    
+            // Establecer is_link en 0 ya que se está subiendo un archivo
+            $input['is_link'] = 0;
+        } elseif (!empty($input['file']) && $input['is_link']) {
+            // Si se proporciona un link en lugar de un archivo y el campo is_link es true
+            $input['is_link'] = 1;
+        } else {
+            // Si no se proporciona ni archivo ni link
+            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
         }
+    
+        // Actualizar la tesis
+        $thesis->update($input);
         
-        $thesis = thesisStudent::find($request['id'])->update($input);
-        return response()->json($thesis);
+        return response()->json("File or link added successfully!");
     }
+    
+    
 
     public function thesisDownload($id){
         $thesis = thesisStudent::find($id);

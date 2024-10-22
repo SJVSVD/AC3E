@@ -105,18 +105,30 @@
                               <option value="Researcher">Researcher</option>
                               </select>
                           </div>
-                      <div class="col-md-3">
-                        <label for="">Beginning Date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="conjointProject.beginningDate">
-                      </div>
-                      <div class="col-md-3">
-                        <label for="">Ending Date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="conjointProject.endingDate">
-                      </div>
+                          <div class="col-md-3">
+                            <label for="">Beginning Date:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input 
+                              type="date" 
+                              class="form-control" 
+                              v-model="conjointProject.beginningDate" 
+                              :max="maxStartDate"
+                              @change="validateDates"
+                            >
+                          </div>
+                          <div class="col-md-3">
+                            <label for="">Ending Date:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <br>
+                            <input 
+                              type="date" 
+                              class="form-control" 
+                              v-model="conjointProject.endingDate" 
+                              :min="minEndDate"
+                              @change="validateDates"
+                            >
+                          </div>
                     </div>
                     <br>
                     <div class="row">
@@ -272,7 +284,41 @@ export default {
         this.conjointProject.collaborationStay = this.project1.collaborationStay;
       }
     },
+    computed: {
+      // La fecha máxima permitida para el campo de fecha de inicio será la fecha de finalización seleccionada
+      maxStartDate() {
+        return this.conjointProject.endingDate ? this.conjointProject.endingDate : null;
+      },
+      // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
+      minEndDate() {
+        return this.conjointProject.beginningDate ? this.conjointProject.beginningDate : null;
+      }
+    },
     methods: {
+      validateDates() {
+        // Validar si las fechas son correctas y emitir advertencias o mensajes de error
+        const beginningDate = new Date(this.conjointProject.beginningDate);
+        const endDate = new Date(this.conjointProject.endingDate);
+        
+        if (this.conjointProject.beginningDate && this.conjointProject.endingDate) {
+          if (beginningDate > endDate) {
+            this.toast.error(`The start date cannot be later than the end date.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+          }
+        }
+      },
       // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
