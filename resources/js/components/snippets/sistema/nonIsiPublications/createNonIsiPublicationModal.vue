@@ -143,7 +143,7 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-md-5">
+                      <div :class="{'col-md-5': !isLink, 'col-md-6': isLink}">
                         <div class="form-group">
                           <label for="archivo" v-if="isLink">Link: </label>
                           <label for="archivo" v-else>File: </label>
@@ -164,7 +164,7 @@
                       </div>
 
                       <!-- Clear button for file input -->
-                      <div v-if="!useLink" class="col-md-1 pt-2">
+                      <div v-if="!isLink" class="col-md-1 pt-2">
                         <br>
                         <a class="btn btn-closed" title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                       </div>
@@ -936,6 +936,10 @@ export default {
         if(this.link == '' && this.isLink == true){
             this.errors.push('link');
         }
+
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
       
         if(this.participationScToggle){
           for (const item in this.participationSc) {
@@ -995,6 +999,8 @@ export default {
               mensaje =   mensaje + "The field Start Date is required" + "\n";
             }else if(item == 'endingDate'){
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'nameOfParticipants'){
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
             }else{

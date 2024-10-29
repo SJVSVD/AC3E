@@ -560,6 +560,9 @@ export default {
             this.errors.push('link');
         }
 
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
 
         var idUser1 = ''
         if(this.idResearcher != ''){
@@ -596,13 +599,17 @@ export default {
         if (this.errors.length != 0){
           this.errors.forEach(item => {
             if(item == 'typeEvent'){
-              mensaje =   mensaje + "The field Type Event is required" + "\n";
+              mensaje =   mensaje + "The field Type of Event is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researchers involved is required" + "\n";
             }else if(item == 'eventName'){
               mensaje =   mensaje + "The field Event Name is required" + "\n";
             }else if(item == 'startDate'){
               mensaje =   mensaje + "The field Start Date is required" + "\n";
             }else if(item == 'endingDate'){
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'numberParticipants'){
               mensaje =   mensaje + "The field Number of Participants is required" + "\n";
             }else if(item == 'duplicated'){

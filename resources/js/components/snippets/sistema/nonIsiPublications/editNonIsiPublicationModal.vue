@@ -831,6 +831,10 @@ export default {
             this.errors.push('link');
         }
 
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
+
         if (!this.fundingSources.basal && !this.fundingSources.other) {
           this.errors.push("fundings");
         }
@@ -875,6 +879,8 @@ export default {
               mensaje =   mensaje + "The field Last Page is required" + "\n";
             }else if(item == 'yearPublished'){
               mensaje =   mensaje + "The field Year Published is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'indexedBy'){
               mensaje =   mensaje + "The field Indexed By is required" + "\n";
             }else if(item == 'researcherInvolved'){

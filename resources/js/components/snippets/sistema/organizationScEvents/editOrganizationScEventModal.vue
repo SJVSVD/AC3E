@@ -752,6 +752,10 @@ export default {
             this.errors.push('link');
         }
 
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
+
         var idUser1 = ''
         if(this.idResearcher != ''){
           idUser1 = this.idResearcher;
@@ -794,6 +798,8 @@ export default {
               mensaje =   mensaje + "The field Start Date is required" + "\n";
             }else if(item == 'endingDate'){
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'numberParticipants'){
               mensaje =   mensaje + "The field Number of Participants is required" + "\n";
             }else if(item == 'duplicated'){

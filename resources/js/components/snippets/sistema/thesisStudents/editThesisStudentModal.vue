@@ -1041,10 +1041,13 @@ export default {
             this.errors.push('link');
         }
 
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
+
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
             this.errors.push('yearThesisEnd');
         }
-
 
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.posteriorArea == ""){
             this.errors.push('posteriorArea');
@@ -1122,6 +1125,8 @@ export default {
               mensaje =   mensaje + "The field Resources provided is required" + "\n";
             }else if(item == 'posteriorArea'){
               mensaje =   mensaje + "The field Posterior working area is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'institutionPosteriorArea'){
               mensaje =   mensaje + "The field Institution posterior working area is required" + "\n";
             }else if(item == 'noTutors'){

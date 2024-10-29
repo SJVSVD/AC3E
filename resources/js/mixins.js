@@ -49,6 +49,14 @@ export const mixin = {
         isEmpty(object) {
             return Object.keys(object).length === 0;
         },
+        isValidURL(url) {
+            try {
+                new URL(url); // Verifica si es una URL válida
+                return true;
+            } catch (_) {
+                return false;
+            }
+        },
         crearTabla(nombreTabla) {
             setTimeout(() => {
                 this.table = $(nombreTabla).DataTable({});

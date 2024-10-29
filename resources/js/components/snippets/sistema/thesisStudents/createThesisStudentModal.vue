@@ -161,7 +161,7 @@
                             <option value="2">In progress</option>
                           </select>
                       </div>
-                      <div v-if="thesisStudent.thesisStatus == '1'" class="col-4">
+                      <div v-if="thesisStudent.thesisStatus == '1'" :class="{'col-md-4': !isLink, 'col-md-5': isLink}">
                         <div class="form-group">
                           <label for="archivo">Thesis Extract: </label>
                           <label for="" style="color: orange;">*</label>
@@ -809,10 +809,13 @@ export default {
             this.errors.push('link');
         }
 
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
+
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
             this.errors.push('yearThesisEnd');
         }
-
 
         if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.posteriorArea == ""){
             this.errors.push('posteriorArea');
@@ -889,6 +892,8 @@ export default {
               mensaje =   mensaje + "The field Month which thesis ends is required" + "\n";
             }else if(item == 'resourcesCenter'){
               mensaje =   mensaje + "The field Resources provided is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'posteriorArea'){
               mensaje =   mensaje + "The field Posterior working area is required" + "\n";
             }else if(item == 'institutionPosteriorArea'){

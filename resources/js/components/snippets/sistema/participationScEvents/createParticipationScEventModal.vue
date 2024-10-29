@@ -140,7 +140,7 @@
                         <label title="The format for this field should be as follows: 'First Name,Last Name; First Name,Last Name; ...'" style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <input type="text" class= "form-control" v-model="participationSc.nameOfParticipants">
                       </div>
-                      <div class="col-md-5">
+                      <div :class="{'col-md-5': !isLink, 'col-md-6': isLink}">
                         <div class="form-group">
                           <label for="archivo" v-if="isLink">Link: </label>
                           <label for="archivo" v-else>File: </label>
@@ -160,9 +160,7 @@
                         
                       </div>
 
-      
-
-                      <div class="col-md-1 pt-2">
+                      <div v-if="!isLink" class="col-md-1 pt-2">
                         <br>
                         <a class="btn btn-closed " title="Clear Input" @click="clearFileInput"><i class="fa-solid fa-ban"></i></a>
                       </div>
@@ -620,6 +618,9 @@ export default {
             this.errors.push('link');
         }
 
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
 
         var idUser1 = ''
         if(this.idResearcher != ''){
@@ -655,13 +656,15 @@ export default {
         if (this.errors.length != 0){
           this.errors.forEach(item => {
             if(item == 'typeEvent'){
-              mensaje =   mensaje + "The field Type Event is required" + "\n";
+              mensaje =   mensaje + "The field Type of Event is required" + "\n";
             }else if(item == 'eventName'){
               mensaje =   mensaje + "The field Event Name is required" + "\n";
             }else if(item == 'startDate'){
               mensaje =   mensaje + "The field Start Date is required" + "\n";
             }else if(item == 'endingDate'){
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'nameOfParticipants'){
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
             }else if(item == 'progressReport'){
