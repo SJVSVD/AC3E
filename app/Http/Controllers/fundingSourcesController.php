@@ -33,114 +33,158 @@ class fundingSourcesController extends Controller
         return response()->json($existentes); 
     }
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
-    public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
+    public function show($userID) {
+        // Inicializar variables y roles
         $roles = [];
         $administrador = false;
+        $titularResearcher = false;
         $fundingSources = fundingSources::where('idUsuario', $userID)->with('usuario')->get();
         
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
-        }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if ($rol['name'] == 'Administrator') {
+                    $roles[] = $rol['name'];
                     $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
                 }
             }
         }
-        if($administrador == false){
-            function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
-                $string = strtolower($string);
-                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
-                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
-            }
-            // Normaliza el nombre del usuario
-            $userName = normalizeString(User::findOrFail($userID)->name);
-            if($userName == 'wael elderedy'){
-                $userName = 'wael';
-            }
-            // Obtén las fuentes de financiación relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-            $fundingSources = fundingSources::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
-                    ->orWhere('idUsuario', $userID);
-            })->with('usuario')->get();
-
-            // Filtra los resultados en PHP si es necesario
-            $fundingSources = $fundingSources->filter(function($source) use ($userName,$userID) {
-                $normalizedResearcher = normalizeString($source->researcherInvolved);
-                return $source->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-            });
-        }else{
-            $fundingSources = fundingSources::with('usuario')->get();
+    
+        function normalizeString($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
         }
+    
+        $userName = normalizeString($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $fundingSources = fundingSources::whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        } elseif ($titularResearcher) {
+            // Lógica para Titular Researcher basada en `idResearchLine`
+            $userResearchLine = $user->idResearchLine;
+    
+            $fundingSources = fundingSources::where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                          ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+            return $fundingSources;
+        } else {
+            // Lógica estándar para usuarios sin roles especiales
+            $fundingSources = fundingSources::where(function($query) use ($userName, $userID) {
+                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                          ->orWhere('idUsuario', $userID);
+                })
+                ->with('usuario')
+                ->get();
+        }
+    
+        // Filtrar resultados en PHP si es necesario
+        $fundingSources = $fundingSources->filter(function($source) use ($userName, $userID) {
+            $normalizedResearcher = normalizeString($source->researcherInvolved);
+            return $source->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+        });
+    
         return $fundingSources;
     }
-
-        // Función para mostrar registros y verificar si es administrador  o no lo es
-        public function fundingSourcesActive($userID){
-            // Seleccionar datos relacionados con el usuario:
-            $roles = [];
-            $administrador = false;
-            $today = Carbon::today();
-            $fundingSources = fundingSources::where('finishDate', '>', $today)->where('idUsuario', $userID)->with('usuario')->get();
-            
-            $user = User::where('id', $userID)->with('roles')->get();
-            // Mantener aquellos que cumplen con los roles del usuario:
-            if ($user[0]['roles'] == "[]"){
-                array_push($roles,'');
-            }
-            else{
-                foreach ($user[0]['roles'] as $rol){
-                    if ($rol['name'] == 'Administrator'){
-                        array_push($roles, $rol['name']);
-                        $administrador = true;
-                    }
-                }
-            }
-            if($administrador == false){
-                function normalizeString($string) {
-                    // Eliminar acentos y convertir a minúsculas
-                    $string = strtolower($string);
-                    $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                    // Eliminar caracteres especiales
-                    $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                    // Eliminar espacios adicionales
-                    $string = trim($string);
-                    
-                    return $string;
-                }
-                // Normaliza el nombre del usuario
-                $userName = normalizeString(User::findOrFail($userID)->name);
-                if($userName == 'wael elderedy'){
-                    $userName = 'wael';
-                }
-                // Obtén las fuentes de financiación relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-                $fundingSources = fundingSources::where('finishDate', '>', $today)->where(function($query) use ($userName, $userID) {
-                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
-                        ->orWhere('idUsuario', $userID);
-                })->with('usuario')->get();
     
-                // Filtra los resultados en PHP si es necesario
-                $fundingSources = $fundingSources->filter(function($source) use ($userName,$userID) {
-                    $normalizedResearcher = normalizeString($source->researcherInvolved);
-                    return $source->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-                });
-            }else{
-                $fundingSources = fundingSources::where('finishDate', '>', $today)->with('usuario')->get();
+    public function fundingSourcesActive($userID) {
+        // Inicializar variables y roles
+        $roles = [];
+        $administrador = false;
+        $titularResearcher = false;
+        $today = Carbon::today();
+        
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if ($rol['name'] == 'Administrator') {
+                    $roles[] = $rol['name'];
+                    $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
+                }
             }
-            return $fundingSources;
         }
+    
+        function normalizeString1($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
+        }
+    
+        $userName = normalizeString1($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $fundingSources = fundingSources::where('finishDate', '>', $today)
+            ->whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        } elseif ($titularResearcher) {
+            // Lógica para Titular Researcher basada en `idResearchLine`
+            $userResearchLine = $user->idResearchLine;
+    
+            $fundingSources = fundingSources::where('finishDate', '>', $today)
+                ->where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                          ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+        } else {
+            // Lógica estándar para usuarios sin roles especiales
+            $fundingSources = fundingSources::where('finishDate', '>', $today)
+                ->where(function($query) use ($userName, $userID) {
+                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                          ->orWhere('idUsuario', $userID);
+                })
+                ->with('usuario')
+                ->get();
+        }
+    
+        // Filtrar resultados en PHP por `finishDate`, `idUsuario`, y nombre normalizado si es necesario
+        $fundingSources = $fundingSources->filter(function($source) use ($today) {
+            return Carbon::parse($source->finishDate)->greaterThan($today);
+        });
+    
+        return $fundingSources;
+    }
 
      // Función para editar un registro
     public function update(Request $request, $id)

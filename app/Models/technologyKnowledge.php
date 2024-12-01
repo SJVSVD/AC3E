@@ -11,8 +11,8 @@ class technologyKnowledge extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "technologyKnowledge";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'technologyTransfer',

@@ -106,61 +106,86 @@ class nonIsiPublicationsController extends Controller
     }
     
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
-    public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
-        $roles = [];
-        $administrador = false;
-        $nonIsiPublications = nonIsiPublication::where('idUsuario', $userID)->with('usuario')->get();
-        
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
+// Función para mostrar registros y verificar roles de administrador o titular researcher
+public function show($userID){
+    $roles = [];
+    $administrador = false;
+    $titularResearcher = false;
+    
+    // Obtener usuario con roles
+    $user = User::where('id', $userID)->with('roles')->first();
+
+    // Verificar roles
+    foreach ($user->roles as $rol) {
+        if ($rol['name'] == 'Administrator') {
+            $roles[] = $rol['name'];
+            $administrador = true;
+        } elseif ($rol['name'] == 'Titular Researcher') {
+            $roles[] = $rol['name'];
+            $titularResearcher = true;
         }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
-                    $administrador = true;
-                }
-            }
-        }
-        if($administrador == false){
-            function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
-                $string = strtolower($string);
-                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
-                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
-            }
-            
-            // Normaliza el nombre del usuario
-            $userName = normalizeString(User::findOrFail($userID)->name);
-            if($userName == 'wael elderedy'){
-                $userName = 'wael';
-            }
-            // Obtén las publicaciones no ISI relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-            $nonIsiPublications = nonIsiPublication::where(function($query) use ($userName, $userID) {
-                $query->where('idUsuario', $userID)
-                      ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
-            })->with('usuario')->get();
-            
-            // Filtra los resultados en PHP si es necesario
-            $nonIsiPublications = $nonIsiPublications->filter(function($publication) use ($userName, $userID) {
-                $normalizedResearcher = normalizeString($publication->researcherInvolved);
-                // Verifica si coincide por nombre normalizado o por ID
-                return $publication->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-            });
-        }else{
-            $nonIsiPublications = nonIsiPublication::with('usuario')->get();
-        }
-        return $nonIsiPublications;
     }
+
+    // Si es Administrador, retornar todas las publicaciones
+    if ($administrador) {
+        return nonIsiPublication::whereHas('usuario', function ($query) {
+            $query->where('estado', 1); // Filtrar solo usuarios activos
+        })
+        ->with('usuario')
+        ->get();
+    }
+
+    // Función para normalizar el nombre del usuario
+    function normalizeString($string) {
+        $string = strtolower($string);
+        $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+        return preg_replace('/[^a-z0-9\s]/', '', trim($string));
+    }
+
+    // Obtener y normalizar el nombre del usuario
+    $userName = normalizeString($user->name);
+    if ($userName == 'wael elderedy') {
+        $userName = 'wael';
+    }
+
+    // Obtener publicaciones para "Titular Researcher"
+    if ($titularResearcher) {
+        // Obtener `idResearchLine` del usuario actual
+        $userResearchLine = $user->idResearchLine;
+
+        // Consultar publicaciones relacionadas por `idResearchLine`, `idUsuario` y `researcherInvolved`
+        $nonIsiPublications = nonIsiPublication::where(function($query) use ($userResearchLine, $userID, $userName) {
+            $query->where('idUsuario', $userID)
+                  ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+        })
+        ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+            $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+        })
+        ->with('usuario')
+        ->get();
+        return $nonIsiPublications;
+    } else {
+        // Filtrar para usuarios sin roles especiales
+        $nonIsiPublications = nonIsiPublication::where(function($query) use ($userName, $userID) {
+            $query->where('idUsuario', $userID)
+                  ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+        })
+        ->whereHas('usuario', function ($query) {
+            $query->where('estado', 1); // Filtrar solo usuarios activos
+        })
+        ->with('usuario')
+        ->get();
+    }
+
+    // Filtrar resultados en PHP si es necesario
+    $nonIsiPublications = $nonIsiPublications->filter(function($publication) use ($userName, $userID) {
+        $normalizedResearcher = normalizeString($publication->researcherInvolved);
+        return $publication->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+    });
+
+    return $nonIsiPublications;
+}
+
 
     // Función para importar los registros que vienen desde excel
     public function importNonIsi(Request $request)

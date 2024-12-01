@@ -11,8 +11,8 @@ class isiPublication extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "isiPublications";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'status',
         'idUsuario',
         'researcherInvolved',

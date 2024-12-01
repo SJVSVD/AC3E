@@ -11,8 +11,8 @@ class outreachActivities extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "outreachActivities";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'activityType',

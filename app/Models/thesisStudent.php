@@ -11,8 +11,8 @@ class thesisStudent extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "thesisStudents";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'researcherInvolved',

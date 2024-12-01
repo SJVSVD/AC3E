@@ -11,8 +11,8 @@ class fundingSources extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "fundingSources";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'researcherInvolved',

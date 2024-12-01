@@ -22,6 +22,54 @@ use Illuminate\Support\Facades\Schema;
 
 class dashboardController extends Controller
 {
+
+    public function updateResearchLinesInvolved()
+    {
+        $modelos = [
+            isiPublication::class,
+            nonIsiPublication::class,
+            books::class,
+            awards::class,
+            organizationsScEvents::class,
+            participationScEvents::class,
+            scCollaborations::class,
+            thesisStudent::class,
+            postDoc::class,
+            outreachActivities::class,
+            patents::class,
+            publicPrivate::class,
+            technologyKnowledge::class,
+            fundingSources::class,
+        ];
+
+        // Recorre todos los modelos para actualizar el campo 'researchLinesInvolved'
+        foreach ($modelos as $modelo) {
+            $registros = $modelo::whereNotNull('researcherInvolved')->get();
+
+            foreach ($registros as $registro) {
+                $researcherNames = explode(',', $registro->researcherInvolved);
+
+                // Limpiar y normalizar los nombres
+                $normalizedNames = array_map('trim', $researcherNames);
+
+                // Obtener las líneas de investigación para cada investigador
+                $researchLines = [];
+                foreach ($normalizedNames as $name) {
+                    $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                    if ($user && $user->researchLine) {
+                        $researchLines[] = $user->researchLine->name;
+                    }
+                }
+
+                // Actualizar el campo 'researchLinesInvolved'
+                $registro->researchLinesInvolved = implode(', ', $researchLines);
+                $registro->save();
+            }
+        }
+
+        return response()->json(['message' => 'Research lines updated successfully.']);
+    }
+
     // Se sacan de la base de datos los ultimos 10 registros que se hayan cargado en la pagina
     public function getRegistros()
     {

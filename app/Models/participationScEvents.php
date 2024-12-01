@@ -11,8 +11,8 @@ class participationScEvents extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "participationScEvents";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'researcherInvolved',

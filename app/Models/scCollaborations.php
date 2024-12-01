@@ -11,8 +11,8 @@ class scCollaborations extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "scCollaborations";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'moduleType',

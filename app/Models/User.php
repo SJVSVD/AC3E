@@ -8,8 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use LaravelAndVueJS\Traits\LaravelPermissionToVueJS;
+use Illuminate\Database\Eloquent\Builder;
 
-//Spatie
+// Spatie
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -30,16 +31,19 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    public function roleUser(){
+
+
+    public function roleUser()
+    {
         return $this->belongsTo(rolesUsers::class, 'idRole', 'id');
     }
 
-    public function researchLine(){
+    public function researchLine()
+    {
         return $this->belongsTo(researchLines::class, 'idResearchLine', 'id');
     }
 }

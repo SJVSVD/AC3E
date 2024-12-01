@@ -11,8 +11,8 @@ class nonIsiPublication extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "nonIsiPublications";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'status',
         'idUsuario',
         'authors',

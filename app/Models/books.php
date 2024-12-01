@@ -11,8 +11,8 @@ class books extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "books";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'status',
         'centerResearcher',
         'researcherInvolved',

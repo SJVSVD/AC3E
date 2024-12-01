@@ -6,7 +6,7 @@
           <div class="modal-container">
             <div class="modal-header pb-1" style="font-weight: bold; color: #444444;">
               <slot name="header">
-                <label class="col-5 m-0" style="font-size: 17px;">Funding Source Details</label>
+                <label class="col-5 m-0" style="font-size: 17px;">Funding Source Details {{ fundingSource1.researchLinesInvolved }}</label>
               </slot>
               <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
             </div>
@@ -23,7 +23,7 @@
                     <label class="col-6 m-0 fs-8 pb-1">Start Date: <label class="fw-normal" style="font-size: 14px;">{{ this.thisDate(fundingSource1.startDate) || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Finish Date: <label class="fw-normal" style="font-size: 14px;">{{ this.thisDate(fundingSource1.finishDate) || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Comments: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.comments || '---' }}</label></label>
-                    <label class="col-6 m-0 fs-8 pb-1">In Cash: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.inCash || '---' }}</label></label>
+                    <label class="col-6 m-0 fs-8 pb-1">In Cash: <label class="fw-normal" style="font-size: 14px;">{{ formatCurrency(fundingSource1.inCash) || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Type of Collaboration: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.typeOfCollaboration || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Progress Report: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.progressReport || '---' }}</label></label>
                   </div>
@@ -51,5 +51,12 @@ export default {
     fundingSource1: Object,
   },
   created() {},
+  methods: {
+    // Formatea el valor con puntos como separadores de miles
+    formatCurrency(value) {
+      if (!value) return '';
+      return parseInt(value).toLocaleString('de-DE'); // Aplica el formato de miles con puntos
+    }
+  }
 }
 </script>

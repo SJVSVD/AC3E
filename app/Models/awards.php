@@ -11,8 +11,8 @@ class awards extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "awards";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'status',
         'idUsuario',
         'researcherInvolved',

@@ -62,57 +62,83 @@ class participationsScEventsController extends Controller
         return response()->json($existentes); 
     }
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
-    public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
+    // Función para mostrar registros y verificar roles de administrador o titular researcher
+    public function show($userID) {
         $roles = [];
         $administrador = false;
-        $participationScEvents = participationScEvents::where('idUsuario', $userID)->with('usuario')->get();
-        
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
-        }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
-                    $administrador = true;
-                }
-            }
-        }
-        if($administrador == false){
-            function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
-                $string = strtolower($string);
-                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
-                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
-            }
-            // Normaliza el nombre del usuario
-            $userName = normalizeString(User::findOrFail($userID)->name);
-            if($userName == 'wael elderedy'){
-                $userName = 'wael';
-            }
-            // Obtén las participaciones en eventos SC relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-            $participationScEvents = participationScEvents::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
-                    ->orWhere('idUsuario', $userID);
-            })->with('usuario')->get();
+        $titularResearcher = false;
 
-            // Filtra los resultados en PHP si es necesario
-            $participationScEvents = $participationScEvents->filter(function($event) use ($userName,$userID) {
-                $normalizedResearcher = normalizeString($event->researcherInvolved);
-                return $event->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-            });
-        }else{
-            $participationScEvents = participationScEvents::with('usuario')->get();
+        // Obtener usuario con roles
+        $user = User::where('id', $userID)->with('roles')->first();
+
+        // Verificar roles
+        foreach ($user->roles as $rol) {
+            if ($rol['name'] == 'Administrator') {
+                $roles[] = $rol['name'];
+                $administrador = true;
+            } elseif ($rol['name'] == 'Titular Researcher') {
+                $roles[] = $rol['name'];
+                $titularResearcher = true;
+            }
         }
+
+        // Si es Administrador, retornar todos los eventos SC
+        if ($administrador) {
+            return participationScEvents::whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        }
+
+        // Función para normalizar el nombre del usuario
+        function normalizeString($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            return preg_replace('/[^a-z0-9\s]/', '', trim($string));
+        }
+
+        // Obtener y normalizar el nombre del usuario
+        $userName = normalizeString($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+
+        // Obtener eventos SC para "Titular Researcher"
+        if ($titularResearcher) {
+            // Obtener `idResearchLine` del usuario actual
+            $userResearchLine = $user->idResearchLine;
+
+            // Consultar eventos relacionados por `idResearchLine`, `idUsuario` y `researcherInvolved`
+            $participationScEvents = participationScEvents::where(function($query) use ($userResearchLine, $userID, $userName) {
+                $query->where('idUsuario', $userID)
+                    ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+            })
+            ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+            })
+            ->with('usuario')
+            ->get();
+            return $participationScEvents;
+        } else {
+            // Filtrar para usuarios sin roles especiales
+            $participationScEvents = participationScEvents::where(function($query) use ($userName, $userID) {
+                $query->where('idUsuario', $userID)
+                    ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+            })
+            ->whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        }
+
+        // Filtrar resultados en PHP si es necesario
+        $participationScEvents = $participationScEvents->filter(function($event) use ($userName, $userID) {
+            $normalizedResearcher = normalizeString($event->researcherInvolved);
+            return $event->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+        });
+
         return $participationScEvents;
     }
 

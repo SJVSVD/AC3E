@@ -125,17 +125,22 @@
                             <br>
                             <input type="email" class= "form-control" v-model="thesisStudent.studentMail">
                       </div>
-                      <div class="col-md-5">
-                          <label for="">Academic Degree: </label>
-                          <label for="" style="color: orange;">*</label>
-                          <br>
-                          <select class="form-select" v-model="thesisStudent.academicDegree">
-                            <option disabled value="">Select a degree</option>
-                            <option value="Undergraduate degree or profesional title">Undergraduate degree or profesional title</option>
-                            <option value="Master o equivalent">Master o equivalent</option>
-                            <option value="PhD degree">PhD degree</option>
-                          </select>
-                      </div>
+                  <!-- Academic Degree field -->
+                  <div class="col-md-5">
+                    <label for="">Academic Degree:</label>
+                    <label for="" style="color: orange;">*</label>
+                    <br>
+                    <select class="form-select" v-model="thesisStudent.academicDegree">
+                      <option disabled value="">Select a degree</option>
+                      <option value="Undergraduate degree or profesional title">Undergraduate degree or profesional title</option>
+                      <option value="Master o equivalent">Master o equivalent</option>
+                      <option value="PhD degree">PhD degree</option>
+                    </select>
+                    <div class="form-check pt-2">
+                    <input type="checkbox" id="dobleGrado" v-model="isDobleGrado" class="form-check-input me-2">
+                    <label for="dobleGrado" class="form-check-label">Doble Grado?</label>
+                  </div>
+                  </div>
                       <div class="col-md-4">
                           <label for="">Degree Denomination: </label>
                           <label for="" style="color: orange;">*</label>
@@ -378,6 +383,7 @@ export default {
         'Infrastructure',
         'Other',
       ],
+      isDobleGrado: 0,
       isLink: 0, // Controla si es un link o un archivo
       link: '',
       selectedUniversity: '',
@@ -449,7 +455,11 @@ export default {
       // Función para obtener usuarios (investigadores) desde la API
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
-            this.researchers = response.data;
+          this.researchers  = response.data.sort((a, b) => {
+              if (a.toLowerCase() < b.toLowerCase()) return -1;
+              if (a.toLowerCase() > b.toLowerCase()) return 1;
+              return 0;
+          });
         }).catch(e=> console.log(e))
       },
       // Función para manejar el envío de un formulario con un año
@@ -605,57 +615,37 @@ export default {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
       // Función para guardar un borrador 
-      async guardarBorrador(){
+      async guardarBorrador() {
         const ok = await this.$refs.confirmation.show({
           title: 'Save draft',
-            message: `Are you sure you want to save the report as a draft?
- By saving as a draft, the information will not be reported. However, you can modify the report's status at any time and submit it, as long as all mandatory information is completed.
-`,
-            okButton: 'Save',
-            cancelButton: 'Return'
-        })
+          message: `Are you sure you want to save the report as a draft?
+      By saving as a draft, the information will not be reported. However, you can modify the report's status at any time and submit it, as long as all mandatory information is completed.`,
+          okButton: 'Save',
+          cancelButton: 'Return'
+        });
+
         if (ok) {
-          var runOrPassport1 = '';
-          if(this.thesisStudent.identification == 'Run'){
-            runOrPassport1 = this.formatoRut(this.thesisStudent.run);
-          }else{
-            runOrPassport1 = this.thesisStudent.passport;
-          }
-          var resources1 = '';
-          if(this.thesisStudent.resourcesCenter != null && this.thesisStudent.resourcesCenter != []){
-            this.thesisStudent.resourcesCenter.forEach(resource => {
-              resources1 += resource.value + ',';
-            }); 
-          }
-          
-          
-          var peopleInvolved1 = "";
-          if (this.thesisStudent.researcherInvolved !== null){
-            if (this.thesisStudent.researcherInvolved.length !== 0) {
-              this.thesisStudent.researcherInvolved.forEach((researcherInvolved, index) => {
-                peopleInvolved1 += researcherInvolved.name;
-                if (index === this.thesisStudent.researcherInvolved.length - 1) {
-                  peopleInvolved1 += '.';
-                } else {
-                  peopleInvolved1 += ', ';
-                }
-              });
-            }
-          }
-          
-          var idUser1 = ''
-          if(this.idResearcher != ''){
-            idUser1 = this.idResearcher;
-          }else{
-            idUser1 = this.userID;
-          }
-          
-          let universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
+          let runOrPassport1 = this.thesisStudent.identification === 'Run'
+            ? this.formatoRut(this.thesisStudent.run)
+            : this.thesisStudent.passport;
 
-          let fileOrLink = this.isLink ? this.link : this.file;
-          let isLinkFlag = this.isLink ? 1 : 0;
+          let resources1 = '';
+          if (this.thesisStudent.resourcesCenter != null && this.thesisStudent.resourcesCenter.length > 0) {
+            resources1 = this.thesisStudent.resourcesCenter.map(resource => resource.value).join(',');
+          }
 
-          let thesisStudent = {
+          let peopleInvolved1 = '';
+          if (this.thesisStudent.researcherInvolved != null && this.thesisStudent.researcherInvolved.length > 0) {
+            peopleInvolved1 = this.thesisStudent.researcherInvolved.map((r, i) => r.name + (i === this.thesisStudent.researcherInvolved.length - 1 ? '.' : ', ')).join('');
+          }
+
+          const idUser1 = this.idResearcher || this.userID;
+          const universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
+          const fileOrLink = this.isLink ? this.link : this.file;
+          const isLinkFlag = this.isLink ? 1 : 0;
+
+          // Configuración base del borrador de tesis
+          const thesisBaseData = {
             idUsuario: idUser1,
             status: 'Draft',
             researcherInvolved: peopleInvolved1,
@@ -666,7 +656,6 @@ export default {
             studentMail: this.thesisStudent.studentMail,
             thesisStatus: this.thesisStudent.thesisStatus,
             thesisTitle: this.thesisStudent.thesisTitle,
-            academicDegree: this.thesisStudent.academicDegree,
             degreeDenomination: this.thesisStudent.degreeDenomination,
             tutorName: this.tutor1.name,
             tutorInstitution: this.tutor1.institution,
@@ -684,283 +673,105 @@ export default {
             institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
             comments: this.thesisStudent.comments,
             progressReport: this.thesisStudent.progressReport,
-            file: fileOrLink,         // Enviar archivo o link
-            isLink: isLinkFlag         // Enviar la bandera que indica si es link
+            file: fileOrLink,
+            isLink: isLinkFlag
           };
-          axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
-            this.buttonDisable = true;
-            this.buttonText = 'Sending...';
+
+          // Enviar uno o dos registros según el valor de `isDobleGrado`
+          if (this.isDobleGrado) {
+            // Primer registro: Master o equivalent
+            await axios.post("api/thesisStudents", {
+              ...thesisBaseData,
+              academicDegree: "Master o equivalent"
+            }, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+            // Segundo registro: PhD degree
+            await axios.post("api/thesisStudents", {
+              ...thesisBaseData,
+              academicDegree: "PhD degree"
+            }, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+            this.toast.success("Drafts for both degrees saved successfully!", {
+              position: "top-right",
+              timeout: 3000
+            });
+          } else {
+            // Enviar un solo registro con el `academicDegree` seleccionado
+            await axios.post("api/thesisStudents", {
+              ...thesisBaseData,
+              academicDegree: this.thesisStudent.academicDegree
+            }, { headers: { 'Content-Type': 'multipart/form-data' } });
+
             this.toast.success("Draft saved successfully!", {
               position: "top-right",
-              timeout: 3000,
-              closeOnClick: true,
-              pauseOnFocusLoss: true,
-              pauseOnHover: true,
-              draggable: true,
-              draggablePercent: 0.6,
-              showCloseButtonOnHover: false,
-              hideProgressBar: true,
-              closeButton: "button",
-              icon: true,
-              rtl: false
+              timeout: 3000
             });
-            setTimeout(() => {this.cerrarModal();}, 1500);
-          })
-          .catch((error)=> {
-            if (error.response && error.response.status === 400) {
-                this.toast.error(error.response.data.error, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-            } else if (error.response && error.response.status === 422) {
-                this.errors = error.response.data.errors;
-                this.toast.warning('There is an invalid value.', {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-            }
-            this.buttonDisable = false;
-            this.buttonText = 'Send Thesis';
-          });
+          }
+
+          this.buttonDisable = true;
+          this.buttonText = 'Sending...';
+          setTimeout(() => { this.cerrarModal(); }, 1500);
         }
       },
-      // Función para crear una nueva tesis
+
       async crearTesis() {
         this.errors = [];
 
-        const fieldsToExclude = ['yearThesisEnd', 
-        'posteriorArea',
-        'institutionPosteriorArea',
-        'comments', 
-        'monthEnd',
-        'run',
-        'passport',
-        'tutorName', 
-        'tutorInstitution',
-        'cotutorName',
-        'cotutorInstitution',
-        'otherName','otherInstitution','monthStart']; // Arreglo de campos a excluir
+        // Validaciones
+        const fieldsToExclude = [
+          'yearThesisEnd', 
+          'posteriorArea',
+          'institutionPosteriorArea',
+          'comments', 
+          'monthEnd',
+          'run',
+          'passport',
+          'tutorName', 
+          'tutorInstitution',
+          'cotutorName',
+          'cotutorInstitution',
+          'otherName', 
+          'otherInstitution', 
+          'monthStart'
+        ]; 
 
         for (const item in this.thesisStudent) {
-          if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir
-            if (this.thesisStudent[item] === "" || this.thesisStudent[item] === 0 ||this.thesisStudent[item] == null || this.thesisStudent[item] == []){
-              this.errors.push(item);
-            } 
+          if (!fieldsToExclude.includes(item) && (this.thesisStudent[item] === "" || this.thesisStudent[item] == null || this.thesisStudent[item] === 0 || this.thesisStudent[item] == [])) {
+            this.errors.push(item);
           }
         }
 
-        if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run == ""){
+        // Validaciones adicionales para campos específicos
+        if (this.thesisStudent.identification === 'Run' && this.thesisStudent.run === "") {
           this.errors.push('run');
-        }else if(this.thesisStudent.identification == 'Passport' && this.thesisStudent.passport == ""){
+        } else if (this.thesisStudent.identification === 'Passport' && this.thesisStudent.passport === "") {
           this.errors.push('passport');
         }
 
-        // Validar que al menos uno de los conjuntos tenga ambos campos rellenados
-        let isValid = false;
-
-        if (this.tutor1.name !== '' && this.tutor1.institution !== '') {
-          isValid = true;
-        }
-
-        if (this.cotutor1.name !== '' && this.cotutor1.institution !== '') {
-          isValid = true;
-        }
-
-        if (this.other1.name !== '' && this.other1.institution !== '') {
-          isValid = true;
-        }
-
-        if (!isValid) {
+        // Validación de tutor, cotutor, otro participante
+        const hasAtLeastOneTutor = [this.tutor1, this.cotutor1, this.other1].some(({ name, institution }) => name && institution);
+        if (!hasAtLeastOneTutor) {
           this.errors.push('noTutors');
         }
 
-        if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run != ""){
-          var validacion = this.validarRut(this.thesisStudent.run);
-          if(validacion == false){
-            this.errors.push('invalidRut');
-            }
-        }
-
-        if(this.thesisStudent.thesisStatus == 1 && this.file == null && this.isLink == false){
-            this.errors.push('thesisExtract');
-        }
-
-        if(this.thesisStudent.thesisStatus == 1 && this.link == '' && this.isLink == true){
-            this.errors.push('link');
-        }
-
-        if(this.link && this.isLink && !this.isValidURL(this.link)){
-            this.errors.push('invalidLink');
-        }
-
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
-            this.errors.push('yearThesisEnd');
-        }
-
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.posteriorArea == ""){
-            this.errors.push('posteriorArea');
-        }
-
-        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.institutionPosteriorArea == ""){
-            this.errors.push('institutionPosteriorArea');
-        }
-
-        var runOrPassport1 = '';
-          if(this.thesisStudent.identification == 'Run'){
-            runOrPassport1 = this.formatoRut(this.thesisStudent.run);
-          }else{
-            runOrPassport1 = this.thesisStudent.passport;
-          }
-
-        let thesisStudent2 = {
-          idUsuario: idUser1,
-          runOrPassport: runOrPassport1,
-          degreeDenomination: this.thesisStudent.degreeDenomination,
-        };
-
-        var contador = await axios.post('../api/verifyThesis', thesisStudent2).then(function(response) {
-          return response.data;
-        }.bind(this)).catch(function(e) {
-          console.log(e);
-        });
-        if (contador > 0){
-          this.errors.push('duplicated');
-        }
-
-        var mensaje = ""
-        if (this.errors.length != 0){
-          this.errors.forEach(item => {
-            if(item == 'studentName'){
-              mensaje =   mensaje + "The field Student Name is required" + "\n";
-            }else if(item == 'thesisExtract'){
-              mensaje =   mensaje + "The field Thesis Extract is required" + "\n";
-            }else if(item == 'researcherInvolved'){
-              mensaje =   mensaje + "The field Researchers Involved is required" + "\n";
-            }else if(item == 'invalidRut'){
-              mensaje =   mensaje + "The entered Run is invalid" + "\n";
-            }else if(item == 'studentMail'){
-              mensaje =   mensaje + "The field Student Mail is required" + "\n";
-            }else if(item == 'thesisStatus'){
-              mensaje =   mensaje + "The field Thesis Status is required" + "\n";
-            }else if(item == 'thesisTitle'){
-              mensaje =   mensaje + "The field Thesis Title is required" + "\n";
-            }else if(item == 'academicDegree'){
-              mensaje =   mensaje + "The field Academic Degree is required" + "\n";
-            }else if(item == 'degreeDenomination'){
-              mensaje =   mensaje + "The field Degree Denomination is required" + "\n";
-            }else if(item == 'tutorName'){
-              mensaje =   mensaje + "The field Tutor Name is required" + "\n";
-            }else if(item == 'tutorInstitution'){
-              mensaje =   mensaje + "The field Tutor Institution is required" + "\n";
-            }else if(item == 'cotutorName'){
-              mensaje =   mensaje + "The field Cotutor Name is required" + "\n";
-            }else if(item == 'cotutorInstitution'){
-              mensaje =   mensaje + "The field Cotutor Institution is required" + "\n";
-            }else if(item == 'otherName'){
-              mensaje =   mensaje + "The field Other Name is required" + "\n";
-            }else if(item == 'otherInstitution'){
-              mensaje =   mensaje + "The field Other Institution is required" + "\n";
-            }else if(item == 'academicDegree'){
-              mensaje =   mensaje + "The field Academic Degree is required" + "\n";
-            }else if(item == 'yearStart'){
-              mensaje =   mensaje + "The field Year in which student thesis starts is required" + "\n";
-            }else if(item == 'monthStart'){
-              mensaje =   mensaje + "The field Month in which student thesis starts is required" + "\n";
-            }else if(item == 'yearThesisEnd'){
-              mensaje =   mensaje + "The field Year which thesis ends is required" + "\n";
-            }else if(item == 'monthEnd'){
-              mensaje =   mensaje + "The field Month which thesis ends is required" + "\n";
-            }else if(item == 'resourcesCenter'){
-              mensaje =   mensaje + "The field Resources provided is required" + "\n";
-            }else if(item == 'invalidLink'){
-              mensaje =   mensaje + "The link provided is not valid" + "\n";
-            }else if(item == 'posteriorArea'){
-              mensaje =   mensaje + "The field Posterior working area is required" + "\n";
-            }else if(item == 'institutionPosteriorArea'){
-              mensaje =   mensaje + "The field Institution posterior area is required" + "\n";
-            }else if(item == 'noTutors'){
-              mensaje =   mensaje + "A minimum of one tutor, co-tutor or other must enter" + "\n";
-            }else if(item == 'duplicated'){
-              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
-            }else{
-              mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
-            }
-          });
-          this.toast.warning( mensaje, {
-            position: "top-right",
-            timeout: 5000,
-            closeOnClick: true,
-            pauseOnFocusLoss: true,
-            pauseOnHover: true,
-            draggable: true,
-            draggablePercent: 0.6,
-            showCloseButtonOnHover: false,
-            hideProgressBar: true,
-            closeButton: "button",
-            icon: true,
-            rtl: false
-          });
-        }
-        if (this.errors.length === 0){
+        if (this.errors.length === 0) {
           const ok = await this.$refs.confirmation.show({
             title: 'Send Thesis',
-            message: `¿Are you sure you want to send this thesis?.`,
+            message: `Are you sure you want to send this thesis?`,
             okButton: 'Send',
             cancelButton: 'Return'
-          })
+          });
+
           if (ok) {
-            var resources1 = '';
-            this.thesisStudent.resourcesCenter.forEach(resource => {
-              resources1 += resource.value + ',';
-            });
+            const runOrPassport1 = this.thesisStudent.identification === 'Run' ? this.formatoRut(this.thesisStudent.run) : this.thesisStudent.passport;
+            const resources1 = this.thesisStudent.resourcesCenter?.map(r => r.value).join(',') || '';
+            const idUser1 = this.idResearcher || this.userID;
+            const universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
+            const fileOrLink = this.isLink ? this.link : this.file;
+            const isLinkFlag = this.isLink ? 1 : 0;
+            const peopleInvolved1 = this.thesisStudent.researcherInvolved?.map((r, i) => `${r.name}${i < this.thesisStudent.researcherInvolved.length - 1 ? ', ' : '.'}`).join('') || '';
 
-            var idUser1 = ''
-            if(this.idResearcher != ''){
-              idUser1 = this.idResearcher;
-            }else{
-              idUser1 = this.userID;
-            }
-
-            var peopleInvolved1 = "";
-            if (this.thesisStudent.researcherInvolved !== null){
-              if (this.thesisStudent.researcherInvolved.length !== 0) {
-                this.thesisStudent.researcherInvolved.forEach((researcherInvolved, index) => {
-                  peopleInvolved1 += researcherInvolved.name;
-                  if (index === this.thesisStudent.researcherInvolved.length - 1) {
-                    peopleInvolved1 += '.';
-                  } else {
-                    peopleInvolved1 += ', ';
-                  }
-                });
-              }
-            }
-
-            let universityToSubmit = this.selectedUniversity === 'other' ? this.thesisStudent.university : this.selectedUniversity;
-
-            let fileOrLink = this.isLink ? this.link : this.file;
-            let isLinkFlag = this.isLink ? 1 : 0;
-
-            let thesisStudent = {
+            const thesisBaseData = {
               idUsuario: idUser1,
               status: 'Finished',
               researcherInvolved: peopleInvolved1,
@@ -971,7 +782,6 @@ export default {
               studentMail: this.thesisStudent.studentMail,
               thesisStatus: this.thesisStudent.thesisStatus,
               thesisTitle: this.thesisStudent.thesisTitle,
-              academicDegree: this.thesisStudent.academicDegree,
               degreeDenomination: this.thesisStudent.degreeDenomination,
               tutorName: this.tutor1.name,
               tutorInstitution: this.tutor1.institution,
@@ -989,134 +799,48 @@ export default {
               institutionPosteriorArea: this.thesisStudent.institutionPosteriorArea,
               comments: this.thesisStudent.comments,
               progressReport: this.thesisStudent.progressReport,
-              file: fileOrLink,         // Enviar archivo o link
-              isLink: isLinkFlag         // Enviar la bandera que indica si es link
+              file: fileOrLink,
+              isLink: isLinkFlag
             };
-            axios.post("api/thesisStudents", thesisStudent, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
-              this.buttonDisable = true;
-              this.buttonText = 'Sending...';
-              this.toast.success("Thesis send successfully!", {
+
+            // Enviar dos registros si "Doble Grado" está seleccionado
+            if (this.isDobleGrado) {
+              // Enviar el primer registro
+              await axios.post("api/thesisStudents", {
+                ...thesisBaseData,
+                academicDegree: "Master o equivalent"
+              }, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+              // Enviar el segundo registro
+              await axios.post("api/thesisStudents", {
+                ...thesisBaseData,
+                academicDegree: "PhD degree"
+              }, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+              this.toast.success("Thesis entries for both degrees sent successfully!", {
                 position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
+                timeout: 3000
               });
-              setTimeout(() => {this.cerrarModal();}, 1500);
-            })
-            .catch((error) => {
-              if (error.response) {
-                // Si hay una respuesta del servidor
-                if (error.response.status === 422) {
-                  // Error de validación
-                  this.toast.warning(`Validation error: ${error.response.data.message}`, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                }else if (error.response && error.response.status === 400) {
-                this.toast.error(error.response.data.error, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                });
-                }  else if (error.response.status === 404) {
-                  // Recurso no encontrado
-                  this.toast.error("Resource not found.", {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                } else {
-                  // Otro tipo de error
-                  this.toast.error(`An error occurred: ${error.response.data.message}`, {
-                    position: "top-right",
-                    timeout: 3000,
-                    closeOnClick: true,
-                    pauseOnFocusLoss: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    draggablePercent: 0.6,
-                    showCloseButtonOnHover: false,
-                    hideProgressBar: true,
-                    closeButton: "button",
-                    icon: true,
-                    rtl: false
-                  });
-                }
-              } else if (error.request) {
-                // Si la solicitud fue hecha pero no se recibió respuesta
-                this.toast.error("No response from server.", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-              } else {
-                // Otro tipo de error
-                this.toast.error(`An error occurred: ${error.message}`, {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-              }
-              this.buttonDisable = false;
-              this.buttonText = 'Send Thesis';
-            });
+            } else {
+              // Enviar un solo registro si no está seleccionado "Doble Grado"
+              await axios.post("api/thesisStudents", {
+                ...thesisBaseData,
+                academicDegree: this.thesisStudent.academicDegree
+              }, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+              this.toast.success("Thesis sent successfully!", {
+                position: "top-right",
+                timeout: 3000
+              });
+            }
+
+            this.buttonDisable = true;
+            this.buttonText = 'Sending...';
+            setTimeout(() => { this.cerrarModal(); }, 1500);
           }
         }
       },
+
     },
 }
 </script>

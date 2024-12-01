@@ -11,8 +11,8 @@ class organizationsScEvents extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "organizationsScEvents";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'status',
         'idUsuario',
         'researcherInvolved',

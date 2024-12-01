@@ -6,7 +6,7 @@
             <div class="modal-container">
               <div class="modal-header pb-1" style="font-weight: bold; color: #444444;">
                 <slot name="header">
-                  <label class="col-5 m-0" style="font-size: 17px;">Thesis Details:</label>
+                  <label class="col-5 m-0" style="font-size: 17px;">Thesis Details: {{ thesisStudent1.researchLinesInvolved }}</label>
                   <label class="col-5 m-0 fs-8 pt-2"> User: <label class="fw-normal" style="font-size: 14px;"></label>{{ thesisStudent1.usuario.name }}</label>
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>

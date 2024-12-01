@@ -30,6 +30,7 @@ use App\Http\Controllers\researchLineController;
 use App\Http\Controllers\roleUserController;
 use App\Http\Controllers\universitiesController;
 use App\Http\Controllers\recycleBinController;
+use App\Http\Controllers\SessionLogController;
 
 // Rutas Generales (SYS_)
 
@@ -155,14 +156,17 @@ Route::post('exportStatistics', [exportsController::class, 'exportStatistics']);
 Route::post('editProgressReport', [extraTablesController::class, 'editProgressReport']);
 Route::get('showProgressReport' , [extraTablesController::class, 'showProgressReport']);
 Route::post('delete-records', [extraTablesController::class, 'deleteRecords']);
+Route::get('/session-logs', [SessionLogController::class, 'getRecentSessions']);
 
 //Indicators
 
+Route::get('getPublicationsByProgressReport' , [indicatorsController::class, 'getPublicationsByProgressReport']);
 Route::get('getIndicators' , [indicatorsController::class, 'getIndicators']);
 Route::get('getIndicators/{id}' , [indicatorsController::class, 'getIndicatorsByProgressYear']);
 
 //Dashboard
 
+Route::get('update-research-lines' , [dashboardController::class, 'updateResearchLinesInvolved']);
 Route::get('getRegistros/{cantidad}' , [dashboardController::class, 'getRegistros']);
 Route::get('getRegistrosUser/{userId}/{cantidad}' , [dashboardController::class, 'getRegistrosUser']);
 //Role User

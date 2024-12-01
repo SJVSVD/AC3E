@@ -6,7 +6,7 @@
             <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Funding source
+                    New Funding source {{ fundingSource.inCash }}
                 </slot>
                 <label for="">Progress year: {{ fundingSource.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
@@ -102,7 +102,7 @@
                       <div class="col-md-3">
                         <label for="">In cash:</label>
                         <br>
-                        <input type="number" class= "form-control" v-model="fundingSource.inCash">
+                        <input type="text" class="form-control" :value="formattedInCash" @input="formatInCash" @keydown="onlyAllowNumbers">
                       </div>
                       <div class="col-md-3">
                           <label for="">Type of collaboration: </label>
@@ -197,9 +197,30 @@ export default {
       // La fecha mínima permitida para el campo de fecha de finalización será la fecha de inicio seleccionada
       minEndDate() {
         return this.fundingSource.startDate ? this.fundingSource.startDate : null;
+      },
+      formattedInCash() {
+        return this.formatCurrency(this.fundingSource.inCash);
       }
     },
-    methods: {
+    methods: {   
+      onlyAllowNumbers(event) {
+        const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete'];
+        if (!/^\d$/.test(event.key) && !allowedKeys.includes(event.key)) {
+          event.preventDefault(); // Bloquea cualquier tecla que no sea un número o tecla permitida
+        }
+      },
+      // Formatea el valor ingresado con puntos de miles
+      formatInCash(event) {
+        // Elimina puntos y convierte el valor en un número sin formato
+        const rawValue = event.target.value.replace(/\./g, '');
+        // Actualiza fundingSource.inCash solo con valores numéricos
+        this.fundingSource.inCash = isNaN(parseInt(rawValue)) ? '' : parseInt(rawValue);
+      },
+      // Agrega puntos como separadores de miles al valor
+      formatCurrency(value) {
+        if (!value) return '';
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      },
       validateDates() {
         // Validar si las fechas son correctas y emitir advertencias o mensajes de error
         const startDate = new Date(this.fundingSource.startDate);
@@ -243,7 +264,11 @@ export default {
       // Función para obtener usuarios (investigadores) desde la API
       getUsuarios(){
         axios.get('api/researchers').then( response =>{
-            this.researchers = response.data;
+          this.researchers  = response.data.sort((a, b) => {
+              if (a.toLowerCase() < b.toLowerCase()) return -1;
+              if (a.toLowerCase() > b.toLowerCase()) return 1;
+              return 0;
+          });
         }).catch(e=> console.log(e))
       },
       // Función para guardar un borrador 

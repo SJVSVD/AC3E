@@ -109,40 +109,29 @@
         <div class="col-lg-4">
             <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="row p-3">
-                    <div class="col-md-6">
-                        <a class="btn btn-search-blue"  style="min-height: 120px; display: flex; justify-content: center; align-items: center;" v-if="is('Administrator')" @click="exportConsolidado">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> {{ buttonText1 }}
+                    <!-- <button @click="updateResearchLines">Actualizar Research Lines</button> -->
+                    <!-- Botón de Export Consolidado (solo para Administrador) -->
+                    <div class="col-12 pt-1" v-if="is('Administrator')">
+                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center mb-2" style="min-height: 50px;" @click="exportConsolidado">
+                            <i class="fa fa-fw fa-download"></i> {{ buttonText1 }}
                         </a>
                     </div>
-                    <div class="col-md-6">
-                        <a class="btn btn-search-blue"  style="min-height: 120px; display: flex; justify-content: center; align-items: center;" @click="exportIndividual">
-                            <i class="fa fa-fw fa-lg fa-solid fa-download"></i> {{ buttonText2 }}
+                    <!-- Botón de Export Individual (ocupa todo el espacio si no es Administrador) -->
+                    <div :class="{'col-12 pt-1': !is('Administrator'), 'col-6': is('Administrator')}">
+                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" @click="exportIndividual">
+                            <i class="fa fa-fw fa-download"></i> {{ buttonText2 }}
+                        </a>
+                    </div>
+                    <!-- Botón de Ver Actividad Reciente -->
+                    <div class="col-12 pt-1" v-if="is('Administrator')">
+                        <a class="btn btn-grey w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" title="Ver Actividad Reciente" @click="showVerActividadReciente = true">
+                            <i class="fa fa-history"></i>&nbsp;View recent activity
                         </a>
                     </div>
                 </div>
-                <!-- <div class="row p-3">
-                    <div class="col-4">
-                        <input type="file" ref="fileInput" accept=".xlsx" class= "form-control" @change="processExcelFile">
-                    </div>
-                </div>
-                <div class="row p-3">
-                    <table v-if="keywordObjects.length > 0">
-                        <thead>
-                            <tr>
-                            <th>DOI</th>
-                            <th>Keyword</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(item, index) in keywordObjects" :key="index">
-                            <td>{{ item.doi }}</td>
-                            <td>{{ item.keyword }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div> -->
             </div>
         </div>
+
         <modalver v-bind:isiPublication1="isiPublication" v-if="showDetailsIsi" @close="showDetailsIsi = false"></modalver>
         <modalver1 v-bind:project1="conjointProjects" v-if="showDetailsConjointProjects" @close="showDetailsConjointProjects = false"></modalver1>
         <modalver2 v-bind:fundingSource1="fundingSources" v-if="showDetailsFundingSources" @close="showDetailsFundingSources = false"></modalver2>
@@ -158,6 +147,7 @@
         <modalver12 v-bind:award1="awards" v-if="showDetailsAwards" @close="showDetailsAwards = false"></modalver12>
         <modalver13 v-bind:book1="books" v-if="showDetailsBooks" @close="showDetailsBooks = false"></modalver13>
         <modalver14 v-bind:technology1="technologyKnowledge" v-if="showDetailsTechnologyKnowledge" @close="showDetailsTechnologyKnowledge = false"></modalver14>
+        <modalrecent v-bind:sessions1="sessions" v-if="showVerActividadReciente" @close="showVerActividadReciente = false"></modalrecent>
     </div>
 </template>
 
@@ -179,12 +169,13 @@ import modalver11 from './snippets/sistema/thesisStudents/detalleThesisModal.vue
 import modalver12 from './snippets/sistema/awards/detailsAwardsModal.vue'
 import modalver13 from './snippets/sistema/books/detailsBooksModal.vue'
 import modalver14 from './snippets/sistema/technologyKnowledge/detailsTechnologyKnowledgeModal.vue'
+import modalrecent from './snippets/sistema/recentActivityModal.vue'
 import modalalerta from './snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../mixins.js'
 import * as XLSX from 'xlsx';
 
 export default {
-    components: { modalconfirmacion,modalalerta,modalver,modalver1,modalver2,modalver3,modalver4,modalver5,modalver6,modalver7,modalver8,modalver9,modalver10,modalver11,modalver12,modalver13,modalver14 },
+    components: { modalrecent,modalconfirmacion,modalalerta,modalver,modalver1,modalver2,modalver3,modalver4,modalver5,modalver6,modalver7,modalver8,modalver9,modalver10,modalver11,modalver12,modalver13,modalver14 },
     mixins: [mixin],
     data() {
         return {
@@ -198,6 +189,7 @@ export default {
             weather: null,
             coords: null,
             usuariosActivos: [],
+            sessions: [],
             mostrarTabla: false,
             mostrarCarga: true,
             isiPublication: '',
@@ -215,6 +207,7 @@ export default {
             awards: '',
             books: '',
             technologyKnowledge: '',
+            showVerActividadReciente: false,
             showDetailsIsi: false,
             showDetailsConjointProjects: false,
             showDetailsFundingSources: false,
@@ -248,8 +241,36 @@ export default {
     },
     mounted(){
         this.getRegistros(this.cantidadRegistros);
+        this.getRecentSessions();
     },
     methods: {
+        async updateResearchLines() {
+            try {
+                // Llamada a la API usando Axios
+                const response = await axios.get('/api/update-research-lines', {
+                // Si necesitas enviar algún dato, agrégalo aquí
+                }, {
+                });
+                
+                // Manejar la respuesta
+                console.log('Respuesta:', response.data);
+                alert('Research Lines actualizadas con éxito.');
+            } catch (error) {
+                // Manejar errores
+                console.error('Error al actualizar Research Lines:', error);
+                alert('Hubo un error al actualizar las Research Lines.');
+            }
+        },
+        // Método para obtener los registros de sesión recientes
+        getRecentSessions() {
+            axios.get('/api/session-logs')
+            .then(response => {
+                this.sessions = response.data;
+            })
+            .catch(error => {
+                console.error('Error al cargar los registros de sesión:', error);
+            });
+        },
         // Procesa un archivo Excel que se carga y realiza operaciones en sus datos.
         // async processExcelFile(event) {
         //     try {

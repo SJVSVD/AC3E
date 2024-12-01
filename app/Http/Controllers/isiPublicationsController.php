@@ -51,60 +51,86 @@ class isiPublicationsController extends Controller
         return response()->json($existentes); 
     }
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
+        // Inicializar variables y roles
         $roles = [];
         $administrador = false;
-        $isiPublications = isiPublication::where('idUsuario', $userID)->with('usuario')->get();
+        $titularResearcher = false;
         
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
-        }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
-                    $administrador = true;
-                }
+        // Obtener usuario y sus roles
+        $user = User::where('id', $userID)->with('roles')->first();
+        $isiPublications = collect();
+    
+        foreach ($user->roles as $rol) {
+            if ($rol['name'] == 'Administrator') {
+                $roles[] = $rol['name'];
+                $administrador = true;
+            } elseif ($rol['name'] == 'Titular Researcher') {
+                $roles[] = $rol['name'];
+                $titularResearcher = true;
             }
         }
-        if($administrador == false){
+    
+        // Si es Administrador, puede ver todos los registros
+        if ($administrador) {
+            $isiPublications = isiPublication::whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        } else {
             function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
                 $string = strtolower($string);
                 $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
                 $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
+                return trim($string);
             }
-            // Obtén el nombre del usuario y normalízalo
-            $userName = normalizeString(User::findOrFail($userID)->name);
+    
+            // Obtener nombre normalizado del usuario
+            $userName = normalizeString($user->name);
             if($userName == 'wael elderedy'){
                 $userName = 'wael';
             }
-            // Obtén los eventos SC relacionados con el usuario por ID o potencialmente relacionados por nombre
-            $isiPublications = IsiPublication::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
-                    ->orWhere('idUsuario', $userID);
-            })->with('usuario')->get();
+    
+            // Si es Titular Researcher, filtra según `idResearchLine`
+            if ($titularResearcher) {
+                // Obtener `idResearchLine` del usuario actual
+                $userResearchLine = $user->idResearchLine;
 
-            // Filtra los resultados en PHP si es necesario
-            $isiPublications = $isiPublications->filter(function($event) use ($userName,$userID) {
+                // Consultar publicaciones relacionadas con `idResearchLine`
+                $isiPublications = isiPublication::where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                        ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+                return $isiPublications;
+            } else {
+                // Filtrado estándar para usuarios sin roles especiales y solo de usuarios activos
+                $isiPublications = isiPublication::where(function($query) use ($userName, $userID) {
+                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                        ->orWhere('idUsuario', $userID);
+                })
+                ->whereHas('usuario', function ($query) {
+                    $query->where('estado', 1); // Filtrar solo usuarios activos
+                })
+                ->with('usuario')
+                ->get();
+            }
+    
+            // Filtrado adicional en PHP
+            $isiPublications = $isiPublications->filter(function($event) use ($userName, $userID) {
                 $normalizedResearcher = normalizeString($event->researcherInvolved);
                 return $event->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
             });
-
-        }else{
-            $isiPublications = isiPublication::with('usuario')->get();
         }
+    
         return $isiPublications;
     }
+    
 
      // Función para editar un registro
     public function update(Request $request, $id)

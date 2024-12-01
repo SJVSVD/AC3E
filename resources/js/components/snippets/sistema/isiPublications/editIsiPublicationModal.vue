@@ -360,7 +360,11 @@ export default {
       // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/researchers').then( response =>{
-            this.researchers = response.data;
+          this.researchers = response.data.sort((a, b) => {
+              if (a.toLowerCase() < b.toLowerCase()) return -1;
+              if (a.toLowerCase() > b.toLowerCase()) return 1;
+              return 0;
+          });
         }).catch(e=> console.log(e))
       },
       // Función para manejar el envío de un formulario con un año

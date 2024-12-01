@@ -11,8 +11,8 @@ class researchLines extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "researchLines";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'name',
     ];
 }

@@ -50,8 +50,8 @@
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ usuario.id }}</p>
                                         </td>
                                         <td>
-                                            <p v-if="usuario.estado == true" class="text-sm font-weight-bolder mb-0" style="color: #28A745">Active</p>
-                                            <p v-else class="text-sm font-weight-bolder mb-0" style="color: #B80F0A">Inactive</p>
+                                            <p v-if="usuario.estado == true" class="text-sm font-weight-bolder mb-0" style="color: #28A745">{{usuario.estado}}</p>
+                                            <p v-else class="text-sm font-weight-bolder mb-0" style="color: #B80F0A">{{usuario.estado}}</p>
                                         </td>      
                                         <td>
                                             <p class="text-sm mb-0">{{ usuario.role_user.name }}</p>

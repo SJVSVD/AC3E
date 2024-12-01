@@ -13,9 +13,22 @@ use App\Models\scCollaborations;
 use App\Models\technologyKnowledge;
 use App\Models\thesisStudent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class indicatorsController extends Controller
 {
+    public function getPublicationsByProgressReport()
+    {
+        // Agrupar las publicaciones por 'progressReport' y contar cuántas publicaciones tiene cada grupo
+        $groupedPublications = isiPublication::select('progressReport', DB::raw('count(*) as total'))
+            ->groupBy('progressReport')
+            ->orderBy('progressReport', 'asc')
+            ->get();
+    
+        return response()->json($groupedPublications);  // Devuelve el resultado como JSON
+    }
+
     //Funcion para conseguir los indicadores de la pagina segun ciertos requisitos
     public function getIndicators()
     {

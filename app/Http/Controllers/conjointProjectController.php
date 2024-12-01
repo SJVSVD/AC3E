@@ -35,44 +35,63 @@ class conjointProjectController extends Controller
         return response()->json($existentes); 
     }
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
+        // Inicializar variables y roles
         $roles = [];
         $administrador = false;
-        $scCollaborations = scCollaborations::where('idUsuario', $userID)->where('moduleType',1)->with('usuario')->get();
-        
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
-        }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
+        $titularResearcher = false;
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if ($rol['name'] == 'Administrator') {
+                    $roles[] = $rol['name'];
                     $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
                 }
             }
         }
-        if($administrador == false){
-            function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
-                $string = strtolower($string);
-                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
-                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
-            }
-            // Normaliza el nombre del usuario
-            $userName = normalizeString(User::findOrFail($userID)->name);
-            if($userName == 'wael elderedy'){
-                $userName = 'wael';
-            }
-            // Obtén las colaboraciones relacionadas con el usuario por ID o potencialmente relacionadas por nombre
+    
+        function normalizeString($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
+        }
+    
+        $userName = normalizeString($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $scCollaborations = scCollaborations::where('moduleType', 1)->whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        } elseif ($titularResearcher) {
+            // Lógica para Titular Researcher basada en `idResearchLine`
+            $userResearchLine = $user->idResearchLine;
+    
+            $scCollaborations = scCollaborations::where('moduleType', 1)
+                ->where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                        ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+        } else {
+            // Lógica estándar para usuarios sin roles especiales
             $scCollaborations = scCollaborations::where('moduleType', 1)
                 ->where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
@@ -80,72 +99,99 @@ class conjointProjectController extends Controller
                 })
                 ->with('usuario')
                 ->get();
-
-            // Filtra los resultados en PHP si es necesario
-            $scCollaborations = $scCollaborations->filter(function($collaboration) use ($userName, $userID) {
-                $normalizedResearcher = normalizeString($collaboration->researcherInvolved);
-                return $collaboration->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-            });
-        }else{
-            $scCollaborations = scCollaborations::where('moduleType',1)->with('usuario')->get();
         }
+
+        $scCollaborations = $scCollaborations->filter(function($collaboration){
+            return $collaboration->moduleType == 1;
+        });
+    
         return $scCollaborations;
     }
-
-        // Función para mostrar registros y verificar si es administrador  o no lo es
-        public function conjointProjectsActive($userID){
-            // Seleccionar datos relacionados con el usuario:
-            $roles = [];
-            $administrador = false;
-            $today = Carbon::today();
-            $scCollaborations = scCollaborations::where('endingDate', '>', $today)->where('idUsuario', $userID)->where('moduleType',1)->with('usuario')->get();
-            
-            $user = User::where('id', $userID)->with('roles')->get();
-            // Mantener aquellos que cumplen con los roles del usuario:
-            if ($user[0]['roles'] == "[]"){
-                array_push($roles,'');
-            }
-            else{
-                foreach ($user[0]['roles'] as $rol){
-                    if ($rol['name'] == 'Administrator'){
-                        array_push($roles, $rol['name']);
-                        $administrador = true;
-                    }
+    
+    public function conjointProjectsActive($userID) {
+        // Inicializar variables y roles
+        $roles = [];
+        $administrador = false;
+        $titularResearcher = false;
+        $today = Carbon::today();
+        $scCollaborations = scCollaborations::where('idUsuario', $userID)
+            ->where('moduleType', 1)
+            ->with('usuario')
+            ->get();
+        
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if ($rol['name'] == 'Administrator') {
+                    $roles[] = $rol['name'];
+                    $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
                 }
             }
-            if($administrador == false){
-                function normalizeString($string) {
-                    // Eliminar acentos y convertir a minúsculas
-                    $string = strtolower($string);
-                    $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                    // Eliminar caracteres especiales
-                    $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                    // Eliminar espacios adicionales
-                    $string = trim($string);
-                    
-                    return $string;
-                }
-                // Normaliza el nombre del usuario
-                $userName = normalizeString(User::findOrFail($userID)->name);
-                if($userName == 'wael elderedy'){
-                    $userName = 'wael';
-                }
-                // Obtén las colaboraciones SC relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-                $scCollaborations = scCollaborations::where('endingDate', '>', $today)->where('moduleType', 1)->where(function($query) use ($userName, $userID) {
+        }
+    
+        function normalizeString1($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
+        }
+    
+        $userName = normalizeString1($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $scCollaborations = scCollaborations::where('endingDate', '>', $today)
+                ->where('moduleType', 1)
+                ->whereHas('usuario', function ($query) {
+                    $query->where('estado', 1); // Filtrar solo usuarios activos
+                })
+                ->with('usuario')
+                ->get();
+        } elseif ($titularResearcher) {
+            // Lógica para Titular Researcher basada en `idResearchLine`
+            $userResearchLine = $user->idResearchLine;
+    
+            $scCollaborations = scCollaborations::where('endingDate', '>', $today)
+                ->where('moduleType', 1)
+                ->where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                        ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+        } else {
+            // Lógica estándar para usuarios sin roles especiales
+            $scCollaborations = scCollaborations::where('endingDate', '>', $today)
+                ->where('moduleType', 1)
+                ->where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                         ->orWhere('idUsuario', $userID);
-                })->with('usuario')->get();
-    
-                // Filtra los resultados en PHP si es necesario
-                $scCollaborations = $scCollaborations->filter(function($collaboration) use ($userName,$userID) {
-                    $normalizedResearcher = normalizeString($collaboration->researcherInvolved);
-                    return $collaboration->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-                });
-            }else{
-                $scCollaborations = scCollaborations::where('endingDate', '>', $today)->where('moduleType',1)->with('usuario')->get();
-            }
-            return $scCollaborations;
+                })
+                ->with('usuario')
+                ->get();
         }
+    
+        $scCollaborations = $scCollaborations->filter(function($collaboration) use ($today) {
+            return $collaboration->moduleType == 1 && 
+                   Carbon::parse($collaboration->endingDate)->greaterThan(Carbon::parse($today)); // Asegurar comparación de fechas y moduleType
+        });
+    
+        return $scCollaborations;
+    }
+    
 
      // Función para editar un registro
     public function update(Request $request, $id)

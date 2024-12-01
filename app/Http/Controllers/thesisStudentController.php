@@ -52,9 +52,6 @@ class thesisStudentController extends Controller
         } elseif (!empty($input['file'])) {
             // Si se proporciona un link en lugar de un archivo
             $input['is_link'] = 1;
-        } else {
-            // Si no se proporciona ni archivo ni link
-            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
         }
 
         $thesisStudent = thesisStudent::create($input);
@@ -80,59 +77,84 @@ class thesisStudentController extends Controller
         return response()->json($existentes); 
     }
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
     public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
+        // Inicializar variables y roles
         $roles = [];
         $administrador = false;
+        $titularResearcher = false;
         $thesisStudents = thesisStudent::where('idUsuario', $userID)->with('usuario')->get();
         
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
-        }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if ($rol['name'] == 'Administrator') {
+                    $roles[] = $rol['name'];
                     $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
                 }
             }
         }
-        if($administrador == false){
-            function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
-                $string = strtolower($string);
-                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
-                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
-            }
-            // Normaliza el nombre del usuario
-            $userName = normalizeString(User::findOrFail($userID)->name);
-            if($userName == 'wael elderedy'){
-                $userName = 'wael';
-            }
-            // Obtén los estudiantes de tesis relacionados con el usuario por ID o potencialmente relacionados por nombre
-            $thesisStudents = thesisStudent::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
-                    ->orWhere('idUsuario', $userID);
-            })->with('usuario')->get();
-
-            // Filtra los resultados en PHP si es necesario
-            $thesisStudents = $thesisStudents->filter(function($student) use ($userName, $userID) {
-                $normalizedResearcher = normalizeString($student->researcherInvolved);
-                return $student->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-            });
-        }else{
-            $thesisStudents = thesisStudent::with('usuario')->get();
+    
+        function normalizeString($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
         }
+    
+        $userName = normalizeString($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $thesisStudents = thesisStudent::whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        } elseif ($titularResearcher) {
+            // Lógica para Titular Researcher basada en `idResearchLine`
+            $userResearchLine = $user->idResearchLine;
+    
+            $thesisStudents = thesisStudent::where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                          ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+            return $thesisStudents;
+        } else {
+            // Lógica estándar para usuarios sin roles especiales
+            $thesisStudents = thesisStudent::where(function($query) use ($userName, $userID) {
+                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                          ->orWhere('idUsuario', $userID);
+                })->whereHas('usuario', function ($query) {
+                    $query->where('estado', 1); // Filtrar solo usuarios activos
+                })
+                ->with('usuario')
+                ->get();
+        }
+    
+        // Filtrar resultados en PHP si es necesario
+        $thesisStudents = $thesisStudents->filter(function($student) use ($userName, $userID) {
+            $normalizedResearcher = normalizeString($student->researcherInvolved);
+            return $student->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+        });
+    
         return $thesisStudents;
     }
+    
 
     public function addFile(Request $request)
     {

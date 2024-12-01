@@ -11,8 +11,8 @@ class postDoc extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "postDocs";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'researcherInvolved',

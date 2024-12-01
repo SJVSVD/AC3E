@@ -11,8 +11,8 @@ class patents extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "patents";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'ipType',

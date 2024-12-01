@@ -32,60 +32,84 @@ class patentsController extends Controller
         return response()->json($existentes); 
     }
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
-    public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
+    public function show($userID) {
+        // Inicializar variables y roles
         $roles = [];
         $administrador = false;
+        $titularResearcher = false;
         $patents = patents::where('idUsuario', $userID)->with('usuario')->get();
         
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
-        }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if ($rol['name'] == 'Administrator') {
+                    $roles[] = $rol['name'];
                     $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
                 }
             }
         }
-        if($administrador == false){
-            function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
-                $string = strtolower($string);
-                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
-                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
-            }
-            // Normaliza el nombre del usuario
-            $userName = normalizeString(User::findOrFail($userID)->name);
-            if($userName == 'wael elderedy'){
-                $userName = 'wael';
-            }
-            // Obtén las patentes relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-            $patents = patents::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
-                    ->orWhere('idUsuario', $userID);
-            })->with('usuario')->get();
-
-            // Filtra los resultados en PHP si es necesario
-            $patents = $patents->filter(function($patent) use ($userName, $userID) {
-                $normalizedResearcher = normalizeString($patent->researcherInvolved);
-                return $patent->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-            });
-        }else{
-            $patents = patents::with('usuario')->get();
+    
+        function normalizeString($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
         }
+    
+        $userName = normalizeString($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $patents = patents::whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        } elseif ($titularResearcher) {
+            // Lógica para Titular Researcher basada en `idResearchLine`
+            $userResearchLine = $user->idResearchLine;
+    
+            $patents = patents::where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                          ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+            return $patents;
+        } else {
+            // Lógica estándar para usuarios sin roles especiales
+            $patents = patents::where(function($query) use ($userName, $userID) {
+                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                          ->orWhere('idUsuario', $userID);
+                })
+                ->whereHas('usuario', function ($query) {
+                    $query->where('estado', 1); // Filtrar solo usuarios activos
+                })
+                ->with('usuario')
+                ->get();
+        }
+    
+        // Filtrar resultados en PHP si es necesario
+        $patents = $patents->filter(function($patent) use ($userName, $userID) {
+            $normalizedResearcher = normalizeString($patent->researcherInvolved);
+            return $patent->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+        });
+    
         return $patents;
     }
-
 
      // Función para editar un registro
     public function update(Request $request, $id)

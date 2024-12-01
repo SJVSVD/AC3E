@@ -36,60 +36,85 @@ class publicPrivateController extends Controller
         return response()->json($existentes); 
     }
 
-    // Función para mostrar registros y verificar si es administrador  o no lo es
-    public function show($userID){
-        // Seleccionar datos relacionados con el usuario:
+    public function show($userID) {
+        // Inicializar variables y roles
         $roles = [];
         $administrador = false;
+        $titularResearcher = false;
         $publicPrivate = publicPrivate::where('idUsuario', $userID)->with('usuario')->get();
         
-        $user = User::where('id', $userID)->with('roles')->get();
-        // Mantener aquellos que cumplen con los roles del usuario:
-        if ($user[0]['roles'] == "[]"){
-            array_push($roles,'');
-        }
-        else{
-            foreach ($user[0]['roles'] as $rol){
-                if ($rol['name'] == 'Administrator'){
-                    array_push($roles, $rol['name']);
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if ($rol['name'] == 'Administrator') {
+                    $roles[] = $rol['name'];
                     $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
                 }
             }
         }
-        if($administrador == false){
-            function normalizeString($string) {
-                // Eliminar acentos y convertir a minúsculas
-                $string = strtolower($string);
-                $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
-                // Eliminar caracteres especiales
-                $string = preg_replace('/[^a-z0-9\s]/', '', $string);
-                // Eliminar espacios adicionales
-                $string = trim($string);
-                
-                return $string;
-            }
-            // Normaliza el nombre del usuario
-            $userName = normalizeString(User::findOrFail($userID)->name);
-            if($userName == 'wael elderedy'){
-                $userName = 'wael';
-            }
-            // Obtén las publicaciones públicas y privadas relacionadas con el usuario por ID o potencialmente relacionadas por nombre
-            $publicPrivate = publicPrivate::where(function($query) use ($userName, $userID) {
-                $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
-                    ->orWhere('idUsuario', $userID);
-            })->with('usuario')->get();
-
-            // Filtra los resultados en PHP si es necesario
-            $publicPrivate = $publicPrivate->filter(function($item) use ($userName,$userID) {
-                $normalizedResearcher = normalizeString($item->researcherInvolved);
-                return $item->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-            });
-        }else{
-            $publicPrivate = publicPrivate::with('usuario')->get();
+    
+        function normalizeString($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
         }
+    
+        $userName = normalizeString($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $publicPrivate = publicPrivate::whereHas('usuario', function ($query) {
+                $query->where('estado', 1); // Filtrar solo usuarios activos
+            })
+            ->with('usuario')
+            ->get();
+        } elseif ($titularResearcher) {
+            // Lógica para Titular Researcher basada en `idResearchLine`
+            $userResearchLine = $user->idResearchLine;
+    
+            $publicPrivate = publicPrivate::where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)
+                          ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+                })
+                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
+                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                })
+                ->with('usuario')
+                ->get();
+            return $publicPrivate;
+        } else {
+            // Lógica estándar para usuarios sin roles especiales
+            $publicPrivate = publicPrivate::where(function($query) use ($userName, $userID) {
+                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                          ->orWhere('idUsuario', $userID);
+                })
+                ->whereHas('usuario', function ($query) {
+                    $query->where('estado', 1); // Filtrar solo usuarios activos
+                })
+                ->with('usuario')
+                ->get();
+        }
+    
+        // Filtrar resultados en PHP si es necesario
+        $publicPrivate = $publicPrivate->filter(function($item) use ($userName, $userID) {
+            $normalizedResearcher = normalizeString($item->researcherInvolved);
+            return $item->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
+        });
+    
         return $publicPrivate;
     }
-
+    
 
      // Función para editar un registro
     public function update(Request $request, $id)

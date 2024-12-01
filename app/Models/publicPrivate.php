@@ -11,8 +11,8 @@ class publicPrivate extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = "publicPrivate";
-
     protected $fillable = [
+        'researchLinesInvolved',
         'idUsuario',
         'status',
         'nameOfActivity',
