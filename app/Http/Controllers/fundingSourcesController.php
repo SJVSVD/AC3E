@@ -12,6 +12,25 @@ class fundingSourcesController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
         $fundingSources = fundingSources::create($input);
         return response()->json("Registro Creado!");
     }
@@ -191,6 +210,25 @@ class fundingSourcesController extends Controller
     {
         $fundingSources = fundingSources::find($id);
         $input = $request->all();
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
         $fundingSources->update($input);
         return response()->json($input);
     }

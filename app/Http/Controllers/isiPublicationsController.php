@@ -31,6 +31,27 @@ class isiPublicationsController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
+
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
+        
         $isiPublication = isiPublication::create($input);
         return response()->json("Publicación Creada!");
     }
@@ -138,6 +159,27 @@ class isiPublicationsController extends Controller
         $isiPublication = isiPublication::find($id);
 
         $input = $request->all();
+
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
+
         $isiPublication->update($input);
         return response()->json("Publicación Editada");
     }
@@ -222,16 +264,54 @@ class isiPublicationsController extends Controller
     public function useDoi(Request $request)
     {
         $doi = $request->input('doi');
-        $url = "https://wos-api.clarivate.com/api/woslite/?databaseId=WOS&usrQuery=DO=".$doi."&count=10&firstRecord=1";
-        $headers = [
+        $wosApiUrl = "https://wos-api.clarivate.com/api/woslite/?databaseId=WOS&usrQuery=DO=" . $doi . "&count=10&firstRecord=1";
+        $wosHeaders = [
             "accept" => "application/json",
             "X-ApiKey" => "cc369e7fe729a62bbb01048470df4ed604027c45"
         ];
-
-        $response = Http::withHeaders($headers)->get($url);
-
-        $data = $response->json();
-
-        return response()->json($data);
+    
+        // Primera llamada: Clarivate WoS API
+        $wosResponse = Http::withHeaders($wosHeaders)->get($wosApiUrl);
+        $wosData = $wosResponse->json();
+    
+        // Verificar si se encontró algún registro en WoS
+        if (!isset($wosData['QueryResult']['RecordsFound']) || $wosData['QueryResult']['RecordsFound'] == 0) {
+            return response()->json([
+                'message' => 'No records found with the entered DOI.',
+                'status' => 'error'
+            ], 404);
+        }
+    
+        // Extraer datos necesarios del primer registro
+        $register = $wosData['Data'][0] ?? null;
+        $journalName = $register['Source']['SourceTitle'][0] ?? null;
+    
+        if (!$journalName) {
+            return response()->json([
+                'message' => 'Journal name not found for the entered DOI.',
+                'status' => 'error'
+            ], 404);
+        }
+    
+        // Segunda llamada: Scopus API para obtener Q y Impact Factor
+        $scopusApiKey = "645c7c515ff007ab09b22957a51c711c";
+        $scopusUrl = "https://api.elsevier.com/content/serial/title?title=" . urlencode($journalName) . "&apiKey=" . $scopusApiKey;
+    
+        $scopusResponse = Http::get($scopusUrl);
+        $scopusData = $scopusResponse->json();
+    
+        // Procesar la respuesta de Scopus
+        $impactFactor = $scopusData['serial-metadata-response']['entry'][0]['citeScoreYearInfoList']['citeScoreCurrentMetric'] ?? 'N/A';
+        $quartile = $scopusData['serial-metadata-response']['entry'][0]['subject-area'][0]['@code'] ?? 'N/A';
+    
+        // Devolver la información combinada
+        return response()->json([
+            'wosData' => $register,
+            'scopusData' => [
+                'impactFactor' => $impactFactor,
+                'quartile' => $quartile
+            ],
+            'status' => 'success'
+        ]);
     }
 }

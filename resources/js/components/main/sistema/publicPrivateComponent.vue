@@ -12,11 +12,34 @@ Includes participation in public policy design, formalization of MOUs/NDAs, part
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
-                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPublicPrivate = true">New Entry</a>
+                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
+                            <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPublicPrivate = true">New Entry</a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
+
+                    <!-- ProgressReport Filter -->
+                    <div class="row px-4 mb-2">
+                        <div class="col-lg-2 col-md-6">
+                        <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+                        <select
+                            id="progressReportFilter"
+                            class="form-select"
+                            v-model="selectedProgressReport"
+                            @change="filterByProgressReport"
+                        >
+                            <option value="">All</option>
+                            <option
+                            v-for="progress in uniqueProgressReports"
+                            :key="progress"
+                            :value="progress"
+                            >
+                            {{ progress }}
+                            </option>
+                        </select>
+                        </div>
+                    </div>
+                    
                 </div>
                 <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px">
                     <div class="container">
@@ -37,18 +60,18 @@ Includes participation in public policy design, formalization of MOUs/NDAs, part
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="publicPrivate in publicPrivates" :key="publicPrivate.id">
+                                    <tr v-for="publicPrivate in filteredPublicprivate" :key="publicPrivate.id">
                                         <td></td>
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ publicPrivate.id }}</p>
                                         </td>                                          
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editPublicPrivate(publicPrivate)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editPublicPrivate(publicPrivate)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verPublicPrivate(publicPrivate)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                         <td>
@@ -113,6 +136,11 @@ export default {
     mixins: [mixin],
     data(){
         return{
+
+            filteredPublicprivate: [], // Publications filtered by progressReport
+            uniqueProgressReports: [], // Unique progressReport values for the selector
+            selectedProgressReport: '', // Selected progressReport value
+
             publicPrivates: null,
             publicPrivate: null,
             showDetailsPublicPrivate: false,
@@ -166,15 +194,52 @@ export default {
             this.publicPrivate = publicPrivate;
             this.showDetailsPublicPrivate = true;
         },
-        getPublicPrivate(id){
-            axios.get(`api/publicPrivate/${id}`).then( response =>{
-                this.publicPrivates = response.data;
-                if (this.table != null){
-                    this.table.clear();
+        filterByProgressReport() {
+            this.mostrarCarga = true;
+            if (this.selectedProgressReport === '') {
+                this.filteredPublicprivate = [...this.publicPrivates];
+            } else {
+                this.filteredPublicprivate = this.publicPrivates.filter(
+                    pub => pub.progressReport === this.selectedProgressReport
+                );
+            }
+
+            if (this.table != null) {
+                this.table.destroy();
+            }
+
+            setTimeout(() => {
+                this.crearTabla('#myTablePublicPrivate');
+                this.mostrarCarga = false;
+            }, 500);
+        },        
+        async getPublicPrivate(id){
+            try {
+                const response = await axios.get(`api/publicPrivate/${id}`);
+                // Asegurar que siempre sea un arreglo, incluso si llega como un objeto
+                this.publicPrivates = Array.isArray(response.data)
+                    ? response.data
+                    : Object.values(response.data || {}); // Maneja el caso de null o undefined
+
+                // Ahora es seguro usar el spread operator
+                this.filteredPublicprivate = [...this.publicPrivates];
+
+                // Verificar si hay registros antes de intentar extraer valores únicos
+                if (this.publicPrivates.length > 0) {
+                    this.uniqueProgressReports = [
+                        ...new Set(this.publicPrivates.map(pub => pub.progressReport).filter(Boolean)),
+                    ].sort((a, b) => b - a);
+                } else {
+                    this.uniqueProgressReports = [];
+                }
+
+                if (this.table != null) {
                     this.table.destroy();
                 }
                 this.crearTabla('#myTablePublicPrivate');
-            }).catch(e=> console.log(e))
+            } catch (error) {
+                console.error('Error fetching postdoc:', error);
+            }
         },
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;

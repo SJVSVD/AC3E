@@ -35,6 +35,11 @@ class UsuarioController extends Controller
         return response()->json(['message' => 'Contraseña cambiada exitosamente']);
     }
 
+    public function getUsersWithResearch()
+    {
+        return User::with('researchLine')->get();
+    }
+
     public function index()
     {
         return User::with('roles')->with('permissions')->with('roleUser')->with('researchLine')->get();

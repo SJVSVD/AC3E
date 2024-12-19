@@ -241,6 +241,11 @@ export default {
       getUsuarios2(){
         axios.get('api/researchers').then( response =>{
             this.researchers2 = response.data;
+            this.researchers2  = response.data.sort((a, b) => {
+                if (a.toLowerCase() < b.toLowerCase()) return -1;
+                if (a.toLowerCase() > b.toLowerCase()) return 1;
+                return 0;
+            });
         }).catch(e=> console.log(e))
       },
       // Método para el evento de entrada

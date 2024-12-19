@@ -111,21 +111,27 @@
                 <div class="row p-3">
                     <!-- <button @click="updateResearchLines">Actualizar Research Lines</button> -->
                     <!-- Botón de Export Consolidado (solo para Administrador) -->
-                    <div class="col-12 pt-1" v-if="is('Administrator')">
-                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center mb-2" style="min-height: 50px;" @click="exportConsolidado">
+                    <div class="col-6 pt-1" v-if="is('Administrator')">
+                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" @click="exportConsolidado">
                             <i class="fa fa-fw fa-download"></i> {{ buttonText1 }}
                         </a>
                     </div>
                     <!-- Botón de Export Individual (ocupa todo el espacio si no es Administrador) -->
-                    <div :class="{'col-12 pt-1': !is('Administrator'), 'col-6': is('Administrator')}">
+                    <div :class="{'col-6 pt-1': !is('Administrator'), 'col-6 pt-1': is('Administrator')}">
                         <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" @click="exportIndividual">
                             <i class="fa fa-fw fa-download"></i> {{ buttonText2 }}
                         </a>
                     </div>
                     <!-- Botón de Ver Actividad Reciente -->
-                    <div class="col-12 pt-1" v-if="is('Administrator')">
+                    <div class="col-6 pt-1" v-if="is('Administrator')">
                         <a class="btn btn-grey w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" title="Ver Actividad Reciente" @click="showVerActividadReciente = true">
                             <i class="fa fa-history"></i>&nbsp;View recent activity
+                        </a>
+                    </div>
+                    <!-- Botón de Modo levantamiento -->
+                    <div class="col-6 pt-1" v-if="is('Administrator')">
+                        <a class="btn btn-closed w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" title="Activate lift mode" @click="showLiftMode = true">
+                            <i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Lift mode
                         </a>
                     </div>
                 </div>
@@ -148,6 +154,8 @@
         <modalver13 v-bind:book1="books" v-if="showDetailsBooks" @close="showDetailsBooks = false"></modalver13>
         <modalver14 v-bind:technology1="technologyKnowledge" v-if="showDetailsTechnologyKnowledge" @close="showDetailsTechnologyKnowledge = false"></modalver14>
         <modalrecent v-bind:sessions1="sessions" v-if="showVerActividadReciente" @close="showVerActividadReciente = false"></modalrecent>
+        <modalliftmode v-if="showLiftMode" @close="showLiftMode = false"></modalliftmode>
+        <modalactiveannouncement  v-bind:activeAnnouncement1="activeAnnouncement" v-if="activeAnnouncement" @close="activeAnnouncement = null"></modalactiveannouncement>
     </div>
 </template>
 
@@ -170,15 +178,18 @@ import modalver12 from './snippets/sistema/awards/detailsAwardsModal.vue'
 import modalver13 from './snippets/sistema/books/detailsBooksModal.vue'
 import modalver14 from './snippets/sistema/technologyKnowledge/detailsTechnologyKnowledgeModal.vue'
 import modalrecent from './snippets/sistema/recentActivityModal.vue'
+import modalliftmode from './snippets/sistema/liftModeModal.vue'
+import modalactiveannouncement from './snippets/sistema/activeAnnouncementModal.vue'
 import modalalerta from './snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../mixins.js'
 import * as XLSX from 'xlsx';
 
 export default {
-    components: { modalrecent,modalconfirmacion,modalalerta,modalver,modalver1,modalver2,modalver3,modalver4,modalver5,modalver6,modalver7,modalver8,modalver9,modalver10,modalver11,modalver12,modalver13,modalver14 },
+    components: { modalactiveannouncement, modalliftmode, modalrecent,modalconfirmacion,modalalerta,modalver,modalver1,modalver2,modalver3,modalver4,modalver5,modalver6,modalver7,modalver8,modalver9,modalver10,modalver11,modalver12,modalver13,modalver14 },
     mixins: [mixin],
     data() {
         return {
+            activeAnnouncement: null,
             cantidadRegistros: 10,
             registros: [],
             buttonText1: 'Download Database',
@@ -207,6 +218,7 @@ export default {
             awards: '',
             books: '',
             technologyKnowledge: '',
+            showLiftMode: false,
             showVerActividadReciente: false,
             showDetailsIsi: false,
             showDetailsConjointProjects: false,
@@ -242,8 +254,19 @@ export default {
     mounted(){
         this.getRegistros(this.cantidadRegistros);
         this.getRecentSessions();
+        this.fetchActiveAnnouncement();
     },
     methods: {
+        async fetchActiveAnnouncement() {
+            try {
+                const { data } = await axios.get('/api/active-announcement');
+                if (data.message) {
+                this.activeAnnouncement = data; // Asigna el anuncio si existe
+                }
+            } catch (error) {
+                console.error('Error fetching the active announcement:', error);
+            }
+        },
         async updateResearchLines() {
             try {
                 // Llamada a la API usando Axios

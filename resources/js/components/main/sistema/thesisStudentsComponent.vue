@@ -12,9 +12,30 @@ It is important to add the current occupation for those students who have alread
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
-                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewThesisStudent = true">New Entry</a>
+                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
+                            <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewThesisStudent = true">New Entry</a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="row px-4 mb-2">
+                        <div class="col-lg-2 col-md-6">
+                        <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+                        <select
+                            id="progressReportFilter"
+                            class="form-select"
+                            v-model="selectedProgressReport"
+                            @change="filterByProgressReport"
+                        >
+                            <option value="">All</option>
+                            <option
+                            v-for="progress in uniqueProgressReports"
+                            :key="progress"
+                            :value="progress"
+                            >
+                            {{ progress }}
+                            </option>
+                        </select>
                         </div>
                     </div>
                 </div>
@@ -38,7 +59,7 @@ It is important to add the current occupation for those students who have alread
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="thesisStudent in thesisStudents" :key="thesisStudent.id">
+                                    <tr v-for="thesisStudent in filteredThesis" :key="thesisStudent.id">
                                         <td></td>
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ thesisStudent.id }}</p>
@@ -57,9 +78,9 @@ It is important to add the current occupation for those students who have alread
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verThesis(thesisStudent)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editThesisStudent(thesisStudent)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editThesisStudent(thesisStudent)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteThesisStudent(thesisStudent.id,)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteThesisStudent(thesisStudent.id,)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                         <td>
@@ -124,6 +145,11 @@ export default {
     mixins: [mixin],
     data(){
         return{
+
+            filteredThesis: [], // Publications filtered by progressReport
+            uniqueProgressReports: [], // Unique progressReport values for the selector
+            selectedProgressReport: '', // Selected progressReport value
+
             thesisStudents: null,
             thesisStudent: null,
             showNewThesisStudent: false,
@@ -200,15 +226,44 @@ export default {
             this.thesisStudent = thesisStudent2;
             this.showDetailsThesis = true;
         },
-        getThesisStudents(id){
-            axios.get(`api/thesisStudents/${id}`).then( response =>{
+        filterByProgressReport() {
+            this.mostrarCarga = true;
+            if (this.selectedProgressReport === '') {
+                this.filteredThesis = [...this.thesisStudents];
+            } else {
+                this.filteredThesis = this.thesisStudents.filter(
+                    pub => pub.progressReport === this.selectedProgressReport
+                );
+            }
+
+            if (this.table != null) {
+                this.table.destroy();
+            }
+
+            setTimeout(() => {
+                this.crearTabla('#MyTableThesisStudents');
+                this.mostrarCarga = false;
+            }, 500);
+        },
+        async getThesisStudents(id){
+            try {
+                const response = await axios.get(`api/thesisStudents/${id}`);
                 this.thesisStudents = response.data;
-                if (this.table != null){
-                    this.table.clear();
+                this.filteredThesis = [...response.data];
+
+                // Extract unique progressReport values
+                this.uniqueProgressReports = [
+                    ...new Set(this.thesisStudents.map(pub => pub.progressReport).filter(Boolean)),
+                ].sort((a, b) => b - a);
+
+                if (this.table != null) {
+
                     this.table.destroy();
                 }
                 this.crearTabla('#MyTableThesisStudents');
-            }).catch(e=> console.log(e))
+            } catch (error) {
+                console.error('Error fetching collaborations:', error);
+            }
         },
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;

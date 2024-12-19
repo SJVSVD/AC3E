@@ -297,7 +297,7 @@ export default {
       // Función para obtener usuarios desde otra ruta de la API
       getUsuarios2(){
         axios.get('api/usuarios').then( response =>{
-            this.researchers2 = response.data;
+          this.researchers2 = response.data.sort((a, b) => a.name.localeCompare(b.name));
         }).catch(e=> console.log(e))
       },
       // Función para limpiar la entrada de archivo

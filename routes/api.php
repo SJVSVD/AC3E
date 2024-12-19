@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,7 @@ use App\Http\Controllers\roleUserController;
 use App\Http\Controllers\universitiesController;
 use App\Http\Controllers\recycleBinController;
 use App\Http\Controllers\SessionLogController;
+use App\Http\Controllers\announcementController;
 
 // Rutas Generales (SYS_)
 
@@ -152,20 +154,25 @@ Route::post('exportIndividual', [exportsController::class, 'exportIndividual']);
 Route::post('exportStatistics', [exportsController::class, 'exportStatistics']);
 
 //Extra tables
-
+Route::get('getUsersWithResearch', [UsuarioController::class, 'getUsersWithResearch']);
 Route::post('editProgressReport', [extraTablesController::class, 'editProgressReport']);
 Route::get('showProgressReport' , [extraTablesController::class, 'showProgressReport']);
 Route::post('delete-records', [extraTablesController::class, 'deleteRecords']);
 Route::get('/session-logs', [SessionLogController::class, 'getRecentSessions']);
 
 //Indicators
-
+Route::get('/getFilteredRecordsByModule/{params}', [IndicatorsController::class, 'getFilteredRecordsByModule']);
+Route::get('/getPublicationsByResearchLine/{lineName}', [IndicatorsController::class, 'getPublicationsByResearchLine']);
+Route::get('/getGeneralRecordsByProgressReport', [IndicatorsController::class, 'getGeneralRecordsByProgressReport']);
+Route::get('/getMembersByLine/{lineName}', [indicatorsController::class, 'getMembersByLine']);
+Route::get('/getPersonRecordsByProgressReport/{userId}', [IndicatorsController::class, 'getPersonRecordsByProgressReport']);
 Route::get('getPublicationsByProgressReport' , [indicatorsController::class, 'getPublicationsByProgressReport']);
 Route::get('getIndicators' , [indicatorsController::class, 'getIndicators']);
 Route::get('getIndicators/{id}' , [indicatorsController::class, 'getIndicatorsByProgressYear']);
 
 //Dashboard
-
+Route::get('/active-announcement', [announcementController::class, 'getActiveAnnouncement']);
+Route::apiResource('announcements', announcementController::class);
 Route::get('update-research-lines' , [dashboardController::class, 'updateResearchLinesInvolved']);
 Route::get('getRegistros/{cantidad}' , [dashboardController::class, 'getRegistros']);
 Route::get('getRegistrosUser/{userId}/{cantidad}' , [dashboardController::class, 'getRegistrosUser']);

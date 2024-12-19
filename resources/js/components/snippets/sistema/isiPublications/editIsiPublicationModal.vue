@@ -22,6 +22,15 @@
               </div>
               <div class="modal-body">
                 <slot name="body">
+                  <div v-if="isiPublication.quartile || isiPublication.impactFactor" class="publication-info">
+                    <span v-if="isiPublication.quartile">
+                      <strong>Quartile:</strong> {{ isiPublication.quartile }}
+                    </span>
+                    &nbsp;
+                    <span v-if="isiPublication.impactFactor">
+                      <strong>Impact Factor:</strong> {{ isiPublication.impactFactor }}
+                    </span>
+                  </div>
                   <div class="row">
                       <div class="col-md-6">
                         <label for="">AC3E Researchers Involved:</label>
@@ -291,7 +300,9 @@ export default {
       this.isiPublication.yearPublished = this.isiPublication1.yearPublished;
       this.isiPublication.month = this.isiPublication1.month;
       this.isiPublication.keywords = this.isiPublication1.keywords;
-
+      this.isiPublication.quartile = this.isiPublication1.quartile;
+      this.isiPublication.impactFactor = this.isiPublication1.impactFactor;
+      
       if (this.isiPublication1.funding != null) {
         const valoresSeparados1 = this.isiPublication1.funding.split(",");
 
@@ -441,6 +452,8 @@ export default {
               thesisStudents: this.isiPublication.thesisStudents,
               nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
+              impactFactor: this.isiPublication.impactFactor,
+              quartile: this.isiPublication.quartile,
               comments: this.isiPublication.comments,
               progressReport: this.isiPublication.progressReport,
             };
@@ -551,50 +564,31 @@ export default {
       },
       useDOI() {
           const encodedDoi = encodeURIComponent(this.isiPublication.doi);
-          axios.post('api/useDoi', { doi: encodedDoi }).then(response => {
-              console.log(response.data.Data);
-              var register = response.data.Data[0];
-              if(response.data.QueryResult.RecordsFound == 0){
-                this.toast.warning("No records found with the entered DOI.", {
-                  position: "top-right",
-                  timeout: 3000,
-                  closeOnClick: true,
-                  pauseOnFocusLoss: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  draggablePercent: 0.6,
-                  showCloseButtonOnHover: false,
-                  hideProgressBar: true,
-                  closeButton: "button",
-                  icon: true,
-                  rtl: false
-                });
-              }else{
-                var authorString = '';
-                register.Author.Authors.forEach((author, index) => {
-                    if (index !== 0) {
-                        authorString += '; ';
-                    }
-                    authorString += author;
-                });
-                authorString += '.';
-                this.isiPublication.authors = authorString;
+          axios.post('api/useDoi', { doi: this.isiPublication.doi })
+            .then(response => {
+              const data = response.data;
+
+              if (data.status === 'error') {
+                this.toast.warning(data.message, { position: "top-right", timeout: 3000 });
+              } else {
+                const register = data.wosData;
+                const scopus = data.scopusData;
+
+                this.isiPublication.authors = register.Author.Authors.join('; ') + '.';
                 this.isiPublication.articleTitle = register.Title.Title[0];
                 this.isiPublication.journalName = register.Source.SourceTitle[0];
                 this.isiPublication.volume = register.Source.Volume[0];
-                if (register.Keyword.Keywords && register.Keyword.Keywords.length > 0) {
-                    this.isiPublication.keywords = register.Keyword.Keywords.join(', ');
-                } else {
-                    this.isiPublication.keywords = '';
-                }
-                let splitStrings = register.Source.Pages[0].split('-');
-                this.isiPublication.firstPage = splitStrings[0];
-                this.isiPublication.lastPage = splitStrings[1];
                 this.isiPublication.yearPublished = register.Source['Published.BiblioYear'][0];
+                this.isiPublication.impactFactor = scopus.impactFactor;
+                this.isiPublication.quartile = scopus.quartile;
+
+                this.toast.success("Data loaded successfully!", { position: "top-right", timeout: 3000 });
               }
-          }).catch(error => {
+            })
+            .catch(error => {
               console.error(error);
-          });
+              this.toast.error("An error occurred while fetching the data.", { position: "top-right" });
+            });
       },
       onInput(event) {
         const input = event.target;
@@ -633,6 +627,8 @@ export default {
           'lastPage',
           'keywords',
           'month',
+          'impactFactor',
+          'quartile',
           'fundings'
         ];
 
@@ -803,6 +799,8 @@ export default {
               thesisStudents: this.isiPublication.thesisStudents,
               nationalExternalResearchers: this.isiPublication.nationalExternalResearchers,
               internationalExternalResearchers: this.isiPublication.internationalExternalResearchers,
+              impactFactor: this.isiPublication.impactFactor,
+              quartile: this.isiPublication.quartile,
               comments: this.isiPublication.comments,
               progressReport: this.isiPublication.progressReport,
             };

@@ -105,10 +105,13 @@
                     <li><a href="/patents">Intellectual Property</a></li>
                     <li><a href="/public-private">Public-private connections</a></li>
                     <li><a href="/technology-knowledge">Tec. and know. transfer</a></li>
+                    @unless(auth()->user()->hasRole('Anid'))
                     <li><a href="/funding-sources">Funding sources</a></li>
+                    @endunless
                 </ul>
             </li>
             <hr size="4" class="separador">
+            @unless(auth()->user()->hasRole(['Anid']))
             <li>
                 <div class="iocn-link">
                     <a href="#">
@@ -122,6 +125,7 @@
                     <li><a href="/power-bi">Power BI</a></li>
                 </ul>
             </li>
+            @endunless
             <li>
                 <div class="iocn-link">
                     <a href="#">

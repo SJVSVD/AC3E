@@ -1,110 +1,117 @@
 <template>
     <div class="row mt-4 mx-4">
-        <div class="col-12">
-            <div class="card mb-4">
-                <div class="row pb-0 p-4">
-                    <div class="col-lg-10 col-md-12">
-                        <div class="info-box">
-                            Includes all articles <strong>published</strong> in scientific journals indexed in the Web of Science, during the current baseline year (Sep-present). By entering the DOI, most of the fields will be filled automatically; if not, please manually enter the required information.
-                            In the table below, you have the option to search for a publication to check if it has already been reported. It is recommended to filter by year of publication for the review.
-                            Articles published in periods prior to the current baseline year <strong>will NOT be considered</strong>  in the report and individual results evaluation.
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
-                        <div class="d-flex">
-                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewIsiPublication = true">New Entry</a>
-                            <a class="btn btn-spacing btn-search-blue ml-2" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px">
-                    <div class="container">
-                        <div class="table-responsive p-0">
-                            <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="MyTableIsiPublications">
-                                <thead>
-                                    <tr style="color: black">
-                                        <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Doi</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
-                                        
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="isiPublication in isiPublications" :key="isiPublication.id">
-                                        <td></td>
-                                        <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ isiPublication.id }}</p>
-                                        </td>                                          
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(isiPublication)"><i class="fa-regular fa-eye"></i></a>
-                                                &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ isiPublication.status }}</p>
-                                            <p v-if="isiPublication.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ isiPublication.usuario.name }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.authors == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text" :title="isiPublication.authors" >{{ isiPublication.authors }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.doi == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.doi }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.articleTitle == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ isiPublication.articleTitle }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.journalName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.journalName }}</p>
-                                        </td>
-                                        <td>
-                                            <p v-if="isiPublication.yearPublished == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ isiPublication.yearPublished }}</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="row">
-                                <div class="col-3">
-                                <label style="font-weight: 500">
-                                    These buttons use the elements selected in the table, if none exist, it will select all the records. </label>
-                                </div>
-                                <div class="col-auto">
-                                    <label title="To select a single record from the table, just do &#013; Click on the box in the first column to select &#013; several consecutive hold SHIFT, to select several &#013; non-consecutive hold CTRL."><span class="badge bg-dark-grey fs-10">?</span></label>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="row pb-0 p-4">
+            <div class="col-lg-10 col-md-12">
+              <div class="info-box">
+                Includes all articles <strong>published</strong> in scientific journals indexed in the Web of Science, during the current baseline year (Sep-present). By entering the DOI, most of the fields will be filled automatically; if not, please manually enter the required information.
+                In the table below, you have the option to search for a publication to check if it has already been reported. It is recommended to filter by year of publication for the review.
+                Articles published in periods prior to the current baseline year <strong>will NOT be considered</strong> in the report and individual results evaluation.
+              </div>
             </div>
-            <modalconfirmacion ref="confirmation"></modalconfirmacion>
-            <modalalerta ref="alert"></modalalerta>
-            <modalver v-bind:isiPublication1="isiPublication" v-if="showDetailsIsi" @close="showDetailsIsi = false"></modalver>
-            <modaleditar v-bind:isiPublication1="isiPublicationEdit" v-if="showEditIsiPublication" @close="showEditIsiPublication = false" @recarga="recargarTabla('General')"></modaleditar>
-            <modalcrear v-if="showNewIsiPublication" @close="showNewIsiPublication = false" @recarga="recargarTabla('General')"></modalcrear>
+            <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
+              <div class="d-flex">
+                <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
+                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewIsiPublication = true">New Entry</a>
+                <a class="btn btn-spacing btn-search-blue ml-2" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
+              </div>
+            </div>
+          </div>
+  
+          <!-- ProgressReport Filter -->
+          <div class="row px-4 mb-2">
+            <div class="col-lg-2 col-md-6">
+              <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+              <select
+                id="progressReportFilter"
+                class="form-select"
+                v-model="selectedProgressReport"
+                @change="filterByProgressReport"
+              >
+                <option value="">All</option>
+                <option
+                  v-for="progress in uniqueProgressReports"
+                  :key="progress"
+                  :value="progress"
+                >
+                  {{ progress }}
+                </option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px">
+            <div class="container">
+              <div class="table-responsive p-0">
+                <div v-show="mostrarCarga" class="loader-sm"></div>
+                <table v-show="mostrarTabla" class="table align-items-center mb-0" id="MyTableIsiPublications">
+                  <thead>
+                    <tr style="color: black">
+                      <th style="min-width: 16px;"></th>
+                      <th class="text-uppercase text-xs font-weight-bolder">ID</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">Status</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">User</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">Doi</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
+                      <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="isiPublication in filteredIsiPublications" :key="isiPublication.id">
+                      <td></td>
+                      <td>
+                        <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ isiPublication.id }}</p>
+                      </td>
+                      <td class="align-middle text-end">
+                        <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
+                          &nbsp;
+                          <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(isiPublication)"><i class="fa-regular fa-eye"></i></a>
+                          &nbsp;
+                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
+                        </div>
+                      </td>
+                      <td>
+                        <p v-if="isiPublication.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ isiPublication.status }}</p>
+                        <p v-if="isiPublication.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
+                      </td>
+                      <td class="text-sm mb-0 truncate-text" :title="isiPublication.usuario.name">
+                    {{ truncateText(isiPublication.usuario.name, 60) }}
+                    </td>
+                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.authors || '---'">
+                    {{ truncateText(isiPublication.authors || '---', 60) }}
+                    </td>
+                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.doi || '---'">
+                    {{ truncateText(isiPublication.doi || '---', 60) }}
+                    </td>
+                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.articleTitle || '---'">
+                    {{ truncateText(isiPublication.articleTitle || '---', 60) }}
+                    </td>
+                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.journalName || '---'">
+                    {{ truncateText(isiPublication.journalName || '---', 60) }}
+                    </td>
+                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.yearPublished || '---'">
+                    {{ truncateText(isiPublication.yearPublished || '---', 60) }}
+                    </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+      <modalconfirmacion ref="confirmation"></modalconfirmacion>
+      <modalalerta ref="alert"></modalalerta>
+      <modalver v-bind:isiPublication1="isiPublication" v-if="showDetailsIsi" @close="showDetailsIsi = false"></modalver>
+      <modaleditar v-bind:isiPublication1="isiPublicationEdit" v-if="showEditIsiPublication" @close="showEditIsiPublication = false" @recarga="recargarTabla('General')"></modaleditar>
+      <modalcrear v-if="showNewIsiPublication" @close="showNewIsiPublication = false" @recarga="recargarTabla('General')"></modalcrear>
     </div>
-</template>
+  </template>
 
 <script>
 import axios from 'axios'
@@ -120,7 +127,10 @@ export default {
     mixins: [mixin],
     data(){
         return{
-            isiPublications: null,
+            isiPublications: [], // All publications
+            filteredIsiPublications: [], // Publications filtered by progressReport
+            uniqueProgressReports: [], // Unique progressReport values for the selector
+            selectedProgressReport: '', // Selected progressReport value
             isiPublication: null,
             showNewIsiPublication: false,
             showEditIsiPublication: false,
@@ -139,17 +149,72 @@ export default {
             this.isiPublication = isiPublication;
             this.showDetailsIsi = true;
         },
-        getIsiPublications(id){
-            axios.get(`api/isiPublications/${id}`).then( response =>{
+        async getIsiPublications(id) {
+            try {
+                const response = await axios.get(`api/isiPublications/${id}`);
                 this.isiPublications = response.data;
-                this.isiPublicationsAux = response.data;
-                if (this.table != null){
-                    this.table.clear();
-                    this.table.destroy();
+
+                // Default filtered publications
+                this.filteredIsiPublications = [...this.isiPublications];
+
+                // Extract unique progressReport values (excluding null or empty values)
+                this.uniqueProgressReports = [
+                ...new Set(this.isiPublications.map(pub => pub.progressReport).filter(Boolean))
+                ].sort((a, b) => a - b);
+
+                // Handle table reinitialization
+                if (this.table != null) {
+                this.table.destroy(); // Destroy the table instance
                 }
-                this.crearTabla('#MyTableIsiPublications');
-            }).catch(e=> console.log(e))
+                this.crearTabla('#MyTableIsiPublications'); // Recreate the table with new data
+            } catch (error) {
+                console.error('Error fetching publications:', error);
+            }
         },
+        filterByProgressReport() {
+            this.mostrarCarga = true; // Activar indicador de carga
+
+            // Restaurar datos originales si se selecciona "All"
+            if (this.selectedProgressReport == "") {
+                this.filteredIsiPublications = [...this.isiPublications];
+
+                // Verificar y destruir la tabla existente
+                if (this.table != null) {
+
+                this.table.destroy();
+                this.table = null; // Limpiar referencia de la tabla
+                }
+
+                // Reconstruir la tabla de manera segura
+                setTimeout(() => {
+                if (document.querySelector("#MyTableIsiPublications")) {
+                    this.crearTabla("#MyTableIsiPublications");
+                }
+                this.mostrarCarga = false; // Desactivar indicador de carga
+                }, 500);
+            } else {
+                // Filtrar por progressReport
+                this.filteredIsiPublications = this.isiPublications.filter(
+                publication => publication.progressReport === this.selectedProgressReport
+                );
+                // Verificar y destruir la tabla existente
+                if (this.table != null) {
+                    this.table.destroy();
+                    this.table = null; // Limpiar referencia de la tabla
+                }
+                
+                // Reconstruir la tabla de manera segura
+                setTimeout(() => {
+                    console.log(this.filteredIsiPublications);
+                if (document.querySelector("#MyTableIsiPublications")) {
+                    this.crearTabla("#MyTableIsiPublications");
+                }
+                this.mostrarCarga = false; // Desactivar indicador de carga
+                }, 500);
+            }
+            },
+
+
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;
             if($tipoRecarga == 'General'){

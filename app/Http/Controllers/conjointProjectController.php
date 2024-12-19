@@ -12,6 +12,25 @@ class conjointProjectController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
         $scCollaborations = scCollaborations::create($input);
         return response()->json("Colaboracion Creada!");
     }
@@ -198,6 +217,25 @@ class conjointProjectController extends Controller
     {
         $scCollaborations = scCollaborations::find($id);
         $input = $request->all();
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
         $scCollaborations->update($input);
         return response()->json($input);
     }

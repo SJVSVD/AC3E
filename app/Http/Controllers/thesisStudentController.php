@@ -54,6 +54,26 @@ class thesisStudentController extends Controller
             $input['is_link'] = 1;
         }
 
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
+
         $thesisStudent = thesisStudent::create($input);
         return response()->json("Thesis Creada!");
     }
@@ -205,6 +225,27 @@ class thesisStudentController extends Controller
     {
         $thesis = thesisStudent::find($id);
         $input = $request->all();
+
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
+
         $thesis->update($input);
         return response()->json('se ha guardado');
     }

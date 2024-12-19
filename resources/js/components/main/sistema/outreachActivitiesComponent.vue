@@ -10,9 +10,31 @@
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
-                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewOutreach = true">New Entry</a>
+                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
+                            <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewOutreach = true">New Entry</a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- ProgressReport Filter -->
+                    <div class="row px-4 mb-2">
+                        <div class="col-lg-2 col-md-6">
+                        <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+                        <select
+                            id="progressReportFilter"
+                            class="form-select"
+                            v-model="selectedProgressReport"
+                            @change="filterByProgressReport"
+                        >
+                            <option value="">All</option>
+                            <option
+                            v-for="progress in uniqueProgressReports"
+                            :key="progress"
+                            :value="progress"
+                            >
+                            {{ progress }}
+                            </option>
+                        </select>
                         </div>
                     </div>
                 </div>
@@ -35,18 +57,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="outreachActivity in outreachActivities" :key="outreachActivity.id">
+                                    <tr v-for="outreachActivity in filteredOutreachs" :key="outreachActivity.id">
                                         <td></td>
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ outreachActivity.id }}</p>
                                         </td>                                          
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editActivity(outreachActivity)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editActivity(outreachActivity)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verActivity(outreachActivity)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteActivity(outreachActivity.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteActivity(outreachActivity.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                         <td>
@@ -111,6 +133,10 @@ export default {
     mixins: [mixin],
     data(){
         return{
+            filteredOutreachs: [], // Publications filtered by progressReport
+            uniqueProgressReports: [], // Unique progressReport values for the selector
+            selectedProgressReport: '', // Selected progressReport value
+
             outreachActivities: null,
             outreachActivity: null,
             showDetailsActivity: false,
@@ -164,15 +190,51 @@ export default {
             this.outreachActivity = outreachActivity;
             this.showDetailsActivity = true;
         },
-        getOutreachActivities(id){
-            axios.get(`api/outreachActivities/${id}`).then( response =>{
-                this.outreachActivities = response.data;
-                if (this.table != null){
-                    this.table.clear();
+        filterByProgressReport() {
+            this.mostrarCarga = true;
+            if (this.selectedProgressReport === '') {
+                this.filteredOutreachs = [...this.outreachActivities];
+            } else {
+                this.filteredOutreachs = this.outreachActivities.filter(
+                    pub => pub.progressReport === this.selectedProgressReport
+                );
+            }
+
+            if (this.table != null) {
+                this.table.destroy();
+            }
+
+            setTimeout(() => {
+                this.crearTabla('#myTableOutreach');
+                this.mostrarCarga = false;
+            }, 500);
+        },
+        async getOutreachActivities(id){
+            try {
+                const response = await axios.get(`api/outreachActivities/${id}`);
+                this.outreachActivities = Array.isArray(response.data)
+                    ? response.data
+                    : Object.values(response.data || {}); // Maneja el caso de null o undefined
+
+                // Ahora es seguro usar el spread operator
+                this.filteredOutreachs = [...this.outreachActivities];
+
+                // Verificar si hay registros antes de intentar extraer valores únicos
+                if (this.outreachActivities.length > 0) {
+                    this.uniqueProgressReports = [
+                        ...new Set(this.outreachActivities.map(pub => pub.progressReport).filter(Boolean)),
+                    ].sort((a, b) => b - a);
+                } else {
+                    this.uniqueProgressReports = [];
+                }
+                
+                if (this.table != null) {
                     this.table.destroy();
                 }
                 this.crearTabla('#myTableOutreach');
-            }).catch(e=> console.log(e))
+            } catch (error) {
+                console.error('Error fetching collaborations:', error);
+            }
         },
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;

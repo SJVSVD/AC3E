@@ -88,6 +88,10 @@ export const mixin = {
                 });
             }, 100);
         },
+        truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+        },
         validarRut(value) {
             var validado = validateRut(value);
             return validado;

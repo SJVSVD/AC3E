@@ -11,6 +11,25 @@ class postDocController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
         $postDoc = postDoc::create($input);
         return response()->json("Registro Creado!");
     }
@@ -100,11 +119,7 @@ class postDocController extends Controller
                 ->get();
         }
     
-        // Filtrar resultados en PHP si es necesario
-        $postDoc = $postDoc->filter(function($doc) use ($userName, $userID) {
-            $normalizedResearcher = normalizeString($doc->researcherInvolved);
-            return $doc->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-        });
+
     
         return $postDoc;
     }    
@@ -114,6 +129,25 @@ class postDocController extends Controller
     {
         $postDoc = postDoc::find($id);
         $input = $request->all();
+        // Obtener los nombres de los investigadores relacionados
+        if (isset($input['researcherInvolved'])) {
+            $researcherNames = explode(',', $input['researcherInvolved']);
+
+            // Limpiar y normalizar los nombres
+            $normalizedNames = array_map('trim', $researcherNames);
+
+            // Obtener las líneas de investigación para cada investigador
+            $researchLines = [];
+            foreach ($normalizedNames as $name) {
+                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+                if ($user && $user->researchLine) {
+                    $researchLines[] = $user->researchLine->name;
+                }
+            }
+
+            // Asignar las líneas de investigación al campo antes de guardar
+            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        }
         $postDoc->update($input);
         return response()->json($input);
     }

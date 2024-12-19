@@ -12,19 +12,37 @@ The destination country and city correspond to the location of the project leade
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
-                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewProject = true">New Entry</a>
+                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
+                            <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewProject = true">New Entry</a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+                        <select
+                            id="progressReportFilter"
+                            class="form-select"
+                            v-model="selectedProgressReport"
+                            @change="filterByProgressReport"
+                        >
+                            <option value="">All</option>
+                            <option
+                                v-for="progress in uniqueProgressReports"
+                                :key="progress"
+                                :value="progress"
+                            >
+                                {{ progress }}
+                            </option>
+                        </select>
+                    </div>
                     <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="showActiveOnly"> Show active only</label>
-                                  &nbsp;
-                                  <a class="btn btn-xs btn-search-blue" @click="recargarTabla('Active')"><i class="fa-solid fa-magnifying-glass"></i></a>
-                          </div>
-                      </div>
+                        <div class="form-check pt-2 ">
+                        <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                v-model="showActiveOnly"> Show active only</label>
+                                &nbsp;
+                                <a class="btn btn-xs btn-search-blue" @click="recargarTabla('Active')"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px">
                     <div class="container">
@@ -46,18 +64,18 @@ The destination country and city correspond to the location of the project leade
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="conjointProject in conjointProjects" :key="conjointProject.id">
+                                    <tr v-for="conjointProject in filteredProjects" :key="conjointProject.id">
                                         <td></td>
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ conjointProject.id }}</p>
                                         </td>                                          
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editProject(conjointProject)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editProject(conjointProject)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verProject(conjointProject)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteProject(conjointProject.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteProject(conjointProject.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                         <td>
@@ -127,6 +145,9 @@ export default {
     data(){
         return{
             conjointProjects: null,
+            filteredProjects: null,
+            uniqueProgressReports: [],
+            selectedProgressReport: '',
             conjointProject: null,
             showNewProject: false,
             showActiveOnly: false,
@@ -180,26 +201,53 @@ export default {
             this.conjointProject = conjointProject;
             this.showDetailsProject = true;
         },
-        getConjointProjects(id){
-            axios.get(`api/conjointProjects/${id}`).then( response =>{
+        async getConjointProjects(id){
+            try {
+                const response = await axios.get(`api/conjointProjects/${id}`);
                 this.conjointProjects = response.data;
-                console.log(this.conjointProjects);
+                this.filteredProjects = [...response.data];
+
+                // Extract unique progressReport values
+                this.uniqueProgressReports = [
+                    ...new Set(this.conjointProjects.map(pub => pub.progressReport).filter(Boolean)),
+                ].sort((a, b) => b - a);
+
+                if (this.table != null) {
+                    this.table.destroy();
+                }
+                this.crearTabla('#myTableProjects');
+            } catch (error) {
+                console.error('Error fetching collaborations:', error);
+            }
+        },
+        getActiveProjects(id){
+            axios.get(`api/conjointProjectsActive/${id}`).then( response =>{
+                this.conjointProjects = response.data;
+                this.filteredProjects = [...response.data];
                 if (this.table != null){
-                    this.table.clear();
                     this.table.destroy();
                 }
                 this.crearTabla('#myTableProjects');
             }).catch(e=> console.log(e))
         },
-        getActiveProjects(id){
-            axios.get(`api/conjointProjectsActive/${id}`).then( response =>{
-                this.conjointProjects = response.data;
-                if (this.table != null){
-                    this.table.clear();
-                    this.table.destroy();
-                }
+        filterByProgressReport() {
+            this.mostrarCarga = true;
+            if (this.selectedProgressReport === '') {
+                this.filteredProjects = [...this.conjointProjects];
+            } else {
+                this.filteredProjects = this.conjointProjects.filter(
+                    pub => pub.progressReport === this.selectedProgressReport
+                );
+            }
+
+            if (this.table != null) {
+                this.table.destroy();
+            }
+
+            setTimeout(() => {
                 this.crearTabla('#myTableProjects');
-            }).catch(e=> console.log(e))
+                this.mostrarCarga = false;
+            }, 500);
         },
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;

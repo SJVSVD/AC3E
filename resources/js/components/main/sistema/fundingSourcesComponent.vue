@@ -10,10 +10,28 @@
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
-                            <button @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewFundingSource = true">New Entry</a>
+                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
+                            <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewFundingSource = true">New Entry</a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+                        <select
+                            id="progressReportFilter"
+                            class="form-select"
+                            v-model="selectedProgressReport"
+                            @change="filterByProgressReport"
+                        >
+                            <option value="">All</option>
+                            <option
+                                v-for="progress in uniqueProgressReports"
+                                :key="progress"
+                                :value="progress"
+                            >
+                                {{ progress }}
+                            </option>
+                        </select>
                     </div>
                     <div class="col-md-4">
                         <div class="form-check pt-2 ">
@@ -42,18 +60,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="fundingSource in fundingSources" :key="fundingSource.id">
+                                    <tr v-for="fundingSource in filteredSources" :key="fundingSource.id">
                                         <td></td>
                                         <td>
                                             <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ fundingSource.id }}</p>
                                         </td>                                          
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a class="btn btn-alert btn-xs" title="Edit" @click="editFundingSource(fundingSource)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editFundingSource(fundingSource)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verFunding(fundingSource)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a class="btn btn-closed btn-xs" title="Delete" @click="deleteFundingSource(fundingSource.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteFundingSource(fundingSource.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                         <td>
@@ -111,6 +129,11 @@ export default {
     mixins: [mixin],
     data(){
         return{
+
+            filteredSources: null,
+            uniqueProgressReports: [],
+            selectedProgressReport: '',
+
             fundingSources: null,
             fundingSource: null,
             showDetailsSource: false,
@@ -164,21 +187,49 @@ export default {
             this.fundingSource = fundingSource;
             this.showDetailsSource = true;
         },
-        getFundingSources(id){
-            axios.get(`api/fundingSources/${id}`).then( response =>{
+        filterByProgressReport() {
+            this.mostrarCarga = true;
+            if (this.selectedProgressReport === '') {
+                this.filteredSources = [...this.fundingSources];
+            } else {
+                this.filteredSources = this.fundingSources.filter(
+                    pub => pub.progressReport === this.selectedProgressReport
+                );
+            }
+
+            if (this.table != null) {
+                this.table.destroy();
+            }
+
+            setTimeout(() => {
+                this.crearTabla('#myTableFunding');
+                this.mostrarCarga = false;
+            }, 500);
+        },
+        async getFundingSources(id){
+            try {
+                const response = await axios.get(`api/fundingSources/${id}`);
                 this.fundingSources = response.data;
-                if (this.table != null){
-                    this.table.clear();
+                this.filteredSources = [...response.data];
+
+                // Extract unique progressReport values
+                this.uniqueProgressReports = [
+                    ...new Set(this.fundingSources.map(pub => pub.progressReport).filter(Boolean)),
+                ].sort((a, b) => b - a);
+
+                if (this.table != null) {
                     this.table.destroy();
                 }
                 this.crearTabla('#myTableFunding');
-            }).catch(e=> console.log(e))
+            } catch (error) {
+                console.error('Error fetching collaborations:', error);
+            }
         },
         getActiveFunding(id){
             axios.get(`api/fundingSourcesActive/${id}`).then( response =>{
                 this.fundingSources = response.data;
+                this.filteredSources = [...response.data];
                 if (this.table != null){
-                    this.table.clear();
                     this.table.destroy();
                 }
                 this.crearTabla('#myTableFunding');

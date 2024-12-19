@@ -115,8 +115,6 @@ class dashboardController extends Controller
     }
     
     
-    
-    
     public function getRegistrosUser($userId, $cantidad) {
 
         function normalizeString($string) {

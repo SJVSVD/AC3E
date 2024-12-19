@@ -35,6 +35,8 @@ class isiPublication extends Model
         'nationalExternalResearchers',
         'internationalExternalResearchers',
         'comments',
+        'quartile',
+        'impactFactor',
         'progressReport',
     ];
 

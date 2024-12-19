@@ -6,7 +6,7 @@
             <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Funding source {{ fundingSource.inCash }}
+                    New Funding source 
                 </slot>
                 <label for="">Progress year: {{ fundingSource.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
@@ -54,6 +54,7 @@
                       
                       <div class="col-md-6">
                         <label for="">AC3E Researchers Involved:</label>
+                        <label title="You must list all the researchers who are part of the center." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <Multiselect
                           placeholder="Select the participants"
                           v-model="fundingSource.researcherInvolved"
@@ -101,6 +102,7 @@
                       </div>
                       <div class="col-md-3">
                         <label for="">In cash:</label>
+                        <label title="It must be in CLP." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
                         <br>
                         <input type="text" class="form-control" :value="formattedInCash" @input="formatInCash" @keydown="onlyAllowNumbers">
                       </div>

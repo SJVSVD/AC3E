@@ -22,7 +22,7 @@
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Type Event: </label>
-                      <label v-if="organization1.typeEvent != null" class="fw-normal" style="font-size: 14px;">{{ organization1.typeEvent }}</label>
+                      <label v-if="organization1.typeEvent != null" class="fw-normal" style="font-size: 14px;">{{ organization1 }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">

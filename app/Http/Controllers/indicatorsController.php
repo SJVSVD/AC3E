@@ -2,22 +2,313 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\awards;
+use App\Models\books;
 use App\Models\extraTables;
+use App\Models\fundingSources;
 use App\Models\isiPublication;
 use App\Models\nonIsiPublication;
+use App\Models\organizationsScEvents;
 use App\Models\outreachActivities;
+use App\Models\participationScEvents;
 use App\Models\patents;
 use App\Models\postDoc;
 use App\Models\publicPrivate;
 use App\Models\scCollaborations;
 use App\Models\technologyKnowledge;
 use App\Models\thesisStudent;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
 class indicatorsController extends Controller
 {
+
+    public function getFilteredRecordsByModule(Request $request)
+    {
+        try {
+            $moduleName = $request->input('module');
+            $lineName = $request->input('line');
+            $personId = $request->input('person');
+    
+            // Validar el módulo
+            $moduleClass = $this->getModuleClass($moduleName);
+    
+            if (!$moduleClass) {
+                return response()->json(['error' => 'Invalid module name'], 400);
+            }
+    
+            $recordsByYear = [];
+    
+            $model = new $moduleClass;
+    
+            // Construir consulta base
+            $query = $model->select('progressReport', DB::raw('COUNT(*) as total'));
+    
+            // Filtrar por persona si está seleccionada
+            if ($personId) {
+                $user = User::find($personId);
+                if (!$user) {
+                    return response()->json(['error' => 'User not found'], 404);
+                }
+    
+                $normalizedUserName = strtolower($user->name);
+                $query->where(function ($query) use ($personId, $normalizedUserName) {
+                    $query->where('idUsuario', $personId)
+                          ->orWhereRaw('LOWER(researcherInvolved) LIKE ?', ["%{$normalizedUserName}%"]);
+                });
+            }
+    
+            // Filtrar por línea de investigación si está seleccionada
+            if ($lineName) {
+                $normalizedLineName = strtolower($lineName);
+                $query->whereRaw('LOWER(researchLinesInvolved) LIKE ?', ["%{$normalizedLineName}%"]);
+            }
+    
+            // Agrupar registros por progressReport y contar
+            $groupedRecords = $query->groupBy('progressReport')
+                ->orderBy('progressReport', 'asc')
+                ->get();
+    
+            foreach ($groupedRecords as $record) {
+                $progressReportYear = $record->progressReport;
+    
+                if (!isset($recordsByYear[$progressReportYear])) {
+                    $recordsByYear[$progressReportYear] = 0;
+                }
+    
+                $recordsByYear[$progressReportYear] += $record->total;
+            }
+    
+            // Ordenar por año de progressReport
+            ksort($recordsByYear);
+    
+            // Obtener el progressReport actual desde extraTables
+            $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+    
+            return response()->json([
+                'currentProgressReport' => $currentProgressReport,
+                'recordsByYear' => $recordsByYear,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error fetching filtered records by module: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+    
+
+    public function getPublicationsByResearchLine($lineName)
+    {
+        try {
+            // Normalizar el nombre de la línea de investigación
+            $normalizedLineName = strtolower($lineName);
+    
+            // Obtener el progressReport actual desde extraTables
+            $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+    
+            // Módulos que se deben buscar
+            $modules = [
+                isiPublication::class,
+                nonIsiPublication::class,
+                books::class,
+                awards::class,
+                organizationsScEvents::class,
+                participationScEvents::class,
+                scCollaborations::class,
+                thesisStudent::class,
+                postDoc::class,
+                outreachActivities::class,
+                patents::class,
+                publicPrivate::class,
+                technologyKnowledge::class,
+                fundingSources::class
+            ];
+    
+            $recordsByYear = [];
+    
+            foreach ($modules as $module) {
+                $model = new $module;
+    
+                // Agrupar registros por progressReport y filtrar por línea de investigación
+                $groupedRecords = $model
+                    ->select('progressReport', DB::raw('COUNT(*) as total'))
+                    ->whereRaw('LOWER(researchLinesInvolved) LIKE ?', ["%{$normalizedLineName}%"])
+                    ->groupBy('progressReport')
+                    ->get();
+    
+                foreach ($groupedRecords as $record) {
+                    $progressReportYear = $record->progressReport;
+    
+                    if (!isset($recordsByYear[$progressReportYear])) {
+                        $recordsByYear[$progressReportYear] = 0;
+                    }
+    
+                    $recordsByYear[$progressReportYear] += $record->total;
+                }
+            }
+    
+            // Ordenar por año de progressReport
+            ksort($recordsByYear);
+    
+            return response()->json([
+                'currentProgressReport' => $currentProgressReport,
+                'recordsByYear' => $recordsByYear
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching records by research line: ' . $e->getMessage()], 500);
+        }
+    }
+    
+
+    public function getPersonRecordsByProgressReport($userId)
+    {
+        try {
+            // Obtener el nombre del usuario y normalizarlo
+            $user = User::find($userId);
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+    
+            $normalizedUserName = $this->normalizeString($user->name);
+    
+            // Obtener el progressReport actual desde extraTables
+            $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+    
+            // Módulos que se deben buscar
+            $modules = [
+                'isiPublications' => isiPublication::class,
+                'nonIsiPublications' => nonIsiPublication::class,
+                'books' => books::class,
+                'awards' => awards::class,
+                'organizationsScEvents' => organizationsScEvents::class,
+                'participationScEvents' => participationScEvents::class,
+                'scCollaborations' => scCollaborations::class,
+                'thesisStudents' => thesisStudent::class,
+                'postDocs' => postDoc::class,
+                'outreachActivities' => outreachActivities::class,
+                'patents' => patents::class,
+                'publicPrivate' => publicPrivate::class,
+                'technologyKnowledge' => technologyKnowledge::class,
+                'fundingSources' => fundingSources::class
+            ];
+    
+            $recordsByYear = [];
+    
+            foreach ($modules as $moduleName => $module) {
+                $model = new $module;
+    
+                // Manejar el caso especial para `books`
+                $query = $model->select('progressReport', DB::raw('COUNT(*) as total'));
+    
+                if ($moduleName === 'books') {
+                    $query->where('centerResearcher', $userId);
+                } else {
+                    $query->where(function ($query) use ($userId, $normalizedUserName) {
+                        $query->where('idUsuario', $userId)
+                              ->orWhereRaw("LOWER(REPLACE(REPLACE(REPLACE(researcherInvolved, '\r', ''), '\n', ''), '\t', '')) LIKE ?", ["%$normalizedUserName%"]);
+                    });
+                }
+    
+                // Agrupar registros por progressReport y contar
+                $groupedRecords = $query->groupBy('progressReport')->get();
+    
+                foreach ($groupedRecords as $record) {
+                    $progressReportYear = $record->progressReport;
+    
+                    if (!isset($recordsByYear[$progressReportYear])) {
+                        $recordsByYear[$progressReportYear] = 0;
+                    }
+    
+                    $recordsByYear[$progressReportYear] += $record->total;
+                }
+            }
+    
+            // Ordenar por año de progressReport
+            ksort($recordsByYear);
+    
+            return response()->json([
+                'userName' => $user->name,
+                'currentProgressReport' => $currentProgressReport,
+                'recordsByYear' => $recordsByYear
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching person records: ' . $e->getMessage()], 500);
+        }
+    }
+    
+
+    public function getGeneralRecordsByProgressReport()
+        {
+            try {
+                // Obtener el progressReport actual desde extraTables
+                $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+
+                // Módulos que se deben buscar
+                $modules = [
+                    isiPublication::class,
+                    nonIsiPublication::class,
+                    books::class,
+                    awards::class,
+                    organizationsScEvents::class,
+                    participationScEvents::class,
+                    scCollaborations::class,
+                    thesisStudent::class,
+                    postDoc::class,
+                    outreachActivities::class,
+                    patents::class,
+                    publicPrivate::class,
+                    technologyKnowledge::class,
+                    fundingSources::class
+                ];
+
+                $recordsByYear = [];
+
+                foreach ($modules as $module) {
+                    $model = new $module;
+
+                    // Agrupar registros por progressReport y contar
+                    $groupedRecords = $model
+                        ->select('progressReport', DB::raw('COUNT(*) as total'))
+                        ->groupBy('progressReport')
+                        ->get();
+
+                    foreach ($groupedRecords as $record) {
+                        $progressReportYear = $record->progressReport;
+
+                        if (!isset($recordsByYear[$progressReportYear])) {
+                            $recordsByYear[$progressReportYear] = 0;
+                        }
+
+                        $recordsByYear[$progressReportYear] += $record->total;
+                    }
+                }
+
+                // Ordenar por año de progressReport
+                ksort($recordsByYear);
+
+                return response()->json([
+                    'currentProgressReport' => $currentProgressReport,
+                    'recordsByYear' => $recordsByYear
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error fetching general records: ' . $e->getMessage()], 500);
+            }
+        }
+
+    
+    
+    // Función para normalizar cadenas
+    private function normalizeString($string)
+    {
+        $string = strtolower($string);
+        $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+        $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+        return trim($string);
+    }
+
     public function getPublicationsByProgressReport()
     {
         // Agrupar las publicaciones por 'progressReport' y contar cuántas publicaciones tiene cada grupo
@@ -139,4 +430,31 @@ class indicatorsController extends Controller
     
         return response()->json($data);
     }
+
+    protected function getModuleClass($moduleName)
+    {
+        $modules = [
+            'isiPublications' => isiPublication::class,
+            'nonIsiPublications' => nonIsiPublication::class,
+            'books' => books::class,
+            'awards' => awards::class,
+            'organizationsScEvents' => organizationsScEvents::class,
+            'participationScEvents' => participationScEvents::class,
+            'scCollaborations' => scCollaborations::class,
+            'thesisStudents' => thesisStudent::class,
+            'postDocs' => postDoc::class,
+            'outreachActivities' => outreachActivities::class,
+            'patents' => patents::class,
+            'publicPrivate' => publicPrivate::class,
+            'technologyKnowledge' => technologyKnowledge::class,
+            'fundingSources' => fundingSources::class,
+        ];
+
+        if (!isset($modules[$moduleName])) {
+            throw new \Exception("Module {$moduleName} is not defined.");
+        }
+
+        return $modules[$moduleName];
+    }
+
 }
