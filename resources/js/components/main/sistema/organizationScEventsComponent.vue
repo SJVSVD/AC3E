@@ -13,7 +13,7 @@
                 <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed">
                   <i class="fa fa-fw fa-trash"></i> Delete Selected
                 </button>
-                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewOrganization = true">New Entry</a>
+                <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewOrganization = true">New Entry</a>
                 <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')">
                   <i class="fa-solid fa-rotate"></i>
                 </a>
@@ -89,7 +89,7 @@
                           </a>
                           <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
                           &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editOrganization(organizationScEvent)">
+                          <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || organizationScEvent.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editOrganization(organizationScEvent)">
                             <i class="fa fa-fw fa-edit"></i>
                           </a>
                           &nbsp;

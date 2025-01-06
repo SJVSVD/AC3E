@@ -91,7 +91,7 @@ class organizationsScEventsController extends Controller
 
         // Verificar roles
         foreach ($user->roles as $rol) {
-            if ($rol['name'] == 'Administrator') {
+            if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                 $roles[] = $rol['name'];
                 $administrador = true;
             } elseif ($rol['name'] == 'Titular Researcher') {

@@ -54,16 +54,16 @@ class postDocController extends Controller
         $roles = [];
         $administrador = false;
         $titularResearcher = false;
-        $postDoc = postDoc::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->first();
+        $postDoc = postDoc::where('idUsuario', $userID)->with('usuario')->get();
     
         // Identificar roles del usuario
         if ($user->roles->isEmpty()) {
             $roles[] = '';
         } else {
             foreach ($user->roles as $rol) {
-                if ($rol['name'] == 'Administrator') {
+                if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                     $roles[] = $rol['name'];
                     $administrador = true;
                 } elseif ($rol['name'] == 'Titular Researcher') {
@@ -118,9 +118,7 @@ class postDocController extends Controller
                 ->with('usuario')
                 ->get();
         }
-    
-
-    
+        
         return $postDoc;
     }    
 

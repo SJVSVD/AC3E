@@ -30,6 +30,8 @@
                       <label class="col-md-9 m-0 fs-8 pb-1"> Funding: <label v-if="isiPublication1.funding != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.funding }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
                       <label class="col-md-6 m-0 fs-8 pb-1"> Comments: <label v-if="isiPublication1.comments != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.comments }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
                       <label class="col-md-6 m-0 fs-8 pb-1"> Progress Report Year: <label class="fw-normal" style="font-size: 14px;">{{ isiPublication1.progressReport }}</label></label>
+                      <label class="col-md-3 m-0 fs-8 pb-1"> Impact Factor: <label v-if="isiPublication1.impactFactor != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.impactFactor }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
+                      <label class="col-md-3 m-0 fs-8 pb-1"> Quartile: <label v-if="isiPublication1.quartile != null" class="fw-normal" style="font-size: 14px;">{{ isiPublication1.quartile }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
                     </div>
                   </div>
                 </slot>

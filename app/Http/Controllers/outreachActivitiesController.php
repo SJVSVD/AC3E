@@ -58,16 +58,16 @@ class outreachActivitiesController extends Controller
         $roles = [];
         $administrador = false;
         $titularResearcher = false;
-        $outreachActivities = outreachActivities::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->first();
+        $outreachActivities = outreachActivities::where('idUsuario', $userID)->with('usuario')->get();
     
         // Identificar roles del usuario
         if ($user->roles->isEmpty()) {
             $roles[] = '';
         } else {
             foreach ($user->roles as $rol) {
-                if ($rol['name'] == 'Administrator') {
+                if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                     $roles[] = $rol['name'];
                     $administrador = true;
                 } elseif ($rol['name'] == 'Titular Researcher') {
@@ -122,12 +122,6 @@ class outreachActivitiesController extends Controller
                 ->with('usuario')
                 ->get();
         }
-    
-        // Filtrar resultados en PHP si es necesario
-        $outreachActivities = $outreachActivities->filter(function($activity) use ($userName, $userID) {
-            $normalizedResearcher = normalizeString($activity->researcherInvolved);
-            return $activity->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-        });
     
         return $outreachActivities;
     }

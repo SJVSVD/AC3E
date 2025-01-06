@@ -58,16 +58,16 @@ class patentsController extends Controller
         $roles = [];
         $administrador = false;
         $titularResearcher = false;
-        $patents = patents::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->first();
+        $patents = patents::where('idUsuario', $userID)->with('usuario')->get();
     
         // Identificar roles del usuario
         if ($user->roles->isEmpty()) {
             $roles[] = '';
         } else {
             foreach ($user->roles as $rol) {
-                if ($rol['name'] == 'Administrator') {
+                if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                     $roles[] = $rol['name'];
                     $administrador = true;
                 } elseif ($rol['name'] == 'Titular Researcher') {
@@ -123,12 +123,7 @@ class patentsController extends Controller
                 ->get();
         }
     
-        // Filtrar resultados en PHP si es necesario
-        $patents = $patents->filter(function($patent) use ($userName, $userID) {
-            $normalizedResearcher = normalizeString($patent->researcherInvolved);
-            return $patent->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-        });
-    
+
         return $patents;
     }
 

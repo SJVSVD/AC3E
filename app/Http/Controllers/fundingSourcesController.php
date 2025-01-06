@@ -57,16 +57,16 @@ class fundingSourcesController extends Controller
         $roles = [];
         $administrador = false;
         $titularResearcher = false;
-        $fundingSources = fundingSources::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->first();
+        $fundingSources = fundingSources::where('idUsuario', $userID)->with('usuario')->get();
     
         // Identificar roles del usuario
         if ($user->roles->isEmpty()) {
             $roles[] = '';
         } else {
             foreach ($user->roles as $rol) {
-                if ($rol['name'] == 'Administrator') {
+                if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                     $roles[] = $rol['name'];
                     $administrador = true;
                 } elseif ($rol['name'] == 'Titular Researcher') {
@@ -119,12 +119,6 @@ class fundingSourcesController extends Controller
                 ->get();
         }
     
-        // Filtrar resultados en PHP si es necesario
-        $fundingSources = $fundingSources->filter(function($source) use ($userName, $userID) {
-            $normalizedResearcher = normalizeString($source->researcherInvolved);
-            return $source->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-        });
-    
         return $fundingSources;
     }
     
@@ -142,7 +136,7 @@ class fundingSourcesController extends Controller
             $roles[] = '';
         } else {
             foreach ($user->roles as $rol) {
-                if ($rol['name'] == 'Administrator') {
+                if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                     $roles[] = $rol['name'];
                     $administrador = true;
                 } elseif ($rol['name'] == 'Titular Researcher') {

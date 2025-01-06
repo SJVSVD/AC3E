@@ -11,7 +11,7 @@
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
                             <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewFundingSource = true">New Entry</a>
+                            <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewFundingSource = true">New Entry</a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                                         </td>                                          
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editFundingSource(fundingSource)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a  v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || fundingSource.idUsuario == userID)"  class="btn btn-alert btn-xs" title="Edit" @click="editFundingSource(fundingSource)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verFunding(fundingSource)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
@@ -79,16 +79,26 @@
                                             <p v-if="fundingSource.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
                                         </td>                                          
                                         <td>
-                                            <p class="text-sm mb-0">{{ fundingSource.usuario.name }}</p>
+                                            <p v-if="fundingSource.usuario.name == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ fundingSource.usuario.name }}</p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ fundingSource.projectTitle }}</p>
+                                        <p v-if="fundingSource.projectTitle == null" class="text-sm mb-0">---</p>
+                                        <p 
+                                            v-else 
+                                            class="text-sm mb-0 truncate-text" 
+                                            :title="fundingSource.projectTitle"
+                                        >
+                                            {{ truncateText(fundingSource.projectTitle, 70) }}
+                                        </p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ thisDate(fundingSource.startDate) }}</p>
+                                            <p v-if="fundingSource.startDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ thisDate(fundingSource.startDate) }}</p>
                                         </td>
                                         <td>
-                                            <p class="text-sm mb-0">{{ thisDate(fundingSource.finishDate) }}</p>
+                                            <p v-if="fundingSource.finishDate == null" class="text-sm mb-0">---</p>
+                                            <p v-else class="text-sm mb-0">{{ thisDate(fundingSource.finishDate) }}</p>
                                         </td>
                                     </tr>
                                 </tbody>

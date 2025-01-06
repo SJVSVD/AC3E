@@ -13,7 +13,7 @@
                 <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed">
                   <i class="fa fa-fw fa-trash"></i> Delete Selected
                 </button>
-                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewAward = true">New Entry</a>
+                <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewAward = true">New Entry</a>
                 <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')">
                   <i class="fa-solid fa-rotate"></i>
                 </a>
@@ -63,7 +63,7 @@
                       </td>
                       <td class="align-middle text-end">
                         <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editAward(award)">
+                          <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || award.idUsuario == userID)"  class="btn btn-alert btn-xs" title="Edit" @click="editAward(award)">
                             <i class="fa fa-fw fa-edit"></i>
                           </a>
                           &nbsp;

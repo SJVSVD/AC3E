@@ -12,7 +12,7 @@
             <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
               <div class="d-flex">
                 <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewNonIsiPublication = true">New Entry</a>
+                <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewNonIsiPublication = true">New Entry</a>
                 <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
               </div>
             </div>
@@ -70,7 +70,7 @@
                           <a v-else-if="nonIsiPublication.is_link == 1" :href="nonIsiPublication.file" class="btn btn-search-blue btn-xs" title="Redirect" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                           <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
                           &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-alert btn-xs" title="Edit" @click="editNonIsiPublication(nonIsiPublication)"><i class="fa fa-fw fa-edit"></i></a>
+                          <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || nonIsiPublication.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editNonIsiPublication(nonIsiPublication)"><i class="fa fa-fw fa-edit"></i></a>
                           &nbsp;
                           <a class="btn btn-success btn-xs" title="Details" @click="verNonIsiPublication(nonIsiPublication)"><i class="fa-regular fa-eye"></i></a>
                           &nbsp;

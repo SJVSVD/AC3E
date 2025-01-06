@@ -60,16 +60,16 @@ class technologyKnowledgeController extends Controller
         $roles = [];
         $administrador = false;
         $titularResearcher = false;
-        $technologyKnowledge = technologyKnowledge::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->first();
+        $technologyKnowledge = technologyKnowledge::where('idUsuario', $userID)->with('usuario')->get();
     
         // Identificar roles del usuario
         if ($user->roles->isEmpty()) {
             $roles[] = '';
         } else {
             foreach ($user->roles as $rol) {
-                if ($rol['name'] == 'Administrator') {
+                if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                     $roles[] = $rol['name'];
                     $administrador = true;
                 } elseif ($rol['name'] == 'Titular Researcher') {
@@ -123,12 +123,6 @@ class technologyKnowledgeController extends Controller
                 ->with('usuario')
                 ->get();
         }
-    
-        // Filtrar resultados en PHP si es necesario
-        $technologyKnowledge = $technologyKnowledge->filter(function($knowledge) use ($userName, $userID) {
-            $normalizedResearcher = normalizeString($knowledge->researcherInvolved);
-            return $knowledge->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-        });
     
         return $technologyKnowledge;
     }

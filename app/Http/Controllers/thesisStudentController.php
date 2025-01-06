@@ -102,16 +102,16 @@ class thesisStudentController extends Controller
         $roles = [];
         $administrador = false;
         $titularResearcher = false;
-        $thesisStudents = thesisStudent::where('idUsuario', $userID)->with('usuario')->get();
         
         $user = User::where('id', $userID)->with('roles')->first();
+        $thesisStudents = thesisStudent::where('idUsuario', $userID)->with('usuario')->get();
     
         // Identificar roles del usuario
         if ($user->roles->isEmpty()) {
             $roles[] = '';
         } else {
             foreach ($user->roles as $rol) {
-                if ($rol['name'] == 'Administrator') {
+                if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
                     $roles[] = $rol['name'];
                     $administrador = true;
                 } elseif ($rol['name'] == 'Titular Researcher') {
@@ -166,11 +166,7 @@ class thesisStudentController extends Controller
                 ->get();
         }
     
-        // Filtrar resultados en PHP si es necesario
-        $thesisStudents = $thesisStudents->filter(function($student) use ($userName, $userID) {
-            $normalizedResearcher = normalizeString($student->researcherInvolved);
-            return $student->idUsuario == $userID || strpos($normalizedResearcher, $userName) !== false;
-        });
+
     
         return $thesisStudents;
     }

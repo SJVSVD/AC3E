@@ -134,10 +134,9 @@ public function show($userID){
     
     // Obtener usuario con roles
     $user = User::where('id', $userID)->with('roles')->first();
-
     // Verificar roles
     foreach ($user->roles as $rol) {
-        if ($rol['name'] == 'Administrator') {
+        if ($rol['name'] == 'Administrator' || $rol['name'] == 'Anid' || $rol['name'] == 'Staff') {
             $roles[] = $rol['name'];
             $administrador = true;
         } elseif ($rol['name'] == 'Titular Researcher') {
