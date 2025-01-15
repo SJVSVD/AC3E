@@ -138,6 +138,6 @@ class PageController extends Controller
 
     public function powerbiTest()
     {
-        return view('pages.powerbiTest');
+        return view('pages.powerBiTest');
     }
 }
