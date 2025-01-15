@@ -188,14 +188,16 @@ export default {
             if (ok) { 
                 axios.post('api/delete-records', {
                     module: module,
-                    ids: selectedIds
+                    ids: selectedIds,
+                    user_id: this.userID // Asegúrate de que `this.currentUserId` contiene el ID del usuario actual
                 })
                 .then(response => {
-                    this.toast.success(response.data.success);
-                    this.recargarTabla('General');
+                    this.toast.success(`${response.data.deletedCount} records successfully deleted!`);
+                    this.recargarTabla("General");
                 })
                 .catch(error => {
-                    this.toast.error("An error occurred.");
+                    console.error('Error deleting records:', error);
+                    this.toast.error('Failed to delete records.');
                 });
             }
         },
@@ -282,28 +284,35 @@ export default {
         async deleteThesisStudent(id) {
             const ok = await this.$refs.confirmation.show({
                 title: 'Delete Thesis',
-                message: `¿Are you sure you want to delete this Thesis?.`,
+                message: `¿Are you sure you want to delete this Thesis?`,
                 okButton: 'Delete',
                 cancelButton: 'Return'
-            })
+            });
+
             if (ok) {
-                axios.delete(`api/thesisStudents/${id}`).then( response =>{
-                    this.toast.success("Thesis successfully removed!", {
-                        position: "top-right",
-                        timeout: 3000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                    });
-                    this.recargarTabla('General');
-                }).catch(e=> console.log(e))
+                const userId = this.userID; // Asegúrate de obtener el ID del usuario actual.
+                axios
+                    .delete(`api/thesisStudents/${id}`, {
+                        params: { user_id: userId },
+                    })
+                    .then((response) => {
+                        this.toast.success("Thesis successfully removed!", {
+                            position: "top-right",
+                            timeout: 3000,
+                            closeOnClick: true,
+                            pauseOnFocusLoss: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            draggablePercent: 0.6,
+                            showCloseButtonOnHover: false,
+                            hideProgressBar: true,
+                            closeButton: "button",
+                            icon: true,
+                            rtl: false,
+                        });
+                        this.recargarTabla('General');
+                    })
+                    .catch((e) => console.log(e));
             }
         },
     }

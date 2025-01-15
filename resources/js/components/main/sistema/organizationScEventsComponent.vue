@@ -216,17 +216,19 @@
               cancelButton: 'Return'
           })
           if (ok) { 
-              axios.post('api/delete-records', {
-                  module: module,
-                  ids: selectedIds
-              })
-              .then(response => {
-                  this.toast.success(response.data.success);
-                  this.recargarTabla('General');
-              })
-              .catch(error => {
-                  this.toast.error("An error occurred.");
-              });
+            axios.post('api/delete-records', {
+                module: module,
+                ids: selectedIds,
+                user_id: this.userID // Asegúrate de que `this.currentUserId` contiene el ID del usuario actual
+            })
+            .then(response => {
+                this.toast.success(`${response.data.deletedCount} records successfully deleted!`);
+                this.recargarTabla(module);
+            })
+            .catch(error => {
+                console.error('Error deleting records:', error);
+                this.toast.error('Failed to delete records.');
+            });
           }
       },
       async getOrganizations(id) {
@@ -280,19 +282,42 @@
       },
       async deleteOrganization(id) {
         const ok = await this.$refs.confirmation.show({
-          title: 'Delete Organization',
-          message: `Are you sure you want to delete this organization?`,
-          okButton: 'Delete',
-          cancelButton: 'Cancel',
+            title: 'Delete Organization Sc',
+            message: `Are you sure you want to delete this Organization Sc?`,
+            okButton: 'Delete',
+            cancelButton: 'Return',
         });
         if (ok) {
-          try {
-            await axios.delete(`api/organizationScEvents/${id}`);
-            this.toast.success('Organization successfully deleted.');
-            this.recargarTabla('General');
-          } catch (error) {
-            console.error('Error deleting organization:', error);
-          }
+            try {
+                // Obtén el ID del usuario actual desde la sesión o contexto
+                const userId = this.userID; // Asegúrate de tener acceso a este dato en tu componente
+                
+                // Envía el ID del proyecto y el ID del usuario
+                await axios.delete(`api/organizationScEvents/${id}`, {
+                    data: { user_id: userId },
+                });
+
+                // Mostrar mensaje de éxito
+                this.toast.success('Organization Sc successfully removed!', {
+                    position: 'top-right',
+                    timeout: 3000,
+                    closeOnClick: true,
+                    pauseOnFocusLoss: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    draggablePercent: 0.6,
+                    showCloseButtonOnHover: false,
+                    hideProgressBar: true,
+                    closeButton: 'button',
+                    icon: true,
+                    rtl: false,
+                });
+
+                // Recargar la tabla
+                this.recargarTabla('General');
+            } catch (error) {
+                console.error('Error deleting Organization Sc:', error);
+            }
         }
       },
     },

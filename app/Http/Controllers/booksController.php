@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\books;
+use App\Models\SessionLog;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class booksController extends Controller
@@ -58,10 +60,7 @@ class booksController extends Controller
 
         // Si es Administrador, retornar todos los libros
         if ($administrador) {
-            return books::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            return books::with('usuario')
             ->get();
         }
 
@@ -89,7 +88,7 @@ class booksController extends Controller
                     ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
             })
             ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                $query->where('idResearchLine', $userResearchLine);
             })
             ->with('usuario')
             ->get();
@@ -211,13 +210,42 @@ class booksController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $books->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Books",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json("Libro Editada");
     }
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        books::find($id)->delete();
-        return response()->json("Libro Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $book = Books::find($id);
+     
+         if (!$book) {
+             return response()->json(['message' => 'Book not found'], 404);
+         }
+     
+         // Elimina el libro
+         $book->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Books Management",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'Book successfully deleted']);
+     }
+     
 }

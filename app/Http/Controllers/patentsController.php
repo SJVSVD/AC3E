@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\patents;
+use App\Models\SessionLog;
 use App\Models\User;
+use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -91,10 +93,7 @@ class patentsController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $patents = patents::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $patents = patents::with('usuario')
             ->get();
         } elseif ($titularResearcher) {
             // Lógica para Titular Researcher basada en `idResearchLine`
@@ -104,9 +103,7 @@ class patentsController extends Controller
                     $query->where('idUsuario', $userID)
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
-                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-                })
+
                 ->with('usuario')
                 ->get();
             return $patents;
@@ -115,9 +112,6 @@ class patentsController extends Controller
             $patents = patents::where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                           ->orWhere('idUsuario', $userID);
-                })
-                ->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -152,6 +146,16 @@ class patentsController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $patents->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Patents",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -238,9 +242,27 @@ class patentsController extends Controller
 
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        patents::find($id)->delete();
-        return response()->json("Registro Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $patents = patents::find($id);
+     
+         if (!$patents) {
+             return response()->json(['message' => 'patents not found'], 404);
+         }
+     
+         // Elimina el libro
+         $patents->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Patents",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'patents successfully deleted']);
+     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\awards;
+use App\Models\SessionLog;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class awardsController extends Controller
@@ -75,10 +77,7 @@ class awardsController extends Controller
 
         // Si es Administrador, retornar todos los premios
         if ($administrador) {
-            return awards::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            return awards::with('usuario')
             ->get();
         }
 
@@ -106,7 +105,7 @@ class awardsController extends Controller
                     ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
             })
             ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                $query->where('idResearchLine', $userResearchLine);
             })
             ->with('usuario')
             ->get();
@@ -197,13 +196,42 @@ class awardsController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $awards->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Awards",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json("Premio Editado");
     }
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        awards::find($id)->delete();
-        return response()->json("Premio Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtén el ID del usuario enviado
+         $award = awards::find($id);
+     
+         if (!$award) {
+             return response()->json(['message' => 'Award not found'], 404);
+         }
+     
+         // Elimina el premio
+         $award->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Awards",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'Award successfully deleted']);
+     }
+     
 }

@@ -136,9 +136,18 @@
                       <option value="Master o equivalent">Master o equivalent</option>
                       <option value="PhD degree">PhD degree</option>
                     </select>
+                    <div v-if="isDobleGrado">
+                      &nbsp;
+                      <select class="form-select" v-model="academicDegree2">
+                        <option disabled value="">Select the double degree</option>
+                        <option v-if="thesisStudent.academicDegree != 'Undergraduate degree or profesional title'" value="Undergraduate degree or profesional title">Undergraduate degree or profesional title</option>
+                        <option v-if="thesisStudent.academicDegree != 'Master o equivalent'" value="Master o equivalent">Master o equivalent</option>
+                        <option v-if="thesisStudent.academicDegree != 'PhD degree'"  value="PhD degree">PhD degree</option>
+                      </select>
+                    </div>
                     <div class="form-check pt-2">
                     <input type="checkbox" id="dobleGrado" v-model="isDobleGrado" class="form-check-input me-2">
-                    <label for="dobleGrado" class="form-check-label">Doble Grado?</label>
+                    <label for="dobleGrado" class="form-check-label">Double Degree ?</label>
                   </div>
                   </div>
                       <div class="col-md-4">
@@ -377,6 +386,7 @@ export default {
         progressReport: "",
         comments: "",
       },
+      academicDegree2: "",
       options1: [
         'Equipment',
         'Information',
@@ -682,13 +692,13 @@ export default {
             // Primer registro: Master o equivalent
             await axios.post("api/thesisStudents", {
               ...thesisBaseData,
-              academicDegree: "Master o equivalent"
+              academicDegree: this.thesisStudent.academicDegree
             }, { headers: { 'Content-Type': 'multipart/form-data' } });
 
             // Segundo registro: PhD degree
             await axios.post("api/thesisStudents", {
               ...thesisBaseData,
-              academicDegree: "PhD degree"
+              academicDegree: this.academicDegree2
             }, { headers: { 'Content-Type': 'multipart/form-data' } });
 
             this.toast.success("Drafts for both degrees saved successfully!", {
@@ -808,13 +818,13 @@ export default {
               // Enviar el primer registro
               await axios.post("api/thesisStudents", {
                 ...thesisBaseData,
-                academicDegree: "Master o equivalent"
+                academicDegree: this.thesisStudent.academicDegree
               }, { headers: { 'Content-Type': 'multipart/form-data' } });
 
               // Enviar el segundo registro
               await axios.post("api/thesisStudents", {
                 ...thesisBaseData,
-                academicDegree: "PhD degree"
+                academicDegree: this.academicDegree2
               }, { headers: { 'Content-Type': 'multipart/form-data' } });
 
               this.toast.success("Thesis entries for both degrees sent successfully!", {

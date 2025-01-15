@@ -168,17 +168,19 @@
               cancelButton: 'Return'
           })
           if (ok) { 
-              axios.post('api/delete-records', {
-                  module: module,
-                  ids: selectedIds
-              })
-              .then(response => {
-                  this.toast.success(response.data.success);
-                  this.recargarTabla('General');
-              })
-              .catch(error => {
-                  this.toast.error("An error occurred.");
-              });
+            axios.post('api/delete-records', {
+                module: module,
+                ids: selectedIds,
+                user_id: this.userID // Asegúrate de que `this.currentUserId` contiene el ID del usuario actual
+            })
+            .then(response => {
+                this.toast.success(`${response.data.deletedCount} records successfully deleted!`);
+                this.recargarTabla("General");
+            })
+            .catch(error => {
+                console.error('Error deleting records:', error);
+                this.toast.error('Failed to delete records.');
+            });
           }
       },
       async getAwards(id) {
@@ -235,7 +237,13 @@
         });
         if (ok) {
           try {
-            await axios.delete(`api/awards/${id}`);
+            // Captura el user_id de alguna fuente (e.g., del estado global o local)
+            const userId = this.userID; // Asegúrate de ajustar esto según tu estructura
+
+            await axios.delete(`api/awards/${id}`, {
+              data: { user_id: userId }, // Envía el user_id en el cuerpo de la solicitud
+            });
+
             this.toast.success('Award successfully deleted.');
             this.recargarTabla('General');
           } catch (error) {

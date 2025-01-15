@@ -188,14 +188,16 @@ export default {
             if (ok) { 
                 axios.post('api/delete-records', {
                     module: module,
-                    ids: selectedIds
+                    ids: selectedIds,
+                    user_id: this.userID // Asegúrate de que `this.currentUserId` contiene el ID del usuario actual
                 })
                 .then(response => {
-                    this.toast.success(response.data.success);
-                    this.recargarTabla('General');
+                    this.toast.success(`${response.data.deletedCount} records successfully deleted!`);
+                    this.recargarTabla("General");
                 })
                 .catch(error => {
-                    this.toast.error("An error occurred.");
+                    console.error('Error deleting records:', error);
+                    this.toast.error('Failed to delete records.');
                 });
             }
         },
@@ -267,6 +269,46 @@ export default {
                 }
             } else {
                 this.crearTabla('#myTableCollaborations');
+            }
+        },
+        async deleteCollaboration(id) {
+            const ok = await this.$refs.confirmation.show({
+                title: 'Delete Sc Collaboration',
+                message: `Are you sure you want to delete this Sc Collaboration?`,
+                okButton: 'Delete',
+                cancelButton: 'Return',
+            });
+            if (ok) {
+                try {
+                    // Obtén el ID del usuario actual desde la sesión o contexto
+                    const userId = this.userID; // Asegúrate de tener acceso a este dato en tu componente
+                    
+                    // Envía el ID del proyecto y el ID del usuario
+                    await axios.delete(`api/scCollaborations/${id}`, {
+                        data: { user_id: userId },
+                    });
+
+                    // Mostrar mensaje de éxito
+                    this.toast.success('Sc Collaboration successfully removed!', {
+                        position: 'top-right',
+                        timeout: 3000,
+                        closeOnClick: true,
+                        pauseOnFocusLoss: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        draggablePercent: 0.6,
+                        showCloseButtonOnHover: false,
+                        hideProgressBar: true,
+                        closeButton: 'button',
+                        icon: true,
+                        rtl: false,
+                    });
+
+                    // Recargar la tabla
+                    this.recargarTabla('General');
+                } catch (error) {
+                    console.error('Error deleting Sc Collaboration:', error);
+                }
             }
         },
     },

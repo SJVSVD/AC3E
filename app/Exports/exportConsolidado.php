@@ -1264,6 +1264,21 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                     // Añadir Nombre Usuario:
                     $nombreUsuario = User::where('id',$outreach['idUsuario'])->get();
                     $outreach['idUsuario'] = isset($nombreUsuario[0]['name']) ? $nombreUsuario[0]['name'] : 'Undefined';;
+
+                    // Crear el campo Target
+                    $targetFields = [
+                        'Undergraduate Students' => $outreach['undergraduateStudents'],
+                        'Primary Education Students' => $outreach['primaryEducationStudents'],
+                        'Secondary Education Students' => $outreach['secondaryEducationStudents'],
+                        'General Community' => $outreach['generalCommunity'],
+                        'Companies,Industries,Services' => $outreach['companiesIndustriesServices'],
+                        'School Teachers' => $outreach['schoolTeachers'],
+                        'Government Official' => $outreach['governmentOfficial'],
+                        'Other' => $outreach['other'],
+                    ];
+
+                    $targetString = implode(', ', array_keys(array_filter($targetFields)));
+                    $outreach['target'] = $targetString;
                 }
                 // Ordenar elementos de las facturas:
                 $outreachArray = [];
@@ -1282,14 +1297,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
                         'Duration (days)' => $outreach['duration'],
                         'Place Region' => $outreach['placeRegion'],
                         'City' => $outreach['city'],
-                        'Undergraduate Students' => $outreach['undergraduateStudents'],
-                        'Primary Education Students' => $outreach['primaryEducationStudents'],
-                        'Secondary Education Students' => $outreach['secondaryEducationStudents'],
-                        'General Community' => $outreach['generalCommunity'],
-                        'Companies,Industries,Services' => $outreach['companiesIndustriesServices'],
-                        'School Teachers' => $outreach['schoolTeachers'],
-                        'Government Official' => $outreach['governmentOfficial'],
-                        'Other' => $outreach['other'],
+                        'Target' => $outreach['target'], // Agregado el campo Target
                         'Comments' => $outreach['comments'],
                     ];
                     array_push($outreachArray, $newOutreach);
@@ -1303,7 +1311,7 @@ class exportConsolidado implements WithMultipleSheets, WithDefaultStyles, WithEv
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Responsability','Type of Activity','Event Title','Activity Description','Date','Attendant Amount','Duration (days)','Place Region','City','Undergraduate Students','Primary Education Students','Secondary Education Students','General Community','Companies,Industries,Services','School Teachers','Government Official','Other','Comments'];
+                return ['Id', 'Progress Report','User','Researchers Involved','Responsability','Type of Activity','Event Title','Activity Description','Date','Attendant Amount','Duration (days)','Place Region','City','Target','Comments'];
             }
 
             public function columnWidths(): array

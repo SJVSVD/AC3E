@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\nonIsiPublication;
+use App\Models\SessionLog;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class nonIsiPublicationsController extends Controller
@@ -147,10 +149,7 @@ public function show($userID){
 
     // Si es Administrador, retornar todas las publicaciones
     if ($administrador) {
-        return nonIsiPublication::whereHas('usuario', function ($query) {
-            $query->where('estado', 1); // Filtrar solo usuarios activos
-        })
-        ->with('usuario')
+        return nonIsiPublication::with('usuario')
         ->get();
     }
 
@@ -177,9 +176,6 @@ public function show($userID){
             $query->where('idUsuario', $userID)
                   ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
         })
-        ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-            $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-        })
         ->with('usuario')
         ->get();
         return $nonIsiPublications;
@@ -188,9 +184,6 @@ public function show($userID){
         $nonIsiPublications = nonIsiPublication::where(function($query) use ($userName, $userID) {
             $query->where('idUsuario', $userID)
                   ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
-        })
-        ->whereHas('usuario', function ($query) {
-            $query->where('estado', 1); // Filtrar solo usuarios activos
         })
         ->with('usuario')
         ->get();
@@ -301,13 +294,41 @@ public function show($userID){
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $nonIsiPublication->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Non WoS Publications",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json("Publicación Editada");
     }
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        nonIsiPublication::find($id)->delete();
-        return response()->json("Publicación Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $nonIsiPublicacion = nonIsiPublication::find($id);
+     
+         if (!$nonIsiPublicacion) {
+             return response()->json(['message' => 'nonIsiPublicacion not found'], 404);
+         }
+     
+         // Elimina el libro
+         $nonIsiPublicacion->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Non WoS Publications",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'nonIsiPublicacion successfully deleted']);
+     }
 }

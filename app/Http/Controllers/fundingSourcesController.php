@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\fundingSources;
+use App\Models\SessionLog;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -90,10 +91,7 @@ class fundingSourcesController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $fundingSources = fundingSources::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $fundingSources = fundingSources::with('usuario')
             ->get();
         } elseif ($titularResearcher) {
             // Lógica para Titular Researcher basada en `idResearchLine`
@@ -104,7 +102,7 @@ class fundingSourcesController extends Controller
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
                 ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                    $query->where('idResearchLine', $userResearchLine);
                 })
                 ->with('usuario')
                 ->get();
@@ -161,9 +159,6 @@ class fundingSourcesController extends Controller
         // Lógica para Administrador
         if ($administrador) {
             $fundingSources = fundingSources::where('finishDate', '>', $today)
-            ->whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
             ->with('usuario')
             ->get();
         } elseif ($titularResearcher) {
@@ -176,7 +171,7 @@ class fundingSourcesController extends Controller
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
                 ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                    $query->where('idResearchLine', $userResearchLine);
                 })
                 ->with('usuario')
                 ->get();
@@ -224,6 +219,16 @@ class fundingSourcesController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $fundingSources->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Funding Sources",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -300,9 +305,27 @@ class fundingSourcesController extends Controller
     }
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        fundingSources::find($id)->delete();
-        return response()->json("Registro Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $fundingSource = fundingSources::find($id);
+     
+         if (!$fundingSource) {
+             return response()->json(['message' => 'fundingSource not found'], 404);
+         }
+     
+         // Elimina el libro
+         $fundingSource->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Funding Sources ",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'fundingSource successfully deleted']);
+     }
 }

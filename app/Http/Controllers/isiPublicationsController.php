@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\isiPublication;
+use App\Models\SessionLog;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -94,10 +96,7 @@ class isiPublicationsController extends Controller
     
         // Si es Administrador, puede ver todos los registros
         if ($administrador) {
-            $isiPublications = isiPublication::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $isiPublications = isiPublication::with('usuario')
             ->get();
         } else {
             function normalizeString($string) {
@@ -124,7 +123,7 @@ class isiPublicationsController extends Controller
                         ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
                 ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                    $query->where('idResearchLine', $userResearchLine);
                 })
                 ->with('usuario')
                 ->get();
@@ -134,9 +133,6 @@ class isiPublicationsController extends Controller
                 $isiPublications = isiPublication::where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                         ->orWhere('idUsuario', $userID);
-                })
-                ->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -181,6 +177,16 @@ class isiPublicationsController extends Controller
         }
 
         $isiPublication->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo WoS Publications",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json("Publicación Editada");
     }
     
@@ -255,11 +261,29 @@ class isiPublicationsController extends Controller
     }
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        isiPublication::find($id)->delete();
-        return response()->json("Publicación Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $isiPublication = isiPublication::find($id);
+     
+         if (!$isiPublication) {
+             return response()->json(['message' => 'isiPublication not found'], 404);
+         }
+     
+         // Elimina el libro
+         $isiPublication->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo WoS Publications",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'isiPublication successfully deleted']);
+     }
 
     public function useDoi(Request $request)
     {

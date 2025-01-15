@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\SessionLog;
 use App\Models\technologyKnowledge;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class technologyKnowledgeController extends Controller
@@ -93,10 +96,7 @@ class technologyKnowledgeController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $technologyKnowledge = technologyKnowledge::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $technologyKnowledge = technologyKnowledge::with('usuario')
             ->get();
         } elseif ($titularResearcher) {
             // Lógica para Titular Researcher basada en `idResearchLine`
@@ -106,9 +106,6 @@ class technologyKnowledgeController extends Controller
                     $query->where('idUsuario', $userID)
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
-                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-                })
                 ->with('usuario')
                 ->get();
             return $technologyKnowledge;
@@ -117,8 +114,6 @@ class technologyKnowledgeController extends Controller
             $technologyKnowledge = technologyKnowledge::where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                           ->orWhere('idUsuario', $userID);
-                })->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -155,6 +150,16 @@ class technologyKnowledgeController extends Controller
         }
 
         $technologyKnowledge->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Technology Knowledge",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -215,9 +220,27 @@ class technologyKnowledgeController extends Controller
 
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        technologyKnowledge::find($id)->delete();
-        return response()->json("Registro Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $technologyKnowledge = technologyKnowledge::find($id);
+     
+         if (!$technologyKnowledge) {
+             return response()->json(['message' => 'technologyKnowledge not found'], 404);
+         }
+     
+         // Elimina el libro
+         $technologyKnowledge->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Technology Knowledge",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'technologyKnowledge successfully deleted']);
+     }
 }

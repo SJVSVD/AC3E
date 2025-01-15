@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\postDoc;
+use App\Models\SessionLog;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class postDocController extends Controller
@@ -87,21 +89,17 @@ class postDocController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $postDoc = postDoc::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $postDoc = postDoc::with('usuario')
             ->get();
         } elseif ($titularResearcher) {
             // Lógica para Titular Researcher basada en `idResearchLine`
             $userResearchLine = $user->idResearchLine;
-    
             $postDoc = postDoc::where(function($query) use ($userResearchLine, $userID, $userName) {
                     $query->where('idUsuario', $userID)
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
                 ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                    $query->where('idResearchLine', $userResearchLine);
                 })
                 ->with('usuario')
                 ->get();
@@ -111,9 +109,6 @@ class postDocController extends Controller
             $postDoc = postDoc::where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                           ->orWhere('idUsuario', $userID);
-                })
-                ->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -147,6 +142,16 @@ class postDocController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $postDoc->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Postdocs",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -218,9 +223,27 @@ class postDocController extends Controller
     
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        postDoc::find($id)->delete();
-        return response()->json("Registro Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $postDoc = postDoc::find($id);
+     
+         if (!$postDoc) {
+             return response()->json(['message' => 'postDoc not found'], 404);
+         }
+     
+         // Elimina el libro
+         $postDoc->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Postdoctoral Fellows",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'postDoc successfully deleted']);
+     }
 }

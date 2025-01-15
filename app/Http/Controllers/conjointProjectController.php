@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\scCollaborations;
+use App\Models\SessionLog;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -90,9 +91,7 @@ class conjointProjectController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $scCollaborations = scCollaborations::where('moduleType', 1)->whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
+            $scCollaborations = scCollaborations::where('moduleType', 1)
             ->with('usuario')
             ->get();
         } elseif ($titularResearcher) {
@@ -105,7 +104,7 @@ class conjointProjectController extends Controller
                         ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
                 ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                    $query->where('idResearchLine', $userResearchLine);
                 })
                 ->with('usuario')
                 ->get();
@@ -171,9 +170,6 @@ class conjointProjectController extends Controller
         if ($administrador) {
             $scCollaborations = scCollaborations::where('endingDate', '>', $today)
                 ->where('moduleType', 1)
-                ->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
-                })
                 ->with('usuario')
                 ->get();
         } elseif ($titularResearcher) {
@@ -187,7 +183,7 @@ class conjointProjectController extends Controller
                         ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
                 ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
+                    $query->where('idResearchLine', $userResearchLine);
                 })
                 ->with('usuario')
                 ->get();
@@ -237,14 +233,40 @@ class conjointProjectController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $scCollaborations->update($input);
+        
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Conjoint Project",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+        
         return response()->json($input);
     }
 
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        scCollaborations::find($id)->delete();
+     public function destroy(Request $request, $id)
+    { 
+        $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+        $scCollaboration = scCollaborations::find($id);
+        if (!$scCollaboration) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+        $scCollaboration->delete();
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $userId,
+            'event_type' => 'delete',
+            'description' => "Usuario eliminó un registro con ID {$id} en el módulo Conjoint Project",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+            
+
         return response()->json("Colaboracion Eliminado");
     }
 }

@@ -17,7 +17,7 @@ class UsuarioController extends Controller
 {
 
     public function getResearchers(){
-        return User::pluck('name');
+        return User::where('estado', 1)->pluck('name');
     }
 
 

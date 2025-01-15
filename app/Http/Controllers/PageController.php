@@ -130,4 +130,14 @@ class PageController extends Controller
     {
         return view('pages.indicators');
     }
+
+    public function powerbiGoals()
+    {
+        return view('pages.powerbiGoals');
+    }
+
+    public function powerbiTest()
+    {
+        return view('pages.powerbiTest');
+    }
 }

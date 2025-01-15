@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\scCollaborations;
+use App\Models\SessionLog;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -93,9 +94,7 @@ class scCollaborationsController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $scCollaborations = scCollaborations::where('moduleType', 0)->whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
+            $scCollaborations = scCollaborations::where('moduleType', 0)
             ->with('usuario')
             ->get();
         } elseif ($titularResearcher) {
@@ -107,9 +106,6 @@ class scCollaborationsController extends Controller
                     $query->where('idUsuario', $userID)
                         ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
-                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-                })
                 ->with('usuario')
                 ->get();
         } else {
@@ -118,8 +114,6 @@ class scCollaborationsController extends Controller
                 ->where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                         ->orWhere('idUsuario', $userID);
-                })->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -176,9 +170,6 @@ class scCollaborationsController extends Controller
         if ($administrador) {
             $scCollaborations = scCollaborations::where('moduleType', 0)
                 ->whereDate('endingDate', '>', $today) // Usar `whereDate` para comparar correctamente
-                ->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
-                })
                 ->with('usuario')
                 ->get();
         } elseif ($titularResearcher) {
@@ -191,9 +182,6 @@ class scCollaborationsController extends Controller
                     $query->where('idUsuario', $userID)
                         ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
-                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-                })
                 ->with('usuario')
                 ->get();
 
@@ -204,8 +192,6 @@ class scCollaborationsController extends Controller
                 ->where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                         ->orWhere('idUsuario', $userID);
-                })->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -364,14 +350,42 @@ class scCollaborationsController extends Controller
         $scCollaborations = scCollaborations::find($id);
         $input = $request->all();
         $scCollaborations->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Sc Collaborations",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        scCollaborations::find($id)->delete();
-        return response()->json("Colaboracion Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $scCollaborations = scCollaborations::find($id);
+     
+         if (!$scCollaborations) {
+             return response()->json(['message' => 'scCollaborations not found'], 404);
+         }
+     
+         // Elimina el libro
+         $scCollaborations->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Sc Collaborations",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'scCollaborations successfully deleted']);
+     }
 }

@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth'], function () {
 		});
 		Route::get('/indicators', [PageController::class, 'indicators'])->name('indicators');
 		Route::get('/power-bi', [PageController::class, 'powerBi'])->name('power-bi');
+		Route::get('/powerbi-goals', [PageController::class, 'powerbiGoals'])->name('powerbi-goals');
+		Route::get('/powerbi-test', [PageController::class, 'powerbiTest'])->name('powerbi-test');
 		Route::get('/admin-usuarios', [PageController::class, 'adminUsuarios'])->name('admin-usuarios');
 		Route::get('/recycle-bin', [PageController::class, 'recycleBin'])->name('recycle-bin');
 		Route::get('/import-info', [PageController::class, 'importInfo'])->name('import-info');

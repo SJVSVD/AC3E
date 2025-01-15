@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\scCollaborations;
+use App\Models\SessionLog;
 use App\Models\thesisStudent;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class thesisStudentController extends Controller
 {
-
     public function index(Request $request)
     {
         // Obtener la clave secreta desde el archivo .env
@@ -135,10 +136,7 @@ class thesisStudentController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $thesisStudents = thesisStudent::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $thesisStudents = thesisStudent::with('usuario')
             ->get();
         } elseif ($titularResearcher) {
             // Lógica para Titular Researcher basada en `idResearchLine`
@@ -148,9 +146,6 @@ class thesisStudentController extends Controller
                     $query->where('idUsuario', $userID)
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
-                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-                })
                 ->with('usuario')
                 ->get();
             return $thesisStudents;
@@ -159,8 +154,6 @@ class thesisStudentController extends Controller
             $thesisStudents = thesisStudent::where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                           ->orWhere('idUsuario', $userID);
-                })->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -243,7 +236,17 @@ class thesisStudentController extends Controller
         }
 
         $thesis->update($input);
-        return response()->json('se ha guardado');
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Thesis Student",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
+        return response()->json('Se ha editado');
     }
 
     // Función para importar los registros que vienen desde excel
@@ -408,9 +411,28 @@ class thesisStudentController extends Controller
     
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        thesisStudent::find($id)->delete();
-        return response()->json("Thesis Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtén el ID del usuario enviado
+         $thesisStudent = ThesisStudent::find($id);
+     
+         if (!$thesisStudent) {
+             return response()->json(['message' => 'Thesis not found'], 404);
+         }
+     
+         // Elimina la tesis
+         $thesisStudent->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Thesis Student",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'Thesis successfully deleted']);
+     }
+     
 }

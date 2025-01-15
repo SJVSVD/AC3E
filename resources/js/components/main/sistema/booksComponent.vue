@@ -164,17 +164,19 @@ import {mixin} from '../../../mixins.js'
               cancelButton: 'Return'
           })
           if (ok) { 
-              axios.post('api/delete-records', {
-                  module: module,
-                  ids: selectedIds
-              })
-              .then(response => {
-                  this.toast.success(response.data.success);
-                  this.recargarTabla('General');
-              })
-              .catch(error => {
-                  this.toast.error("An error occurred.");
-              });
+            axios.post('api/delete-records', {
+                module: module,
+                ids: selectedIds,
+                user_id: this.userID // Asegúrate de que `this.currentUserId` contiene el ID del usuario actual
+            })
+            .then(response => {
+                this.toast.success(`${response.data.deletedCount} records successfully deleted!`);
+                this.recargarTabla(module);
+            })
+            .catch(error => {
+                console.error('Error deleting records:', error);
+                this.toast.error('Failed to delete records.');
+            });
           }
       },
       verBook(book){
@@ -239,8 +241,18 @@ import {mixin} from '../../../mixins.js'
         });
         if (ok) {
           try {
-            await axios.delete(`api/books/${id}`);
-            this.toast.success('Book successfully deleted.');
+            const userId = this.userID; // Asegúrate de que `currentUserId` tenga el ID del usuario logueado.
+            await axios.delete(`api/books/${id}`, {
+              data: { user_id: userId }, // Incluye el user_id en el cuerpo de la solicitud.
+            });
+            this.toast.success('Book successfully deleted.', {
+              position: 'top-right',
+              timeout: 3000,
+              closeOnClick: true,
+              pauseOnFocusLoss: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
             this.recargarTabla('General');
           } catch (error) {
             console.error('Error deleting book:', error);

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\participationScEvents;
+use App\Models\SessionLog;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class participationsScEventsController extends Controller
@@ -104,10 +106,7 @@ class participationsScEventsController extends Controller
 
         // Si es Administrador, retornar todos los eventos SC
         if ($administrador) {
-            return participationScEvents::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            return participationScEvents::with('usuario')
             ->get();
         }
 
@@ -134,9 +133,6 @@ class participationsScEventsController extends Controller
                 $query->where('idUsuario', $userID)
                     ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
             })
-            ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-            })
             ->with('usuario')
             ->get();
             return $participationScEvents;
@@ -145,9 +141,6 @@ class participationsScEventsController extends Controller
             $participationScEvents = participationScEvents::where(function($query) use ($userName, $userID) {
                 $query->where('idUsuario', $userID)
                     ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
-            })
-            ->whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
             })
             ->with('usuario')
             ->get();
@@ -360,6 +353,16 @@ class participationsScEventsController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $participationScEvents->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Participation Sc Events",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -370,9 +373,27 @@ class participationsScEventsController extends Controller
     }
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        participationScEvents::find($id)->delete();
-        return response()->json("Participacion Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $participationScEvents = participationScEvents::find($id);
+     
+         if (!$participationScEvents) {
+             return response()->json(['message' => 'participationScEvents not found'], 404);
+         }
+     
+         // Elimina el libro
+         $participationScEvents->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Participation Sc Events",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]); 
+     
+         return response()->json(['message' => 'participationScEvents successfully deleted']);
+     }
 }

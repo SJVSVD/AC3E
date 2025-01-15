@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Models\outreachActivities;
+use App\Models\SessionLog;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 
 class outreachActivitiesController extends Controller
@@ -91,10 +94,7 @@ class outreachActivitiesController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $outreachActivities = outreachActivities::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $outreachActivities = outreachActivities::with('usuario')
             ->get();
         } elseif ($titularResearcher) {
             // Lógica para Titular Researcher basada en `idResearchLine`
@@ -104,9 +104,6 @@ class outreachActivitiesController extends Controller
                     $query->where('idUsuario', $userID)
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
-                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-                })
                 ->with('usuario')
                 ->get();
                 return $outreachActivities;
@@ -115,9 +112,6 @@ class outreachActivitiesController extends Controller
             $outreachActivities = outreachActivities::where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                           ->orWhere('idUsuario', $userID);
-                })
-                ->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -151,6 +145,16 @@ class outreachActivitiesController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $outreachActivities->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Outreach Activities",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -225,11 +229,28 @@ class outreachActivitiesController extends Controller
     }
     
 
-
      // Función para eliminar un registro
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        outreachActivities::find($id)->delete();
-        return response()->json("Registro Eliminado");
+        $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+        $outreachActivities = outreachActivities::find($id);
+    
+        if (!$outreachActivities) {
+            return response()->json(['message' => 'outreachActivities not found'], 404);
+        }
+    
+        // Elimina el libro
+        $outreachActivities->delete();
+    
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $userId,
+            'event_type' => 'delete',
+            'description' => "Usuario eliminó un registro con ID {$id} en el módulo Outreach Activities",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+    
+        return response()->json(['message' => 'Outreach successfully deleted']);
     }
 }

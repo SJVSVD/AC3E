@@ -32,10 +32,12 @@ const fundingSourcesComponent = defineAsyncComponent(() => import('@/components/
 const adminRolesComponent = defineAsyncComponent(() => import('@/components/main/sistema/adminRolesComponent.vue'));
 const userProfileComponent = defineAsyncComponent(() => import('@/components/userProfileComponent.vue'));
 const powerBiComponent = defineAsyncComponent(() => import('@/components/powerBiComponent.vue'));
+const powerBiTestComponent = defineAsyncComponent(() => import('@/components/powerBiTestComponent.vue'));
 const importInfoComponent = defineAsyncComponent(() => import('@/components/importInfoComponent.vue'));
 const recycleBinComponent = defineAsyncComponent(() => import('@/components/recycleBinComponent.vue'));
 const error = defineAsyncComponent(() => import('@/components/errorComponent.vue'));
 const indicatorsComponent = defineAsyncComponent(() => import('@/components/indicatorsComponent.vue'));
+const powerbiGoalsComponent = defineAsyncComponent(() => import('@/components/powerbiGoalsComponent.vue'));
 
 app.component("dashboard-component", dashboardComponent);
 app.mount("#dashboard");
@@ -97,6 +99,9 @@ app.mount("#userp");
 app.component("powerbi-component", powerBiComponent);
 app.mount("#powerbi-component");
 
+app.component("powerbitest-component", powerBiTestComponent);
+app.mount("#powerbitest-component");
+
 app.component("import-info", importInfoComponent);
 app.mount("#import-info");
 
@@ -105,6 +110,9 @@ app.mount("#recycle-bin");
 
 app.component("indicators-component", indicatorsComponent);
 app.mount("#indicators-component");
+
+app.component("powerbi-goals", powerbiGoalsComponent);
+app.mount("#powerbi-goals");
 
 app.component("error-component", error);
 app.mount("#error");

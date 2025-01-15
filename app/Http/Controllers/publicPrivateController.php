@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\publicPrivate;
+use App\Models\SessionLog;
+use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -93,10 +95,7 @@ class publicPrivateController extends Controller
     
         // Lógica para Administrador
         if ($administrador) {
-            $publicPrivate = publicPrivate::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            $publicPrivate = publicPrivate::with('usuario')
             ->get();
         } elseif ($titularResearcher) {
             // Lógica para Titular Researcher basada en `idResearchLine`
@@ -106,9 +105,6 @@ class publicPrivateController extends Controller
                     $query->where('idUsuario', $userID)
                           ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
                 })
-                ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                    $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-                })
                 ->with('usuario')
                 ->get();
             return $publicPrivate;
@@ -117,9 +113,6 @@ class publicPrivateController extends Controller
             $publicPrivate = publicPrivate::where(function($query) use ($userName, $userID) {
                     $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
                           ->orWhere('idUsuario', $userID);
-                })
-                ->whereHas('usuario', function ($query) {
-                    $query->where('estado', 1); // Filtrar solo usuarios activos
                 })
                 ->with('usuario')
                 ->get();
@@ -154,6 +147,16 @@ class publicPrivateController extends Controller
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
         $publicPrivate->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Public-private Connections",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -270,9 +273,27 @@ class publicPrivateController extends Controller
     
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        publicPrivate::find($id)->delete();
-        return response()->json("Registro Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $publicPrivate = publicPrivate::find($id);
+     
+         if (!$publicPrivate) {
+             return response()->json(['message' => 'publicPrivate not found'], 404);
+         }
+     
+         // Elimina el libro
+         $publicPrivate->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Public-private Connections",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'publicPrivate successfully deleted']);
+     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Models\organizationsScEvents;
+use App\Models\SessionLog;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class organizationsScEventsController extends Controller
 {
@@ -102,10 +104,7 @@ class organizationsScEventsController extends Controller
 
         // Si es Administrador, retornar todos los eventos SC
         if ($administrador) {
-            return organizationsScEvents::whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
-            })
-            ->with('usuario')
+            return organizationsScEvents::with('usuario')
             ->get();
         }
 
@@ -132,9 +131,6 @@ class organizationsScEventsController extends Controller
                 $query->where('idUsuario', $userID)
                     ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
             })
-            ->orWhereHas('usuario', function ($query) use ($userResearchLine) {
-                $query->where('idResearchLine', $userResearchLine)->where('estado', 1);
-            })
             ->with('usuario')
             ->get();
             return $organizationsScEvents;
@@ -143,9 +139,6 @@ class organizationsScEventsController extends Controller
             $organizationsScEvents = organizationsScEvents::where(function($query) use ($userName, $userID) {
                 $query->where('idUsuario', $userID)
                     ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
-            })
-            ->whereHas('usuario', function ($query) {
-                $query->where('estado', 1); // Filtrar solo usuarios activos
             })
             ->with('usuario')
             ->get();
@@ -330,6 +323,16 @@ class organizationsScEventsController extends Controller
         }
 
         $organizationsScEvents->update($input);
+
+        // Registra el evento en el log
+        SessionLog::create([
+            'user_id' => $input['idUsuario'],
+            'event_type' => 'update',
+            'description' => "Usuario edito el registro con ID {$id} en el módulo Organization Sc Events",
+            'timestamp' => Carbon::now(),
+            'ip_address' => $request->ip(),
+        ]);
+
         return response()->json($input);
     }
 
@@ -340,9 +343,27 @@ class organizationsScEventsController extends Controller
     }
 
      // Función para eliminar un registro
-    public function destroy($id)
-    {
-        organizationsScEvents::find($id)->delete();
-        return response()->json("Organizacion Eliminado");
-    }
+     public function destroy(Request $request, $id)
+     {
+         $userId = $request->input('user_id'); // Obtiene el ID del usuario desde la solicitud
+         $organization = organizationsScEvents::find($id);
+     
+         if (!$organization) {
+             return response()->json(['message' => 'organizationsScEvents not found'], 404);
+         }
+     
+         // Elimina el libro
+         $organization->delete();
+     
+         // Registra el evento en el log
+         SessionLog::create([
+             'user_id' => $userId,
+             'event_type' => 'delete',
+             'description' => "Usuario eliminó un registro con ID {$id} en el módulo Organization Sc Events",
+             'timestamp' => Carbon::now(),
+             'ip_address' => $request->ip(),
+         ]);
+     
+         return response()->json(['message' => 'Organization successfully deleted']);
+     }
 }

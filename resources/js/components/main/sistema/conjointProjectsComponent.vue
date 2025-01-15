@@ -186,14 +186,16 @@ export default {
             if (ok) { 
                 axios.post('api/delete-records', {
                     module: module,
-                    ids: selectedIds
+                    ids: selectedIds,
+                    user_id: this.userID // Asegúrate de que `this.currentUserId` contiene el ID del usuario actual
                 })
                 .then(response => {
-                    this.toast.success(response.data.success);
-                    this.recargarTabla('General');
+                    this.toast.success(`${response.data.deletedCount} records successfully deleted!`);
+                    this.recargarTabla("General");
                 })
                 .catch(error => {
-                    this.toast.error("An error occurred.");
+                    console.error('Error deleting records:', error);
+                    this.toast.error('Failed to delete records.');
                 });
             }
         },
@@ -272,15 +274,24 @@ export default {
         },
         async deleteProject(id) {
             const ok = await this.$refs.confirmation.show({
-                title: 'Delete Collaborative project',
-                message: `¿Are you sure you want to delete this Collaborative project?.`,
+                title: 'Delete Collaborative Project',
+                message: `Are you sure you want to delete this Collaborative Project?`,
                 okButton: 'Delete',
-                cancelButton: 'Return'
-            })
+                cancelButton: 'Return',
+            });
             if (ok) {
-                axios.delete(`api/conjointProjects/${id}`).then( response =>{
-                    this.toast.success("Collaborative project successfully removed!", {
-                        position: "top-right",
+                try {
+                    // Obtén el ID del usuario actual desde la sesión o contexto
+                    const userId = this.userID; // Asegúrate de tener acceso a este dato en tu componente
+                    
+                    // Envía el ID del proyecto y el ID del usuario
+                    await axios.delete(`api/conjointProjects/${id}`, {
+                        data: { user_id: userId },
+                    });
+
+                    // Mostrar mensaje de éxito
+                    this.toast.success('Collaborative Project successfully removed!', {
+                        position: 'top-right',
                         timeout: 3000,
                         closeOnClick: true,
                         pauseOnFocusLoss: true,
@@ -289,14 +300,19 @@ export default {
                         draggablePercent: 0.6,
                         showCloseButtonOnHover: false,
                         hideProgressBar: true,
-                        closeButton: "button",
+                        closeButton: 'button',
                         icon: true,
-                        rtl: false
+                        rtl: false,
                     });
+
+                    // Recargar la tabla
                     this.recargarTabla('General');
-                }).catch(e=> console.log(e))
+                } catch (error) {
+                    console.error('Error deleting Collaborative Project:', error);
+                }
             }
         },
+
     }
 }
 </script>
