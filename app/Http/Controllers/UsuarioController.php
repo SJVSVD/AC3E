@@ -20,6 +20,10 @@ class UsuarioController extends Controller
         return User::where('estado', 1)->pluck('name');
     }
 
+    public function getResearchers2(){
+        return User::where('estado', 1)->get();
+    }
+
 
     public function changePassword(Request $request, $id)
     {

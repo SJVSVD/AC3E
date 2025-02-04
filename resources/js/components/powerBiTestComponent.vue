@@ -2,51 +2,77 @@
   <div class="row mt-4 mx-4">
     <div class="col-12">
       <div class="card mb-4">
-        <div class="row pb-0 p-4">
-          <div class="col-md-12 col-12 mb-2">
-          </div>
-        </div>
         <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px;">
           <div class="row">
-            <!-- Lista de líneas de investigación -->
-            <div class="col-4 p-4">
-              <div v-for="line in researchLines" :key="line.name" class="mb-4">
-                <div class="card">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                    <div class="form-check pt-2">
-                      <label class="form-check-label">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          :checked="selectedResearchLine === line.name"
-                          @change="handleLineSelection(line.name)"
-                        />
+            
+            <!-- FILTROS (3 de 12) -->
+            <div class="col-3 p-4">
+              <div class="card shadow">
+                <div class="card-header text-white">
+                  <h5 class="card-title text-center">Filters</h5>
+                </div>
+                <div class="card-body p-3">
+                  
+                  <!-- Selector de Tipo de Filtro -->
+                  <label class="form-label">Filter By:</label>
+                  <select v-model="selectedFilterType" class="form-select mb-3" @change="resetFilters">
+                    <option value="" disabled>Select a type of filter</option>
+                    <option value="line">Línea de Investigación</option>
+                    <option value="researcher">Investigador</option>
+                    <option value="researchType">Tipo de Investigador</option>
+                  </select>
+
+                  <!-- Selector Dinámico de Línea, Investigador o Tipo de Investigador -->
+                  <div v-if="selectedFilterType === 'line'">
+                    <label class="form-label">Research Line:</label>
+                    <select v-model="selectedResearchLine" class="form-select mb-3" @change="handleLineSelection">
+                      <option :value="null" disabled>Select a research line</option>
+                      <option v-for="line in researchLines" :key="line.id" :value="line.id">
                         {{ line.name }}
-                      </label>
-                    </div>
-                    <button
-                      class="btn btn-sm btn-link"
-                      @click="toggleExpand(line.name)"
-                    >
-                      <i v-if="expandedLines.includes(line.name)" class="fa-solid fa-chevron-up"></i>
-                      <i v-else class="fa-solid fa-chevron-down"></i>
-                    </button>
+                      </option>
+                    </select>
                   </div>
-                  <div v-if="expandedLines.includes(line.name)" class="card-body">
+
+                  <div v-if="selectedFilterType === 'researcher'">
+                    <label class="form-label">Reseacher:</label>
+                    <select v-model="selectedPerson" class="form-select mb-3" @change="handlePersonSelection">
+                      <option :value="null" disabled>Select a researcher</option>
+                      <option v-for="person in allResearchers" :key="person.id" :value="person.id">
+                        {{ person.name }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div v-if="selectedFilterType === 'researchType'">
+                    <label class="form-label">Type of researcher:</label>
+                    <select v-model="selectedResearchType" class="form-select mb-3">
+                      <option :value="null" disabled>Select a type of researcher</option>
+                      <option v-for="type in researcherTypes" :key="type" :value="type.id">
+                        {{ type.name }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <!-- Selector de Módulos (Opcional) -->
+                  <label class="form-label">Filter by module:</label>
+                  <select v-model="selectedModule" class="form-select mb-3">
+                    <option :value="null" >Select a module</option>
+                    <option v-for="module in modules" :key="module.name" :value="module.name">
+                      {{ module.displayName }}
+                    </option>
+                  </select>
+
+                  <button class="btn btn-search-blue w-100 mt-3" @click="applyFilters">
+                    Apply Filters
+                  </button>
+
+                  <div class="card mt-3" v-if="filteredUsers.length > 0">
+                    <div class="card-header text-white">
+                      <h5 class="card-title text-center">Filtered Users</h5>
+                    </div>
                     <ul class="list-group list-group-flush">
-                      <li v-for="person in line.members" :key="person.id" class="list-group-item">
-                        <div class="form-check pt-2">
-                          <label class="form-check-label">
-                            <input
-                              type="checkbox"
-                              class="form-check-input"
-                              :id="`person-${person.id}`"
-                              :checked="selectedPerson === person.id"
-                              @change="handlePersonSelection(person.id)"
-                            />
-                            {{ person.name }}
-                          </label>
-                        </div>
+                      <li v-for="user in filteredUsers" :key="user.id" class="list-group-item">
+                        {{ user.name }}
                       </li>
                     </ul>
                   </div>
@@ -54,55 +80,54 @@
               </div>
             </div>
 
-            <div class="col-4 p-4">
-              <div class="card shadow">
-                <div class="card-header text-white">
-                  <h5 class="card-title text-center">Filter by Module</h5>
-                </div>
-                <div class="card-body p-3">
-                  <ul class="list-group">
-                    <li 
-                      v-for="module in modules" 
-                      :key="module.name" 
-                      class="list-group-item d-flex justify-content-between align-items-center module-item"
-                      :class="{ 'active-module': selectedModule === module.name }"
-                      @click="selectModule(module.name)"
-                    >
-                      {{ module.displayName }}
-                      <i 
-                        v-if="selectedModule === module.name" 
-                        class="fa-solid fa-check text-success animate__animated animate__fadeIn"
-                      ></i>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="col-4 text-center p-4">
+            <!-- GRÁFICO (9 de 12) -->
+            <div class="col-9 text-center p-4">
               <div class="chart-container">
                 <div ref="chartRef" style="width: 100%; height: 100%;"></div>
               </div>
+
+              <!-- Message if no data is available -->
+              <div v-if="!loading && isEmptyData">
+                <p class="text-muted">No data available for the selected filters.</p>
+              </div>
+
+              <!-- Error message -->
+              <div v-if="errorMessage" class="alert alert-danger mt-3">
+                <p>{{ errorMessage }}</p>
+              </div>
+
+              <!-- Show selected data if available -->
               <div v-if="selectedYearData && !loading">
                 <p>{{ selectedYearData }}</p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
-      <modalconfirmacion ref="confirmation"></modalconfirmacion>
-      <modalalerta ref="alert"></modalalerta>
     </div>
   </div>
 </template>
+
 
 <script>
 import { ref, onMounted } from "vue";
 import * as echarts from "echarts";
 import axios from "axios";
-import { useToast } from "vue-toastification";
 
 export default {
   setup() {
+    const selectedFilterType = ref(""); // Tipo de filtro seleccionado
+    const selectedResearchLine = ref(null);
+    const selectedPerson = ref(null);
+    const selectedResearchType = ref(null);
+    const selectedModule = ref(null);
+    const filteredUsers = ref([]);
+    const researchLines = ref([]);
+    const allResearchers = ref([]);
+    const researcherTypes = ref([]);
+    const goalsData = ref([]); // 📌 Almacenar los goals
+
     const modules = ref([
       { name: 'isiPublications', displayName: 'WoS Publications' },
       { name: 'nonIsiPublications', displayName: 'Non-WoS Publications' },
@@ -120,262 +145,168 @@ export default {
       { name: 'fundingSources', displayName: 'Funding Sources' },
     ]);
 
-    const selectedModule = ref(null);
-    const toast = useToast();
-
-    const showErrorToast = (message) => {
-      toast.error(message, {
-        position: "top-right",
-        timeout: 3000,
-      });
-    };
-
-    const selectModule = async (moduleName) => {
-      if (!selectedResearchLine.value && !selectedPerson.value) {
-        showErrorToast("No research line or person selected. Cannot apply module filter.");
-        return;
-      }
-      if (selectedModule.value === moduleName) {
-        selectedModule.value = null;
-        chartConfig.value.labels = [];
-        chartConfig.value.datasets[0].data = [];
-        updateChartOptions();
-      } else {
-        selectedModule.value = moduleName;
-
-        try {
-          loading.value = true;
-
-                  // Construir los parámetros para la API
-        const params = {
-          module: moduleName,
-        };
-
-        if (selectedResearchLine.value) {
-          params.line = selectedResearchLine.value; // Agregar línea seleccionada si existe
-        }
-
-        if (selectedPerson.value) {
-          params.person = selectedPerson.value; // Agregar persona seleccionada si existe
-        }
-
-        console.log(params);
-          const response = await axios.get('/api/getFilteredRecordsByModule', {
-            params: params,
-          });
-          const records = response.data.recordsByYear;
-
-          // Extraer datos
-          const labels = Object.keys(records).map((key) => `Year ${key}`);
-          const data = Object.values(records);
-
-          // Actualizar gráfico
-          updateChartOptions(labels, data);
-          loading.value = false;
-        } catch (error) {
-          console.error('Error fetching records for module:', error);
-          loading.value = false;
-        }
-      }
-    };
-
-    const chartRef = ref(null); // Referencia al div del gráfico
-    let chartInstance = null;   // Instancia de ECharts
+    const chartRef = ref(null);
+    let chartInstance = null;
     const loading = ref(false);
-    const selectedResearchLine = ref(null);
 
-    // Función para inicializar el gráfico
+    // Inicializar el gráfico vacío
     const initChart = () => {
       if (chartRef.value) {
         chartInstance = echarts.init(chartRef.value);
-        updateChartOptions([], []); // Inicializar con datos vacíos
+        updateChartOptions([], [], []);
       }
     };
 
-
-    // Función para actualizar las opciones del gráfico
-    const updateChartOptions = (labels, data) => {
+    // 📌 Función para actualizar los datos del gráfico con "goals"
+    const updateChartOptions = (labels, data, goals) => {
       const options = {
-        title: { text: "Records by Progress Report", left: "center" },
-        tooltip: {
-          trigger: "axis",
-          formatter: "{b}: {c} Records", // Mostrar año y cantidad
-        },
-        xAxis: {
-          type: "category",
-          data: labels, // Etiquetas de eje X (años)
-          nameLocation: "middle",
-          nameGap: 25,
-          axisLabel: { rotate: 45 },
-        },
-        yAxis: {
-          type: "value",
-          name: "Record Count",
-          nameLocation: "middle",
-          nameGap: 35,
-          minInterval: 1,
-        },
+        title: { text: "Records & Goals by Progress Report", left: "center" },
+        tooltip: { trigger: "axis" },
+        xAxis: { type: "category", data: labels },
+        yAxis: { type: "value" },
         series: [
           {
             name: "Records",
             type: "line",
-            data: data, // Datos del eje Y
-            smooth: true,
-            lineStyle: { color: "#ed8d1d" },
-            itemStyle: { color: "#666666" },
+            data: data,
+            lineStyle: { color: "#ed8d1d" }
           },
+          {
+            name: "Goals",
+            type: "line",
+            data: goals,
+            lineStyle: { color: "red", width: 2 },
+            itemStyle: { color: "red" }
+          }
         ],
       };
       chartInstance.setOption(options);
     };
 
-    // Función para obtener los datos generales
-    const fetchGeneralRecords = async () => {
+    const isEmptyData = ref(false);
+    const errorMessage = ref("");
+    const hasFiltered = ref(false); // Controla si ya se aplicó algún filtro
+
+    // 📌 Modificar `applyFilters` para incluir "goals"
+    const applyFilters = async () => {
+      let params = {};
+
+      if (selectedFilterType.value === "line" && selectedResearchLine.value) {
+        params.line = selectedResearchLine.value;
+      } else if (selectedFilterType.value === "researcher" && selectedPerson.value) {
+        params.person = selectedPerson.value;
+      } else if (selectedFilterType.value === "researchType" && selectedResearchType.value) {
+        params.role = selectedResearchType.value;
+      } else {
+        console.warn("No filters selected.");
+        return;
+      }
+
+      if (selectedModule.value) {
+        params.module = selectedModule.value;
+      }
+
       try {
         loading.value = true;
-        const response = await axios.get("/api/getGeneralRecordsByProgressReport");
+        errorMessage.value = "";
+        isEmptyData.value = false;
+        hasFiltered.value = true; // Marca que se aplicó un filtro
+
+        // 📌 Llamar a la API que ahora devuelve también los "goals"
+        const response = await axios.get("/api/getFilteredRecordsByModule", { params });
         const records = response.data.recordsByYear;
+        filteredUsers.value = response.data.filteredUsers || [];
+        goalsData.value = response.data.goals || {}; // 📌 Guardar los goals
 
-        // Extraer datos
+        // Si no hay datos, mostrar mensaje y ocultar el gráfico
+        if (!records || Object.keys(records).length === 0) {
+          isEmptyData.value = true;
+          updateChartOptions([], [], []);
+          return;
+        }
+
+        // Convertir datos en arrays ordenados
         const labels = Object.keys(records).map((key) => `Year ${key}`);
-        const data = Object.values(records);
+        const values = Object.values(records);
+        const goals = labels.map((year) => goalsData.value[year.replace("Year ", "")] || null);
 
-        // Actualizar gráfico
-        updateChartOptions(labels, data);
+        updateChartOptions(labels, values, goals);
+        isEmptyData.value = false;
         loading.value = false;
       } catch (error) {
-        console.error("Error fetching general records:", error);
+        console.error("Error fetching filtered data:", error);
+        errorMessage.value = "An error occurred while retrieving the data. Please try again.";
         loading.value = false;
+        isEmptyData.value = false;
+        hasFiltered.value = true;
       }
     };
 
-    // Función para manejar la selección de una línea de investigación
-    const handleLineSelection = async (lineName) => {
-      if (selectedResearchLine.value === lineName) {
-        // Deseleccionar y limpiar el gráfico
-        selectedPerson.value = null;
-        selectedResearchLine.value = null;
-        updateChartOptions([], []);
-      } else {
-        selectedResearchLine.value = lineName;
-
-        try {
-          loading.value = true;
-          const response = await axios.get(`/api/getPublicationsByResearchLine/${lineName}`);
-          const data = response.data.recordsByYear;
-
-          // Procesar los datos para el gráfico
-          const labels = Object.keys(data).map((key) => `Year ${key}`);
-          const values = Object.values(data);
-          updateChartOptions(labels, values);
-          loading.value = false;
-        } catch (error) {
-          console.error("Error fetching publications for line:", error);
-          loading.value = false;
-        }
-      }
+    // Resetear filtros al cambiar de tipo de filtro
+    const resetFilters = () => {
+      selectedResearchLine.value = null;
+      selectedPerson.value = null;
+      selectedResearchType.value = null;
     };
 
-    const handlePersonSelection = async (personId) => {
-      if (selectedPerson.value === personId) {
-        // Deseleccionar y limpiar el gráfico
-        selectedResearchLine.value = null;
-        selectedPerson.value = null;
-        updateChartOptions([], []);
-      } else {
-        selectedPerson.value = personId;
-
-        try {
-          loading.value = true;
-
-          // Llamada a la API para obtener los registros de la persona
-          const response = await axios.get(`/api/getPersonRecordsByProgressReport/${personId}`);
-          const data = response.data.recordsByYear;
-
-          console.log("Fetched data for person:", data);
-
-          // Procesar los datos para el gráfico
-          const labels = Object.keys(data).map((key) => `Report ${key}`);
-          const values = Object.values(data);
-
-          updateChartOptions(labels, values);
-          loading.value = false;
-        } catch (error) {
-          console.error("Error fetching records for person:", error);
-          loading.value = false;
-        }
-      }
-    };
-
-    
-    const selectedPerson = ref(null);
-    const selectedYearData = ref('');
-
-    const researchLines = ref([]);
-    const expandedLines = ref([]);
-
-    const toggleExpand = (lineName) => {
-      const index = expandedLines.value.indexOf(lineName);
-      if (index === -1) {
-        expandedLines.value.push(lineName);
-      } else {
-        expandedLines.value.splice(index, 1);
-      }
-    };
-
-
-    const fetchResearchLinesAndMembers = async () => {
+    // Cargar datos de líneas de investigación y miembros
+    const fetchResearchLines = async () => {
       try {
-        const response = await axios.get('/api/getUsersWithResearch');
-        const data = Array.isArray(response.data) ? response.data : Object.values(response.data);
-
-        const groupedLines = {};
-        data.forEach((user) => {
-          const lineName = user.research_line.name;
-          if (!groupedLines[lineName]) {
-            groupedLines[lineName] = [];
-          }
-          groupedLines[lineName].push({
-            id: user.id,
-            name: user.name,
-          });
-        });
-
-        researchLines.value = Object.keys(groupedLines).map((lineName) => ({
-          name: lineName,
-          members: groupedLines[lineName].sort((a, b) => a.name.localeCompare(b.name)),
-        }));
+        const response = await axios.get("/api/researchLines");
+        researchLines.value = response.data;
       } catch (error) {
-        console.error('Error fetching research lines and members:', error);
+        console.error("Error fetching research lines:", error);
       }
     };
 
-  onMounted(async () => {
-    initChart();
-    await fetchGeneralRecords();
-    fetchResearchLinesAndMembers(); // Cargar datos adicionales
-  });
+    // Cargar datos de roles
+    const fetchResearcherTypes = async () => {
+      try {
+        const response = await axios.get("/api/rolesUser");
+        researcherTypes.value = response.data;
+      } catch (error) {
+        console.error("Error fetching researcher types:", error);
+      }
+    };
 
+    // Cargar datos de usuarios
+    const fetchAllResearchers = async () => {
+      try {
+        const response = await axios.get("/api/getResearchers2");
+        allResearchers.value = response.data;
+      } catch (error) {
+        console.error("Error fetching researchers:", error);
+      }
+    };
 
+    onMounted(async () => {
+      initChart();
+      await fetchResearcherTypes();
+      await fetchResearchLines();
+      await fetchAllResearchers();
+    });
 
     return {
-      chartRef,
-      selectedYearData,
-      loading,
-      researchLines,
-      expandedLines,
+      selectedFilterType,
       selectedResearchLine,
       selectedPerson,
-      toggleExpand,
-      handleLineSelection,
-      modules,
+      selectedResearchType,
       selectedModule,
-      selectModule,
-      handlePersonSelection
+      modules,
+      researchLines,
+      allResearchers,
+      researcherTypes,
+      filteredUsers,
+      applyFilters,
+      chartRef,
+      loading,
+      resetFilters,
+      goalsData, // 📌 Agregar goals a las variables reactivas
     };
   },
 };
 </script>
+
 
 <style scoped>
 .chart-container {

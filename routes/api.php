@@ -33,6 +33,7 @@ use App\Http\Controllers\universitiesController;
 use App\Http\Controllers\recycleBinController;
 use App\Http\Controllers\SessionLogController;
 use App\Http\Controllers\announcementController;
+use App\Http\Controllers\progressReportGoalsController;
 
 // Rutas Generales (SYS_)
 
@@ -45,6 +46,7 @@ Route::group(['prefix' => 'recycle-bin'], function() {
 // Users
 Route::apiResource('usuarios', UsuarioController::class);
 Route::get('cambiarEstadoUsuario/{id}', [UsuarioController::class, 'cambiarEstadoUsuario']);
+Route::get('getResearchers2', [UsuarioController::class, 'getResearchers2']);
 Route::get('researchers', [UsuarioController::class, 'getResearchers']);
 Route::post('usuarios/updateUser/{id}', [UsuarioController::class, 'updateUser']);
 Route::put('/changePassword/{id}', [UsuarioController::class, 'changePassword']);
@@ -161,7 +163,10 @@ Route::post('delete-records', [extraTablesController::class, 'deleteRecords']);
 Route::get('/session-logs', [SessionLogController::class, 'getRecentSessions']);
 
 //Indicators
-Route::get('/getFilteredRecordsByModule/{params}', [IndicatorsController::class, 'getFilteredRecordsByModule']);
+Route::post('/saveProgressReport', [progressReportGoalsController::class, 'saveProgressReport']);
+Route::get('/getProgressReport/{id}', [progressReportGoalsController::class, 'getProgressReport']);
+
+Route::get('/getFilteredRecordsByModule', [IndicatorsController::class, 'getFilteredRecordsByModule']);
 Route::get('/getPublicationsByResearchLine/{lineName}', [IndicatorsController::class, 'getPublicationsByResearchLine']);
 Route::get('/getGeneralRecordsByProgressReport', [IndicatorsController::class, 'getGeneralRecordsByProgressReport']);
 Route::get('/getMembersByLine/{lineName}', [indicatorsController::class, 'getMembersByLine']);

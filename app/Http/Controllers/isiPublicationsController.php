@@ -297,7 +297,7 @@ class isiPublicationsController extends Controller
         // Primera llamada: Clarivate WoS API
         $wosResponse = Http::withHeaders($wosHeaders)->get($wosApiUrl);
         $wosData = $wosResponse->json();
-    
+        return $wosData;
         // Verificar si se encontró algún registro en WoS
         if (!isset($wosData['QueryResult']['RecordsFound']) || $wosData['QueryResult']['RecordsFound'] == 0) {
             return response()->json([
@@ -323,7 +323,7 @@ class isiPublicationsController extends Controller
     
         $scopusResponse = Http::get($scopusUrl);
         $scopusData = $scopusResponse->json();
-    
+
         // Procesar la respuesta de Scopus
         $impactFactor = $scopusData['serial-metadata-response']['entry'][0]['citeScoreYearInfoList']['citeScoreCurrentMetric'] ?? 'N/A';
         $quartile = $scopusData['serial-metadata-response']['entry'][0]['subject-area'][0]['@code'] ?? 'N/A';

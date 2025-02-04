@@ -1,7 +1,7 @@
 @extends('layouts.main', ['class' => 'g-sidenav-show bg-gray-100'])
-@section('title', '- Outreach Activities')
+@section('title', '- Dissemination and Outreach Activities')
 @section('content')
-    @include('layouts.navbars.auth.topnav', ['title' => 'Outreach Activities'])
+    @include('layouts.navbars.auth.topnav', ['title' => 'Dissemination and Outreach Activities'])
     <body class="antialiased">
         <div id="outreach-activities">
             <outreach-activities></outreach-activities>

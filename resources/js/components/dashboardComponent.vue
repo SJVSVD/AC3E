@@ -111,13 +111,13 @@
                 <div class="row p-3">
                     <!-- <button @click="updateResearchLines">Actualizar Research Lines</button> -->
                     <!-- Botón de Export Consolidado (solo para Administrador) -->
-                    <div class="col-6 pt-1" v-if="is('Administrator')">
+                    <div class="col-6 pt-1 pb-2" v-if="is('Administrator')|| is('Staff')">
                         <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" @click="exportConsolidado">
                             <i class="fa fa-fw fa-download"></i> {{ buttonText1 }}
                         </a>
                     </div>
                     <!-- Botón de Export Individual (ocupa todo el espacio si no es Administrador) -->
-                    <div :class="{'col-6 pt-1': !is('Administrator'), 'col-6 pt-1': is('Administrator')}">
+                    <div v-if="!is('Staff')" :class="{'col-6 pt-1': !is('Administrator'), 'col-6 pt-1': is('Administrator')}">
                         <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" @click="exportIndividual">
                             <i class="fa fa-fw fa-download"></i> {{ buttonText2 }}
                         </a>

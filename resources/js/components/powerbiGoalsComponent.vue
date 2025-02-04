@@ -1,253 +1,252 @@
 <template>
-    <div class="row mt-4 mx-4">
-      <div class="col-12">
-        <div class="card mb-4">
-          <div class="row pb-0 p-4">
-            <div class="col-4">
-              <div class="d-flex align-items-center">
-                <select
-                  v-model="selectedProgress"
-                  class="form-select form-select-sm me-2"
-                  style="min-width: 100px; max-width: 200px;"
-                >
-                  <option disabled value="">Select a progress report</option>
-                  <option
-                    v-for="number in progressNumbers"
-                    :key="number"
-                    :value="number"
-                  >
-                    {{ number }}
-                  </option>
-                </select>
-                <button
-                  class="btn btn-spacing btn-search-blue mt-2"
-                  @click="searchByProgressReport"
-                >
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-              </div>
-            </div>
-            <div class="col-8">
-              <div class="d-flex justify-content-end">
-                <a
-                  class="btn btn-spacing btn-search-blue"
-                  @click="recargarTabla('General')"
-                >
-                  <i class="fa-solid fa-rotate"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="card-body px-0 pt-0 pb-2" style="min-height: 400px;">
-            <div class="container">
-              <div class="row">
-                <div class="col-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <label for="researchLineSelect" class="form-label">
-                        Selecciona una línea:
-                      </label>
-                      <select
-                        id="researchLineSelect"
-                        v-model="selectedResearchLine"
-                        class="form-select"
-                        @change="handleLineSelection"
-                      >
-                        <option value="" disabled>Selecciona una línea</option>
-                        <option
-                          v-for="line in researchLines"
-                          :key="line.name"
-                          :value="line.name"
-                        >
+  <div class="row mt-4 mx-4">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-body px-0 pt-4 pb-2" style="min-height: 400px;">
+          <div class="container">
+            <div class="row">
+              
+              <!-- FILTROS -->
+              <div class="col-3">
+                <div class="card shadow">
+                  <div class="card-header text-white">
+                    <h5 class="card-title text-center">Filters</h5>
+                  </div>
+                  <div class="card-body p-3">
+
+                    <!-- Selector de Tipo de Filtro -->
+                    <label class="form-label">Filter by:</label>
+                    <select v-model="selectedFilterType" class="form-select mb-3" @change="resetFilters()">
+                      <option value="" disabled>Select a filter type</option>
+                      <option value="line">Research Line</option>
+                      <option value="researcher">Researcher</option>
+                      <option value="researchType">Researcher Type</option>
+                    </select>
+
+                    <!-- Selector de Línea, Investigador o Tipo de Investigador -->
+                    <div v-if="selectedFilterType === 'line'">
+                      <label class="form-label">Select a research line:</label>
+                      <select v-model="selectedResearchLine" class="form-select mb-3">
+                        <option :value="null" disabled>Select a line</option>
+                        <option v-for="line in researchLines" :key="line.id" :value="line.id">
                           {{ line.name }}
                         </option>
                       </select>
                     </div>
-                    <div class="card-header" v-if="selectedMembers.length">
-                      <label for="researchLineSelect" class="form-label">
-                        Selecciona un miembro:
-                      </label>
-                      <select
-                        id="researchLineSelect"
-                        v-model="selectedPerson"
-                        class="form-select"
-                      >
-                        <option value="" disabled>Selecciona un miembro</option>
-                        <option
-                          v-for="member in selectedMembers"
-                          :key="member.id"
-                          :value="member.id"
-                        >
-                          {{ member.name }}
+
+                    <div v-if="selectedFilterType === 'researcher'">
+                      <label class="form-label">Select a researcher:</label>
+                      <select v-model="selectedPerson" class="form-select mb-3">
+                        <option :value="null" disabled>Select a researcher</option>
+                        <option v-for="person in allResearchers" :key="person.id" :value="person.id">
+                          {{ person.name }}
                         </option>
                       </select>
                     </div>
-                    <div class="card-body" v-else>
-                      <p class="text-muted">No hay miembros disponibles.</p>
+
+                    <div v-if="selectedFilterType === 'researchType'">
+                      <label class="form-label">Select researcher type:</label>
+                      <select v-model="selectedResearchType" class="form-select mb-3">
+                        <option :value="null" disabled>Select a type</option>
+                        <option v-for="type in researcherTypes" :key="type.id" :value="type.id">
+                          {{ type.name }}
+                        </option>
+                      </select>
                     </div>
+
+                    <button class="btn btn-search-blue w-100 mt-3" @click="searchGoals">
+                      Load Goals
+                    </button>
+
                   </div>
                 </div>
-                <div class="col-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <label class="form-label">Inputs dinámicos:</label>
+              </div>
+
+              <!-- INPUTS DE METAS -->
+              <div class="col-9">
+                <div class="card">
+                  <div class="card-body">
+                    <label class="form-label">Power-BI Goals:</label>
+                    <div v-if="actualProgressReport > 0">
+                      <div v-for="(input, index) in dynamicInputs" :key="index" class="mb-2">
+                        <label :for="`progressReport${input.progressReport}`">Progress report year {{ input.progressReport }}:</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          :id="`progressReport${input.progressReport}`"
+                          v-model="input.goal"
+                        />
+                      </div>
+                      <button class="btn btn-continue float-end mt-3" @click="saveProgressReports">
+                        Save
+                      </button>
                     </div>
-                    <div class="card-body">
-                      <div v-if="actualProgressReport > 0">
-                        <div
-                          v-for="n in actualProgressReport"
-                          :key="n"
-                          class="mb-2"
-                        >
-                          <label :for="`progressReport${n}`">Progress report year {{ n }}:</label>
-                          <input
-                            type="number"
-                            class="form-control"
-                            :id="`progressReport${n}`"
-                            v-model="dynamicInputs[n - 1].goal"
-                          />
-                        </div>
-                        <button class="btn btn-primary mt-3" @click="saveProgressReports">
-                          Guardar
-                        </button>
-                      </div>
-                      <div v-else>
-                        <p class="text-muted">No hay inputs disponibles.</p>
-                      </div>
+                    <div v-else>
+                      <p class="text-muted">No goals available.</p>
                     </div>
                   </div>
                 </div>
               </div>
+              <!-- FIN INPUTS -->
+
             </div>
           </div>
         </div>
-        <modalconfirmacion ref="confirmation"></modalconfirmacion>
-        <modalalerta ref="alert"></modalalerta>
+
       </div>
     </div>
-  </template>
-  
-  <script>
-  import axios from "axios";
-  import modalconfirmacion from "./snippets/sistema/alerts/confirmationModal.vue";
-  import modalalerta from "./snippets/sistema/alerts/alertModal.vue";
-  import { mixin } from "./../mixins.js";
-  
-  export default {
-    components: { modalconfirmacion, modalalerta },
-    mixins: [mixin],
-    data() {
-      return {
-        indicators: null,
-        mostrarTabla: false,
-        mostrarCarga: true,
-        permisos: null,
-        table: null,
-        actualProgressReport: 0,
-        selectedProgress: "",
-        progressNumbers: [],
-        researchLines: [],
-        selectedResearchLine: "",
-        selectedMembers: [],
-        selectedPerson: "",
-        dynamicInputs: []
-      };
-    },
-    created() {
-      this.getProgressReport();
-      this.fetchResearchLinesAndMembers();
-    },
-    methods: {
-      searchByProgressReport() {
-        axios
-          .get(`api/getIndicators/${this.selectedProgress}`)
-          .then((response) => {
-            this.indicators = response.data;
-            this.recargarTabla("Search");
-          })
-          .catch((e) => console.log(e));
-      },
-      getProgressReport() {
-        axios
-          .get("api/showProgressReport")
-          .then((response) => {
-            this.actualProgressReport = response.data;
-            this.dynamicInputs = Array.from({
-              length: this.actualProgressReport
-            }, (_, index) => ({
-              progressReport: index + 1,
-              goal: null
-            }));
-            this.selectedProgress = this.actualProgressReport;
-            this.progressNumbers = this.createNumberArray(response.data);
-          })
-          .catch((e) => console.log(e));
-      },
-      createNumberArray(progress) {
-        return Array.from({ length: progress }, (_, index) => index + 1);
-      },
-      recargarTabla(tipoRecarga) {
-        this.mostrarCarga = true;
-        if (tipoRecarga == "General") {
-          this.indicators = null;
-          this.getIndicators();
-        } else {
-          this.table.destroy();
-          this.crearTabla("#myTableIndicators");
-        }
-      },
-      async fetchResearchLinesAndMembers() {
-        try {
-          const response = await axios.get("/api/getUsersWithResearch");
-          const data = Array.isArray(response.data)
-            ? response.data
-            : Object.values(response.data);
-  
-          const groupedLines = {};
-          data.forEach((user) => {
-            const lineName = user.research_line.name;
-            if (!groupedLines[lineName]) {
-              groupedLines[lineName] = [];
-            }
-            groupedLines[lineName].push({
-              id: user.id,
-              name: user.name,
-            });
-          });
-  
-          this.researchLines = Object.keys(groupedLines).map((lineName) => ({
-            name: lineName,
-            members: groupedLines[lineName].sort((a, b) =>
-              a.name.localeCompare(b.name)
-            ),
-          }));
-        } catch (error) {
-          console.error("Error fetching research lines and members:", error);
-        }
-      },
-      handleLineSelection() {
-        const selectedLine = this.researchLines.find(
-          (line) => line.name === this.selectedResearchLine
-        );
-        this.selectedMembers = selectedLine ? selectedLine.members : [];
-      },
-      saveProgressReports() {
-        const payload = {
-          type: this.selectedResearchLine ? "ResearchLine" : "Individual",
-          related_id: this.selectedResearchLine || this.selectedPerson,
-          progressReports: this.dynamicInputs
-        };
-  
-        axios
-          .post("/api/saveProgressReports", payload)
-          .then((response) => {
-            console.log("Saved successfully", response.data);
-          })
-          .catch((error) => {
-            console.error("Error saving progress reports", error);
-          });
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+import { ref, onMounted } from "vue";
+
+export default {
+  setup() {
+    const selectedFilterType = ref("");
+    const selectedResearchLine = ref(null);
+    const selectedPerson = ref(null);
+    const selectedResearchType = ref(null);
+
+    const researchLines = ref([]);
+    const allResearchers = ref([]);
+    const researcherTypes = ref([]);
+
+    const actualProgressReport = ref(0);
+    const dynamicInputs = ref([]);
+
+    // Obtener año actual del Progress Report
+    const getProgressReportYear = async () => {
+      try {
+        const response = await axios.get("/api/showProgressReport");
+        actualProgressReport.value = response.data;
+      } catch (error) {
+        console.error("Error fetching progress report year:", error);
       }
-    }
-  };
-  </script>
-  
+    };
+
+    const resetFilters = () => {
+      selectedResearchLine.value = null;
+      selectedPerson.value = null;
+      selectedResearchType.value = null;
+    };
+
+    const fetchResearchData = async () => {
+      try {
+        const response = await axios.get("/api/researchLines");
+        researchLines.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
+      } catch (error) {
+        console.error("Error fetching research lines:", error);
+      }
+    };
+
+    const fetchResearcherTypes = async () => {
+      try {
+        const response = await axios.get("/api/rolesUser");
+        researcherTypes.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
+      } catch (error) {
+        console.error("Error fetching researcher types:", error);
+      }
+    };
+
+    const fetchResearchers = async () => {
+      try {
+        const response = await axios.get("/api/getResearchers2");
+        allResearchers.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
+      } catch (error) {
+        console.error("Error fetching researchers:", error);
+      }
+    };
+
+    // Función para cargar o inicializar metas
+    const searchGoals = async () => {
+      let relatedId = null;
+      let type = "";
+
+      if (selectedFilterType.value === "line" && selectedResearchLine.value) {
+        relatedId = selectedResearchLine.value;
+        type = "ResearchLine";
+      } else if (selectedFilterType.value === "researcher" && selectedPerson.value) {
+        relatedId = selectedPerson.value;
+        type = "Individual";
+      } else if (selectedFilterType.value === "researchType" && selectedResearchType.value) {
+        relatedId = selectedResearchType.value;
+        type = "RoleUser";
+      } else {
+        console.warn("No filter selected.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`/api/getProgressReport/${relatedId}?type=${type}`);
+        let storedGoals = response.data.data?.goals || {};
+
+        if (typeof storedGoals === "string") {
+          storedGoals = JSON.parse(storedGoals);
+        }
+
+        const sortedGoals = Object.keys(storedGoals)
+          .map(year => ({
+            progressReport: parseInt(year),
+            goal: storedGoals[year],
+          }))
+          .sort((a, b) => a.progressReport - b.progressReport);
+
+        // Si no hay datos, inicializar los inputs hasta el año actual
+        if (sortedGoals.length === 0) {
+          dynamicInputs.value = Array.from({ length: actualProgressReport.value }, (_, index) => ({
+            progressReport: index + 1,
+            goal: null,
+          }));
+        } else {
+          dynamicInputs.value = sortedGoals;
+        }
+      } catch (error) {
+        console.error("Error loading progress reports:", error);
+      }
+    };
+
+    // Guardar metas
+    const saveProgressReports = async () => {
+      const payload = {
+        type: selectedPerson.value ? "Individual" : selectedResearchLine.value ? "ResearchLine" : "RoleUser",
+        related_id: selectedPerson.value || selectedResearchLine.value || selectedResearchType.value,
+        goals: dynamicInputs.value,
+      };
+
+      console.log(payload);
+
+      try {
+        await axios.post("/api/saveProgressReport", payload);
+        alert("Goals saved successfully!");
+      } catch (error) {
+        console.error("Error saving progress reports:", error);
+        alert("Error saving goals.");
+      }
+    };
+
+    onMounted(() => {
+      getProgressReportYear();
+      fetchResearchData();
+      fetchResearchers();
+      fetchResearcherTypes();
+    });
+
+    return {
+      resetFilters,
+      selectedFilterType,
+      selectedResearchLine,
+      selectedPerson,
+      selectedResearchType,
+      researchLines,
+      allResearchers,
+      researcherTypes,
+      actualProgressReport,
+      dynamicInputs,
+      searchGoals,
+      saveProgressReports,
+    };
+  },
+};
+</script>

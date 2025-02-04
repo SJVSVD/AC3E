@@ -13,7 +13,9 @@ use App\Models\outreachActivities;
 use App\Models\participationScEvents;
 use App\Models\patents;
 use App\Models\postDoc;
+use App\Models\ProgressReportGoals;
 use App\Models\publicPrivate;
+use App\Models\researchLines;
 use App\Models\scCollaborations;
 use App\Models\technologyKnowledge;
 use App\Models\thesisStudent;
@@ -29,59 +31,125 @@ class indicatorsController extends Controller
     {
         try {
             $moduleName = $request->input('module');
-            $lineName = $request->input('line');
+            $lineId = $request->input('line');
             $personId = $request->input('person');
+            $roleUser = $request->input('role');
     
-            // Validar el módulo
-            $moduleClass = $this->getModuleClass($moduleName);
+            $lineName = null;
+            $filteredUsers = [];
+            $goals = [];
     
-            if (!$moduleClass) {
-                return response()->json(['error' => 'Invalid module name'], 400);
+            // Obtener el nombre de la línea si se recibe un ID
+            if ($lineId) {
+                $researchLine = researchLines::find($lineId);
+                if (!$researchLine) {
+                    return response()->json(['error' => 'Research line not found'], 404);
+                }
+                $lineName = strtolower($researchLine->name);
+    
+                // Obtener usuarios de esta línea de investigación
+                $filteredUsers = User::where('idResearchLine', $lineId)
+                                    ->select('id', 'name')
+                                    ->get();
             }
     
+            // Obtener los usuarios por tipo de investigador
+            if ($roleUser) {
+                $filteredUsers = User::where('idRole', $roleUser)
+                                    ->select('id', 'name')
+                                    ->get();
+            }
+    
+            // 📌 Obtener los goals correspondientes al filtro seleccionado
+            if ($lineId) {
+                $progressReport = ProgressReportGoals::where('research_line_id', $lineId)->first();
+            } elseif ($personId) {
+                $progressReport = ProgressReportGoals::where('user_id', $personId)->first();
+            } elseif ($roleUser) {
+                $progressReport = ProgressReportGoals::where('researcher_type_id', $roleUser)->first();
+            } else {
+                $progressReport = null;
+            }
+    
+            // Convertir goals almacenados en JSON si existen
+            if ($progressReport && $progressReport->goals) {
+                $goals = json_decode($progressReport->goals, true);
+            }
+    
+            // Lista de modelos disponibles
+            $models = [
+                'isiPublications' => isiPublication::class,
+                'nonIsiPublications' => nonIsiPublication::class,
+                'books' => books::class,
+                'awards' => awards::class,
+                'organizationsScEvents' => organizationsScEvents::class,
+                'participationScEvents' => participationScEvents::class,
+                'scCollaborations' => scCollaborations::class,
+                'thesisStudents' => thesisStudent::class,
+                'postDocs' => postDoc::class,
+                'outreachActivities' => outreachActivities::class,
+                'patents' => patents::class,
+                'publicPrivate' => publicPrivate::class,
+                'technologyKnowledge' => technologyKnowledge::class,
+                'fundingSources' => fundingSources::class,
+            ];
+    
+            // Si se seleccionó un módulo, usar solo ese
+            if ($moduleName && isset($models[$moduleName])) {
+                $models = [$moduleName => $models[$moduleName]];
+            }
+            
             $recordsByYear = [];
     
-            $model = new $moduleClass;
+            foreach ($models as $modelName => $modelClass) {
+                $model = new $modelClass;
+                $query = $model->select('progressReport', DB::raw('COUNT(*) as total'));
+                $userColumn = ($modelName === 'books') ? 'centerResearcher' : 'idUsuario';
     
-            // Construir consulta base
-            $query = $model->select('progressReport', DB::raw('COUNT(*) as total'));
-    
-            // Filtrar por persona si está seleccionada
-            if ($personId) {
-                $user = User::find($personId);
-                if (!$user) {
-                    return response()->json(['error' => 'User not found'], 404);
+                // Filtrar por usuario
+                if ($personId) {
+                    $user = User::find($personId);
+                    if (!$user) {
+                        return response()->json(['error' => 'User not found'], 404);
+                    }
+                    $normalizedUserName = strtolower($user->name);
+                    $query->where(function ($query) use ($personId, $normalizedUserName, $userColumn) {
+                        $query->where($userColumn, $personId)
+                              ->orWhereRaw('LOWER(researcherInvolved) LIKE ?', ["%{$normalizedUserName}%"]);
+                    });
                 }
     
-                $normalizedUserName = strtolower($user->name);
-                $query->where(function ($query) use ($personId, $normalizedUserName) {
-                    $query->where('idUsuario', $personId)
-                          ->orWhereRaw('LOWER(researcherInvolved) LIKE ?', ["%{$normalizedUserName}%"]);
-                });
-            }
-    
-            // Filtrar por línea de investigación si está seleccionada
-            if ($lineName) {
-                $normalizedLineName = strtolower($lineName);
-                $query->whereRaw('LOWER(researchLinesInvolved) LIKE ?', ["%{$normalizedLineName}%"]);
-            }
-    
-            // Agrupar registros por progressReport y contar
-            $groupedRecords = $query->groupBy('progressReport')
-                ->orderBy('progressReport', 'asc')
-                ->get();
-    
-            foreach ($groupedRecords as $record) {
-                $progressReportYear = $record->progressReport;
-    
-                if (!isset($recordsByYear[$progressReportYear])) {
-                    $recordsByYear[$progressReportYear] = 0;
+                // Filtrar por línea de investigación
+                if ($lineName) {
+                    $query->whereRaw('LOWER(researchLinesInvolved) LIKE ?', ["%{$lineName}%"]);
                 }
     
-                $recordsByYear[$progressReportYear] += $record->total;
+                // Filtrar por tipo de investigador
+                if ($roleUser) {
+                    $researchers = User::where('idRole', $roleUser)->pluck('id');
+                    if ($researchers->isNotEmpty()) {
+                        $query->whereIn($userColumn, $researchers);
+                    }
+                }
+    
+                // Agrupar por progressReport
+                $groupedRecords = $query->groupBy('progressReport')
+                                        ->orderBy('progressReport', 'asc')
+                                        ->get();
+    
+                // Sumar los valores por año
+                foreach ($groupedRecords as $record) {
+                    $progressReportYear = $record->progressReport;
+    
+                    if (!isset($recordsByYear[$progressReportYear])) {
+                        $recordsByYear[$progressReportYear] = 0;
+                    }
+    
+                    $recordsByYear[$progressReportYear] += $record->total;
+                }
             }
     
-            // Ordenar por año de progressReport
+            // Ordenar los resultados por año de progressReport
             ksort($recordsByYear);
     
             // Obtener el progressReport actual desde extraTables
@@ -90,6 +158,8 @@ class indicatorsController extends Controller
             return response()->json([
                 'currentProgressReport' => $currentProgressReport,
                 'recordsByYear' => $recordsByYear,
+                'filteredUsers' => $filteredUsers, // Lista de usuarios filtrados
+                'goals' => $goals, // 📌 Metas obtenidas
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -97,7 +167,6 @@ class indicatorsController extends Controller
             ], 500);
         }
     }
-    
     
 
     public function getPublicationsByResearchLine($lineName)
