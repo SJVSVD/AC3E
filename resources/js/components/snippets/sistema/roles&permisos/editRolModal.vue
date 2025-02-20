@@ -57,7 +57,7 @@ export default {
     components: { modalconfirmacion, modalalerta },
     mixins: [mixin],
     data: () => ({
-        buttonText:'Edit Role',
+        buttonText:'Edit Record',
         buttonDisable: false,
         name: "",
         id: "",

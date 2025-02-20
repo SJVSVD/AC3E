@@ -31,6 +31,9 @@ class technologyKnowledge extends Model
         'nameOfInstitutionInvolved',
         'researcherInvolved',
         'externalResearcher',
+        'yearEnding',
+        'monthEnding',
+        'actualTrl'
     ];
 
     public function usuario(){

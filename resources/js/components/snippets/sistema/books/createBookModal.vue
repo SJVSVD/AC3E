@@ -214,7 +214,7 @@ export default {
       researchers: [],
       idResearcher: '',
       errors:[],
-      buttonText:'Save Book',
+      buttonText:'Send New Record',
     }),
     created(){
       this.getProgressReport();
@@ -483,7 +483,7 @@ export default {
             }else if(item == 'nameOfResearchLine'){
               mensaje =   mensaje + "The field Name of Research Line is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report Year is required" + "\n";
             }else if(item == 'firstPage'){
               mensaje =   mensaje + "The field First Page is required" + "\n";
             }else if(item == 'lastPage'){

@@ -18,12 +18,10 @@
                     <label class="form-label">Filter by:</label>
                     <select v-model="selectedFilterType" class="form-select mb-3" @change="resetFilters()">
                       <option value="" disabled>Select a filter type</option>
-                      <option value="line">Research Line</option>
-                      <option value="researcher">Researcher</option>
                       <option value="researchType">Researcher Type</option>
                     </select>
 
-                    <!-- Selector de Línea, Investigador o Tipo de Investigador -->
+                    <!-- Selector de Línea, Investigador o Tipo de Investigador
                     <div v-if="selectedFilterType === 'line'">
                       <label class="form-label">Select a research line:</label>
                       <select v-model="selectedResearchLine" class="form-select mb-3">
@@ -42,7 +40,7 @@
                           {{ person.name }}
                         </option>
                       </select>
-                    </div>
+                    </div> -->
 
                     <div v-if="selectedFilterType === 'researchType'">
                       <label class="form-label">Select researcher type:</label>
@@ -53,6 +51,14 @@
                         </option>
                       </select>
                     </div>
+
+                    <label class="form-label">Select a module:</label>
+                    <select v-model="selectedModule" class="form-select mb-3">
+                      <option :value="null" >Select a module</option>
+                      <option v-for="module in modules" :key="module.name" :value="module.name">
+                        {{ module.displayName }}
+                      </option>
+                    </select>
 
                     <button class="btn btn-search-blue w-100 mt-3" @click="searchGoals">
                       Load Goals
@@ -66,7 +72,7 @@
               <div class="col-9">
                 <div class="card">
                   <div class="card-body">
-                    <label class="form-label">Power-BI Goals:</label>
+                    <label class="form-label">Performance targets:</label>
                     <div v-if="actualProgressReport > 0">
                       <div v-for="(input, index) in dynamicInputs" :key="index" class="mb-2">
                         <label :for="`progressReport${input.progressReport}`">Progress report year {{ input.progressReport }}:</label>
@@ -104,10 +110,28 @@ import { ref, onMounted } from "vue";
 
 export default {
   setup() {
+    const modules = ref([
+      { name: 'isiPublications', displayName: 'WoS Publications' },
+      { name: 'nonIsiPublications', displayName: 'Non-WoS Publications' },
+      { name: 'books', displayName: 'Books' },
+      { name: 'awards', displayName: 'Awards' },
+      { name: 'organizationsScEvents', displayName: 'Organizations SC Events' },
+      { name: 'participationScEvents', displayName: 'Participation SC Events' },
+      { name: 'scCollaborations', displayName: 'Scientific Collaborations' },
+      { name: 'thesisStudents', displayName: 'Thesis Students' },
+      { name: 'postDocs', displayName: 'Postdocs' },
+      { name: 'outreachActivities', displayName: 'Outreach Activities' },
+      { name: 'patents', displayName: 'Patents' },
+      { name: 'publicPrivate', displayName: 'Public-Private Initiatives' },
+      { name: 'technologyKnowledge', displayName: 'Technology Knowledge' },
+      { name: 'fundingSources', displayName: 'Funding Sources' },
+    ]);
+
     const selectedFilterType = ref("");
-    const selectedResearchLine = ref(null);
-    const selectedPerson = ref(null);
+    // const selectedResearchLine = ref(null);
+    // const selectedPerson = ref(null);
     const selectedResearchType = ref(null);
+    const selectedModule = ref(null);
 
     const researchLines = ref([]);
     const allResearchers = ref([]);
@@ -127,50 +151,48 @@ export default {
     };
 
     const resetFilters = () => {
-      selectedResearchLine.value = null;
-      selectedPerson.value = null;
+      // selectedResearchLine.value = null;
+      // selectedPerson.value = null;
       selectedResearchType.value = null;
     };
 
-    const fetchResearchData = async () => {
-      try {
-        const response = await axios.get("/api/researchLines");
-        researchLines.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
-      } catch (error) {
-        console.error("Error fetching research lines:", error);
-      }
-    };
+    // const fetchResearchData = async () => {
+    //   try {
+    //     const response = await axios.get("/api/researchLines");
+    //     researchLines.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
+    //   } catch (error) {
+    //     console.error("Error fetching research lines:", error);
+    //   }
+    // };
 
     const fetchResearcherTypes = async () => {
       try {
         const response = await axios.get("/api/rolesUser");
-        researcherTypes.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
+        // Filtrar solo los elementos con id 1, 2, 3
+        researcherTypes.value = response.data
+          .filter(role => [1, 2, 3].includes(role.id)) // Filtro por id
+          .sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
       } catch (error) {
         console.error("Error fetching researcher types:", error);
       }
     };
 
-    const fetchResearchers = async () => {
-      try {
-        const response = await axios.get("/api/getResearchers2");
-        allResearchers.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
-      } catch (error) {
-        console.error("Error fetching researchers:", error);
-      }
-    };
+    // const fetchResearchers = async () => {
+    //   try {
+    //     const response = await axios.get("/api/getResearchers2");
+    //     allResearchers.value = response.data.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar por nombre
+    //   } catch (error) {
+    //     console.error("Error fetching researchers:", error);
+    //   }
+    // };
 
     // Función para cargar o inicializar metas
     const searchGoals = async () => {
       let relatedId = null;
       let type = "";
+      let module = selectedModule.value; // Añadir la selección de módulo
 
-      if (selectedFilterType.value === "line" && selectedResearchLine.value) {
-        relatedId = selectedResearchLine.value;
-        type = "ResearchLine";
-      } else if (selectedFilterType.value === "researcher" && selectedPerson.value) {
-        relatedId = selectedPerson.value;
-        type = "Individual";
-      } else if (selectedFilterType.value === "researchType" && selectedResearchType.value) {
+      if (selectedFilterType.value === "researchType" && selectedResearchType.value) {
         relatedId = selectedResearchType.value;
         type = "RoleUser";
       } else {
@@ -179,7 +201,9 @@ export default {
       }
 
       try {
-        const response = await axios.get(`/api/getProgressReport/${relatedId}?type=${type}`);
+        // Modificar la URL de la solicitud para incluir el parámetro 'module' si está seleccionado
+        const response = await axios.get(`/api/getProgressReport/${relatedId}?type=${type}&module=${module}`);
+
         let storedGoals = response.data.data?.goals || {};
 
         if (typeof storedGoals === "string") {
@@ -207,12 +231,14 @@ export default {
       }
     };
 
+
     // Guardar metas
     const saveProgressReports = async () => {
       const payload = {
-        type: selectedPerson.value ? "Individual" : selectedResearchLine.value ? "ResearchLine" : "RoleUser",
-        related_id: selectedPerson.value || selectedResearchLine.value || selectedResearchType.value,
+        type: "RoleUser",
+        related_id: selectedResearchType.value,
         goals: dynamicInputs.value,
+        module: selectedModule.value // Añadir el campo module
       };
 
       console.log(payload);
@@ -228,16 +254,17 @@ export default {
 
     onMounted(() => {
       getProgressReportYear();
-      fetchResearchData();
-      fetchResearchers();
+      // fetchResearchData();
+      // fetchResearchers();
       fetchResearcherTypes();
     });
 
     return {
       resetFilters,
       selectedFilterType,
-      selectedResearchLine,
-      selectedPerson,
+      // selectedResearchLine,
+      // selectedPerson,
+      selectedModule,
       selectedResearchType,
       researchLines,
       allResearchers,
@@ -246,6 +273,7 @@ export default {
       dynamicInputs,
       searchGoals,
       saveProgressReports,
+      modules
     };
   },
 };

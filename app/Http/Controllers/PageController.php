@@ -136,7 +136,7 @@ class PageController extends Controller
         return view('pages.powerbiGoals');
     }
 
-    public function powerbiTest()
+    public function performanceResults()
     {
         return view('pages.powerBiTest');
     }

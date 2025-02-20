@@ -213,7 +213,7 @@ export default {
       usuarios: [],
       researchers:[],
       errors:[],
-      buttonText:'Save Organization',
+      buttonText:'Send New Record',
     }),
     created(){
       this.getProgressReport();

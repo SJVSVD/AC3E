@@ -33,7 +33,9 @@ use App\Http\Controllers\universitiesController;
 use App\Http\Controllers\recycleBinController;
 use App\Http\Controllers\SessionLogController;
 use App\Http\Controllers\announcementController;
+use App\Http\Controllers\performanceModeController;
 use App\Http\Controllers\progressReportGoalsController;
+use App\Models\PerformanceDataCollectionMode;
 
 // Rutas Generales (SYS_)
 
@@ -126,11 +128,14 @@ Route::post('importPatent', [patentsController::class, 'importPatent']);
 
 //publicPrivate
 Route::apiResource('publicPrivate', publicPrivateController::class);
+Route::get('publicPrivateDownload/{id}' , [publicPrivateController::class, 'publicPrivateDownload']);
 Route::post('verifyPublicPrivate', [publicPrivateController::class, 'verifyPublicPrivate']);
 Route::post('importPublicPrivate', [publicPrivateController::class, 'importPublicPrivate']);
+Route::post('publicPrivate/addFile', [publicPrivateController::class, 'addFile']);
 
 //technologyKnowledge
 Route::apiResource('technologyKnowledge', technologyKnowledgeController::class);
+Route::get('technologyKnowledgesActive/{id}', [technologyKnowledgeController::class, 'technologyKnowledgesActive']);
 Route::post('verifyTechnology', [technologyKnowledgeController::class, 'verifyTechnology']);
 Route::post('importTecAndKnow', [technologyKnowledgeController::class, 'importTecAndKnow']);
 
@@ -176,6 +181,18 @@ Route::get('getIndicators' , [indicatorsController::class, 'getIndicators']);
 Route::get('getIndicators/{id}' , [indicatorsController::class, 'getIndicatorsByProgressYear']);
 
 //Dashboard
+
+// Obtener el estado actual del modo Performance Data Collection
+Route::get('performance-mode', [performanceModeController::class, 'getMode']);
+
+// Activar el modo Performance Data Collection
+Route::post('performance-mode', [performanceModeController::class, 'activateMode']);
+
+// Desactivar el modo Performance Data Collection
+Route::delete('performance-mode', [performanceModeController::class, 'deactivateMode']);
+
+Route::get('performance-mode/notify', [performanceModeController::class, 'notifyCompletion']);
+
 Route::get('/active-announcement', [announcementController::class, 'getActiveAnnouncement']);
 Route::apiResource('announcements', announcementController::class);
 Route::get('update-research-lines' , [dashboardController::class, 'updateResearchLinesInvolved']);

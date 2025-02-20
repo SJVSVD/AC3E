@@ -133,39 +133,24 @@
                     <br>
                     <div class="row">
                       <div class="col-md-3">
-                        <label for="">Country Origin:</label>
+                        <label for="">Institution Country:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.countryOrigin">
                       </div>
                       <div class="col-md-3">
-                        <label for="">City Origin:</label>
+                        <label for="">Institution City:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.cityOrigin">
                       </div>
-                      <div class="col-md-3">
-                        <label for="">Country Destination:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="conjointProject.countryDestination">
-                      </div>
-                      <div class="col-md-3">
-                        <label for="">City Destination:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="conjointProject.cityDestination">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
-
                       <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
                         <input type="text" class= "form-control" v-model="conjointProject.comments">
                       </div>
                     </div>
+                    <br>
                   </slot>
                 </div>
                 <div class="modal-footer">
@@ -208,8 +193,6 @@ export default {
         institutionCollaborates: '',
         countryOrigin: '',
         cityOrigin: '',
-        countryDestination: '',
-        cityDestination: '',
         beginningDate: '',
         endingDate: '',
         nameOfExternalResearcher: '',
@@ -232,7 +215,7 @@ export default {
       ],
       buttonDisable: false,
       errors:[],
-      buttonText:'Save Project',
+      buttonText:'Send New Record',
     }),
     mounted(){
       this.getUsuarios();
@@ -371,8 +354,6 @@ export default {
               activityName: activityName1,
               countryOrigin: this.conjointProject.countryOrigin,
               cityOrigin: this.conjointProject.cityOrigin,
-              countryDestination: this.conjointProject.countryDestination,
-              cityDestination: this.conjointProject.cityDestination,
               beginningDate: this.conjointProject.beginningDate,
               endingDate: this.conjointProject.endingDate,
               nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
@@ -524,8 +505,6 @@ export default {
           studentOrResearcher: this.conjointProject.studentOrResearcher,
           countryOrigin: this.conjointProject.countryOrigin,
           cityOrigin: this.conjointProject.cityOrigin,
-          countryDestination: this.conjointProject.countryDestination,
-          cityDestination: this.conjointProject.cityDestination,
           beginningDate: this.conjointProject.beginningDate,
           endingDate: this.conjointProject.endingDate,
           nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,
@@ -554,19 +533,15 @@ export default {
             }else if(item == 'institutionCollaborates'){
               mensaje =   mensaje + "The field Institution which collaborates is required" + "\n";
             }else if(item == 'countryOrigin'){
-              mensaje =   mensaje + "The field Country Origin is required" + "\n";
+              mensaje =   mensaje + "The field Institution Country is required" + "\n";
             }else if(item == 'cityOrigin'){
-              mensaje =   mensaje + "The field City Origin is required" + "\n";
-            }else if(item == 'countryDestination'){
-              mensaje =   mensaje + "The field Country Destination is required" + "\n";
-            }else if(item == 'cityDestination'){
-              mensaje =   mensaje + "The field City Destination is required" + "\n";
+              mensaje =   mensaje + "The field Institution City is required" + "\n";
             }else if(item == 'beginningDate'){
               mensaje =   mensaje + "The field Beginning Date is required" + "\n";
             }else if(item == 'endingDate'){
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report Year is required" + "\n";
             }else if(item == 'other'){
               mensaje =   mensaje + "The field Other Activity is required" + "\n";
             }else if(item == 'other2'){
@@ -664,8 +639,6 @@ export default {
               activityName: activityName1,
               countryOrigin: this.conjointProject.countryOrigin,
               cityOrigin: this.conjointProject.cityOrigin,
-              countryDestination: this.conjointProject.countryDestination,
-              cityDestination: this.conjointProject.cityDestination,
               beginningDate: this.conjointProject.beginningDate,
               endingDate: this.conjointProject.endingDate,
               nameOfExternalResearcher: this.conjointProject.nameOfExternalResearcher,

@@ -1,7 +1,7 @@
 @extends('layouts.main', ['class' => 'g-sidenav-show bg-gray-100'])
-@section('title', '- Cumulative Results until April, 2024')
+@section('title', '- Performance Results')
 @section('content')
-    @include('layouts.navbars.auth.topnav', ['title' => 'Cumulative Results until April, 2024'])
+    @include('layouts.navbars.auth.topnav', ['title' => 'Performance Results'])
         <div id="powerbitest-component">
             <powerbitest-component></powerbitest-component>
         </div>

@@ -77,11 +77,17 @@
                     </div>
                     <br>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-4">
                         <label for="">Description:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="technologyKnowledge.description">
+                      </div>
+                      <div class="col-md-2">
+                        <label for="">Actual TRL:</label>
+                        <label for="" style="color: orange;">*</label>
+                        <br>
+                        <input type="number" class= "form-control" v-model="technologyKnowledge.actualTrl">
                       </div>
                       <div class="col-md-3">
                         <label for="">Beneficiary institution:</label>
@@ -142,6 +148,34 @@
                     </div>
                     <br>
                     <div class="row">
+                      <div class="col-md-3">
+                          <label for="">Ending Year: </label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <select class="form-select" id="selectYear" v-model="technologyKnowledge.yearEnding">
+                          <option disabled value="">Select a year</option>
+                          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                          </select>
+                      </div>
+                      <div class="col-md-3">
+                          <label for="selectMonth">Ending Month:</label>
+                          <br>
+                          <select class="form-select" id="selectMonth" v-model="technologyKnowledge.monthEnding">
+                              <option disabled value="">Select a month</option>
+                              <option value="January">January</option>
+                              <option value="February">February</option>
+                              <option value="March">March</option>
+                              <option value="April">April</option>
+                              <option value="May">May</option>
+                              <option value="June">June</option>
+                              <option value="July">July</option>
+                              <option value="August">August</option>
+                              <option value="September">September</option>
+                              <option value="October">October</option>
+                              <option value="November">November</option>
+                              <option value="December">December</option>
+                          </select>
+                      </div>
                       <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
@@ -192,11 +226,14 @@ export default {
         researcherInvolved: null,
         typeOfTransfer: '',
         nameOfBeneficiary: '',
+        actualTrl: '',
         country: '',
         city: '',
         placeRegion: '',
         year: '',
         month:'',
+        yearEnding: '',
+        monthEnding:'',
         comments: '',
         progressReport: '',
       },
@@ -207,7 +244,7 @@ export default {
       usuarios: [],
       idResearcher: '',
       errors:[],
-      buttonText:'Save transfer',
+      buttonText:'Send New Record',
     }),
     created(){
       this.getUsuarios2();
@@ -303,11 +340,14 @@ export default {
               knowledgeTransfer: this.technologyKnowledge.knowledgeTransfer,
               typeOfTransfer: this.technologyKnowledge.typeOfTransfer,
               nameOfBeneficiary: this.technologyKnowledge.nameOfBeneficiary,
+              actualTrl: this.technologyKnowledge.actualTrl,
               country: this.technologyKnowledge.country,
               city: this.technologyKnowledge.city,
               placeRegion: this.technologyKnowledge.placeRegion,
               year: this.technologyKnowledge.year,
               month: this.technologyKnowledge.month,
+              yearEnding: this.technologyKnowledge.yearEnding,
+              monthEnding: this.technologyKnowledge.monthEnding,
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };
@@ -429,7 +469,7 @@ export default {
       // Método para crear un registro
       async createTechnology() {
         this.errors = [];
-        const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer','month']; // Arreglo de campos a excluir
+        const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer','month','monthEnding']; // Arreglo de campos a excluir
 
         for (const item in this.technologyKnowledge) {
           if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir
@@ -468,8 +508,12 @@ export default {
               mensaje =   mensaje + "The field Name of institution involved is required" + "\n";
             }else if(item == 'nameOfBeneficiary'){
               mensaje =   mensaje + "The field Name of beneficiary institution is required" + "\n";
+            }else if(item == 'actualTrl'){
+              mensaje =   mensaje + "The field Actual TRL is required" + "\n";
             }else if(item == 'placeRegion'){
               mensaje =   mensaje + "The field Place/Region is required" + "\n";
+            }else if(item == 'yearEnding'){
+              mensaje =   mensaje + "The field Ending Year is required" + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
@@ -531,11 +575,14 @@ export default {
               knowledgeTransfer: this.technologyKnowledge.knowledgeTransfer,
               typeOfTransfer: this.technologyKnowledge.typeOfTransfer,
               nameOfBeneficiary: this.technologyKnowledge.nameOfBeneficiary,
+              actualTrl: this.technologyKnowledge.actualTrl,
               country: this.technologyKnowledge.country,
               city: this.technologyKnowledge.city,
               placeRegion: this.technologyKnowledge.placeRegion,
               year: this.technologyKnowledge.year,
               month: this.technologyKnowledge.month,
+              yearEnding: this.technologyKnowledge.yearEnding,
+              monthEnding: this.technologyKnowledge.monthEnding,
               comments: this.technologyKnowledge.comments,
               progressReport: this.technologyKnowledge.progressReport,
             };

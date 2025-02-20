@@ -15,6 +15,30 @@ class publicPrivateController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
+
+        // Manejar carga de archivo si se envía un archivo
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+    
+            // Verificar el tamaño del archivo (máximo 20 MB)
+            if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
+                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+            }
+    
+            // Guardar el archivo con su nombre original en la carpeta participationScEvents
+            $filename = $file->getClientOriginalName();
+            $input['file'] = $file->storeAs('publicPrivate', $filename, 'public');
+    
+            // Establecer is_link en 0 ya que se está subiendo un archivo
+            $input['is_link'] = 0;
+        } elseif (!empty($input['file'])) {
+            // Si se proporciona un link en lugar de un archivo
+            $input['is_link'] = 1;
+        } else {
+            // Si no se proporciona ni archivo ni link
+            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
+        }
+
         // Obtener los nombres de los investigadores relacionados
         if (isset($input['researcherInvolved'])) {
             $researcherNames = explode(',', $input['researcherInvolved']);
@@ -38,6 +62,41 @@ class publicPrivateController extends Controller
         return response()->json("Registro Creado!");
     }
 
+    public function addFile(Request $request)
+    {
+        $input = $request->all();
+    
+        $publicPrivate = publicPrivate::where('id', $input['id'])->first();
+    
+        // Verificar si se envía un archivo o un link
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+    
+            // Verificar el tamaño del archivo
+            if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
+                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+            }
+    
+            // Guardar el archivo con su nombre original
+            $filename = $file->getClientOriginalName();
+            $input['file'] = $file->storeAs('publicPrivate', $filename, 'public');
+    
+            // Establecer is_link en 0 ya que se está subiendo un archivo
+            $input['is_link'] = 0;
+        } elseif (!empty($input['file']) && $input['is_link']) {
+            // Si se proporciona un link en lugar de un archivo y el campo is_link es true
+            $input['is_link'] = 1;
+        } else {
+            // Si no se proporciona ni archivo ni link
+            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
+        }
+    
+        // Actualizar el registro en la base de datos
+        $publicPrivate->update($input);
+    
+        return response()->json("File or link added successfully!");
+    }    
+
     // Función para detectar registros duplicados
      public function verifyPublicPrivate(Request $request)
     {
@@ -55,6 +114,12 @@ class publicPrivateController extends Controller
         $existentes = $query->count();
     
         return response()->json($existentes); 
+    }
+
+    public function publicPrivateDownload($id){
+        $publicPrivate = publicPrivate::find($id);
+        $pathtoFile = public_path().'/defaults/'.$publicPrivate['file'];
+        return response()->download($pathtoFile);
     }
 
     public function show($userID) {

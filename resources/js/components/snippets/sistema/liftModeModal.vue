@@ -6,7 +6,7 @@
           <div class="modal-container-s">
             <!-- Modal Header -->
             <div class="modal-header pb-1 fw-bold" style="color: #444444;">
-              <slot name="header">Lift Mode</slot>
+              <slot name="header">Display New Message</slot>
               <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
             </div>
 

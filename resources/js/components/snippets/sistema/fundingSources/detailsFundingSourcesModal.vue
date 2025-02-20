@@ -25,7 +25,7 @@
                     <label class="col-6 m-0 fs-8 pb-1">Comments: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.comments || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">In Cash: <label class="fw-normal" style="font-size: 14px;">{{ formatCurrency(fundingSource1.inCash) || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Type of Collaboration: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.typeOfCollaboration || '---' }}</label></label>
-                    <label class="col-6 m-0 fs-8 pb-1">Progress Report: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.progressReport || '---' }}</label></label>
+                    <label class="col-6 m-0 fs-8 pb-1">Progress Report Year: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.progressReport || '---' }}</label></label>
                   </div>
                 </div>
               </slot>

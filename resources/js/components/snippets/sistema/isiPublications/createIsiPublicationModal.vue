@@ -274,7 +274,7 @@ export default {
       usuarios:[],
       errors:[],
       years: [],
-      buttonText:'Send Publication',
+      buttonText:'Send New Record',
     }),
     mounted(){
       this.getUsuarios();

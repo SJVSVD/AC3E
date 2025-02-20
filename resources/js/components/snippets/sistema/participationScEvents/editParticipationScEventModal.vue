@@ -258,7 +258,7 @@ export default {
       id: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Edit Participation',
+      buttonText:'Edit Record',
     }),
     mounted(){
       this.getUsuarios();
@@ -382,9 +382,9 @@ export default {
                 let link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 if (blob.type.includes('pdf')) {
-                    link.download = `Participation-${nombre}.pdf`;
+                    link.download = `participationSc-${nombre}.pdf`;
                 } else if (blob.type.includes('image')) {
-                    link.download = `Participation-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                    link.download = `participationSc-${nombre}.png`; // Cambia la extensión según el tipo de imagen
                 } else {
                     // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
                     console.error('Tipo de archivo no compatible');
@@ -892,7 +892,7 @@ export default {
             }else if(item == 'nameOfParticipants'){
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report Year is required" + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{

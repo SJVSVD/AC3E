@@ -17,9 +17,9 @@
                   <label class="form-label">Filter By:</label>
                   <select v-model="selectedFilterType" class="form-select mb-3" @change="resetFilters">
                     <option value="" disabled>Select a type of filter</option>
-                    <option value="line">Línea de Investigación</option>
-                    <option value="researcher">Investigador</option>
-                    <option value="researchType">Tipo de Investigador</option>
+                    <option value="line">Research Line</option>
+                    <option value="researcher">Researcher</option>
+                    <option value="researchType">Type of researcher</option>
                   </select>
 
                   <!-- Selector Dinámico de Línea, Investigador o Tipo de Investigador -->
@@ -54,7 +54,7 @@
                   </div>
 
                   <!-- Selector de Módulos (Opcional) -->
-                  <label class="form-label">Filter by module:</label>
+                  <label class="form-label">Filter by KPI:</label>
                   <select v-model="selectedModule" class="form-select mb-3">
                     <option :value="null" >Select a module</option>
                     <option v-for="module in modules" :key="module.name" :value="module.name">
@@ -68,11 +68,12 @@
 
                   <div class="card mt-3" v-if="filteredUsers.length > 0">
                     <div class="card-header text-white">
-                      <h5 class="card-title text-center">Filtered Users</h5>
+                      <h5 class="card-title text-center">Research Line Members</h5>
                     </div>
                     <ul class="list-group list-group-flush">
                       <li v-for="user in filteredUsers" :key="user.id" class="list-group-item">
-                        {{ user.name }}
+                        {{ user.name }} - {{ user.idRole }}
+                        
                       </li>
                     </ul>
                   </div>
@@ -160,7 +161,7 @@ export default {
     // 📌 Función para actualizar los datos del gráfico con "goals"
     const updateChartOptions = (labels, data, goals) => {
       const options = {
-        title: { text: "Records & Goals by Progress Report", left: "center" },
+        title: { text: "Records & Goals by Progress Report Year", left: "center" },
         tooltip: { trigger: "axis" },
         xAxis: { type: "category", data: labels },
         yAxis: { type: "value" },
@@ -274,6 +275,11 @@ export default {
       try {
         const response = await axios.get("/api/getResearchers2");
         allResearchers.value = response.data;
+        allResearchers.value.sort((a, b) => {
+          if (a.name < b.name) return -1;  // Si 'a' es antes que 'b', retornar -1
+          if (a.name > b.name) return 1;   // Si 'a' es después que 'b', retornar 1
+          return 0; // Si son iguales
+        });
       } catch (error) {
         console.error("Error fetching researchers:", error);
       }

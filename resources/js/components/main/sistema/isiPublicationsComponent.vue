@@ -12,8 +12,8 @@
             </div>
             <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
               <div class="d-flex">
-                <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewIsiPublication = true">New Entry</a>
+                <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i>  Selected Records</button>
+                <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewIsiPublication = true"><i class="fa-solid fa-add"></i></a>
                 <a class="btn btn-spacing btn-search-blue ml-2" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
               </div>
             </div>
@@ -22,7 +22,7 @@
           <!-- ProgressReport Filter -->
           <div class="row px-4 mb-2">
             <div class="col-lg-2 col-md-6">
-              <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+              <label for="progressReportFilter" class="form-label">Filter By Progress Report Year:</label>
               <select
                 id="progressReportFilter"
                 class="form-select"

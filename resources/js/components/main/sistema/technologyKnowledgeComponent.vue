@@ -10,8 +10,8 @@
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
-                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewTechnology = true">New Entry</a>
+                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i>  Selected Records</button>
+                            <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewTechnology = true"><i class="fa-solid fa-add"></i></a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
@@ -19,7 +19,7 @@
                     <!-- ProgressReport Filter -->
                     <div class="row px-4 mb-2">
                         <div class="col-lg-2 col-md-6">
-                        <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+                        <label for="progressReportFilter" class="form-label">Filter By Progress Report Year:</label>
                         <select
                             id="progressReportFilter"
                             class="form-select"
@@ -36,6 +36,16 @@
                             </option>
                         </select>
                         </div>
+                        <div class="col-md-4">
+                        <div class="form-check pt-2">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" v-model="showActiveOnly">
+                                Show Active Records Only
+                            </label>
+                            &nbsp;
+                            <a class="btn btn-xs btn-search-blue" @click="recargarTabla('Active')"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        </div>
+                    </div>
                     </div>
 
                 </div>
@@ -138,7 +148,7 @@ export default {
             filteredTechnologys: [], // Publications filtered by progressReport
             uniqueProgressReports: [], // Unique progressReport values for the selector
             selectedProgressReport: '', // Selected progressReport value
-
+            showActiveOnly: false,
             technologys: null,
             technology: null,
             showDetailsTechnology: false,
@@ -163,7 +173,7 @@ export default {
                 tempDiv.innerHTML = row[1]; // Cambia el índice según dónde esté el ID
                 return tempDiv.textContent.trim(); // Obtener el contenido de texto que es el ID
             });
-            let module = 'wos-publications'; // Cambia este valor dinámicamente según el módulo
+            let module = 'technology-knowledge'; // Cambia este valor dinámicamente según el módulo
             if (selectedIds.length === 0) {
                 this.toast.error("No records selected.");
                 return;
@@ -241,13 +251,41 @@ export default {
                 console.error('Error fetching postdoc:', error);
             }
         },
+        getActiveTechnologys(id) {
+    axios.get(`api/technologyKnowledgesActive/${id}`)
+        .then(response => {
+            console.log('API Response:', response.data);  // Verifica el formato de la respuesta
+
+            if (Array.isArray(response.data)) {
+                this.technologys = response.data;
+                this.filteredTechnologys = [...response.data];
+            } else {
+                console.error('La respuesta no es un array:', response.data);
+                this.technologys = [];
+                this.filteredTechnologys = [];
+            }
+
+            if (this.table != null) {
+                this.table.destroy();
+            }
+            this.crearTabla('#myTableTechnology');
+        })
+        .catch(error => {
+            console.error('Error fetching active Technologys:', error);
+        });
+},
         recargarTabla($tipoRecarga){
             this.mostrarCarga = true;
             if($tipoRecarga == 'General'){
-                this.technologys = null;
+                this.showActiveOnly = false;
                 this.getTechnologyKnowledge(this.userID);
-            }
-            else{
+            }else if ($tipoRecarga === 'Active') {
+                if (this.showActiveOnly) {
+                    this.getActiveTechnologys(this.userID);
+                } else {
+                    this.recargarTabla('General');
+                }
+            }else{
                 this.crearTabla("#myTableTechnology");
             }
         },

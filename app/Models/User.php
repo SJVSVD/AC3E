@@ -22,8 +22,11 @@ class User extends Authenticatable
         'idRole',
         'name',
         'email',
+        'gender',
         'password',
-        'estado'
+        'estado',
+        'notified_complete',
+        'deadline'
     ];
 
     protected $hidden = [

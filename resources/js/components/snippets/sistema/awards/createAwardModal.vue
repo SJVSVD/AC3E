@@ -173,7 +173,7 @@ export default {
       usuarios: [],
       researchers: [],
       errors:[],
-      buttonText:'Save Award',
+      buttonText:'Send New Record',
     }),
     created(){
       this.getProgressReport();
@@ -415,7 +415,7 @@ export default {
             }else if(item == 'chapterTitle'){
               mensaje =   mensaje + "The field Chapter Title is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report Year is required" + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{

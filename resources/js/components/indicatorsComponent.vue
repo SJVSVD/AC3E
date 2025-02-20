@@ -6,7 +6,7 @@
                 <div class="col-4"> 
                     <div class="d-flex align-items-center">
                         <select v-model="selectedProgress" class="form-select form-select-sm me-2" style="min-width:100px; max-width:200px;">
-                            <option disabled value="">Select a progress report </option>
+                            <option disabled value="">Select a progress report year </option>
                             <option v-for="number in progressNumbers" :value="number">{{ number }}</option>
                         </select>
                         <button class="btn btn-spacing btn-search-blue mt-2" @click="searchByProgressReport"><i class="fa-solid fa-magnifying-glass"></i></button>

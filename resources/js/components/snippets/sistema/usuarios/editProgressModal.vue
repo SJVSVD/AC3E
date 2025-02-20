@@ -6,7 +6,7 @@
                     <div class="modal-container-xs">
                         <div class="modal-header fw-bold" style="color: #444444;">
                             <slot name="header">
-                                Edit progress report
+                                Edit progress report year
                             </slot>
                             <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
                         </div>
@@ -15,7 +15,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="">Progress report: </label>
+                                        <label for="">Progress report Year: </label>
                                         <br>
                                         <input type="number" class= "form-control" v-model="edits.progressReport">
                                     </div>
@@ -84,7 +84,7 @@ export default {
                 // Construye el mensaje de error
                 this.errors.forEach(item => {
                     if(item == 'progressReport'){
-                        mensaje += "The field Progress report is required" + "\n"; 
+                        mensaje += "The field Progress report year is required" + "\n"; 
                     } else {
                         mensaje += "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n"; 
                     }
@@ -109,7 +109,7 @@ export default {
             if(this.errors.length === 0){
                 // Realiza la edición del informe de progreso si no hay errores
                 const ok = await this.$refs.confirmation.show({
-                    title: 'Edit progress report',
+                    title: 'Edit progress report year',
                     message: `Are you sure you want to edit progress report year?.`,
                     okButton: 'Save',
                     cancelButton: 'Return'
@@ -123,7 +123,7 @@ export default {
                         this.buttonText = 'Editing...';
                         this.buttonDisable = true;
                         // Muestra un mensaje de éxito
-                        this.toast.success("Progress report edited successfully!", {
+                        this.toast.success("Progress report year edited successfully!", {
                             position: "top-right",
                             timeout: 3000,
                             closeOnClick: true,

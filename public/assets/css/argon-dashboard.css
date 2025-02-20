@@ -3963,6 +3963,31 @@ textarea.form-control-lg {
   background-color: #adadad;
   border-color: #adadad;
 }
+
+/* Orange */
+.btn-orange {
+  color: #fff;
+  background-color: #FD7E14;
+  border-color: #FD7E14;
+}
+.btn-orange:hover {
+  color: #fff;
+  background-color: #FD7E14;
+  border-color: #FD7E14;
+}
+
+/* Purple */
+.btn-purple {
+  color: #fff;
+  background-color: #6F42C1;
+  border-color: #6F42C1;
+}
+.btn-purple:hover {
+  color: #fff;
+  background-color: #6F42C1;
+  border-color: #6F42C1;
+}
+
 .btn-check:focus + .btn-grey, .btn-grey:focus {
   color: #fff;
   background-color: #adadadd5;

@@ -190,7 +190,7 @@ export default {
       usuarios: [],
       idResearcher: '',
       errors:[],
-      buttonText:'Save Activity',
+      buttonText:'Send New Record',
     }),
     mounted(){
       this.getUsuarios();

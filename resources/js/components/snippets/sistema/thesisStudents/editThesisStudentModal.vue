@@ -423,7 +423,7 @@ export default {
       researchers:[],
       usuarios: [],
       idResearcher: '',
-      buttonText:'Edit Thesis',
+      buttonText:'Edit Record',
       years: [],
     }),
     mounted() {

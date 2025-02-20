@@ -20,7 +20,7 @@
                         {{ errors.name[0] }}
                       </div>
                     </div>
-                    <!-- <label for="">Permisos para este Rol: </label>
+                    <label for="">Permisos para este Rol: </label>
                       <br/>
                       <div v-for="permiso in permisos" :key="permiso.id" class="form-check">
                           <label class="form-check-label"><input type="checkbox" class="form-check-input" v-bind:value="permiso.id"  v-model="permissions">
@@ -28,7 +28,7 @@
                       </div>
                       <div v-if="errors && errors.permission" class="error">
                         {{ errors.permission[0] }}
-                      </div> -->
+                      </div>
                       <br/>
                     <div class="modal-footer">
                       <slot name="footer">
@@ -66,7 +66,7 @@ export default {
         permissions:[],
     }),
     created(){
-        //this.getPermisos();
+        this.getPermisos();
     },
     methods: {
         // Cierra el modal y emite un evento de recarga.

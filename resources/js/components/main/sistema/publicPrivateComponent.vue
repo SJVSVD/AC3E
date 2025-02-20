@@ -12,8 +12,8 @@ Includes participation in public policy design, formalization of MOUs/NDAs, part
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
                         <div class="d-flex">
-                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
-                            <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPublicPrivate = true">New Entry</a>
+                            <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i>  Selected Records</button>
+                            <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewPublicPrivate = true"><i class="fa-solid fa-add"></i></a>
                             <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>
                     </div>
@@ -21,7 +21,7 @@ Includes participation in public policy design, formalization of MOUs/NDAs, part
                     <!-- ProgressReport Filter -->
                     <div class="row px-4 mb-2">
                         <div class="col-lg-2 col-md-6">
-                        <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+                        <label for="progressReportFilter" class="form-label">Filter By Progress Report Year:</label>
                         <select
                             id="progressReportFilter"
                             class="form-select"
@@ -67,6 +67,15 @@ Includes participation in public policy design, formalization of MOUs/NDAs, part
                                         </td>                                          
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                                <a
+                                                    v-if="publicPrivate.file != null && publicPrivate.is_link == 0"
+                                                    class="btn btn-search-blue btn-xs"
+                                                    title="Download File"
+                                                    @click="descargarExtracto(publicPrivate.id, publicPrivate.usuario.name)"
+                                                >
+                                                    <i class="fa-solid fa-download"></i>
+                                                </a>
+                                                &nbsp;
                                                 <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || publicPrivate.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editPublicPrivate(publicPrivate)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verPublicPrivate(publicPrivate)"><i class="fa-regular fa-eye"></i></a>
@@ -140,7 +149,6 @@ export default {
             filteredPublicprivate: [], // Publications filtered by progressReport
             uniqueProgressReports: [], // Unique progressReport values for the selector
             selectedProgressReport: '', // Selected progressReport value
-
             publicPrivates: null,
             publicPrivate: null,
             showDetailsPublicPrivate: false,
@@ -156,6 +164,29 @@ export default {
         this.getPublicPrivate(this.userID);
     },
     methods: {
+        descargarExtracto(id,nombre){
+            axios({
+                url: `api/publicPrivateDownload/${id}`,
+                method: 'GET',
+                responseType: 'arraybuffer',
+            }).then((response) => {
+                let blob = new Blob([response.data], {
+                    type: response.headers['content-type']
+                });
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                if (blob.type.includes('pdf')) {
+                    link.download = `publicPrivate-${nombre}.pdf`;
+                } else if (blob.type.includes('image')) {
+                    link.download = `publicPrivate-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                } else {
+                    // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                    console.error('Tipo de archivo no compatible');
+                    return;
+                }
+                link.click();
+            });
+        },
         async deleteSelected() {
             // Obtener las filas seleccionadas
             let selectedData = this.table.rows({ selected: true }).data().toArray();

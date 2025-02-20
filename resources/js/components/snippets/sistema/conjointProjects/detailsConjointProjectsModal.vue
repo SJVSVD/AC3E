@@ -41,23 +41,13 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Country Origin: </label>
+                      <label>Institution Country: </label>
                       <label v-if="project1.countryOrigin != null" class="fw-normal" style="font-size: 14px;">{{ project1.countryOrigin }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>City Origin: </label>
+                      <label>Institution City: </label>
                       <label v-if="project1.cityOrigin != null" class="fw-normal" style="font-size: 14px;">{{ project1.cityOrigin }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Country Destination: </label>
-                      <label v-if="project1.countryDestination != null" class="fw-normal" style="font-size: 14px;">{{ project1.countryDestination }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>City Destination: </label>
-                      <label v-if="project1.cityDestination != null" class="fw-normal" style="font-size: 14px;">{{ project1.cityDestination }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
@@ -71,7 +61,7 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Progress Report: </label>
+                      <label>Progress Report Year: </label>
                       <label v-if="project1.progressReport != null" class="fw-normal" style="font-size: 14px;">{{ project1.progressReport }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>

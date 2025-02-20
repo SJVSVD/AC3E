@@ -282,7 +282,7 @@ export default {
       idResearcher: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Save fellow',
+      buttonText:'Send New Record',
     }),
     mounted(){
       this.getUsuarios();

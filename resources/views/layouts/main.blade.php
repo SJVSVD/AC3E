@@ -75,7 +75,7 @@
                     <li><a class="link_name" href="#">Administration</a></li>
                     <li><a href="/admin-usuarios">of Users</a></li>
                     <li><a href="/admin-roles">of Roles and Permissions</a></li>
-                    <li><a href="/powerbi-goals">PowerBi Goals</a></li>
+                    <li><a href="/performance-targets">Set Performance Targets</a></li>
                     <li><a href="/import-info">Import data</a></li>
                     <li><a href="/indicators">Indicators</a></li>
                     <li><a href="/recycle-bin">Recycle Bin</a></li>
@@ -125,7 +125,7 @@
                     <li><a class="link_name" href="#">Power BI</a></li>
                     <li><a href="/power-bi">Power BI</a></li>
                     @role('Administrator')
-                    <li><a href="/powerbi-test">Power BI Test</a></li>
+                    <li><a href="/performance-results">Performance Results</a></li>
                     @endrole
                 </ul>
             </li>

@@ -183,7 +183,7 @@ export default {
       id: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Edit source',
+      buttonText:'Edit Record',
     }),
     mounted(){
       this.getUsuarios();

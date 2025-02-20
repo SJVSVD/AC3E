@@ -190,7 +190,7 @@ export default {
       id: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Edit patent',
+      buttonText:'Edit Record',
     }),
     mounted(){
       this.getUsuarios();

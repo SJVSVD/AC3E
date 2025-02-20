@@ -48,25 +48,121 @@ class indicatorsController extends Controller
                 $lineName = strtolower($researchLine->name);
     
                 // Obtener usuarios de esta línea de investigación
-                $filteredUsers = User::where('idResearchLine', $lineId)
-                                    ->select('id', 'name')
+                $filteredUsers = User::where('idResearchLine', $lineId)->where('estado',1)
+                                    ->select('id', 'name','idRole')
                                     ->get();
             }
     
             // Obtener los usuarios por tipo de investigador
             if ($roleUser) {
-                $filteredUsers = User::where('idRole', $roleUser)
+                $filteredUsers = User::where('idRole', $roleUser)->where('estado',1)
                                     ->select('id', 'name')
                                     ->get();
             }
     
             // 📌 Obtener los goals correspondientes al filtro seleccionado
             if ($lineId) {
-                $progressReport = ProgressReportGoals::where('research_line_id', $lineId)->first();
-            } elseif ($personId) {
-                $progressReport = ProgressReportGoals::where('user_id', $personId)->first();
+                // Paso 1: Obtener todos los usuarios de la línea de investigación
+                $usersInLine = User::where('idResearchLine', $lineId)->where('estado',1)
+                ->whereIn('idRole', [1, 2, 3]) // Solo considerar los roles con id entre 1 y 3
+                ->get();
+            
+                // Paso 2: Inicializar un array para almacenar las metas totales por año
+                $totalGoals = [];
+        
+                // Paso 3: Iterar sobre cada usuario de la línea de investigación
+                foreach ($usersInLine as $user) {
+                    // Paso 4: Obtener el tipo de investigador (idRole) del usuario
+                    $roleId = $user->idRole;
+
+                    // Paso 5: Solo considerar roles de 1 a 3 (según lo indicado)
+                    if ($roleId >= 1 && $roleId <= 3) {
+                        // Obtener el progreso de metas para este tipo de investigador (idRole)
+                        $query = ProgressReportGoals::where('researcher_type_id', $roleId);
+
+                        if ($moduleName) {
+                            $query->where('module', $moduleName); // Filtro por módulo
+                        }
+            
+                        // Obtener el progreso de metas para este tipo de investigador y módulo (si se aplica)
+                        $progressReport = $query->first();
+
+                        if ($progressReport) {
+                            // Extraer las metas de este tipo de investigador
+                            $goals = json_decode($progressReport->goals, true);
+
+                            // Paso 6: Dividir las metas entre el número de usuarios con ese idRole
+                            $usersWithType = User::where('idRole', $roleId)->get();
+                            $totalUsers = $usersWithType->count();
+
+                            // Paso 7: Dividir los goals entre el número de usuarios con ese idRole
+                            foreach ($goals as $year => $goal) {
+                                $goals[$year] = round($goal / $totalUsers); // Redondear hacia el número entero más cercano
+                            }
+
+                            // Paso 8: Sumar las metas de este usuario a las metas totales de la línea
+                            foreach ($goals as $year => $goal) {
+                                if (!isset($totalGoals[$year])) {
+                                    $totalGoals[$year] = 0;
+                                }
+                                $totalGoals[$year] += $goal; // Sumar las metas para cada año
+                            }
+                        }
+                    }
+                }
+
+                // Paso 9: Ordenar los goles por año
+                ksort($totalGoals);
+
+                // Guardar los goles sumados y ordenados en el progreso final
+                $progressReport->goals = json_encode($totalGoals);
+            }elseif ($personId) {
+                // 1. Obtener el idRole del usuario (personId)
+                $user = User::find($personId);
+                if (!$user) {
+                    return response()->json([
+                        'message' => 'User not found',
+                        'data' => null
+                    ], 404);
+                }
+        
+                $idRole = $user->idRole;
+        
+                // 2. Buscar el progress report para ese researcher_type_id (idRole)
+                $query = ProgressReportGoals::where('researcher_type_id', $idRole);
+
+                if ($moduleName) {
+                    $query->where('module', $moduleName); // Filtro por módulo
+                }
+    
+                // Obtener el progreso de metas para este tipo de investigador y módulo (si se aplica)
+                $progressReport = $query->first();
+                
+                if ($progressReport) {
+                    // 3. Obtener todos los usuarios con ese researcher_type_id
+                    $usersWithType = User::where('idRole', $idRole)->get();
+                    $totalUsers = $usersWithType->count();
+        
+                    // 4. Dividir los goals entre el número de usuarios con ese idRole
+                    $goals = json_decode($progressReport->goals, true);
+        
+                    foreach ($goals as $year => $goal) {
+                        $goals[$year] = round($goal / $totalUsers);
+                    }
+        
+                    // Actualizar el progress report
+                    $progressReport->goals = json_encode($goals);
+                }
+
             } elseif ($roleUser) {
-                $progressReport = ProgressReportGoals::where('researcher_type_id', $roleUser)->first();
+                $query = ProgressReportGoals::where('researcher_type_id', $roleUser);
+
+                if ($moduleName) {
+                    $query->where('module', $moduleName); // Filtro por módulo
+                }
+    
+                // Obtener el progreso de metas para este tipo de investigador y módulo (si se aplica)
+                $progressReport = $query->first();
             } else {
                 $progressReport = null;
             }
@@ -126,7 +222,7 @@ class indicatorsController extends Controller
     
                 // Filtrar por tipo de investigador
                 if ($roleUser) {
-                    $researchers = User::where('idRole', $roleUser)->pluck('id');
+                    $researchers = User::where('idRole', $roleUser)->where('estado',1)->pluck('id');
                     if ($researchers->isNotEmpty()) {
                         $query->whereIn($userColumn, $researchers);
                     }

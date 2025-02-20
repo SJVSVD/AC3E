@@ -99,6 +99,27 @@
                             <label class="form-check-label"><input type="checkbox" class="form-check-input"
                                   v-model="publicPrivate.participationPublicPolicies"> Participation in definition of public policies </label>
                           </div>
+                          <div class="row mt-2" v-if="publicPrivate.participationPublicPolicies">
+                            <div class="col-12">
+                              <div class="form-group">
+                                <label for="archivo" v-if="isLink">Link: </label>
+                                <label for="archivo" v-else>File: </label>
+                                <label for="" style="color: orange;">*</label>
+                                <label title="A document verifying event participation and containing relevant information about it must be uploaded. Suitable documents include conference programs, participation certificates, or confirmation emails from the organizers. Any one of these will suffice." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                                <!-- Input para archivo (solo si isLink es false) -->
+                                <input v-if="!isLink" type="file" ref="fileInput" accept=".pdf, .png, .jpg, .jpeg" class="form-control" @change="getFile">
+          
+                                <!-- Input para el link (solo si isLink es true) -->
+                                <input v-if="isLink" type="text" v-model="link" placeholder="Enter the link" class="form-control">
+                                <!-- Checkbox para alternar entre subir archivo o ingresar un link -->
+                                <div class="form-check pt-2">
+                                  <input type="checkbox" id="isLink" v-model="isLink" class="form-check-input">
+                                  <label for="isLink" class="form-check-label">Upload Link instead of File</label>
+                                </div>
+                              </div>
+                              
+                            </div>
+                          </div>
                       </div>
                     </div>
                     <br>
@@ -209,8 +230,11 @@ export default {
         nameOfOrganization: '',
         countryOrigin: '',
         comments: '',
+        file: null,
         progressReport: '',
       },
+      isLink: 0, // Controla si es un link o un archivo
+      link: '',
       other: '',
       draft: false,
       showModalProgress: false,
@@ -238,7 +262,7 @@ export default {
       errors:[],
       idResearcher: '',
       usuarios:[],
-      buttonText:'Save connection',
+      buttonText:'Send New Record',
     }),
     created(){
       this.getProgressReport();
@@ -256,6 +280,63 @@ export default {
       }
     },
     methods: {
+      async getFile(e) {
+          const file = e.target.files[0];
+
+          if (!file) return;
+
+          const fileType = file.type;
+          const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+          const maxSizeMB = 20; // Tamaño máximo permitido en MB
+          const maxSizeBytes = maxSizeMB * 1024 * 1024; // Convertir MB a Bytes
+
+          // Verificar si el tipo de archivo está en la lista permitida
+          if (!allowedTypes.includes(fileType)) {
+              // Si el archivo no es PDF ni imagen permitida, mostrar mensaje de error
+              this.toast.error("Unsupported file type. Please upload a PDF or an image (JPG, JPEG, PNG).", {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+              // Limpiar el input de archivo
+              e.target.value = '';
+              return;
+          }
+
+          // Verificar si el tamaño del archivo supera el máximo permitido
+          if (file.size > maxSizeBytes) {
+              // Mostrar mensaje de error si el archivo es demasiado grande
+              this.toast.error(`File is too large. Maximum size allowed is ${maxSizeMB} MB.`, {
+                  position: "top-right",
+                  timeout: 3000,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  draggablePercent: 0.6,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: true,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+              });
+              // Limpiar el input de archivo
+              e.target.value = '';
+              return;
+          }
+
+          // Asignar el archivo válido a la propiedad correspondiente
+          this.publicPrivate.file = file;
+      },
       validateDates() {
         // Validar si las fechas son correctas y emitir advertencias o mensajes de error
         const startDate = new Date(this.publicPrivate.startDate);
@@ -367,6 +448,9 @@ export default {
               idUser1 = this.userID;
             }
 
+            let fileOrLink = this.isLink ? this.link : this.publicPrivate.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
+            let participationPublicPoliciesFlag = this.publicPrivate.participationPublicPolicies ? 1 : 0;
             let publicPrivate = {
               idUsuario: idUser1,
               status: 'Draft',
@@ -375,7 +459,7 @@ export default {
               researcherInvolved: researcherInvolved1,
               placeWhereWasExecuted: this.publicPrivate.placeWhereWasExecuted,
               internationalNational: this.publicPrivate.internationalNational,
-              participationPublicPolicies: this.publicPrivate.participationPublicPolicies,
+              participationPublicPolicies: participationPublicPoliciesFlag,
               nameOfActivity: this.publicPrivate.nameOfActivity,
               startDate: this.publicPrivate.startDate,
               endingDate: this.publicPrivate.endingDate,
@@ -383,9 +467,11 @@ export default {
               nameOfOrganization: this.publicPrivate.nameOfOrganization,
               countryOrigin: this.publicPrivate.countryOrigin,
               comments: this.publicPrivate.comments,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag,      
               progressReport: this.publicPrivate.progressReport,
             };
-            axios.post("api/publicPrivate", publicPrivate).then((result) => {
+            axios.post("api/publicPrivate", publicPrivate, {headers: { 'Content-Type' : 'multipart/form-data' }}).then((result) => {
               this.toast.success("Draft saved successfully!", {
                 position: "top-right",
                 timeout: 3000,
@@ -506,7 +592,8 @@ export default {
 
         const itemsToCheck = [
           'comments',
-          'participationPublicPolicies'
+          'participationPublicPolicies',
+          'file'
         ];
 
 
@@ -526,6 +613,21 @@ export default {
         });
         if (contador > 0){
           this.errors.push('duplicated');
+        }
+
+        // Validar el archivo solo si participationPublicPolicies es true
+        if (this.participationPublicPolicies && this.publicPrivate.file == null && this.isLink == false) {
+            this.errors.push('file');
+        }
+
+        // Validar el link solo si participationPublicPolicies es true
+        if (this.participationPublicPolicies && this.isLink == true && this.link == '') {
+            this.errors.push('link');
+        }
+
+        // Validar el formato del link solo si participationPublicPolicies es true
+        if (this.participationPublicPolicies && this.link && this.isLink && !this.isValidURL(this.link)) {
+            this.errors.push('invalidLink');
         }
 
         var mensaje = ""
@@ -553,6 +655,8 @@ export default {
               mensaje =   mensaje + "The field International/national is required" + "\n";
             }else if(item == 'agentType'){
               mensaje =   mensaje + "The field Agent type is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{
@@ -632,6 +736,9 @@ export default {
               idUser1 = this.userID;
             }
 
+            let fileOrLink = this.isLink ? this.link : this.publicPrivate.file;
+            let isLinkFlag = this.isLink ? 1 : 0;
+
             let publicPrivate = {
               status: 'Finished',
               idUsuario: idUser1,
@@ -647,6 +754,8 @@ export default {
               resultsGoals: this.publicPrivate.resultsGoals,
               nameOfOrganization: this.publicPrivate.nameOfOrganization,
               countryOrigin: this.publicPrivate.countryOrigin,
+              file: fileOrLink,         // Enviar archivo o link
+              isLink: isLinkFlag,   
               comments: this.publicPrivate.comments,
               progressReport: this.publicPrivate.progressReport,
             };

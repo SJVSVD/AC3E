@@ -21,7 +21,7 @@ class UsuarioController extends Controller
     }
 
     public function getResearchers2(){
-        return User::where('estado', 1)->get();
+        return User::where('estado', 1)->whereIn('idRole',[1,2,3])->get();
     }
 
 

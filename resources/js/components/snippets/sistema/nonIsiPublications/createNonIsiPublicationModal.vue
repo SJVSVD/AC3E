@@ -398,7 +398,7 @@ export default {
       usuarios: [],
       errors:[],
       idResearcher: '',
-      buttonText:'Send Publication',
+      buttonText:'Send New Record',
     }),
     created(){
       this.getProgressReport();
@@ -895,7 +895,7 @@ export default {
                 });
               }
               this.buttonDisable = false;
-              this.buttonText = 'Send Publication';
+              this.buttonText = 'Send New Record';
             });
           }
       },
@@ -1028,7 +1028,7 @@ export default {
         }
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
-            title: 'Send Publication',
+            title: 'Send New Record',
             message: `¿Are you sure you want to send this publication?.`,
             okButton: 'Send',
             cancelButton: 'Return'
@@ -1416,7 +1416,7 @@ export default {
                 });
               }
               this.buttonDisable = false;
-              this.buttonText = 'Send Publication';
+              this.buttonText = 'Send New Record';
             });
           }
         }

@@ -221,7 +221,7 @@ export default {
       ],
 
       errors:[],
-      buttonText:'Save Organization',
+      buttonText:'Edit Record',
     }),
     props:{
       organization1: Object,
@@ -340,9 +340,9 @@ export default {
                 let link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
                 if (blob.type.includes('pdf')) {
-                    link.download = `Organization-${nombre}.pdf`;
+                    link.download = `organizationSc-${nombre}.pdf`;
                 } else if (blob.type.includes('image')) {
-                    link.download = `Organization-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+                    link.download = `organizationSc-${nombre}.png`; // Cambia la extensión según el tipo de imagen
                 } else {
                     // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
                     console.error('Tipo de archivo no compatible');

@@ -58,6 +58,90 @@ class technologyKnowledgeController extends Controller
         return response()->json($existentes); 
     }
 
+    public function technologyKnowledgesActive($userID) {
+        // Inicializar variables y roles
+        $roles = [];
+        $administrador = false;
+        $titularResearcher = false;
+        $today = Carbon::today();  // No es necesario formatear aún, trabajamos con objetos Carbon directamente
+    
+        // Obtener usuario y sus roles
+        $user = User::where('id', $userID)->with('roles')->first();
+    
+        // Identificar roles del usuario
+        if ($user->roles->isEmpty()) {
+            $roles[] = '';
+        } else {
+            foreach ($user->roles as $rol) {
+                if (in_array($rol['name'], ['Administrator', 'Anid', 'Staff'])) {
+                    $roles[] = $rol['name'];
+                    $administrador = true;
+                } elseif ($rol['name'] == 'Titular Researcher') {
+                    $roles[] = $rol['name'];
+                    $titularResearcher = true;
+                }
+            }
+        }
+    
+        // Normalizar nombre del usuario
+        function normalizeString1($string) {
+            $string = strtolower($string);
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+            $string = preg_replace('/[^a-z0-9\s]/', '', $string);
+            return trim($string);
+        }
+    
+        $userName = normalizeString1($user->name);
+        if ($userName == 'wael elderedy') {
+            $userName = 'wael';
+        }
+    
+        // Lógica para Administrador
+        if ($administrador) {
+            $technologyKnowledge = technologyKnowledge::with('usuario')
+                ->get();
+        } elseif ($titularResearcher) {
+            $userResearchLine = $user->idResearchLine;
+    
+            $technologyKnowledge = technologyKnowledge::where(function($query) use ($userResearchLine, $userID, $userName) {
+                $query->where('idUsuario', $userID)  // Tecnologías propias
+                      ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%")  // Tecnologías donde participa
+                      ->orWhereHas('usuario', function($subQuery) use ($userResearchLine) {  // Tecnologías de otros usuarios de la misma línea
+                          $subQuery->where('idResearchLine', $userResearchLine);
+                      });
+            })
+            ->with('usuario')
+            ->get();
+        } else {
+            $technologyKnowledge = technologyKnowledge::where(function($query) use ($userName, $userID) {
+                    $query->where('researcherInvolved', 'LIKE', "%{$userName}%")
+                          ->orWhere('idUsuario', $userID);
+                })
+                ->with('usuario')
+                ->get();
+        }
+    
+        $technologyKnowledge = $technologyKnowledge->filter(function($technology) use ($today) {
+            // Verificar que yearEnding y monthEnding existan
+            if ($technology->yearEnding && $technology->monthEnding) {
+                // Convertir el nombre del mes a número usando Carbon
+                try {
+                    $monthNumber = Carbon::parse($technology->monthEnding)->month;
+                    $endingDate = Carbon::create($technology->yearEnding, $monthNumber, 1);
+                    
+                    // Comparar la fecha construida con la fecha actual
+                    return $endingDate->greaterThan($today);
+                } catch (\Exception $e) {
+                    // Si ocurre un error al parsear la fecha, se omite este registro
+                    return false;
+                }
+            }
+            return false;  // Si faltan datos, no considerar el registro como activo
+        });
+    
+        return response()->json($technologyKnowledge->values());
+    }
+
     public function show($userID) {
         // Inicializar variables y roles
         $roles = [];
@@ -102,12 +186,16 @@ class technologyKnowledgeController extends Controller
             // Lógica para Titular Researcher basada en `idResearchLine`
             $userResearchLine = $user->idResearchLine;
     
-            $technologyKnowledge = technologyKnowledge::where(function($query) use ($userResearchLine, $userID, $userName) {
-                    $query->where('idUsuario', $userID)
-                          ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%");
+            $technologyKnowledge = technologyKnowledge::where('moduleType', 0)
+                ->where(function($query) use ($userResearchLine, $userID, $userName) {
+                    $query->where('idUsuario', $userID)  // Tecnologías propias
+                        ->orWhere('researcherInvolved', 'LIKE', "%{$userName}%")  // Tecnologías donde participa
+                        ->orWhereHas('usuario', function($subQuery) use ($userResearchLine) {  // Tecnologías de otros usuarios de la misma línea
+                            $subQuery->where('idResearchLine', $userResearchLine);
+                        });
                 })
                 ->with('usuario')
-                ->get();
+            ->get();
             return $technologyKnowledge;
         } else {
             // Lógica estándar para usuarios sin roles especiales

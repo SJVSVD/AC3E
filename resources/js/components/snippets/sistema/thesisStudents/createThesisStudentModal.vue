@@ -426,7 +426,7 @@ export default {
       usuarios: [],
       researchers:[],
       idResearcher: '',
-      buttonText:'Send Thesis',
+      buttonText:'Send New Record',
       years: [],
     }),
     mounted() {

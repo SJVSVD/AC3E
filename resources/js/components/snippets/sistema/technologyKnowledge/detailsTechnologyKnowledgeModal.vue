@@ -22,12 +22,17 @@
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Technology Transfer: </label>
-                      <label v-if="technology1.technologyTransfer != null" class="fw-normal" style="font-size: 14px;">{{ technology1.technologyTransfer }}</label>
+                      <label v-if="technology1.technologyTransfer != null" class="fw-normal" style="font-size: 14px;">
+                        {{ technology1.technologyTransfer == 1 ? 'True' : 'False' }}
+                      </label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Knowledge Transfer: </label>
-                      <label v-if="technology1.knowledgeTransfer != null" class="fw-normal" style="font-size: 14px;">{{ technology1.knowledgeTransfer }}</label>
+                      <label v-if="technology1.knowledgeTransfer != null" class="fw-normal" style="font-size: 14px;">
+                        {{ technology1.knowledgeTransfer == 1 ? 'True' : 'False' }}
+                      </label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
@@ -38,6 +43,11 @@
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Name of Beneficiary: </label>
                       <label v-if="technology1.nameOfBeneficiary != null" class="fw-normal" style="font-size: 14px;">{{ technology1.nameOfBeneficiary }}</label>
+                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                    </div>
+                    <div class="col-6 m-0 fs-8 pb-1">
+                      <label>Actual Trl: </label>
+                      <label v-if="technology1.actualTrl != null" class="fw-normal" style="font-size: 14px;">{{ technology1.actualTrl }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
@@ -61,12 +71,22 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Comments: </label>
-                      <label v-if="technology1.comments != null" class="fw-normal" style="font-size: 14px;">{{ technology1.comments }}</label>
+                      <label>Month: </label>
+                      <label v-if="technology1.month != null" class="fw-normal" style="font-size: 14px;">{{ technology1.month }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Progress Report: </label>
+                      <label>Ending Year: </label>
+                      <label v-if="technology1.yearEnding != null" class="fw-normal" style="font-size: 14px;">{{ technology1.yearEnding }}</label>
+                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                    </div>
+                    <div class="col-6 m-0 fs-8 pb-1">
+                      <label>Ending Month: </label>
+                      <label v-if="technology1.monthEnding != null" class="fw-normal" style="font-size: 14px;">{{ technology1.monthEnding }}</label>
+                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                    </div>
+                    <div class="col-6 m-0 fs-8 pb-1">
+                      <label>Progress Report Year: </label>
                       <label v-if="technology1.progressReport != null" class="fw-normal" style="font-size: 14px;">{{ technology1.progressReport }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
@@ -88,6 +108,11 @@
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>External Researcher: </label>
                       <label v-if="technology1.externalResearcher != null" class="fw-normal" style="font-size: 14px;">{{ technology1.externalResearcher }}</label>
+                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                    </div>
+                    <div class="col-6 m-0 fs-8 pb-1">
+                      <label>Comments: </label>
+                      <label v-if="technology1.comments != null" class="fw-normal" style="font-size: 14px;">{{ technology1.comments }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                   </div>

@@ -6,7 +6,7 @@
                   <div class="col-12">
                       <div class="d-flex justify-content-end">
                         <button @click="restaurarSeleccionados" class="btn btn-spacing btn-search-blue"><i class="fas fa-trash-restore"></i> Restore Selected</button>
-                          <button @click="eliminarSeleccionados" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i> Delete Selected</button>
+                          <button @click="eliminarSeleccionados" class="btn btn-spacing btn-closed"><i class="fa fa-fw fa-trash"></i>  Selected Records</button>
                           <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                       </div>
                   </div>

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProgressReportGoals extends Model {
     use HasFactory;
 
-    protected $fillable = ['goals', 'research_line_id', 'user_id', 'researcher_type_id'];
+    protected $fillable = ['goals', 'research_line_id', 'user_id', 'researcher_type_id','module'];
 
     protected $casts = [
         'goals' => 'array', // Indica que el campo JSON debe ser tratado como un array en PHP

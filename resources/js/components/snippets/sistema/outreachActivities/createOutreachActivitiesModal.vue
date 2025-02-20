@@ -6,7 +6,7 @@
             <div class="modal-container">
               <div class="modal-header pb-1 fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Entry
+                    Create New Record
                 </slot>
                 <label for="">Progress year: {{ outreachActivity.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
@@ -256,7 +256,7 @@ export default {
       usuarios:[],
       idResearcher: '',
       errors:[],
-      buttonText:'Save Activity',
+      buttonText:'Send New Record',
     }),
     mounted(){
       this.getUsuarios();

@@ -30,6 +30,8 @@ class publicPrivate extends Model
         'countryOrigin',
         'comments',
         'progressReport',
+        'file',
+        'is_link'
     ];
 
     public function usuario(){

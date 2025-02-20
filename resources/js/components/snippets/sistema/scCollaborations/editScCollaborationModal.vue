@@ -133,32 +133,17 @@
                     <br>
                     <div class="row">
                       <div class="col-md-3">
-                        <label for="">Country Origin:</label>
+                        <label for="">Institution Country:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.countryOrigin">
                       </div>
                       <div class="col-md-3">
-                        <label for="">City Origin:</label>
+                        <label for="">Institution City:</label>
                         <label for="" style="color: orange;">*</label>
                         <br>
                         <input type="text" class= "form-control" v-model="scCollaboration.cityOrigin">
                       </div>
-                      <div class="col-md-3">
-                        <label for="">Country Destination:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="scCollaboration.countryDestination">
-                      </div>
-                      <div class="col-md-3">
-                        <label for="">City Destination:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="scCollaboration.cityDestination">
-                      </div>
-                    </div>
-                    <br>
-                    <div class="row">
                       <div class="col-md-6">
                         <label for="">Comments:</label>
                         <br>
@@ -207,8 +192,6 @@ export default {
         institutionCollaborates: '',
         countryOrigin: '',
         cityOrigin: '',
-        countryDestination: '',
-        cityDestination: '',
         beginningDate: '',
         endingDate: '',
         progressReport: '',
@@ -229,7 +212,7 @@ export default {
         "Other",
       ],
       errors:[],
-      buttonText:'Edit Publication',
+      buttonText:'Edit Record',
     }),
     mounted(){
       this.getUsuarios();
@@ -244,8 +227,6 @@ export default {
       this.scCollaboration.institutionCollaborates = this.collaboration1.institutionCollaborates;
       this.scCollaboration.countryOrigin = this.collaboration1.countryOrigin;
       this.scCollaboration.cityOrigin = this.collaboration1.cityOrigin;
-      this.scCollaboration.countryDestination = this.collaboration1.countryDestination;
-      this.scCollaboration.cityDestination = this.collaboration1.cityDestination;
       this.scCollaboration.beginningDate = this.collaboration1.beginningDate;
       this.scCollaboration.endingDate = this.collaboration1.endingDate;
       this.scCollaboration.nameOfExternalResearcher = this.collaboration1.nameOfExternalResearcher;
@@ -603,19 +584,21 @@ export default {
             }else if(item == 'institutionCollaborates'){
               mensaje =   mensaje + "The field Institution which collaborates is required" + "\n";
             }else if(item == 'countryOrigin'){
-              mensaje =   mensaje + "The field Country Origin is required" + "\n";
+              mensaje =   mensaje + "The field Institution Country is required" + "\n";
             }else if(item == 'cityOrigin'){
-              mensaje =   mensaje + "The field City Origin is required" + "\n";
-            }else if(item == 'countryDestination'){
-              mensaje =   mensaje + "The field Country Destination is required" + "\n";
-            }else if(item == 'cityDestination'){
-              mensaje =   mensaje + "The field City Destination is required" + "\n";
+              mensaje =   mensaje + "The field Institution City is required" + "\n";
+            }else if(item == 'collaborationStay'){
+              mensaje =   mensaje + "The field Collaboration Stay is required" + "\n";
             }else if(item == 'beginningDate'){
               mensaje =   mensaje + "The field Beginning Date is required" + "\n";
             }else if(item == 'endingDate'){
               mensaje =   mensaje + "The field Ending Date is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report Year is required" + "\n";
+            }else if(item == 'nameOfExternalResearcher'){
+              mensaje =   mensaje + "The field Name of external person is required" + "\n";
+            }else if(item == 'studentOrResearcher'){
+              mensaje =   mensaje + "The field Student or Researcher is required" + "\n";
             }else if(item == 'other'){
               mensaje =   mensaje + "The field Other Activity is required" + "\n";
             }else if(item == 'other2'){
@@ -705,8 +688,6 @@ export default {
               activityName: activityName1,
               countryOrigin: this.scCollaboration.countryOrigin,
               cityOrigin: this.scCollaboration.cityOrigin,
-              countryDestination: this.scCollaboration.countryDestination,
-              cityDestination: this.scCollaboration.cityDestination,
               beginningDate: this.scCollaboration.beginningDate,
               endingDate: this.scCollaboration.endingDate,
               nameOfAC3EMember: this.scCollaboration.nameOfAC3EMember,

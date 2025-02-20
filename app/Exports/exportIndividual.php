@@ -130,7 +130,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
         foreach ($isiPublications as $isiPublication) {
             $newisiPublication = [
                 'Id' => $isiPublication['id'],
-                'Progress Report' => $isiPublication['progressReport'],
+                'Progress Report Year' => $isiPublication['progressReport'],
                 'User' => $isiPublication['idUsuario'],
                 'Researchers Involved' => $isiPublication['researcherInvolved'],
                 'Authors' => $isiPublication['authors'],
@@ -163,7 +163,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
     public function headings(): array
     {
-        return ['No.','Progress Report','User','Researchers Involved','Authors','Article Title','Journal Name','Digital Object Identifier (DOI)','Volume','First Page', 'Last Page','Funding','Year Published','Month','Keywords','Main Researchers','Associative Researchers','Postdoc','Thesis Students','National External Researchers','Internacional External Researchers','Comments'];
+        return ['No.','Progress Report Year','User','Researchers Involved','Authors','Article Title','Journal Name','Digital Object Identifier (DOI)','Volume','First Page', 'Last Page','Funding','Year Published','Month','Keywords','Main Researchers','Associative Researchers','Postdoc','Thesis Students','National External Researchers','Internacional External Researchers','Comments'];
     }
 
     public function registerEvents(): array
@@ -281,7 +281,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($nonIsiPublications as $nonIsiPublication) {
                     $newNonIsiPublication = [
                         'Id' => $nonIsiPublication['id'],
-                        'Progress Report' => $nonIsiPublication['progressReport'],
+                        'Progress Report Year' => $nonIsiPublication['progressReport'],
                         'User' => $nonIsiPublication['idUsuario'],
                         'Researchers Involved' => $nonIsiPublication['researcherInvolved'],
                         'Authors' => $nonIsiPublication['authors'],
@@ -312,7 +312,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Authors','Article Title','Journal Name','Volume','First Page','Last Page','Funding','Year Published','Month','Main Researchers','Associative Researchers','Post Doc','Thesis Students','National External Researchers','International External Researchers','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Authors','Article Title','Journal Name','Volume','First Page','Last Page','Funding','Year Published','Month','Main Researchers','Associative Researchers','Post Doc','Thesis Students','National External Researchers','International External Researchers','Comments'];
             }
 
             public function columnWidths(): array
@@ -426,7 +426,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($books as $book) {
                     $newBook = [
                         'Id' => $book['id'],
-                        'Progress Report' => $book['progressReport'],
+                        'Progress Report Year' => $book['progressReport'],
                         'User' => $book['centerResearcher'],
                         'Researchers Involved' => $book['researcherInvolved'],
                         'Books Authors' => $book['bookAuthors'],
@@ -453,7 +453,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Books Authors','Chapter Authors','Title of the Book','Chapter Title','First Page','Last Page','Editorial/City/Country','Year','Month','Work Type','ISBN','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Books Authors','Chapter Authors','Title of the Book','Chapter Title','First Page','Last Page','Editorial/City/Country','Year','Month','Work Type','ISBN','Comments'];
             }
 
             public function columnWidths(): array
@@ -567,7 +567,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($awards as $award) {
                     $newAward = [
                         'Id' => $award['id'],
-                        'Progress Report' => $award['progressReport'],
+                        'Progress Report Year' => $award['progressReport'],
                         'User' => $award['idUsuario'],
                         'Researchers Involved' => $award['researcherInvolved'],
                         'Awardee Name' => $award['awardeeName'],
@@ -590,7 +590,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id','Progress Report','User','Researchers Involved', 'Awardee Name','Award Name','Year','Month','Constribution of the Awardee','Awarding Institution','Country','Comments'];
+                return ['Id','Progress Report Year','User','Researchers Involved', 'Awardee Name','Award Name','Year','Month','Constribution of the Awardee','Awarding Institution','Country','Comments'];
             }
 
             public function columnWidths(): array
@@ -703,7 +703,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($organizationsScEvents as $organization) {
                     $newOrganization = [
                         'Id' => $organization['id'],
-                        'Progress Report' => $organization['progressReport'],
+                        'Progress Report Year' => $organization['progressReport'],
                         'User' => $organization['idUsuario'],
                         'Researchers Involved' => $organization['researcherInvolved'],
                         'Type of event' => $organization['typeEvent'],
@@ -726,7 +726,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Type of event','Name course/congress','Number of participants','Country','City','Start Date','Ending Date','Comments'];
             }
 
             public function columnWidths(): array
@@ -977,21 +977,20 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($collaborations as $collaboration) {
                     $newCollaboration = [
                         'Id' => $collaboration['id'],
-                        'Progress Report' => $collaboration['progressReport'],
+                        'Progress Report Year' => $collaboration['progressReport'],
                         'User' => $collaboration['idUsuario'],
                         'Researchers Involved' => $collaboration['researcherInvolved'],
                         'Activity Name' => $collaboration['activityName'],
                         'Student or Researcher' => $collaboration['studentOrResearcher'],
                         'Name of External Researcher' => $collaboration['nameOfExternalResearcher'],
                         'Collaboration Stay' => $collaboration['collaborationStay'],
-                        'Country Origin' => $collaboration['countryOrigin'],
-                        'City Origin' => $collaboration['cityOrigin'],
-                        'Country Destination' => $collaboration['countryDestination'],
-                        'City Destination' => $collaboration['cityDestination'],
+                        'Institution Country' => $collaboration['countryOrigin'],
+                        'Institution City' => $collaboration['cityOrigin'],
                         'Institution with which the Center collaborates' => $collaboration['institutionCollaborates'],
                         'Beginning Date' => $collaboration['beginningDate'],
                         'Ending Date' => $collaboration['endingDate'],
                         'Comments' => $collaboration['comments'],
+                        'International/National' => (trim(strtolower($collaboration['countryOrigin'])) === 'chile') ? 'National' : 'International'
                     ];
                     array_push($collaborationsArray, $newCollaboration);
                 }
@@ -1004,13 +1003,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress report','User','Researchers Involved','Activity Name','Student or Researcher','Name of External Researcher','Collaboration Stay','Country Origin','City Origin','Country Destination','City Destination','Institution with which the Center collaborates','Beginning Date','Ending Date','Comments'];
+                return ['Id', 'Progress report','User','Researchers Involved','Activity Name','Student or Researcher','Name of External Researcher','Collaboration Stay','Institution Country','Institution City','Institution with which the Center collaborates','Beginning Date','Ending Date','Comments','International/National'];
             }
 
             public function columnWidths(): array
             {
                 // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
-                $specificWidths = array_fill_keys(range('C', 'P'), 40);
+                $specificWidths = array_fill_keys(range('C', 'O'), 40);
             
                 // Devolver el arreglo de anchos específicos
                 return $specificWidths;
@@ -1034,7 +1033,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             public function styles(Worksheet $sheet)
             {
                 // Establecer estilos para el encabezado
-                $sheet->getStyle('A1:P1')->applyFromArray([
+                $sheet->getStyle('A1:O1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
@@ -1052,7 +1051,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 ]);
         
                 // Establecer estilos para las celdas (excepto el encabezado)
-                $sheet->getStyle('A2:P'.$sheet->getHighestRow())->applyFromArray([
+                $sheet->getStyle('A2:O'.$sheet->getHighestRow())->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
@@ -1075,7 +1074,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:P1');
+                        $sheet->setAutoFilter('A1:O1');
                     },
                 ];
             }
@@ -1117,7 +1116,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($theses as $these) {
                     $newThesis = [
                         'Id' => $these['id'],
-                        'Progress Report' => $these['progressReport'],
+                        'Progress Report Year' => $these['progressReport'],
                         'User' => $these['idUsuario'],
                         'Researchers Involved' => $these['researcherInvolved'],
                         'Student Name' => $these['studentName'],
@@ -1153,7 +1152,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Student Name','RUN or Passport','Gender','Student Mail','Thesis Status','Thesis Title','Academic Degree','Degree Denomination','Tutor Name','Tutor Institution','Cotutor Name','Cotutor Institution','Other Name','Other Institution','University that gives the degree','Year in which thesis starts','Year in which thesis ends','Resources provided by the Center','Posterior working area','Institution of Posterior working area','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Student Name','RUN or Passport','Gender','Student Mail','Thesis Status','Thesis Title','Academic Degree','Degree Denomination','Tutor Name','Tutor Institution','Cotutor Name','Cotutor Institution','Other Name','Other Institution','University that gives the degree','Year in which thesis starts','Year in which thesis ends','Resources provided by the Center','Posterior working area','Institution of Posterior working area','Comments'];
             }
 
             public function columnWidths(): array
@@ -1266,7 +1265,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($postDocs as $postDoc) {
                     $newPostDoc = [
                         'Id' => $postDoc['id'],
-                        'Progress Report' => $postDoc['progressReport'],
+                        'Progress Report Year' => $postDoc['progressReport'],
                         'User' => $postDoc['idUsuario'],
                         'Researchers Involved' => $postDoc['researcherInvolved'],
                         'Name of Postdoctoral Fellows' => $postDoc['nameOfPostdoc'],
@@ -1293,7 +1292,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Name of Postdoctoral Fellows','RUN/Passport','Gender','Personal Email','Research Topic','Tutor name','Associated Institution','Funding Source','Starting Date','Ending Date','Resources provided by the Center','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Name of Postdoctoral Fellows','RUN/Passport','Gender','Personal Email','Research Topic','Tutor name','Associated Institution','Funding Source','Starting Date','Ending Date','Resources provided by the Center','Comments'];
             }
 
             public function columnWidths(): array
@@ -1421,7 +1420,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($outreachs as $outreach) {
                     $newOutreach = [
                         'Id' => $outreach['id'],
-                        'Progress Report' => $outreach['progressReport'],
+                        'Progress Report Year' => $outreach['progressReport'],
                         'User' => $outreach['idUsuario'],
                         'Researchers Involved' => $outreach['researcherInvolved'],
                         'Responsability' => $outreach['responsability'],
@@ -1447,7 +1446,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Responsability','Type of Activity','Event Title','Activity Description','Date','Attendant Amount','Duration (days)','Place Region','City','Target','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Responsability','Type of Activity','Event Title','Activity Description','Date','Attendant Amount','Duration (days)','Place Region','City','Target','Comments'];
             }
 
             public function columnWidths(): array
@@ -1560,7 +1559,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($patents as $patent) {
                     $newPatent = [
                         'Id' => $patent['id'],
-                        'Progress Report' => $patent['progressReport'],
+                        'Progress Report Year' => $patent['progressReport'],
                         'User' => $patent['idUsuario'],
                         'Researchers Involved' => $patent['researcherInvolved'],
                         'Name of Patent' => $patent['nameOfPatent'],
@@ -1586,7 +1585,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Name of Patent','IP Type','Authors','Institution Owner(s)','Country of Registration','Application Date','Grant Date','Application Status','Registration Number','Application granted n.º','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Name of Patent','IP Type','Authors','Institution Owner(s)','Country of Registration','Application Date','Grant Date','Application Status','Registration Number','Application granted n.º','Comments'];
             }
 
             public function columnWidths(): array
@@ -1699,7 +1698,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($publicPrivates as $publicPrivate) {
                     $newPublicPrivate = [
                         'Id' => $publicPrivate['id'],
-                        'Progress Report' => $publicPrivate['progressReport'],
+                        'Progress Report Year' => $publicPrivate['progressReport'],
                         'User' => $publicPrivate['idUsuario'],
                         'Researchers Involved' => $publicPrivate['researcherInvolved'],
                         'Agent Type' => $publicPrivate['agentType'],
@@ -1726,7 +1725,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Agent Type','Type of Connection','Place where activity was executed','International/National','Participation in definition of public policies','Name of Activity','Results/Goals','Name Of Organization','Country Origin','Start Date','Ending Date','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Agent Type','Type of Connection','Place where activity was executed','International/National','Participation in definition of public policies','Name of Activity','Results/Goals','Name Of Organization','Country Origin','Start Date','Ending Date','Comments'];
             }
 
             public function columnWidths(): array
@@ -1839,7 +1838,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($technologyKnowledges as $technologyKnowledge) {
                     $newTechnologyKnowledge = [
                         'Id' => $technologyKnowledge['id'],
-                        'Progress Report' => $technologyKnowledge['progressReport'],
+                        'Progress Report Year' => $technologyKnowledge['progressReport'],
                         'User' => $technologyKnowledge['idUsuario'],
                         'Researchers Involved' => $technologyKnowledge['researcherInvolved'],
                         'Technology Transfer' => $technologyKnowledge['technologyTransfer'],
@@ -1865,7 +1864,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Technology Transfer','Knowledge Transfer','Type of Transfer','Name of the Institution Involved','Name of Beneficiary Institution','Description','Country','City','Place/Region','Year','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Technology Transfer','Knowledge Transfer','Type of Transfer','Name of the Institution Involved','Name of Beneficiary Institution','Description','Country','City','Place/Region','Year','Comments'];
             }
 
             public function columnWidths(): array
@@ -1978,7 +1977,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 foreach ($fundings as $funding) {
                     $newFunding = [
                         'Id' => $funding['id'],
-                        'Progress Report' => $funding['progressReport'],
+                        'Progress Report Year' => $funding['progressReport'],
                         'User' => $funding['idUsuario'],
                         'Researchers Involved' => $funding['researcherInvolved'],
                         'Type Sources' => $funding['typeSources'],
@@ -2003,7 +2002,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report','User','Researchers Involved','Type Sources','Name of the institution','Program/contest','Project Title','Principal Researcher','Start','Finish','In Cash','Type of collaboration','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Type Sources','Name of the institution','Program/contest','Project Title','Principal Researcher','Start','Finish','In Cash','Type of collaboration','Comments'];
             }
 
             public function columnWidths(): array

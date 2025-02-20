@@ -184,7 +184,7 @@ export default {
       usuarios: [],
       idResearcher: '',
       errors:[],
-      buttonText:'Save source',
+      buttonText:'Send New Record',
     }),
     mounted(){
       this.getUsuarios();

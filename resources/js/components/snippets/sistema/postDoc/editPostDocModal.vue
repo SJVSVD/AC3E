@@ -284,7 +284,7 @@ export default {
       idResearcher: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Edit fellow',
+      buttonText:'Edit Record',
     }),
     mounted(){
       this.getUsuarios();

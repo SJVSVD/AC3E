@@ -254,7 +254,7 @@ export default {
       idResearcher: '',
       buttonDisable: false,
       errors:[],
-      buttonText:'Save Participation',
+      buttonText:'Send New Record',
     }),
     mounted(){
       this.getUsuarios();
@@ -672,7 +672,7 @@ export default {
             }else if(item == 'nameOfParticipants'){
               mensaje =   mensaje + "The field Name of Participants is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report line is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report Year is required" + "\n";
             }else if(item == 'duplicated'){
               mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
             }else{

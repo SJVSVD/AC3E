@@ -225,7 +225,7 @@ export default {
       buttonDisable: false,
       id:'',
       errors:[],
-      buttonText:'Edit Book',
+      buttonText:'Edit Record',
     }),
     props:{
       book1: Object,
@@ -548,7 +548,7 @@ export default {
             }else if(item == 'nameOfResearchLine'){
               mensaje =   mensaje + "The field Name of Research Line is required" + "\n";
             }else if(item == 'progressReport'){
-              mensaje =   mensaje + "The field Progress Report is required" + "\n";
+              mensaje =   mensaje + "The field Progress Report Year is required" + "\n";
             }else if(item == 'firstPage'){
               mensaje =   mensaje + "The field First Page is required" + "\n";
             }else if(item == 'lastPage'){

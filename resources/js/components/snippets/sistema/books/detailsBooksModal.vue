@@ -66,7 +66,7 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">
-                      <label>Progress Report: </label>
+                      <label>Progress Report Year: </label>
                       <label v-if="book1.progressReport != null" class="fw-normal" style="font-size: 14px;">{{ book1.progressReport }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>

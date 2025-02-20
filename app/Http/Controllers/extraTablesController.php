@@ -16,6 +16,7 @@ use App\Models\postDoc;
 use App\Models\publicPrivate;
 use App\Models\scCollaborations;
 use App\Models\SessionLog;
+use App\Models\technologyKnowledge;
 use App\Models\thesisStudent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -91,6 +92,9 @@ class extraTablesController extends Controller
                 break;
             case 'public-private':
                 $deletedCount = publicPrivate::whereIn('id', $ids)->delete();
+                break;
+            case 'technology-knowledge':
+                $deletedCount = technologyKnowledge::whereIn('id', $ids)->delete();
                 break;
             default:
                 return response()->json(['error' => 'Invalid module'], 400);

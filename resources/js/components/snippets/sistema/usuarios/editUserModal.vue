@@ -108,7 +108,7 @@ export default {
     components: { modalconfirmacion, modalalerta,  },
     mixins: [mixin],
     data: () => ({
-        buttonText:'Edit User',
+        buttonText:'Edit Record',
         buttonDisable: false,
         user:{
             name: "",

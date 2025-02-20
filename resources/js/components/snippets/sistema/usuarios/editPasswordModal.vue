@@ -22,7 +22,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for=""> Confirm New Password: </label>
+                                        <label for=""> Confirm Password: </label>
                                         <br>
                                         <input type="password" class= "form-control" v-model="edits.confirmPassword">
                                     </div>

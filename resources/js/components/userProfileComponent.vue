@@ -2,7 +2,7 @@
     <div class="card shadow-lg mx-4 card-profile-bottom">
         <div class="card-body p-3">
             <div class="row gx-4">
-                <div class="col-auto">
+                <div class="col-md-1">
                     <div style="position: relative; left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);">
                         <div style="width: 150px; height: 150px; display: flex; justify-content: center; align-items: center;">
                             <img class="img-not-draggable w-100 h-100 border-radius-100 shadow-sm" style="object-fit: cover;" src="https://icon-library.com/images/default-user-icon/default-user-icon-13.jpg">
@@ -62,18 +62,29 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Name:</label>
                                     <br>
                                     <input :disabled="isEditing == false" class="form-control" type="text" v-model="editables.name">
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Email:</label>
                                     <br>
                                     <input :disabled="isEditing == false" class="form-control" type="text" v-model="editables.email">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="gender" class="form-control-label">Gender:</label>
+                                    <select :disabled="isEditing == false" class="form-select" v-model="editables.gender" id="gender">
+                                        <option :value="null" disabled>Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -111,6 +122,7 @@ export default {
             editables:{
                 name: null,
                 email: null,
+                gender: null,
             },
             showEditPassword: false,
             passwordEdit: null,
@@ -152,6 +164,7 @@ export default {
                 this.profilePic = this.usuario.profilePic;
                 this.editables.name = this.usuario.name;
                 this.editables.email = this.usuario.email;
+                this.editables.gender = this.usuario.gender;
             }).catch(e=> console.log(e))
         },
         // Se activa la edicion del perfil
@@ -208,6 +221,7 @@ export default {
                 let usuario = {
                     name: this.editables.name,
                     email: this.editables.email,
+                    gender: this.editables.gender,
                 };
                 var id = this.id;
                 axios.put(`api/usuarios/${id}`, usuario).then((result) => {

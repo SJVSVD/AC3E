@@ -272,7 +272,7 @@ export default {
       researchers: [],
       usuarios: [],
       errors:[],
-      buttonText:'Edit Publication',
+      buttonText:'Edit Record',
     }),
     props:{
       isiPublication1: Object,

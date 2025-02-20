@@ -25,7 +25,29 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+        <div v-if="activeDataCollection" class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+            <div class="card overflow-hidden" style="height: 160px;">
+                <div class="card-body p-3 text-white  background-size" style="background-color: #4d4d4d; min-height: 160px;">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="numbers" style="min-height: 80px; text-align: center; margin-top: 40px;">
+                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Data Collection Countdown</p>
+                                <h5 style="color: orange;" class="fw-bolder">
+                                    {{ timeCountdown }}
+                                </h5>
+                                <a v-if="!notify" class="btn btn-orange " title="Notify data"  @click="notifyData">
+                                    <i class="fa-solid fa-envelope-circle-check"></i> 
+                                </a>
+                                <a v-else class="btn btn-orange ">
+                                    You have already notified
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-else class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
             <div class="card overflow-hidden" style="height: 160px;">
                 <div class="card-body p-3 text-white  background-size" style="background-color: #4d4d4d; min-height: 160px;">
                     <div class="row">
@@ -49,7 +71,7 @@
         </div>
     </div>
     <div class="row mt-4">
-        <div class="col-lg-8">
+        <div class="col-lg-10">
             <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
                 <div class="table-responsive p-4">
                     <div v-show="mostrarCarga" class="loader-sm"></div>
@@ -106,32 +128,38 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
+        <div class="col-lg-2">
+            <div class="card z-index-2 p-0" style="max-height: 650px;">
                 <div class="row p-3">
                     <!-- <button @click="updateResearchLines">Actualizar Research Lines</button> -->
                     <!-- Botón de Export Consolidado (solo para Administrador) -->
-                    <div class="col-6 pt-1 pb-2" v-if="is('Administrator')|| is('Staff')">
-                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" @click="exportConsolidado">
-                            <i class="fa fa-fw fa-download"></i> {{ buttonText1 }}
+                    <div class="col-6" v-if="is('Administrator')|| is('Staff')">
+                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" :title="buttonText1" style="min-height: 40px; min-width: 20px;" @click="exportConsolidado">
+                            <i class="fa fa-fw fa-download"></i> 
                         </a>
                     </div>
                     <!-- Botón de Export Individual (ocupa todo el espacio si no es Administrador) -->
-                    <div v-if="!is('Staff')" :class="{'col-6 pt-1': !is('Administrator'), 'col-6 pt-1': is('Administrator')}">
-                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" @click="exportIndividual">
-                            <i class="fa fa-fw fa-download"></i> {{ buttonText2 }}
+                    <div v-if="!is('Staff')" :class="{'col-6 ': !is('Administrator'), 'col-6 ': is('Administrator')}">
+                        <a class="btn btn-purple w-100 d-flex justify-content-center align-items-center" :title="buttonText1"  style="min-height: 40px; min-width: 20px;" @click="exportIndividual">
+                            <i class="fa fa-fw fa-download"></i>
                         </a>
                     </div>
                     <!-- Botón de Ver Actividad Reciente -->
                     <div class="col-6 pt-1" v-if="is('Administrator')">
-                        <a class="btn btn-grey w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" title="Ver Actividad Reciente" @click="showVerActividadReciente = true">
-                            <i class="fa fa-history"></i>&nbsp;View recent activity
+                        <a class="btn btn-orange w-100 d-flex justify-content-center align-items-center" style="min-height: 40px; min-width: 20px;" title="View recent activity" @click="showVerActividadReciente = true">
+                            <i class="fa fa-history"></i>
                         </a>
                     </div>
                     <!-- Botón de Modo levantamiento -->
                     <div class="col-6 pt-1" v-if="is('Administrator')">
-                        <a class="btn btn-closed w-100 d-flex justify-content-center align-items-center" style="min-height: 50px;" title="Activate lift mode" @click="showLiftMode = true">
-                            <i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Lift mode
+                        <a class="btn btn-continue w-100 d-flex justify-content-center align-items-center" style="min-height: 40px; min-width: 20px;" title="Display New Message" @click="showLiftMode = true">
+                            <i class="fa-solid fa-add"></i>
+                        </a>
+                    </div>
+                    <!-- Botón de Performance Data Collection Mode -->
+                    <div class="col-6 pt-1" v-if="is('Administrator')">
+                        <a class="btn btn-closed w-100 d-flex justify-content-center align-items-center" style="min-height: 40px; min-width: 20px;" title="Activate Performance Data Collection Mode" @click="showDataCollection = true">
+                            <i class="fa-solid fa-clock"></i>
                         </a>
                     </div>
                 </div>
@@ -155,6 +183,9 @@
         <modalver14 v-bind:technology1="technologyKnowledge" v-if="showDetailsTechnologyKnowledge" @close="showDetailsTechnologyKnowledge = false"></modalver14>
         <modalrecent v-bind:sessions1="sessions" v-if="showVerActividadReciente" @close="showVerActividadReciente = false"></modalrecent>
         <modalliftmode v-if="showLiftMode" @close="showLiftMode = false"></modalliftmode>
+        <modaldatacollection v-if="showDataCollection" @close="showDataCollection = false"></modaldatacollection>
+        <modalconfirmdata v-bind:iduser="userID" v-if="showConfirmData" @close="showConfirmData = false"></modalconfirmdata>
+        <modalconfirmacion ref="confirmation"></modalconfirmacion>
         <modalactiveannouncement  v-bind:activeAnnouncement1="activeAnnouncement" v-if="activeAnnouncement" @close="activeAnnouncement = null"></modalactiveannouncement>
     </div>
 </template>
@@ -179,13 +210,15 @@ import modalver13 from './snippets/sistema/books/detailsBooksModal.vue'
 import modalver14 from './snippets/sistema/technologyKnowledge/detailsTechnologyKnowledgeModal.vue'
 import modalrecent from './snippets/sistema/recentActivityModal.vue'
 import modalliftmode from './snippets/sistema/liftModeModal.vue'
+import modaldatacollection from './snippets/sistema/dataCollectionModal.vue'
+import modalconfirmdata from './snippets/sistema/confirmDataModal.vue'
 import modalactiveannouncement from './snippets/sistema/activeAnnouncementModal.vue'
 import modalalerta from './snippets/sistema/alerts/alertModal.vue'
 import {mixin} from '../mixins.js'
 import * as XLSX from 'xlsx';
 
 export default {
-    components: { modalactiveannouncement, modalliftmode, modalrecent,modalconfirmacion,modalalerta,modalver,modalver1,modalver2,modalver3,modalver4,modalver5,modalver6,modalver7,modalver8,modalver9,modalver10,modalver11,modalver12,modalver13,modalver14 },
+    components: { modalconfirmdata,modaldatacollection,modalactiveannouncement, modalliftmode, modalrecent,modalconfirmacion,modalalerta,modalver,modalver1,modalver2,modalver3,modalver4,modalver5,modalver6,modalver7,modalver8,modalver9,modalver10,modalver11,modalver12,modalver13,modalver14 },
     mixins: [mixin],
     data() {
         return {
@@ -195,8 +228,10 @@ export default {
             buttonText1: 'Download Database',
             buttonText2: 'Export personal results',
             CLPRates: null,
-            interval: null,
+            intervalRealTime: null,
+            intervalCountDown: null,
             time: null,
+            timeCountdown: null,
             weather: null,
             coords: null,
             usuariosActivos: [],
@@ -218,7 +253,12 @@ export default {
             awards: '',
             books: '',
             technologyKnowledge: '',
+            notify: false,
+            researcher: false,
+            activeDataCollection: false,
+            showConfirmData: false,
             showLiftMode: false,
+            showDataCollection: false,
             showVerActividadReciente: false,
             showDetailsIsi: false,
             showDetailsConjointProjects: false,
@@ -239,29 +279,80 @@ export default {
         }
     },
     beforeDestroy() {
-        clearInterval(this.interval);
-    },
+        clearInterval(this.intervalCountDown);  // Limpiar el intervalo de la cuenta regresiva
+        clearInterval(this.intervalRealTime);   // Limpiar el intervalo de la hora real
+        },
     created() {
-        this.interval = setInterval(() => {
-            options = {
+        // Inicializa el intervalo para mostrar la hora real
+        this.intervalRealTime = setInterval(() => {
+            const options = {
                 year: 'numeric', month: 'numeric', day: 'numeric',
                 hour: 'numeric', minute: 'numeric', second: 'numeric',
                 hour12: false,
             };
-            this.time = Intl.DateTimeFormat(navigator.language, options).format()
+            this.time = Intl.DateTimeFormat(navigator.language, options).format();
         }, 1000);
     },
     mounted(){
         this.getRegistros(this.cantidadRegistros);
         this.getRecentSessions();
         this.fetchActiveAnnouncement();
+        this.fetchDataCollection();
     },
     methods: {
+        async notifyData(){
+            this.showConfirmData = true;
+        },
+        async fetchDataCollection() {
+            try {
+                const { data } = await axios.get('/api/performance-mode', {
+                    params: { user_id: this.userID }
+                });
+                console.log(data);
+                this.notify = data.notify;
+                this.researcher = data.researcher;
+                // Limpia los intervalos previos
+                clearInterval(this.intervalCountDown);
+                
+                if (data.mode.is_active && data.researcher) {
+
+                    if(!data.notify){
+                        this.activeAnnouncement = {
+                            message: "AAAAAAAAAAA"
+                        };
+                    }
+
+                    const deadline = new Date(data.mode.deadline).getTime(); // Convierte el deadline a timestamp
+                    
+                    // Intervalo para la cuenta regresiva
+                    this.intervalCountDown = setInterval(() => {
+                        const now = new Date().getTime(); // Obtiene el tiempo actual
+                        const distance = deadline - now; // Calcula la diferencia
+
+                        if (distance > 0) {
+                            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                            this.timeCountdown = `${days}d ${hours}h ${minutes}m ${seconds}s`; // Muestra la cuenta regresiva
+                        } else {
+                            this.timeCountdown = "La cuenta regresiva ha terminado"; // Si pasó el tiempo
+                            clearInterval(this.intervalCountDown); // Detiene el intervalo de cuenta regresiva
+                        }
+                    }, 1000); // Actualiza cada segundo
+                    this.activeDataCollection = true;
+                }
+            } catch (error) {
+                console.error('Error fetching the active announcement:', error);
+            }
+        },
+
         async fetchActiveAnnouncement() {
             try {
                 const { data } = await axios.get('/api/active-announcement');
                 if (data.message) {
-                this.activeAnnouncement = data; // Asigna el anuncio si existe
+                    this.activeAnnouncement = data; // Asigna el anuncio si existe
                 }
             } catch (error) {
                 console.error('Error fetching the active announcement:', error);

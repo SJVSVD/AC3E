@@ -11,9 +11,9 @@
             <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
               <div class="d-flex">
                 <button v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" @click="deleteSelected" class="btn btn-spacing btn-closed">
-                  <i class="fa fa-fw fa-trash"></i> Delete Selected
+                  <i class="fa fa-fw fa-trash"></i>  Selected Records
                 </button>
-                <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewOrganization = true">New Entry</a>
+                <a v-if="!is('Staff') && !is('Anid')" class="btn btn-spacing btn-continue" id="show-modal1" @click="showNewOrganization = true"><i class="fa-solid fa-add"></i></a>
                 <a class="btn btn-spacing btn-search-blue" @click="recargarTabla('General')">
                   <i class="fa-solid fa-rotate"></i>
                 </a>
@@ -24,7 +24,7 @@
           <!-- ProgressReport Filter -->
           <div class="row px-4 mb-2">
             <div class="col-lg-2 col-md-6">
-              <label for="progressReportFilter" class="form-label">Filter by Progress Report:</label>
+              <label for="progressReportFilter" class="form-label">Filter By Progress Report Year:</label>
               <select
                 id="progressReportFilter"
                 class="form-select"
@@ -191,6 +191,29 @@
       this.getOrganizations(this.userID);
     },
     methods: {
+      descargarExtracto(id,nombre){
+          axios({
+              url: `api/organizationDownload/${id}`,
+              method: 'GET',
+              responseType: 'arraybuffer',
+          }).then((response) => {
+              let blob = new Blob([response.data], {
+                  type: response.headers['content-type']
+              });
+              let link = document.createElement('a');
+              link.href = window.URL.createObjectURL(blob);
+              if (blob.type.includes('pdf')) {
+                  link.download = `organizationSc-${nombre}.pdf`;
+              } else if (blob.type.includes('image')) {
+                  link.download = `organizationSc-${nombre}.png`; // Cambia la extensión según el tipo de imagen
+              } else {
+                  // Si el tipo de archivo no es ni PDF ni imagen, puedes manejarlo de acuerdo a tus requerimientos
+                  console.error('Tipo de archivo no compatible');
+                  return;
+              }
+              link.click();
+          });
+      },
       truncateText(text, maxLength) {
         if (!text) return '---';
         return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
