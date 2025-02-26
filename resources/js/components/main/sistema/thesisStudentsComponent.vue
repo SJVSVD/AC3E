@@ -43,18 +43,19 @@ It is important to add the current occupation for those students who have alread
                     <div class="container">
                         <div class="table-responsive p-0">
                             <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="MyTableThesisStudents">
-                                <thead>
-                                    <tr style="color: black">
-                                        <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Thesis Title</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Student Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Tutor Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Academic Degree</th>
+                            <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="MyTableThesisStudents">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width: 16px;"></th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Thesis Title</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Student Name</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Tutor Name</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Academic Degree</th>
                                         
                                     </tr>
                                 </thead>
@@ -62,10 +63,10 @@ It is important to add the current occupation for those students who have alread
                                     <tr v-for="thesisStudent in filteredThesis" :key="thesisStudent.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ thesisStudent.id }}</p>
+                                            <p class="text-sm pb-0 font-weight-bold">{{ thesisStudent.id }}</p>
                                         </td>
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                        <td class="text-left">
+                                            <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                                                 <a v-if="thesisStudent.file != null && thesisStudent.is_link == 0" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(thesisStudent.id, thesisStudent.usuario.name)"><i class="fa-solid fa-download"></i></a>
                                                 <a v-else-if="thesisStudent.is_link == 1" 
                                                 :href="thesisStudent.file" 
@@ -78,33 +79,35 @@ It is important to add the current occupation for those students who have alread
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verThesis(thesisStudent)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || technology.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editThesisStudent(thesisStudent)"><i class="fa fa-fw fa-edit"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || thesisStudent.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editThesisStudent(thesisStudent)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteThesisStudent(thesisStudent.id,)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| thesisStudent.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deleteThesisStudent(thesisStudent.id,)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
-                                        <td>
-                                            <p v-if="thesisStudent.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ thesisStudent.status }}</p>
-                                            <p v-if="thesisStudent.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                             
-                                        <td>
-                                            <p class="text-sm mb-0">{{ thesisStudent.usuario.name }}</p>
+                                        <td class="text-start">
+                                            <span v-if="thesisStudent.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                            <span v-else-if="thesisStudent.status == 'Finished'" class="badge bg-success">Registered</span>
+                                            <span v-else class="badge bg-secondary">No information</span>
+                                        </td>                                                   
+
+                                        <td class="text-sm text-nowrap" :title="thesisStudent.usuario.name || '---'">
+                                            {{ truncateText(thesisStudent.usuario.name || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="thesisStudent.thesisTitle == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ thesisStudent.thesisTitle }}</p>
+                                        <td class="text-sm text-nowrap" :title="thesisStudent.progressReport || '---'">
+                                            {{ truncateText(thesisStudent.progressReport || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="thesisStudent.studentName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ thesisStudent.studentName }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="thesisStudent.thesisTitle || '---'">
+                                            {{ truncateText(thesisStudent.thesisTitle || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="thesisStudent.tutorName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ thesisStudent.tutorName }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="thesisStudent.studentName || '---'">
+                                            {{ truncateText(thesisStudent.studentName || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="thesisStudent.academicDegree == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ thesisStudent.academicDegree }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="thesisStudent.tutorName || '---'">
+                                            {{ truncateText(thesisStudent.tutorName || '---', 60) }}
+                                        </td>
+                                        <td class="text-sm text-start text-nowrap" :title="thesisStudent.academicDegree || '---'">
+                                            {{ truncateText(thesisStudent.academicDegree || '---', 60) }}
                                         </td>
                                     </tr>
                                 </tbody>

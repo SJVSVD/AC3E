@@ -44,60 +44,66 @@
             <div class="container">
               <div class="table-responsive p-0">
                 <div v-show="mostrarCarga" class="loader-sm"></div>
-                <table v-show="mostrarTabla" class="table align-items-center mb-0" id="MyTableNonIsiPublications">
-                  <thead>
-                    <tr style="color: black">
-                      <th style="min-width: 16px;"></th>
-                      <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="nonIsiPublication in filteredNonIsiPublications" :key="nonIsiPublication.id">
-                      <td></td>
-                      <td>
-                        <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ nonIsiPublication.id }}</p>
-                      </td>
-                      <td class="align-middle text-end">
-                        <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                          <a v-if="nonIsiPublication.file != null && nonIsiPublication.is_link == 0" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(nonIsiPublication.id, nonIsiPublication.usuario.name)"><i class="fa-solid fa-download"></i></a>
-                          <a v-else-if="nonIsiPublication.is_link == 1" :href="nonIsiPublication.file" class="btn btn-search-blue btn-xs" title="Redirect" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                          <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
-                          &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || nonIsiPublication.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editNonIsiPublication(nonIsiPublication)"><i class="fa fa-fw fa-edit"></i></a>
-                          &nbsp;
-                          <a class="btn btn-success btn-xs" title="Details" @click="verNonIsiPublication(nonIsiPublication)"><i class="fa-regular fa-eye"></i></a>
-                          &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(nonIsiPublication.id)"><i class="fa fa-fw fa-trash"></i></a>
-                        </div>
-                      </td>
-                      <td>
-                        <p v-if="nonIsiPublication.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ nonIsiPublication.status }}</p>
-                        <p v-if="nonIsiPublication.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                      </td>
-                      <td class="text-sm mb-0 truncate-text" :title="nonIsiPublication.usuario.name">
-                        {{ truncateText(nonIsiPublication.usuario.name, 60) }}
-                      </td>
-                      <td class="text-sm mb-0 truncate-text" :title="nonIsiPublication.authors || '---'">
-                        {{ truncateText(nonIsiPublication.authors || '---', 60) }}
-                      </td>
-                      <td class="text-sm mb-0 truncate-text" :title="nonIsiPublication.articleTitle || '---'">
-                        {{ truncateText(nonIsiPublication.articleTitle || '---', 60) }}
-                      </td>
-                      <td class="text-sm mb-0 truncate-text" :title="nonIsiPublication.journalName || '---'">
-                        {{ truncateText(nonIsiPublication.journalName || '---', 60) }}
-                      </td>
-                      <td class="text-sm mb-0">{{ nonIsiPublication.yearPublished || '---' }}</td>
-                    </tr>
-                  </tbody>
+                <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="MyTableNonIsiPublications">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width: 16px;"></th>
+                            <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                            <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                            <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                            <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                            <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                            <th data-orderable="true" class="text-xs font-weight-bold text-left">Author(s)</th>
+                            <th data-orderable="true" class="text-xs font-weight-bold text-left">Article Title</th>
+                            <th data-orderable="true" class="text-xs font-weight-bold text-left">Journal Name</th>
+                            <th data-orderable="true" class="text-xs font-weight-bold text-left">Year Published</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="nonIsiPublication in filteredNonIsiPublications" :key="nonIsiPublication.id">
+                            <td></td>
+                            <td class="text-sm font-weight-bold">{{ nonIsiPublication.id }}</td>
+                            <td class="text-left">
+                                <div class="d-flex px-1 py-1 justify-content-start align-items-center">
+                                    <a v-if="nonIsiPublication.file != null && nonIsiPublication.is_link == 0" class="btn btn-search-blue btn-xs" title="Download Thesis Extract" @click="descargarExtracto(nonIsiPublication.id, nonIsiPublication.usuario.name)"><i class="fa-solid fa-download"></i></a>
+                                    <a v-else-if="nonIsiPublication.is_link == 1" :href="nonIsiPublication.file" class="btn btn-search-blue btn-xs" title="Redirect" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                                    <a v-else class="btn btn-grey btn-xs"><i class="fa-solid fa-download"></i></a>
+                                    &nbsp;
+                                    <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || nonIsiPublication.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editNonIsiPublication(nonIsiPublication)"><i class="fa fa-edit"></i></a>
+                                    &nbsp;
+                                    <a class="btn btn-success btn-xs" title="Details" @click="verNonIsiPublication(nonIsiPublication)"><i class="fa-regular fa-eye"></i></a>
+                                    &nbsp;
+                                    <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| nonIsiPublication.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(nonIsiPublication.id)"><i class="fa fa-trash"></i></a>
+                                </div>
+                            </td>
+                            <td>
+                                <span v-if="nonIsiPublication.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                <span v-else-if="nonIsiPublication.status == 'Finished'" class="badge bg-success">Registered</span>
+                                <span v-else class="badge bg-secondary">No information</span>
+                            </td>
+                            <td class="text-sm text-nowrap" :title="nonIsiPublication.usuario.name">
+                                {{ truncateText(nonIsiPublication.usuario.name, 40) }}
+                            </td>
+                            <td class="text-sm text-nowrap" :title="nonIsiPublication.progressReport">
+                                {{ truncateText(nonIsiPublication.progressReport, 40) }}
+                            </td>
+                            <td class="text-sm text-start text-nowrap" :title="nonIsiPublication.authors || '---'">
+                                {{ truncateText(nonIsiPublication.authors || '---', 40) }}
+                            </td>
+                            <td class="text-sm text-start text-nowrap" :title="nonIsiPublication.articleTitle || '---'">
+                                {{ truncateText(nonIsiPublication.articleTitle || '---', 40) }}
+                            </td>
+                            <td class="text-sm text-start text-nowrap" :title="nonIsiPublication.journalName || '---'">
+                                {{ truncateText(nonIsiPublication.journalName || '---', 40) }}
+                            </td>
+                            <td class="text-sm text-nowrap">
+                                {{ nonIsiPublication.yearPublished ? nonIsiPublication.yearPublished : '---' }}
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
-              </div>
+            </div>
             </div>
           </div>
         </div>

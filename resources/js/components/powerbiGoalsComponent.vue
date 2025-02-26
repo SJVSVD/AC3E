@@ -52,9 +52,9 @@
                       </select>
                     </div>
 
-                    <label class="form-label">Select a module:</label>
+                    <label class="form-label">Filter by KPI:</label>
                     <select v-model="selectedModule" class="form-select mb-3">
-                      <option :value="null" >Select a module</option>
+                      <option :value="null" >Select a KPI</option>
                       <option v-for="module in modules" :key="module.name" :value="module.name">
                         {{ module.displayName }}
                       </option>
@@ -190,7 +190,7 @@ export default {
     const searchGoals = async () => {
       let relatedId = null;
       let type = "";
-      let module = selectedModule.value; // Añadir la selección de módulo
+      let module = selectedModule.value; // Obtener el módulo seleccionado
 
       if (selectedFilterType.value === "researchType" && selectedResearchType.value) {
         relatedId = selectedResearchType.value;
@@ -201,8 +201,15 @@ export default {
       }
 
       try {
-        // Modificar la URL de la solicitud para incluir el parámetro 'module' si está seleccionado
-        const response = await axios.get(`/api/getProgressReport/${relatedId}?type=${type}&module=${module}`);
+        // Construir la URL dinámicamente
+        let url = `/api/getProgressReport/${relatedId}?type=${type}`;
+        
+        // Solo agregar 'module' si no es null
+        if (module !== null) {
+          url += `&module=${module}`;
+        }
+
+        const response = await axios.get(url);
 
         let storedGoals = response.data.data?.goals || {};
 
@@ -210,26 +217,29 @@ export default {
           storedGoals = JSON.parse(storedGoals);
         }
 
-        const sortedGoals = Object.keys(storedGoals)
-          .map(year => ({
-            progressReport: parseInt(year),
-            goal: storedGoals[year],
-          }))
-          .sort((a, b) => a.progressReport - b.progressReport);
+        // Asegurar que tenemos `actualProgressReport.value` años
+        let maxYears = actualProgressReport.value;
+        let goalsMap = new Map();
 
-        // Si no hay datos, inicializar los inputs hasta el año actual
-        if (sortedGoals.length === 0) {
-          dynamicInputs.value = Array.from({ length: actualProgressReport.value }, (_, index) => ({
-            progressReport: index + 1,
-            goal: null,
-          }));
-        } else {
-          dynamicInputs.value = sortedGoals;
-        }
+        // Convertir datos obtenidos en un mapa
+        Object.keys(storedGoals).forEach(year => {
+          goalsMap.set(parseInt(year), storedGoals[year]);
+        });
+
+        // Construir `dynamicInputs` asegurando que tenga `maxYears` años
+        dynamicInputs.value = Array.from({ length: maxYears }, (_, index) => {
+          let year = index + 1;
+          return {
+            progressReport: year,
+            goal: goalsMap.get(year) || null, // Si no existe en los datos, asignar null
+          };
+        });
       } catch (error) {
         console.error("Error loading progress reports:", error);
       }
     };
+
+
 
 
     // Guardar metas
@@ -237,9 +247,13 @@ export default {
       const payload = {
         type: "RoleUser",
         related_id: selectedResearchType.value,
-        goals: dynamicInputs.value,
-        module: selectedModule.value // Añadir el campo module
+        goals: dynamicInputs.value
       };
+
+      // Solo agregar 'module' si tiene un valor distinto de null
+      if (selectedModule.value !== null) {
+        payload.module = selectedModule.value;
+      }
 
       console.log(payload);
 

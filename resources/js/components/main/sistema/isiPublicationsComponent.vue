@@ -45,58 +45,69 @@
             <div class="container">
               <div class="table-responsive p-0">
                 <div v-show="mostrarCarga" class="loader-sm"></div>
-                <table v-show="mostrarTabla" class="table align-items-center mb-0" id="MyTableIsiPublications">
-                  <thead>
-                    <tr style="color: black">
-                      <th style="min-width: 16px;"></th>
-                      <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Author(s)</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Doi</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Article Title</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Journal Name</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Year Published</th>
+                <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="MyTableIsiPublications">
+                  <thead class="thead-light">
+                    <tr>
+                      <th style="width: 16px;"></th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Author(s)</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Doi</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Article Title</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Journal Name</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Year Published</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="isiPublication in filteredIsiPublications" :key="isiPublication.id">
                       <td></td>
-                      <td>
-                        <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ isiPublication.id }}</p>
-                      </td>
-                      <td class="align-middle text-end">
-                        <div class="d-flex px-3 py-1 justify-content-center align-items-center">
-                          <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || isiPublication.idUsuario == userID)"  class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)"><i class="fa fa-fw fa-edit"></i></a>
+                      <td class="text-sm font-weight-bold">{{ isiPublication.id }}</td>
+                      <td class="text-left">
+                        <div class="d-flex px-1 py-1 justify-content-start align-items-center">
+                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher') || isiPublication.idUsuario == userID"    
+                            class="btn btn-alert btn-xs" title="Edit" @click="editIsiPublication(isiPublication)">
+                            <i class="fa fa-edit"></i>
+                          </a>
                           &nbsp;
-                          <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(isiPublication)"><i class="fa-regular fa-eye"></i></a>
+                          <a class="btn btn-success btn-xs" title="Details" @click="verIsiPublication(isiPublication)">
+                            <i class="fa-regular fa-eye"></i>
+                          </a>
                           &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id,)"><i class="fa fa-fw fa-trash"></i></a>
-                        </div>
+                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher') || isiPublication.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deletePublication(isiPublication.id)">
+                            <i class="fa fa-trash"></i>
+                          </a>
+                          </div>
                       </td>
                       <td>
-                        <p v-if="isiPublication.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ isiPublication.status }}</p>
-                        <p v-if="isiPublication.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
+                        <span v-if="isiPublication.status == 'Draft'" class="badge bg-alert">Draft</span>
+                        <span v-else-if="isiPublication.status == 'Finished'" class="badge bg-success">Registered</span>
+                        <span v-else class="badge bg-secondary">No information</span>
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="isiPublication.usuario.name">
-                    {{ truncateText(isiPublication.usuario.name, 60) }}
-                    </td>
-                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.authors || '---'">
-                    {{ truncateText(isiPublication.authors || '---', 60) }}
-                    </td>
-                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.doi || '---'">
-                    {{ truncateText(isiPublication.doi || '---', 60) }}
-                    </td>
-                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.articleTitle || '---'">
-                    {{ truncateText(isiPublication.articleTitle || '---', 60) }}
-                    </td>
-                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.journalName || '---'">
-                    {{ truncateText(isiPublication.journalName || '---', 60) }}
-                    </td>
-                    <td class="text-sm mb-0 truncate-text" :title="isiPublication.yearPublished || '---'">
-                    {{ truncateText(isiPublication.yearPublished || '---', 60) }}
-                    </td>
+                      <td class="text-sm text-nowrap" :title="isiPublication.usuario.name">
+                        {{ truncateText(isiPublication.usuario.name, 40) }}
+                      </td>
+                      <td class="text-sm text-nowrap" :title="isiPublication.progressReport">
+                        {{ truncateText(isiPublication.progressReport, 40) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap" :title="isiPublication.authors || '---'">
+                        {{ truncateText(isiPublication.authors || '---', 40) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap" :title="isiPublication.doi || '---'">
+                        {{ truncateText(isiPublication.doi || '---', 40) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap" :title="isiPublication.articleTitle">
+                        {{ truncateText(isiPublication.articleTitle, 40) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap" :title="isiPublication.journalName">
+                        {{ truncateText(isiPublication.journalName, 40) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap">
+                        {{ isiPublication.yearPublished ? isiPublication.yearPublished : '---' }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>

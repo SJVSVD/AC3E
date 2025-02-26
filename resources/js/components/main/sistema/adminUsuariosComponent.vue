@@ -33,7 +33,7 @@
                                     <tr style="color: black">
                                         <th style="min-width: 16px;"></th>
                                         <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">User Role</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Research Line</th>
                                         <th class="text-uppercase text-xs font-weight-bolder">Name</th>

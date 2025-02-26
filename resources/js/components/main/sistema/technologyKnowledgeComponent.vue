@@ -53,58 +53,59 @@
                     <div class="container">
                         <div class="table-responsive p-0">
                             <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableTechnology">
-                                <thead>
-                                    <tr style="color: black">
-                                        <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Type of Transfer</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Description</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Institution Involved</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Researchers Involved</th>
+                            <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="myTableTechnology">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width: 16px;"></th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Type of Transfer</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Description</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Institution Involved</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Year</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="technology in filteredTechnologys" :key="technology.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ technology.id }}</p>
+                                            <p class="text-sm font-weight-bold">{{ technology.id }}</p>
                                         </td>                                          
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                        <td class="text-left">
+                                            <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                                                 <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || technology.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editTechnology(technology)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verTechnology(technology)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteTechnology(technology.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| technology.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deleteTechnology(technology.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
-                                        <td>
-                                            <p v-if="technology.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ technology.status }}</p>
-                                            <p v-if="technology.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ technology.usuario.name }}</p>
+                                        <td class="text-start">
+                                            <span v-if="technology.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                            <span v-else-if="technology.status == 'Finished'" class="badge bg-success">Registered</span>
+                                            <span v-else class="badge bg-secondary">No information</span>
+                                        </td>                                           
+
+                                        <td class="text-sm text-nowrap" :title="technology.usuario.name || '---'">
+                                            {{ truncateText(technology.usuario.name || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="technology.typeOfTransfer == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ technology.typeOfTransfer }}</p>
+                                        <td class="text-sm text-nowrap" :title="technology.progressReport || '---'">
+                                            {{ truncateText(technology.progressReport || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="technology.description == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ technology.description }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="technology.typeOfTransfer || '---'">
+                                            {{ truncateText(technology.typeOfTransfer || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="technology.nameOfInstitutionInvolved == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ technology.nameOfInstitutionInvolved }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="technology.description || '---'">
+                                            {{ truncateText(technology.description || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="technology.researcherInvolved == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ technology.researcherInvolved }}</p>
-                                        </td>
+                                        <td class="text-sm text-start text-nowrap" :title="technology.nameOfInstitutionInvolved || '---'">
+                                            {{ truncateText(technology.nameOfInstitutionInvolved || '---', 40) }}
+                                        </td>          
+                                        <td class="text-sm text-nowrap">{{ technology.year || '---' }}</td>
                                     </tr>
                                 </tbody>
                             </table>

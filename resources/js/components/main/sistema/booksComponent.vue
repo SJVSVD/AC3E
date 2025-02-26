@@ -43,27 +43,29 @@
             <div class="container">
               <div class="table-responsive p-0">
                 <div v-show="mostrarCarga" class="loader-sm"></div>
-                <table v-show="mostrarTabla" class="table align-items-center mb-0" id="MyTableBooks">
-                  <thead>
-                    <tr style="color: black">
-                      <th style="min-width: 16px;"></th>
-                      <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Book Title</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Book Authors</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Year</th>
+                <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="MyTableBooks">
+                  <thead class="thead-light">
+                    <tr >
+                      <th style="width: 16px;"></th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Book Title</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Book Authors</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Work Type</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Year</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="book in filteredBooks" :key="book.id">
                       <td></td>
                       <td>
-                        <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ book.id }}</p>
+                        <p class="text-sm font-weight-bold">{{ book.id }}</p>
                       </td>
-                      <td class="align-middle text-end">
-                        <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                      <td class="text-left">
+                        <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                           <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || book.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editBook(book)">
                             <i class="fa fa-fw fa-edit"></i>
                           </a>
@@ -72,29 +74,31 @@
                             <i class="fa-regular fa-eye"></i>
                           </a>
                           &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteBook(book.id)">
+                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| book.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deleteBook(book.id)">
                             <i class="fa fa-fw fa-trash"></i>
                           </a>
                         </div>
                       </td>
-                      <td>
-                        <p v-if="book.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">
-                          {{ book.status }}
-                        </p>
-                        <p v-if="book.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">
-                          Registered
-                        </p>
+                      <td class="text-start">
+                        <span v-if="book.status == 'Draft'" class="badge bg-alert">Draft</span>
+                        <span v-else-if="book.status == 'Finished'" class="badge bg-success">Registered</span>
+                        <span v-else class="badge bg-secondary">No information</span>
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="book.usuario.name">
+                      <td class="text-sm text-nowrap" :title="book.usuario.name">
                         {{ truncateText(book.usuario.name, 60) }}
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="book.bookTitle || '---'">
+                      <td class="text-sm text-nowrap" :title="book.progressReport">
+                        {{ truncateText(book.progressReport, 60) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap" :title="book.bookTitle || '---'">
                         {{ truncateText(book.bookTitle || '---', 60) }}
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="book.bookAuthors || '---'">
+                      <td class="text-sm text-start text-nowrap" :title="book.bookAuthors || '---'">
                         {{ truncateText(book.bookAuthors || '---', 60) }}
                       </td>
-                      <td class="text-sm mb-0">{{ book.year || '---' }}</td>
+                      <td class="text-sm text-start text-nowrap">{{ book.workType || '---' }}</td>
+                      <td class="text-sm text-nowrap">{{ book.year || '---' }}</td>
                     </tr>
                   </tbody>
                 </table>

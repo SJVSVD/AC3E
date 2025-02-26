@@ -66,17 +66,7 @@
                     Apply Filters
                   </button>
 
-                  <div class="card mt-3" v-if="filteredUsers.length > 0">
-                    <div class="card-header text-white">
-                      <h5 class="card-title text-center">Research Line Members</h5>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                      <li v-for="user in filteredUsers" :key="user.id" class="list-group-item">
-                        {{ user.name }} - {{ user.idRole }}
-                        
-                      </li>
-                    </ul>
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -103,6 +93,27 @@
               </div>
             </div>
 
+          </div>
+          <div class="card mt-3" v-if="filteredUsers.length > 0">
+            <div class="card-header text-white">
+              <h5 v-if="selectedFilterType == 'line'" class="card-title text-center">Research Line Members</h5>
+              <h5 v-if="selectedFilterType == 'researchType' && selectedResearchType == 1" class="card-title text-center">Associative Researchers</h5>
+              <h5 v-if="selectedFilterType == 'researchType' && selectedResearchType == 2" class="card-title text-center">Postdoctoral Researchers</h5>
+              <h5 v-if="selectedFilterType == 'researchType' && selectedResearchType == 3" class="card-title text-center">Main Researchers</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div 
+                  v-for="user in filteredUsers" 
+                  :key="user.id" 
+                  class="col-md-6 col-lg-4 mb-2"
+                >
+                  <div class="list-group-item">
+                    {{ user.name }} - {{ user.idRole }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -254,17 +265,20 @@ export default {
     const fetchResearchLines = async () => {
       try {
         const response = await axios.get("/api/researchLines");
-        researchLines.value = response.data;
+
+        // Filtrar las líneas de investigación que sean undefined o null
+        researchLines.value = response.data.filter(line => line.name !== "Undefined" && line.name !== null);
       } catch (error) {
         console.error("Error fetching research lines:", error);
       }
     };
 
+
     // Cargar datos de roles
     const fetchResearcherTypes = async () => {
       try {
         const response = await axios.get("/api/rolesUser");
-        researcherTypes.value = response.data;
+        researcherTypes.value = response.data.filter(line => line.name !== "Administrator" && line.name !== "Inactive");
       } catch (error) {
         console.error("Error fetching researcher types:", error);
       }

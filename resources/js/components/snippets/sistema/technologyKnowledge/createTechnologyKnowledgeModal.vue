@@ -8,7 +8,7 @@
                 <slot name="header">
                     New Tec. and know. transfer 
                 </slot>
-                <label for="">Progress year: {{ technologyKnowledge.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
+                <label for="">Progress report year: {{ technologyKnowledge.progressReport }} &nbsp;&nbsp; <a class="btn" v-if="is('Administrator')"@click="showModalProgress = true"><i class="fa-solid fa-pen-to-square"></i></a></label>
                 <label v-if="is('Administrator')" class="col-5 m-0"> Researcher: <label class="fw-normal" style="font-size: 14px;">
                   <select class="form-select" v-model="idResearcher">
                     <option disabled value="">Select a researcher</option>
@@ -84,10 +84,12 @@
                         <input type="text" class= "form-control" v-model="technologyKnowledge.description">
                       </div>
                       <div class="col-md-2">
-                        <label for="">Actual TRL:</label>
-                        <label for="" style="color: orange;">*</label>
+                        <label for="actualTrl">Actual TRL:</label>
                         <br>
-                        <input type="number" class= "form-control" v-model="technologyKnowledge.actualTrl">
+                        <select id="actualTrl" class="form-select" v-model="technologyKnowledge.actualTrl">
+                          <option disabled value="">Select a TRL</option>
+                          <option v-for="n in 9" :key="n" :value="n">{{ n }}</option>
+                        </select>
                       </div>
                       <div class="col-md-3">
                         <label for="">Beneficiary institution:</label>
@@ -469,7 +471,7 @@ export default {
       // Método para crear un registro
       async createTechnology() {
         this.errors = [];
-        const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer','month','monthEnding']; // Arreglo de campos a excluir
+        const fieldsToExclude = ['comments', 'technologyTransfer','knowledgeTransfer','month','monthEnding','actualTrl']; // Arreglo de campos a excluir
 
         for (const item in this.technologyKnowledge) {
           if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir

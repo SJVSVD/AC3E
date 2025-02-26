@@ -20,14 +20,14 @@
                                     {{ errors.name[0] }}
                                 </div>
                             </div>
-                            <!-- <label for="">Permisos para este Rol: </label>
+                            <label for="">Permisos para este Rol: </label>
                             <br/>
                             <div v-for="permiso in permisos" :key="permiso.id" class="form-check">
                                 <label class="form-check-label">
                                     <input type="checkbox" class="form-check-input" v-bind:id="permiso.id" v-bind:value="permiso.id" v-model="permissions">
                                         &nbsp;{{ permiso.name }}
                                 </label>
-                            </div> -->
+                            </div>
                             <br/>
                             <div class="modal-footer">
                                 <slot name="footer">
@@ -73,8 +73,8 @@ export default {
     created(){
         this.name = this.rol.name;
         this.id = this.rol.id;
-        //this.getPermisos();
-        //this.getPermisosRol(this.id);
+        this.getPermisos();
+        this.getPermisosRol(this.id);
     },
     methods: {
           // Cierra el modal y emite un evento de recarga.
@@ -119,6 +119,7 @@ export default {
             if (ok) {
                 let rol = {
                     name: this.name,
+                    permission: this.permissions,
                 }
                 var id = this.id;
                 axios.put(`api/roles/${id}`, rol).then((result) => {

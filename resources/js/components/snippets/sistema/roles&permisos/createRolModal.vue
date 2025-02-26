@@ -6,7 +6,7 @@
             <div class="modal-container-xs">
               <div class="modal-header fw-bold" style="color: #444444;">
                 <slot name="header">
-                    New Role
+                    New Role {{ permissions }}
                 </slot>
                 <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
               </div>
@@ -90,6 +90,7 @@ export default {
         if (ok) {
           let rol = {
             name: this.name,
+            permission: this.permissions
           };
           axios.post("api/roles", rol).then((result) => {
             this.buttonDisable = true;

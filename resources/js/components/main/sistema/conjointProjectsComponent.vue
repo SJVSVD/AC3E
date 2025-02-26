@@ -48,62 +48,67 @@ The destination country and city correspond to the location of the project leade
                     <div class="container">
                         <div class="table-responsive p-0">
                             <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableProjects">
-                                <thead>
-                                    <tr style="color: black">
+                            <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="myTableProjects">
+                                <thead class="thead-light">
+                                    <tr>
                                         <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of AC3E Member</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of External Person</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Beggining Date</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Activity Name</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Ac3e Researchers Involved</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Name of External Person</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Institution</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Beginning Date</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Ending Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="conjointProject in filteredProjects" :key="conjointProject.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ conjointProject.id }}</p>
+                                            <p class="text-sm font-weight-bold">{{ conjointProject.id }}</p>
                                         </td>                                          
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                        <td class="text-left">
+                                            <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                                                 <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || conjointProject.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editProject(conjointProject)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verProject(conjointProject)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteProject(conjointProject.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| conjointProject.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deleteProject(conjointProject.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
-                                        <td>
-                                            <p v-if="conjointProject.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ conjointProject.status }}</p>
-                                            <p v-if="conjointProject.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ conjointProject.usuario.name }}</p>
+                                        <td class="text-start">
+                                            <span v-if="conjointProject.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                            <span v-else-if="conjointProject.status == 'Finished'" class="badge bg-success">Registered</span>
+                                            <span v-else class="badge bg-secondary">No information</span>
+                                        </td>                                     
+                                        <td class="text-sm text-nowrap" :title="conjointProject.usuario.name || '---'">
+                                            {{ truncateText(conjointProject.usuario.name || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="conjointProject.activityName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ conjointProject.activityName }}</p>
+                                        <td class="text-sm text-nowrap" :title="conjointProject.progressReport || '---'">
+                                            {{ truncateText(conjointProject.progressReport || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="conjointProject.researcherInvolved == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ conjointProject.researcherInvolved }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="conjointProject.activityName || '---'">
+                                            {{ truncateText(conjointProject.activityName || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="conjointProject.nameOfExternalResearcher == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ conjointProject.nameOfExternalResearcher }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="conjointProject.researcherInvolved || '---'">
+                                            {{ truncateText(conjointProject.researcherInvolved || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="conjointProject.beginningDate == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ this.thisDate(conjointProject.beginningDate) }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="conjointProject.nameOfExternalResearcher || '---'">
+                                            {{ truncateText(conjointProject.nameOfExternalResearcher || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="conjointProject.endingDate == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ this.thisDate(conjointProject.endingDate) }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="conjointProject.institutionCollaborates || '---'">
+                                            {{ truncateText(conjointProject.institutionCollaborates || '---', 40) }}
+                                        </td>
+                                        <td class="text-sm text-start text-nowrap" :title="conjointProject.beginningDate || '---'">
+                                            {{ this.thisDate(conjointProject.beginningDate) || '---' }}
+                                        </td>
+                                        <td class="text-sm text-start text-nowrap" :title="conjointProject.endingDate || '---'">
+                                            {{ this.thisDate(conjointProject.endingDate) || '---' }}
                                         </td>
                                     </tr>
                                 </tbody>

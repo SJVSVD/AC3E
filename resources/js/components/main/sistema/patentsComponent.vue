@@ -43,62 +43,60 @@
                     <div class="container">
                         <div class="table-responsive p-0">
                             <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTablePatents">
-                                <thead>
-                                    <tr style="color: black">
-                                        <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Authors</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Patent</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status Application</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Registration Number</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Researchers Involved</th>
+                            <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="myTablePatents">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width: 16px;"></th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Authors</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Name of Patent</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Status Application</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Registration Number</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="patent in filteredPatents" :key="patent.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ patent.id }}</p>
+                                            <p class="text-sm font-weight-bold">{{ patent.id }}</p>
                                         </td>                                          
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                        <td class="text-left">
+                                            <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                                                 <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || patent.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editPatent(patent)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verPatent(patent)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deletePatent(patent.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| patent.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deletePatent(patent.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
                                         <td>
-                                            <p v-if="patent.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ patent.status }}</p>
-                                            <p v-if="patent.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ patent.usuario.name }}</p>
+                                            <span v-if="patent.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                            <span v-else-if="patent.status == 'Finished'" class="badge bg-success">Registered</span>
+                                            <span v-else class="badge bg-secondary">No information</span>
+                                        </td>                                           
+
+                                        <td class="text-sm text-nowrap" :title="patent.usuario.name || '---'">
+                                            {{ truncateText(patent.usuario.name || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="patent.authors == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ patent.authors }}</p>
+                                        <td class="text-sm text-nowrap" :title="patent.progressReport || '---'">
+                                            {{ truncateText(patent.progressReport || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="patent.nameOfPatent == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ patent.nameOfPatent }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="patent.authors || '---'">
+                                            {{ truncateText(patent.authors || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="patent.applicationStatus == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ patent.applicationStatus }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="patent.nameOfPatent || '---'">
+                                            {{ truncateText(patent.nameOfPatent || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="patent.registrationNumber == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ patent.registrationNumber }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="patent.applicationStatus || '---'">
+                                            {{ truncateText(patent.applicationStatus || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="patent.researcherInvolved == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ patent.researcherInvolved }}</p>
+                                        <td class="text-sm  text-nowrap" :title="patent.registrationNumber || '---'">
+                                            {{ truncateText(patent.registrationNumber || '---', 60) }}
                                         </td>
                                     </tr>
                                 </tbody>

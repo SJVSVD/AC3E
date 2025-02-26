@@ -82,11 +82,12 @@ class indicatorsController extends Controller
 
                         if ($moduleName) {
                             $query->where('module', $moduleName); // Filtro por módulo
+                        }else{
+                            $query->where('module', null);
                         }
-            
+                        
                         // Obtener el progreso de metas para este tipo de investigador y módulo (si se aplica)
                         $progressReport = $query->first();
-
                         if ($progressReport) {
                             // Extraer las metas de este tipo de investigador
                             $goals = json_decode($progressReport->goals, true);
@@ -94,11 +95,6 @@ class indicatorsController extends Controller
                             // Paso 6: Dividir las metas entre el número de usuarios con ese idRole
                             $usersWithType = User::where('idRole', $roleId)->get();
                             $totalUsers = $usersWithType->count();
-
-                            // Paso 7: Dividir los goals entre el número de usuarios con ese idRole
-                            foreach ($goals as $year => $goal) {
-                                $goals[$year] = round($goal / $totalUsers); // Redondear hacia el número entero más cercano
-                            }
 
                             // Paso 8: Sumar las metas de este usuario a las metas totales de la línea
                             foreach ($goals as $year => $goal) {
@@ -133,6 +129,8 @@ class indicatorsController extends Controller
 
                 if ($moduleName) {
                     $query->where('module', $moduleName); // Filtro por módulo
+                }else{
+                    $query->where('module', null);
                 }
     
                 // Obtener el progreso de metas para este tipo de investigador y módulo (si se aplica)
@@ -146,10 +144,6 @@ class indicatorsController extends Controller
                     // 4. Dividir los goals entre el número de usuarios con ese idRole
                     $goals = json_decode($progressReport->goals, true);
         
-                    foreach ($goals as $year => $goal) {
-                        $goals[$year] = round($goal / $totalUsers);
-                    }
-        
                     // Actualizar el progress report
                     $progressReport->goals = json_encode($goals);
                 }
@@ -159,6 +153,8 @@ class indicatorsController extends Controller
 
                 if ($moduleName) {
                     $query->where('module', $moduleName); // Filtro por módulo
+                }else{
+                    $query->where('module', null);
                 }
     
                 // Obtener el progreso de metas para este tipo de investigador y módulo (si se aplica)

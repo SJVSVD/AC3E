@@ -45,63 +45,62 @@ If the project end date is unknown, please enter an approximate date.
                     <div class="container">
                         <div class="table-responsive p-0">
                             <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTablePostDoc">
-                                <thead>
-                                    <tr style="color: black">
+                            <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="myTablePostDoc">
+                                <thead class="thead-light">
+                                    <tr>
                                         <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Postdoc</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Supervisor Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Research Topic</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Start Year</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Ending Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Name of Postdoc</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Supervisor Name</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Research Topic</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Start Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Ending Year</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="postDoc in filteredPostdoc" :key="postDoc.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ postDoc.id }}</p>
+                                            <p class="text-sm font-weight-bold">{{ postDoc.id }}</p>
                                         </td>                                          
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                        <td class="text-left">
+                                            <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                                                 <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || postDoc.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editPostDoc(postDoc)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verPostDoc(postDoc)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deletePostDoc(postDoc.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| postDoc.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deletePostDoc(postDoc.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
-                                        <td>
-                                            <p v-if="postDoc.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ postDoc.status }}</p>
-                                            <p v-if="postDoc.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ postDoc.usuario.name }}</p>
+                                        <td class="text-start">
+                                            <span v-if="postDoc.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                            <span v-else-if="postDoc.status == 'Finished'" class="badge bg-success">Registered</span>
+                                            <span v-else class="badge bg-secondary">No information</span>
+                                        </td>                                         
+
+                                        <td class="text-sm text-nowrap" :title="postDoc.usuario.name || '---'">
+                                            {{ truncateText(postDoc.usuario.name || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="postDoc.nameOfPostdoc == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 ">{{ postDoc.nameOfPostdoc }}</p>
+                                        <td class="text-sm text-nowrap" :title="postDoc.progressReport || '---'">
+                                            {{ truncateText(postDoc.progressReport || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="postDoc.supervisorName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ postDoc.supervisorName }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="postDoc.nameOfPostdoc || '---'">
+                                            {{ truncateText(postDoc.nameOfPostdoc || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="postDoc.researchTopic == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ postDoc.researchTopic }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="postDoc.supervisorName || '---'">
+                                            {{ truncateText(postDoc.supervisorName || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="postDoc.startYear == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ postDoc.startYear }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="postDoc.researchTopic || '---'">
+                                            {{ truncateText(postDoc.researchTopic || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="postDoc.endingYear == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ postDoc.endingYear }}</p>
-                                        </td>
+
+                                        <td class="text-sm text-nowrap">{{ this.thisDate(postDoc.startYear) }}</td>
+                                        <td class="text-sm text-nowrap">{{ this.thisDate(postDoc.endingYear) }}</td>
                                     </tr>
                                 </tbody>
                             </table>

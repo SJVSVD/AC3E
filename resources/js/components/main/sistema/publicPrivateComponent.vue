@@ -45,28 +45,29 @@ Includes participation in public policy design, formalization of MOUs/NDAs, part
                     <div class="container">
                         <div class="table-responsive p-0">
                             <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTablePublicPrivate">
-                                <thead>
-                                    <tr style="color: black">
-                                        <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Activity</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Name of Organization</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Type of Connection</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Researchers Involved</th>
+                            <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="myTablePublicPrivate">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width: 16px;"></th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Name of Activity</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Name of Organization</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Agent Type</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Type of Connection</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="publicPrivate in filteredPublicprivate" :key="publicPrivate.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ publicPrivate.id }}</p>
+                                            <p class="text-sm font-weight-bold">{{ publicPrivate.id }}</p>
                                         </td>                                          
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                        <td class="text-left">
+                                            <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                                                 <a
                                                     v-if="publicPrivate.file != null && publicPrivate.is_link == 0"
                                                     class="btn btn-search-blue btn-xs"
@@ -80,31 +81,33 @@ Includes participation in public policy design, formalization of MOUs/NDAs, part
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verPublicPrivate(publicPrivate)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| publicPrivate.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deletePublicPrivate(publicPrivate.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
-                                        <td>
-                                            <p v-if="publicPrivate.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ publicPrivate.status }}</p>
-                                            <p v-if="publicPrivate.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ publicPrivate.usuario.name }}</p>
+                                        <td class="text-start">
+                                            <span v-if="publicPrivate.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                            <span v-else-if="publicPrivate.status == 'Finished'" class="badge bg-success">Registered</span>
+                                            <span v-else class="badge bg-secondary">No information</span>
+                                        </td>                                           
+
+                                        <td class="text-sm text-nowrap" :title="publicPrivate.usuario.name || '---'">
+                                            {{ truncateText(publicPrivate.usuario.name || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="publicPrivate.nameOfActivity == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ publicPrivate.nameOfActivity }}</p>
+                                        <td class="text-sm text-nowrap" :title="publicPrivate.progressReport || '---'">
+                                            {{ truncateText(publicPrivate.progressReport || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="publicPrivate.nameOfOrganization == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ publicPrivate.nameOfOrganization }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="publicPrivate.nameOfActivity || '---'">
+                                            {{ truncateText(publicPrivate.nameOfActivity || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="publicPrivate.typeOfConnection == null || publicPrivate.typeOfConnection == ''" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ publicPrivate.typeOfConnection }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="publicPrivate.nameOfOrganization || '---'">
+                                            {{ truncateText(publicPrivate.nameOfOrganization || '---', 40) }}
                                         </td>
-                                        <td>
-                                            <p v-if="publicPrivate.researcherInvolved == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ publicPrivate.researcherInvolved }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="publicPrivate.agentType || '---'">
+                                            {{ truncateText(publicPrivate.agentType || '---', 40) }}
+                                        </td>
+                                        <td class="text-sm text-start text-nowrap" :title="publicPrivate.typeOfConnection || '---'">
+                                            {{ truncateText(publicPrivate.typeOfConnection || '---', 60) }}
                                         </td>
                                     </tr>
                                 </tbody>

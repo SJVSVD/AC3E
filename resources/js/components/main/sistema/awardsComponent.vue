@@ -43,26 +43,28 @@
             <div class="container">
               <div class="table-responsive p-0">
                 <div v-show="mostrarCarga" class="loader-sm"></div>
-                <table v-show="mostrarTabla" class="table align-items-center mb-0" id="MyTableAward">
-                  <thead>
-                    <tr style="color: black">
-                      <th style="min-width: 16px;"></th>
-                      <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Awardee Name</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Award Name</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Year</th>
+                <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="MyTableAward">
+                  <thead class="thead-light">
+                    <tr>
+                      <th style="width: 16px;"></th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Award Name</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Institution</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Year</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="award in filteredAwards" :key="award.id">
                       <td></td>
                       <td>
-                        <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ award.id }}</p>
+                        <p class="text-sm font-weight-bold">{{ award.id }}</p>
                       </td>
-                      <td class="align-middle text-end">
-                        <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                      <td class="text-left">
+                        <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                           <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || award.idUsuario == userID)"  class="btn btn-alert btn-xs" title="Edit" @click="editAward(award)">
                             <i class="fa fa-fw fa-edit"></i>
                           </a>
@@ -71,26 +73,28 @@
                             <i class="fa-regular fa-eye"></i>
                           </a>
                           &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteAward(award.id)">
+                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| award.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deleteAward(award.id)">
                             <i class="fa fa-fw fa-trash"></i>
                           </a>
                         </div>
                       </td>
-                      <td>
-                        <p v-if="award.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">
-                          {{ award.status }}
-                        </p>
-                        <p v-if="award.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">
-                          Registered
-                        </p>
+                      <td class="text-start">
+                        <span v-if="award.status == 'Draft'" class="badge bg-alert">Draft</span>
+                        <span v-else-if="award.status == 'Finished'" class="badge bg-success">Registered</span>
+                        <span v-else class="badge bg-secondary">No information</span>
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="award.usuario.name">
+                      <td class="text-sm text-nowrap" :title="award.usuario.name">
                         {{ truncateText(award.usuario.name, 60) }}
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="award.awardName || '---'">
-                        {{ truncateText(award.awardName || '---', 60) }}
+                      <td class="text-sm text-nowrap" :title="award.progressReport">
+                        {{ truncateText(award.progressReport, 60) }}
                       </td>
-                      <td class="text-sm mb-0">{{ award.year || '---' }}</td>
+                      <td class="text-sm text-start text-nowrap" :title="award.awardName || '---'">
+                        {{ truncateText(award.awardName || '---', 40) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap">{{ truncateText(award.awardName || '---', 40) }}</td>
+                      <td class="text-sm text-nowrap">{{ award.year || '---' }}</td>
                     </tr>
                   </tbody>
                 </table>

@@ -6,14 +6,14 @@
               <div class="modal-container-xs">
                 <div class="modal-header fw-bold" style="color: #444444;">
                   <slot name="header">
-                      Nuevo Permiso
+                      New Permission
                   </slot>
                   <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
                 </div>
                 <div class="modal-body">
                   <slot name="body">
                       <div class="form-group">
-                        <label for="name">Nombre del permiso: </label>
+                        <label for="name">Name of Permission: </label>
                         <br>
                         <input type="text" class= "form-control" v-model="nombrePermiso">
                       </div>
@@ -48,7 +48,7 @@
       components: { modalconfirmacion, modalalerta },
       mixins: [mixin],
       data: () => ({
-          buttonText:'Guardar Permiso',
+          buttonText:'Save',
           buttonDisable: false,
           nombrePermiso: "",
           errors:[],
@@ -70,10 +70,10 @@
           },
         async crearRol() {
             const ok = await this.$refs.confirmation.show({
-                title: 'Crear Permiso',
-                message: `¿Está seguro/a que desea crear el permiso '${this.nombrePermiso}'? Esta acción no puede ser desecha.`,
-                okButton: 'Crear',
-                cancelButton: 'Volver'
+                title: 'New Permission',
+                message: `Are you sure you want to create the permission '${this.nombrePermiso}'? This action cannot be undone.`,
+                okButton: 'Save',
+                cancelButton: 'Cancel'
             })
             if (ok) {
                 let permisos = {
@@ -81,8 +81,8 @@
                 };
                 axios.post("api/permisos", permisos).then((result) => {
                     this.buttonDisable = true;
-                    this.buttonText = 'Guardando...';
-                    this.toast.success("Permiso guardado con éxito!", {
+                    this.buttonText = 'Saving...';
+                    this.toast.success("Permission saved successfully!", {
                         position: "top-right",
                         closeOnClick: true,
                         pauseOnFocusLoss: true,

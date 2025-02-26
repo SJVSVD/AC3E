@@ -44,29 +44,31 @@
             <div class="container">
               <div class="table-responsive p-0">
                 <div v-show="mostrarCarga" class="loader-sm"></div>
-                <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableParticipations">
-                  <thead>
-                    <tr style="color: black">
+                <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="myTableParticipations">
+                  <thead class="thead-light">
+                    <tr>
                       <th style="min-width: 16px;"></th>
-                      <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Event Name</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Start Date</th>
-                      <th class="text-uppercase text-xs font-weight-bolder">Ending Date</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                      <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Event Name</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Type of Event</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Start Date</th>
+                      <th data-orderable="true" class="text-xs font-weight-bold text-left">Ending Date</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="participationScEvent in filteredParticipationScEvents" :key="participationScEvent.id">
                       <td></td>
                       <td>
-                        <p class="text-sm font-weight-bolder mb-0" style="color:black">
+                        <p class="text-sm font-weight-bold">
                           {{ participationScEvent.id }}
                         </p>
                       </td>
-                      <td class="align-middle text-end">
-                        <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                      <td class="text-left">
+                        <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                           <a
                             v-if="participationScEvent.file != null && participationScEvent.is_link == 0"
                             class="btn btn-search-blue btn-xs"
@@ -94,35 +96,31 @@
                             <i class="fa-regular fa-eye"></i>
                           </a>
                           &nbsp;
-                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteParticipation(participationScEvent.id)">
+                          <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| participationScEvent.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deleteParticipation(participationScEvent.id)">
                             <i class="fa fa-fw fa-trash"></i>
                           </a>
                         </div>
                       </td>
-                      <td>
-                        <p
-                          v-if="participationScEvent.status == 'Draft'"
-                          class="text-sm font-weight-bolder mb-0"
-                          style="color:#878686"
-                        >
-                          {{ participationScEvent.status }}
-                        </p>
-                        <p
-                          v-if="participationScEvent.status == 'Finished'"
-                          class="text-sm font-weight-bolder mb-0"
-                          style="color:#28A745"
-                        >
-                          Registered
-                        </p>
+                      <td class="text-start">
+                          <span v-if="participationScEvent.status == 'Draft'" class="badge bg-alert">Draft</span>
+                          <span v-else-if="participationScEvent.status == 'Finished'" class="badge bg-success">Registered</span>
+                          <span v-else class="badge bg-secondary">No information</span>
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="participationScEvent.usuario.name">
+                      <td class="text-sm text-nowrap" :title="participationScEvent.usuario.name">
                         {{ truncateText(participationScEvent.usuario.name, 60) }}
                       </td>
-                      <td class="text-sm mb-0 truncate-text" :title="participationScEvent.eventName || '---'">
+                      <td class="text-sm text-nowrap" :title="participationScEvent.progressReport">
+                        {{ truncateText(participationScEvent.progressReport, 60) }}
+                      </td>
+                      <td class="text-sm text-start text-nowrap" :title="participationScEvent.eventName || '---'">
                         {{ truncateText(participationScEvent.eventName || '---', 60) }}
                       </td>
-                      <td class="text-sm mb-0">{{ this.thisDate(participationScEvent.startDate) }}</td>
-                      <td class="text-sm mb-0">{{ this.thisDate(participationScEvent.endingDate) }}</td>
+                      <td class="text-sm text-start text-nowrap" :title="participationScEvent.typeEvent || '---'">
+                        {{ truncateText(participationScEvent.typeEvent || '---', 60) }}
+                      </td>
+                      <td class="text-sm text-nowrap">{{ this.thisDate(participationScEvent.startDate) }}</td>
+                      <td class="text-sm text-nowrap">{{ this.thisDate(participationScEvent.endingDate) }}</td>
                     </tr>
                   </tbody>
                 </table>

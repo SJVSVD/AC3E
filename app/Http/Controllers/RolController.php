@@ -51,13 +51,15 @@ class RolController extends Controller
     {
         $campos = [
             'name'=> 'required',
+            'permission'=> 'required',
         ];
         $mensaje = [
             'name.required' => 'El campo "Nombre" es obligatorio.',
+            'permission.required' => 'El campo "Permiso" es obligatorio.',
         ];
         $this->validate($request, $campos, $mensaje);
         $role = Role::create(['name'=> $request ->input('name')]);
-        //$role->syncPermissions($request->input('permission'));
+        $role->syncPermissions($request->input('permission'));
 
         return response()->json("Rol Creado!");
     }
@@ -86,18 +88,28 @@ class RolController extends Controller
      * @return \Illuminate\Http\Response
      */
      // Función para editar un registro
-    public function update(Request $request, $id)
-    {
-        $this->validate($request, ['name'=> 'required'],['permission'=> 'required']);
-
-        $role = Role::find($id);
-
-        $role->name = $request->input('name');
-        $role->save();
-
-        $role->syncPermissions($request->input('permission'));
-        return response()->json("Rol Editado");
-    }
+     public function update(Request $request, $id)
+     {
+         // ✅ Validación correcta de los datos
+         $validated = $request->validate([
+             'name' => 'required|string|max:255',
+             'permission' => 'array', // Asegurar que sea un array
+         ]);
+     
+         // ✅ Buscar el rol y manejar error si no existe
+         $role = Role::find($id);
+         if (!$role) {
+             return response()->json(['error' => 'Rol no encontrado'], 404);
+         }
+     
+         // ✅ Actualizar nombre del rol
+         $role->update(['name' => $validated['name']]);
+     
+         // ✅ Sincronizar permisos
+         $role->syncPermissions($validated['permission']);
+     
+         return response()->json(['message' => 'Rol Editado con éxito']);
+     }
 
     /**
      * Remove the specified resource from storage.

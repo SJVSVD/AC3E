@@ -147,6 +147,8 @@ Route::get('fundingSourcesActive/{id}', [fundingSourcesController::class, 'fundi
 
 Route::apiResource('roles', RolController::class);
 Route::apiResource('permisos', PermisosController::class);
+Route::get('getPermisosRol/{id}', [PermisosController::class, 'getPermisosRol']);
+
 Route::post('updateRecords', [thesisStudentController::class, 'updateRecords']);
 //Universities
 

@@ -7,7 +7,7 @@
                         <div class="d-flex justify-content-end">
                             <a class="btn btn-continue" id="show-modal1" @click="showCrearRol = true">New Role</a>
                             &nbsp;
-                            <a class="btn btn-continue" id="show-modal1" @click="showCrearPermiso = true">Nuevo Permiso</a>
+                            <a class="btn btn-continue" id="show-modal1" @click="showCrearPermiso = true">New Permission</a>
                             &nbsp;
                             <a class="btn btn-search-blue" @click="recargarTabla('General')"><i class="fa-solid fa-rotate"></i></a>
                         </div>

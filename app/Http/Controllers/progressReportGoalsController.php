@@ -29,7 +29,14 @@ class progressReportGoalsController extends Controller {
             $query->where('researcher_type_id', $request->related_id);
         }
     
-        // Buscar si ya existe un registro
+        // Agregar condición para 'module', considerando registros sin módulo explícito
+        if ($request->has('module')) {
+            $query->where('module', $request->module);
+        } else {
+            $query->whereNull('module'); // Para diferenciar registros sin módulo
+        }
+    
+        // Buscar si ya existe un registro con los mismos criterios
         $progressReport = $query->first();
     
         // Si existe, actualizar solo los goals y el campo module (si se pasó)
@@ -64,6 +71,7 @@ class progressReportGoalsController extends Controller {
             'data' => $progressReport
         ], 200);
     }
+    
     
     public function getProgressReport($id, Request $request) {
         $module = $request->query('module');  // Obtener el módulo desde la consulta

@@ -5,7 +5,7 @@
                 <div class="row pb-0 p-4">
                     <div class="col-lg-10 col-md-12">
                         <div class="info-box">
-                            Includes all non-scientific activities that promote and disseminate the work of AC3E and its members, executed during the current baseline year (Sep-present). Examples of outreach activities include: school talks, press notes, appearances in mass media, guided tours of facilities, publication of educational materials, etc.
+                            Includes all outreach and dissemination activities that promote and share the work of AC3E and its members, carried out during the current baseline year (Sep–present). Outreach activities engage the general public and non-scientific audiences through initiatives such as school talks, press notes, mass media appearances, guided facility tours, and educational material publication. Dissemination activities focus on sharing research findings with specialized audiences through conferences, workshops, industry collaborations, and technical presentations.
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-12 d-flex justify-content-lg-end justify-content-center align-items-center">
@@ -42,57 +42,62 @@
                     <div class="container">
                         <div class="table-responsive p-0">
                             <div v-show="mostrarCarga" class="loader-sm"></div>
-                            <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableOutreach">
-                                <thead>
-                                    <tr style="color: black">
-                                        <th style="min-width: 16px;"></th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">ID</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Actions</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Status</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">User</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Activity Type</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Activity Name</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Date</th>
-                                        <th class="text-uppercase text-xs font-weight-bolder">Researchers Involved</th>
+                            <table v-show="mostrarTabla" class="table table-striped align-items-center mb-0" id="myTableOutreach">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width: 16px;"></th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">ID</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Actions</th>
+                                        <th data-orderable="false" class="text-xs font-weight-bold text-left">Status</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">User</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Progress Report Year</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Activity Type</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Activity Name</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Attendant Amount</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Date</th>
+                                        <th data-orderable="true" class="text-xs font-weight-bold text-left">Researchers Involved</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="outreachActivity in filteredOutreachs" :key="outreachActivity.id">
                                         <td></td>
                                         <td>
-                                            <p class="text-sm font-weight-bolder mb-0" style="color:black">{{ outreachActivity.id }}</p>
+                                            <p class="text-sm font-weight-bold">{{ outreachActivity.id }}</p>
                                         </td>                                          
-                                        <td class="align-middle text-end">
-                                            <div class="d-flex px-3 py-1 justify-content-center align-items-center">
+                                        <td class="text-left">
+                                            <div class="d-flex px-1 py-1 justify-content-start align-items-center">
                                                 <a v-if="!is('Staff') && !is('Anid') && (!is('Titular Researcher') || outreachActivity.idUsuario == userID)" class="btn btn-alert btn-xs" title="Edit" @click="editActivity(outreachActivity)"><i class="fa fa-fw fa-edit"></i></a>
                                                 &nbsp;
                                                 <a class="btn btn-success btn-xs" title="Details" @click="verActivity(outreachActivity)"><i class="fa-regular fa-eye"></i></a>
                                                 &nbsp;
-                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')" class="btn btn-closed btn-xs" title="Delete" @click="deleteActivity(outreachActivity.id)"><i class="fa fa-fw fa-trash"></i></a>
+                                                <a v-if="!is('Staff') && !is('Anid') && !is('Titular Researcher')|| outreachActivity.idUsuario == userID"  
+                            class="btn btn-closed btn-xs" title="Delete" @click="deleteActivity(outreachActivity.id)"><i class="fa fa-fw fa-trash"></i></a>
                                             </div>
                                         </td>
-                                        <td>
-                                            <p v-if="outreachActivity.status == 'Draft'" class="text-sm font-weight-bolder mb-0" style="color:#878686">{{ outreachActivity.status }}</p>
-                                            <p v-if="outreachActivity.status == 'Finished'" class="text-sm font-weight-bolder mb-0" style="color:#28A745">Registered</p>
-                                        </td>                                          
-                                        <td>
-                                            <p class="text-sm mb-0">{{ outreachActivity.usuario.name }}</p>
+                                        <td class="text-start">
+                                            <span v-if="outreachActivity.status == 'Draft'" class="badge bg-alert">Draft</span>
+                                            <span v-else-if="outreachActivity.status == 'Finished'" class="badge bg-success">Registered</span>
+                                            <span v-else class="badge bg-secondary">No information</span>
+                                        </td>                                      
+
+                                        <td class="text-sm text-nowrap" :title="outreachActivity.usuario.name">
+                                            {{ truncateText(outreachActivity.usuario.name, 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="outreachActivity.activityType == null || outreachActivity.activityType == '' " class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ outreachActivity.activityType }}</p>
+                                        <td class="text-sm text-nowrap" :title="outreachActivity.progressReport">
+                                            {{ truncateText(outreachActivity.progressReport, 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="outreachActivity.activityName == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0 truncate-text">{{ outreachActivity.activityName }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="outreachActivity.activityType || '---'">
+                                            {{ truncateText(outreachActivity.activityType || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="outreachActivity.date == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ this.thisDate(outreachActivity.date) }}</p>
+                                        <td class="text-sm text-start text-nowrap" :title="outreachActivity.activityName || '---'">
+                                            {{ truncateText(outreachActivity.activityName || '---', 60) }}
                                         </td>
-                                        <td>
-                                            <p v-if="outreachActivity.researcherInvolved == null" class="text-sm mb-0">---</p>
-                                            <p v-else class="text-sm mb-0">{{ outreachActivity.researcherInvolved }}</p>
+                                        <td class="text-sm text-nowrap" :title="outreachActivity.attendantsAmount || '---'">
+                                            {{ truncateText(outreachActivity.attendantsAmount || '---', 60) }}
+                                        </td>
+                                        <td class="text-sm text-nowrap">{{ this.thisDate(outreachActivity.date) }}</td>
+                                        <td class="text-sm text-start text-nowrap" :title="outreachActivity.researcherInvolved || '---'">
+                                            {{ truncateText(outreachActivity.researcherInvolved || '---', 60) }}
                                         </td>
                                     </tr>
                                 </tbody>

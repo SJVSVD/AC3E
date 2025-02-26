@@ -6,14 +6,14 @@
           <div class="modal-container-xs">
             <!-- Modal Header -->
             <div class="modal-header pb-1 fw-bold" style="color: #444444;">
-              <slot name="header">Notify my data</slot>
+              <slot name="header">Notify Data Collection as Complete</slot>
               <a class="btn btn-closed" @click="$emit('close')" ref="closeBtn">X</a>
             </div>
 
             <!-- Modal Body -->
             <div class="modal-body">
               <slot name="body">
-                <p>Are you sure you want to notify your data?</p>
+                <p>Are you sure you want to notify that you have finished uploading your information for the current period?”</p>
               </slot>
             </div>
 
