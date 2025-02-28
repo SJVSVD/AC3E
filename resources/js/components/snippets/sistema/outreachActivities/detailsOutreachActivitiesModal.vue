@@ -20,6 +20,12 @@
                       <label v-if="activity1.status != null" class="fw-normal" style="font-size: 14px;">{{ activity1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ activity1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ activity1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Type of Activity: </label>
                       <label v-if="activity1.activityType != null" class="fw-normal" style="font-size: 14px;">{{ activity1.activityType }}</label>
@@ -67,67 +73,61 @@
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Undergraduate Students: </label>
-                      <label v-if="activity1.undergraduateStudents != null" class="fw-normal" style="font-size: 14px;">{{ activity1.undergraduateStudents }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.undergraduateStudents === 1 ? 'Yes' : (activity1.undergraduateStudents === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Primary Education Students: </label>
-                      <label v-if="activity1.primaryEducationStudents != null" class="fw-normal" style="font-size: 14px;">{{ activity1.primaryEducationStudents }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.primaryEducationStudents === 1 ? 'Yes' : (activity1.primaryEducationStudents === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Secondary Education Students: </label>
-                      <label v-if="activity1.secondaryEducationStudents != null" class="fw-normal" style="font-size: 14px;">{{ activity1.secondaryEducationStudents }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.secondaryEducationStudents === 1 ? 'Yes' : (activity1.secondaryEducationStudents === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>General Community: </label>
-                      <label v-if="activity1.generalCommunity != null" class="fw-normal" style="font-size: 14px;">{{ activity1.generalCommunity }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.generalCommunity === 1 ? 'Yes' : (activity1.generalCommunity === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Companies, Industries, Services: </label>
-                      <label v-if="activity1.companiesIndustriesServices != null" class="fw-normal" style="font-size: 14px;">{{ activity1.companiesIndustriesServices }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.companiesIndustriesServices === 1 ? 'Yes' : (activity1.companiesIndustriesServices === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>School Teachers: </label>
-                      <label v-if="activity1.schoolTeachers != null" class="fw-normal" style="font-size: 14px;">{{ activity1.schoolTeachers }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.schoolTeachers === 1 ? 'Yes' : (activity1.schoolTeachers === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Government Official: </label>
-                      <label v-if="activity1.governmentOfficial != null" class="fw-normal" style="font-size: 14px;">{{ activity1.governmentOfficial }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.governmentOfficial === 1 ? 'Yes' : (activity1.governmentOfficial === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Other: </label>
-                      <label v-if="activity1.other != null" class="fw-normal" style="font-size: 14px;">{{ activity1.other }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ activity1.other === 1 ? 'Yes' : (activity1.other === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Name of the Main Responsible: </label>
-                      <label v-if="activity1.nameOfTheMainResponsible != null" class="fw-normal" style="font-size: 14px;">{{ activity1.nameOfTheMainResponsible }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
+
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Progress Report Year: </label>
                       <label v-if="activity1.progressReport != null" class="fw-normal" style="font-size: 14px;">{{ activity1.progressReport }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Researchers Involved: </label>
-                      <label v-if="activity1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ activity1.researcherInvolved }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>External Researcher: </label>
-                      <label v-if="activity1.externalResearcher != null" class="fw-normal" style="font-size: 14px;">{{ activity1.externalResearcher }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Responsibility: </label>
-                      <label v-if="activity1.responsibility != null" class="fw-normal" style="font-size: 14px;">{{ activity1.responsibility }}</label>
+                      <label>Responsability: </label>
+                      <label v-if="activity1.responsability != null" class="fw-normal" style="font-size: 14px;">{{ activity1.responsability }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">

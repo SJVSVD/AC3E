@@ -25,11 +25,12 @@
                       <label v-if="project1.institutionCollaborates != null" class="fw-normal" style="font-size: 14px;">{{ project1.institutionCollaborates }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Researchers Involved: </label>
-                      <label v-if="project1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ project1.researcherInvolved }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ project1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ project1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Activity Type: </label>
                       <label v-if="project1.activityType != null" class="fw-normal" style="font-size: 14px;">{{ project1.activityType }}</label>

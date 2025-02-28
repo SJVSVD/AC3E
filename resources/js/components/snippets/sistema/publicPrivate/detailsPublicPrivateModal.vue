@@ -20,6 +20,12 @@
                       <label v-if="publicPrivate1.status != null" class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Name of Activity: </label>
                       <label v-if="publicPrivate1.nameOfActivity != null" class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.nameOfActivity }}</label>
@@ -47,18 +53,9 @@
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Participation Public Policies: </label>
-                      <label v-if="publicPrivate1.participationPublicPolicies != null" class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.participationPublicPolicies }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Researchers Involved: </label>
-                      <label v-if="publicPrivate1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.researcherInvolved }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>External Researcher: </label>
-                      <label v-if="publicPrivate1.externalResearcher != null" class="fw-normal" style="font-size: 14px;">{{ publicPrivate1.externalResearcher }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
+                      <label class="fw-normal" style="font-size: 14px;">
+                        {{ publicPrivate1.participationPublicPolicies === 1 ? 'Yes' : (publicPrivate1.participationPublicPolicies === 0 ? 'No' : '---') }}
+                      </label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Start Date: </label>

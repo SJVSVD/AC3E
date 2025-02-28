@@ -20,6 +20,12 @@
                       <label v-if="patent1.status != null" class="fw-normal" style="font-size: 14px;">{{ patent1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ patent1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ patent1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>IP Type: </label>
                       <label v-if="patent1.ipType != null" class="fw-normal" style="font-size: 14px;">{{ patent1.ipType }}</label>
@@ -68,11 +74,6 @@
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Name of Patent: </label>
                       <label v-if="patent1.nameOfPatent != null" class="fw-normal" style="font-size: 14px;">{{ patent1.nameOfPatent }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Researchers Involved: </label>
-                      <label v-if="patent1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ patent1.researcherInvolved }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">

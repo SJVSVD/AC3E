@@ -20,6 +20,12 @@
                       <label v-if="postDoc1.status != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ postDoc1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ postDoc1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Personal Email: </label>
                       <label v-if="postDoc1.personalEmail != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.personalEmail }}</label>
@@ -71,63 +77,8 @@
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Private Sector: </label>
-                      <label v-if="postDoc1.privateSector != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.privateSector }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Academy1: </label>
-                      <label v-if="postDoc1.academy1 != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.academy1 }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Business: </label>
-                      <label v-if="postDoc1.business != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.business }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Own Entrepreneurship: </label>
-                      <label v-if="postDoc1.ownEntrepreneurship != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.ownEntrepreneurship }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Public Sector: </label>
-                      <label v-if="postDoc1.publicSector != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.publicSector }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Government: </label>
-                      <label v-if="postDoc1.government != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.government }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Academy2: </label>
-                      <label v-if="postDoc1.academy2 != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.academy2 }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Social ONG: </label>
-                      <label v-if="postDoc1.socialOng != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.socialOng }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>In the Center: </label>
-                      <label v-if="postDoc1.inTheCenter != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.inTheCenter }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>None of the Above: </label>
-                      <label v-if="postDoc1.noneOfTheAbove != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.noneOfTheAbove }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
                       <label>Institution Name: </label>
                       <label v-if="postDoc1.institutionName != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.institutionName }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Name of Research: </label>
-                      <label v-if="postDoc1.nameOfResearch != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.nameOfResearch }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">
@@ -138,16 +89,6 @@
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Progress Report Year: </label>
                       <label v-if="postDoc1.progressReport != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.progressReport }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Posterior Working Area: </label>
-                      <label v-if="postDoc1.posteriorWorkingArea != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.posteriorWorkingArea }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Institution Working Area: </label>
-                      <label v-if="postDoc1.institutionWorkingArea != null" class="fw-normal" style="font-size: 14px;">{{ postDoc1.institutionWorkingArea }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                   </div>

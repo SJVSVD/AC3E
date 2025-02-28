@@ -13,56 +13,36 @@
                 <!-- Filtro de fechas -->
                 <div class="d-flex mb-3">
                   <label for="startDate" class="me-2">Start Date:</label>
-                  <input
-                    type="date"
-                    id="startDate"
-                    v-model="startDate"
-                    class="form-control me-3"
-                  />
+                  <input type="date" id="startDate" v-model="startDate" class="form-control me-3" />
                   <label for="endDate" class="me-2">End Date:</label>
-                  <input
-                    type="date"
-                    id="endDate"
-                    v-model="endDate"
-                    class="form-control me-3"
-                  />
+                  <input type="date" id="endDate" v-model="endDate" class="form-control me-3" />
                   <button class="btn btn-search-blue" @click="applyFilter">Filter</button>
                 </div>
 
                 <!-- Mostrar símbolo de carga mientras se obtienen los registros -->
-                <div
-                  v-if="loading"
-                  class="d-flex justify-content-center align-items-center"
-                  style="height: 200px;"
-                >
+                <div v-if="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
                   <i class="fa fa-spinner fa-spin fa-3x"></i>
                 </div>
 
                 <!-- Tabla para mostrar el registro de sesiones recientes -->
-                <div
-                  v-else
-                  class="table-responsive"
-                  style="max-height: 600px; overflow-y: auto;"
-                >
-                  <table class="table table-striped mb-0" style="font-size: 1rem;">
+                <div v-else class="table-responsive" style="max-height: 600px; overflow-y: auto; overflow-x: auto;">
+                  <table class="table table-striped mb-0" style="font-size: 1rem; table-layout: fixed; width: 100%;">
                     <thead>
                       <tr style="font-weight: bold;">
-                        <th>User</th>
-                        <th>Event</th>
-                        <th>Hour</th>
-                        <th>Description</th>
+                        <th style="width: 20%;">User</th>
+                        <th style="width: 15%;">Event</th>
+                        <th style="width: 15%;">Hour</th>
+                        <th style="width: 50%;">Description</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr
-                        v-for="session in sessions"
-                        :key="session.id"
-                        style="height: 3rem;"
-                      >
+                      <tr v-for="session in sessions" :key="session.id" style="height: 3rem;">
                         <td>{{ session.user.name }}</td>
-                        <td>{{ capitalizeFirstLetter(session.event_type) }}</td>
+                        <td :class="{ 'text-danger fw-bold': session.event_type === 'Notify' }">
+                          {{ capitalizeFirstLetter(session.event_type) }}
+                        </td>
                         <td>{{ formatTimestamp(session.timestamp) }}</td>
-                        <td>{{ session.description }}</td>
+                        <td style="white-space: normal;">{{ session.description }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -75,6 +55,8 @@
     </div>
   </transition>
 </template>
+
+
 
 <script>
 import axios from "axios";
@@ -101,6 +83,22 @@ export default {
     formatTimestamp(timestamp) {
       return new Date(timestamp).toLocaleString();
     },
+    showToast(mensaje) {
+      this.toast.warning(mensaje, {
+        position: "top-right",
+        timeout: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        draggable: true,
+        draggablePercent: 0.6,
+        showCloseButtonOnHover: false,
+        hideProgressBar: true,
+        closeButton: "button",
+        icon: true,
+        rtl: false,
+      });
+    },
     // Llama a la API para obtener el registro de sesiones recientes
     fetchSessions(startDate, endDate) {
       this.loading = true; // Inicia el símbolo de carga
@@ -124,12 +122,12 @@ export default {
     applyFilter() {
       // Valida que las fechas no estén vacías y aplica el filtro
       if (!this.startDate || !this.endDate) {
-        alert("Please select both start and end dates.");
+        this.showToast("Please select both start and end dates.");
         return;
       }
 
       if (this.startDate > this.endDate) {
-        alert("Start date cannot be after end date.");
+        this.showToast("Start date cannot be after end date.");
         return;
       }
 

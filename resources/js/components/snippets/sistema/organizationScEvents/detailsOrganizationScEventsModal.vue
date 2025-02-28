@@ -20,9 +20,15 @@
                       <label v-if="organization1.status != null" class="fw-normal" style="font-size: 14px;">{{ organization1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ organization1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ organization1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Type Event: </label>
-                      <label v-if="organization1.typeEvent != null" class="fw-normal" style="font-size: 14px;">{{ organization1 }}</label>
+                      <label v-if="organization1.typeEvent != null" class="fw-normal" style="font-size: 14px;">{{ organization1.typeEvent }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-md-6 m-0 fs-8 pb-1">

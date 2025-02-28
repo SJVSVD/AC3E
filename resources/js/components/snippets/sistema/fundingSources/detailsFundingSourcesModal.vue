@@ -15,6 +15,12 @@
                 <div class="form-group">
                   <div class="row">
                     <div class="text-uppercase pb-4">General Information:</div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> Researchers Involved:
+                      <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> Research lines Involved:
+                      <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <label class="col-6 m-0 fs-8 pb-1">Type of Sources: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.typeSources || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Name of Institution: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.nameOfInstitution || '---' }}</label></label>
                     <label class="col-6 m-0 fs-8 pb-1">Program Contest: <label class="fw-normal" style="font-size: 14px;">{{ fundingSource1.programContest || '---' }}</label></label>

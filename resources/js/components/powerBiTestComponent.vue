@@ -96,10 +96,7 @@
           </div>
           <div class="card mt-3" v-if="filteredUsers.length > 0">
             <div class="card-header text-white">
-              <h5 v-if="selectedFilterType == 'line'" class="card-title text-center">Research Line Members</h5>
-              <h5 v-if="selectedFilterType == 'researchType' && selectedResearchType == 1" class="card-title text-center">Associative Researchers</h5>
-              <h5 v-if="selectedFilterType == 'researchType' && selectedResearchType == 2" class="card-title text-center">Postdoctoral Researchers</h5>
-              <h5 v-if="selectedFilterType == 'researchType' && selectedResearchType == 3" class="card-title text-center">Main Researchers</h5>
+              <h5 class="card-title text-center">{{ headerTitle }}</h5>
             </div>
             <div class="card-body">
               <div class="row">
@@ -130,6 +127,7 @@ import axios from "axios";
 export default {
   setup() {
     const selectedFilterType = ref(""); // Tipo de filtro seleccionado
+    const headerTitle = ref(""); // Tipo de filtro seleccionado
     const selectedResearchLine = ref(null);
     const selectedPerson = ref(null);
     const selectedResearchType = ref(null);
@@ -169,38 +167,89 @@ export default {
       }
     };
 
-    // 📌 Función para actualizar los datos del gráfico con "goals"
     const updateChartOptions = (labels, data, goals) => {
       const options = {
         title: { text: "Records & Goals by Progress Report Year", left: "center" },
-        tooltip: { trigger: "axis" },
-        xAxis: { type: "category", data: labels },
-        yAxis: { type: "value" },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "line", // Cambié el tipo a "line" para que sea más preciso
+            lineStyle: {
+              color: "#999",  // Color de la línea del puntero
+              width: 1,       // Grosor de la línea
+              type: "solid"   // Tipo de línea sólida para mayor visibilidad
+            },
+            // Hacer más preciso el puntero
+            snap: true, // Esto asegura que el puntero se alinee exactamente con los puntos de datos
+          },
+          confine: true, // Para evitar que el tooltip se desborde
+          // Mejorar la alineación del tooltip para evitar desplazamientos extraños
+          position: function (point, params, dom, rect, size) {
+            return [point[0], point[1] + 10]; // Alineamos el tooltip un poco hacia abajo
+          },
+        },
+        xAxis: {
+          type: "category",
+          data: labels,
+          axisPointer: { // Mejorar la interacción en el eje X
+            type: "shadow",
+          }
+        },
+        yAxis: {
+          type: "value",
+          axisPointer: {
+            type: "shadow", // Asegura que el puntero también se active en el eje Y
+          }
+        },
         series: [
           {
             name: "Records",
             type: "line",
             data: data,
-            lineStyle: { color: "#ed8d1d" }
+            lineStyle: { color: "#ed8d1d" },
+            // Esto asegura que el punto se destaque cuando el puntero esté sobre él
+            emphasis: {
+              focus: "series"
+            }
           },
           {
             name: "Goals",
             type: "line",
             data: goals,
             lineStyle: { color: "red", width: 2 },
-            itemStyle: { color: "red" }
+            itemStyle: { color: "red" },
+            emphasis: {
+              focus: "series"
+            }
           }
         ],
       };
+
       chartInstance.setOption(options);
     };
+
+
 
     const isEmptyData = ref(false);
     const errorMessage = ref("");
     const hasFiltered = ref(false); // Controla si ya se aplicó algún filtro
 
-    // 📌 Modificar `applyFilters` para incluir "goals"
     const applyFilters = async () => {
+      // Actualizar el encabezado según el filtro seleccionado
+      if (selectedFilterType.value === "line") {
+        headerTitle.value = "Research Line Members";
+      } else if (selectedFilterType.value === "researchType") {
+        if (selectedResearchType.value === 1) {
+          headerTitle.value = "Associative Researchers";
+        } else if (selectedResearchType.value === 2) {
+          headerTitle.value = "Postdoctoral Researchers";
+        } else if (selectedResearchType.value === 3) {
+          headerTitle.value = "Main Researchers";
+        }
+      } else if (selectedFilterType.value === "researcher") {
+        headerTitle.value = "Researcher Details";
+      }
+
       let params = {};
 
       if (selectedFilterType.value === "line" && selectedResearchLine.value) {
@@ -222,25 +271,30 @@ export default {
         loading.value = true;
         errorMessage.value = "";
         isEmptyData.value = false;
-        hasFiltered.value = true; // Marca que se aplicó un filtro
+        hasFiltered.value = true; // Se aplicó un filtro
 
-        // 📌 Llamar a la API que ahora devuelve también los "goals"
+        // Llamar a la API que devuelve también los "goals" y el currentProgressReport
         const response = await axios.get("/api/getFilteredRecordsByModule", { params });
         const records = response.data.recordsByYear;
         filteredUsers.value = response.data.filteredUsers || [];
-        goalsData.value = response.data.goals || {}; // 📌 Guardar los goals
+        goalsData.value = response.data.goals || {};
 
         // Si no hay datos, mostrar mensaje y ocultar el gráfico
         if (!records || Object.keys(records).length === 0) {
           isEmptyData.value = true;
           updateChartOptions([], [], []);
+          loading.value = false;
           return;
         }
 
-        // Convertir datos en arrays ordenados
-        const labels = Object.keys(records).map((key) => `Year ${key}`);
-        const values = Object.values(records);
-        const goals = labels.map((year) => goalsData.value[year.replace("Year ", "")] || null);
+        // Utilizar el currentProgressReport de la API (el año actual según extraTables)
+        const currentYear = Number(response.data.currentProgressReport);
+
+        // Crear un arreglo con todos los años desde 0 hasta currentYear (inclusivo)
+        const allYears = Array.from({ length: currentYear + 1 }, (_, i) => i.toString());
+        const labels = allYears.map(year => `Year ${year}`);
+        const values = allYears.map(year => records[year] || 0);
+        const goals = allYears.map(year => goalsData.value[year] || null);
 
         updateChartOptions(labels, values, goals);
         isEmptyData.value = false;
@@ -253,6 +307,7 @@ export default {
         hasFiltered.value = true;
       }
     };
+
 
     // Resetear filtros al cambiar de tipo de filtro
     const resetFilters = () => {
@@ -307,6 +362,7 @@ export default {
     });
 
     return {
+      headerTitle,
       selectedFilterType,
       selectedResearchLine,
       selectedPerson,

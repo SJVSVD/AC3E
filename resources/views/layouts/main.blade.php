@@ -77,7 +77,7 @@
                     <li><a href="/admin-roles">of Roles and Permissions</a></li>
                     <li><a href="/performance-targets">Set Performance Targets</a></li>
                     <li><a href="/import-info">Import data</a></li>
-                    <li><a href="/indicators">Indicators</a></li>
+                    <!-- <li><a href="/indicators">Indicators</a></li> -->
                     <li><a href="/recycle-bin">Recycle Bin</a></li>
                 </ul>
             </li>

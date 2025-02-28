@@ -20,6 +20,12 @@
                       <label v-if="collaboration1.status != null" class="fw-normal" style="font-size: 14px;">{{ collaboration1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ collaboration1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ collaboration1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Institution Collaborates: </label>
                       <label v-if="collaboration1.institutionCollaborates != null" class="fw-normal" style="font-size: 14px;">{{ collaboration1.institutionCollaborates }}</label>

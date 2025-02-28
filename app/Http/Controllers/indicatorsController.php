@@ -153,12 +153,29 @@ class indicatorsController extends Controller
 
                 if ($moduleName) {
                     $query->where('module', $moduleName); // Filtro por módulo
-                }else{
+                } else {
                     $query->where('module', null);
                 }
-    
+            
                 // Obtener el progreso de metas para este tipo de investigador y módulo (si se aplica)
                 $progressReport = $query->first();
+                
+                if ($progressReport) {
+                    // Contar la cantidad de usuarios activos con el idRole dado
+                    $activeUsersCount = User::where('idRole', $roleUser)->where('estado', 1)->count();
+                    
+                    // Decodificar los goals (asumidos en formato JSON)
+                    $goalsArray = json_decode($progressReport->goals, true);
+                    
+                    // Multiplicar cada goal por la cantidad de usuarios activos
+                    foreach ($goalsArray as $year => $goal) {
+                        $goalsArray[$year] = $goal * $activeUsersCount;
+                    }
+                    
+                    // Actualizar los goals en el progress report
+                    $progressReport->goals = json_encode($goalsArray);
+                    $goals = $goalsArray;
+                }
             } else {
                 $progressReport = null;
             }
@@ -224,6 +241,8 @@ class indicatorsController extends Controller
                     }
                 }
     
+                $query->where('status', 'Finished');
+
                 // Agrupar por progressReport
                 $groupedRecords = $query->groupBy('progressReport')
                                         ->orderBy('progressReport', 'asc')

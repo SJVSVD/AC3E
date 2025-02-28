@@ -26,28 +26,28 @@
             </div>
         </div>
         <div v-if="activeDataCollection" class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
-            <div class="card overflow-hidden" style="height: 200px;">
-                <div class="card-body p-3 text-white  background-size" style="background-color: #4d4d4d; min-height: 160px;">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="numbers" style="min-height: 80px; text-align: center; margin-top: 10px;">
-                                <p class="text-sm mb-0 text-uppercase text-white fw-bold">Data Collection Countdown</p>
-                                <h4 style="color: red;" class="fw-bolder">
-                                    {{ timeCountdown }}
-                                </h4>
-                                Once you have finished uploading your information, you must notify by clicking the button below:
-                                <a v-if="!notify" class="btn btn-dark-grey " title="Notify Data Collection as Complete"  @click="notifyData">
-                                    <i class="fa-solid fa-envelope-circle-check"></i>&nbsp; Notify Data Collection as Complete
-                                </a>
-                                <a v-else class="btn btn-orange ">
-                                    You have already notified
-                                </a>
-                            </div>
-                        </div>
+            <div class="card overflow-hidden d-flex flex-column" style="height: 200px;">
+                <div class="card-body p-3 text-white background-size d-flex flex-column justify-content-between" 
+                    style="background-color: #4d4d4d; min-height: 160px;">
+                    <div class="text-center">
+                        <p class="text-sm mb-0 text-uppercase text-white fw-bold">Data Collection Countdown</p>
+                        <h4 style="color: red; font-size: 22px;" class="fw-bolder">
+                            {{ timeCountdown }}
+                        </h4>
+                        <p>Once you have finished uploading your information, you must notify by clicking the button below:</p>
+                    </div>
+                    <div class="text-center">
+                        <a v-if="!notify" class="btn btn-dark-grey w-100" title="Notify Data Collection as Complete" @click="notifyData">
+                            <i class="fa-solid fa-envelope-circle-check"></i>&nbsp; Notify Data Collection as Complete
+                        </a>
+                        <a v-else class="btn btn-orange w-100">
+                            You have already notified
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
+
         <div v-else class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
             <div class="card overflow-hidden" style="height: 160px;">
                 <div class="card-body p-3 text-white  background-size" style="background-color: #4d4d4d; min-height: 160px;">
@@ -74,7 +74,7 @@
     <div class="row mt-4">
         <div class="col-lg-10">
             <div class="card z-index-2 p-0" style="min-height: 200px; max-height: 650px;">
-                <div class="table-responsive p-4">
+                <div class="table-responsive custom-scroll  p-4">
                     <div v-show="mostrarCarga" class="loader-sm"></div>
                     <table v-show="mostrarTabla" class="table align-items-center mb-0" id="myTableRegistros">
                         <thead>
@@ -132,38 +132,38 @@
         <div class="col-lg-2">
             <div class="card z-index-2 p-0" style="max-height: 650px;">
                 <div class="row p-3">
-                    <!-- <button @click="updateResearchLines">Actualizar Research Lines</button> -->
                     <!-- Botón de Export Consolidado (solo para Administrador) -->
                     <div class="col-12" v-if="can('See_Download_Database')">
-                        <a class="btn btn-search-blue w-100 d-flex justify-content-center align-items-center" :title="buttonText1" style="min-height: 40px; min-width: 20px;" @click="exportConsolidado">
+                        <a class="btn btn-search-blue w-100 d-flex justify-content-start align-items-center" :title="buttonText1" style="min-height: 40px; min-width: 20px;" @click="exportConsolidado">
                             <i class="fa fa-fw fa-download"></i>&nbsp;{{ buttonText1 }}
                         </a>
                     </div>
                     <!-- Botón de Export Individual-->
                     <div v-if="can('See_Individual_Export')" class="col-12 pt-1">
-                        <a class="btn btn-purple w-100 d-flex justify-content-center align-items-center" :title="buttonText2"  style="min-height: 40px; min-width: 20px;" @click="exportIndividual">
+                        <a class="btn btn-purple w-100 d-flex justify-content-start align-items-center" :title="buttonText2"  style="min-height: 40px; min-width: 20px;" @click="exportIndividual">
                             <i class="fa fa-fw fa-download"></i>&nbsp;{{ buttonText2 }}
                         </a>
                     </div>
                     <!-- Botón de Ver Actividad Reciente -->
                     <div class="col-12 pt-1" v-if="is('Administrator')">
-                        <a class="btn btn-orange w-100 d-flex justify-content-center align-items-center" style="min-height: 40px; min-width: 20px;" title="View recent activity" @click="showVerActividadReciente = true">
+                        <a class="btn btn-orange w-100 d-flex justify-content-start align-items-center" style="min-height: 40px; min-width: 20px;" title="View recent activity" @click="showVerActividadReciente = true">
                             <i class="fa fa-history"></i>&nbsp; View recent activity
                         </a>
                     </div>
                     <!-- Botón de Modo levantamiento -->
                     <div class="col-12 pt-1" v-if="is('Administrator')">
-                        <a class="btn btn-continue w-100 d-flex justify-content-center align-items-center" style="min-height: 40px; min-width: 20px;" title="Display New Message" @click="showLiftMode = true">
+                        <a class="btn btn-continue w-100 d-flex justify-content-start align-items-center" style="min-height: 40px; min-width: 20px;" title="Display New Message" @click="showLiftMode = true">
                             <i class="fa-solid fa-envelope"></i>&nbsp; Display New Message
                         </a>
                     </div>
                     <!-- Botón de Performance Data Collection Mode -->
                     <div class="col-12 pt-1" v-if="is('Administrator')">
-                        <a class="btn btn-closed w-100 d-flex justify-content-center align-items-center" style="min-height: 40px; min-width: 20px;" title="Activate Performance Data Collection Mode" @click="showDataCollection = true">
-                            <i class="fa-solid fa-clock"></i>Performance Data Collection Mode
+                        <a class="btn btn-closed w-100 d-flex justify-content-start align-items-center" style="min-height: 40px; min-width: 20px;" title="Activate Performance Data Collection Mode" @click="showDataCollection = true">
+                            <i class="fa-solid fa-clock"></i>&nbsp; Data Collection Mode
                         </a>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -317,12 +317,6 @@ export default {
                 
                 if (data.mode.is_active && data.researcher) {
 
-                    if(!data.notify){
-                        this.activeAnnouncement = {
-                            message: "AAAAAAAAAAA"
-                        };
-                    }
-
                     const deadline = new Date(data.mode.deadline).getTime(); // Convierte el deadline a timestamp
                     
                     // Intervalo para la cuenta regresiva
@@ -338,7 +332,7 @@ export default {
 
                             this.timeCountdown = `${days}d ${hours}h ${minutes}m ${seconds}s`; // Muestra la cuenta regresiva
                         } else {
-                            this.timeCountdown = "La cuenta regresiva ha terminado"; // Si pasó el tiempo
+                            this.timeCountdown = "The submission deadline has officially ended"; // Si pasó el tiempo
                             clearInterval(this.intervalCountDown); // Detiene el intervalo de cuenta regresiva
                         }
                     }, 1000); // Actualiza cada segundo
@@ -813,4 +807,3 @@ export default {
 
 }
 </script>
-

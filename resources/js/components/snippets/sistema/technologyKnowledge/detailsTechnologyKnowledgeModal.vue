@@ -20,10 +20,16 @@
                       <label v-if="technology1.status != null" class="fw-normal" style="font-size: 14px;">{{ technology1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ technology1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ technology1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Technology Transfer: </label>
                       <label v-if="technology1.technologyTransfer != null" class="fw-normal" style="font-size: 14px;">
-                        {{ technology1.technologyTransfer == 1 ? 'True' : 'False' }}
+                        {{ technology1.technologyTransfer == 1 ? 'Yes' : 'No' }}
                       </label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
@@ -31,7 +37,7 @@
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Knowledge Transfer: </label>
                       <label v-if="technology1.knowledgeTransfer != null" class="fw-normal" style="font-size: 14px;">
-                        {{ technology1.knowledgeTransfer == 1 ? 'True' : 'False' }}
+                        {{ technology1.knowledgeTransfer == 1 ? 'Yes' : 'No' }}
                       </label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
@@ -98,16 +104,6 @@
                     <div class="col-6 m-0 fs-8 pb-1">
                       <label>Name of Institution Involved: </label>
                       <label v-if="technology1.nameOfInstitutionInvolved != null" class="fw-normal" style="font-size: 14px;">{{ technology1.nameOfInstitutionInvolved }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>Researchers Involved: </label>
-                      <label v-if="technology1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ technology1.researcherInvolved }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
-                    <div class="col-6 m-0 fs-8 pb-1">
-                      <label>External Researcher: </label>
-                      <label v-if="technology1.externalResearcher != null" class="fw-normal" style="font-size: 14px;">{{ technology1.externalResearcher }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
                     <div class="col-6 m-0 fs-8 pb-1">

@@ -286,6 +286,10 @@
           this.crearTabla('#myTableParticipations');
         }
       },
+      verParticipation(participation){
+          this.participationScEvent = participation;
+          this.showDetailsParticipation = true;
+      },
       editParticipation(participation) {
         this.participationEdit = participation;
         this.showEditParticipation = true;

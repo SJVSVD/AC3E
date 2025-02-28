@@ -20,6 +20,8 @@
                       <label v-if="book1.workType != null" class="fw-normal" style="font-size: 14px;">{{ book1.workType }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> Researchers Involved: <label v-if="book1.researcherInvolved != null" class="fw-normal" style="font-size: 14px;">{{ book1.researcherInvolved }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> Research lines Involved: <label v-if="book1.researchLinesInvolved != null" class="fw-normal" style="font-size: 14px;">{{ book1.researchLinesInvolved }}</label><label v-else class="fw-normal" style="font-size: 14px;">---</label></label>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Book Authors: </label>
                       <label v-if="book1.bookAuthors != null" class="fw-normal" style="font-size: 14px;">{{ book1.bookAuthors }}</label>

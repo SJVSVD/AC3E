@@ -20,11 +20,12 @@
                       <label v-if="participation1.status != null" class="fw-normal" style="font-size: 14px;">{{ participation1.status }}</label>
                       <label v-else class="fw-normal" style="font-size: 14px;">---</label>
                     </div>
-                    <div class="col-md-6 m-0 fs-8 pb-1">
-                      <label>Researchers involved: </label>
-                      <label v-if="participation1.presentationTitle != null" class="fw-normal" style="font-size: 14px;">{{ participation1.researcherInvolved }}</label>
-                      <label v-else class="fw-normal" style="font-size: 14px;">---</label>
-                    </div>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Researchers Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ participation1.researcherInvolved || '---' }}</label>
+                    </label>
+                    <label class="col-md-10 m-0 fs-8 pb-1"> <label for="">Research lines Involved:</label> 
+                      <label class="fw-normal" style="font-size: 14px;">{{ participation1.researchLinesInvolved || '---' }}</label>
+                    </label>
                     <div class="col-md-6 m-0 fs-8 pb-1">
                       <label>Presentation Title: </label>
                       <label v-if="participation1.presentationTitle != null" class="fw-normal" style="font-size: 14px;">{{ participation1.presentationTitle }}</label>

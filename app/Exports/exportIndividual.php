@@ -128,6 +128,30 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
         // Ordenar elementos de las facturas:
         $isis = [];
         foreach ($isiPublications as $isiPublication) {
+
+            $researchers = [];
+
+            if (isset($isiPublication['mainResearchers']) && $isiPublication['mainResearchers'] == 1) {
+                $researchers[] = 'Main Researchers';
+            }
+            if (isset($isiPublication['associativeResearchers']) && $isiPublication['associativeResearchers'] == 1) {
+                $researchers[] = 'Associative Researchers';
+            }
+            if (isset($isiPublication['postDoc']) && $isiPublication['postDoc'] == 1) {
+                $researchers[] = 'Post Doc';
+            }
+            if (isset($isiPublication['thesisStudents']) && $isiPublication['thesisStudents'] == 1) {
+                $researchers[] = 'Thesis Students';
+            }
+            if (isset($isiPublication['nationalExternalResearchers']) && $isiPublication['nationalExternalResearchers'] == 1) {
+                $researchers[] = 'National External Researchers';
+            }
+            if (isset($isiPublication['internationalExternalResearchers']) && $isiPublication['internationalExternalResearchers'] == 1) {
+                $researchers[] = 'International External Researchers';
+            }
+            
+            $researchersField = implode(', ', $researchers);
+
             $newisiPublication = [
                 'Id' => $isiPublication['id'],
                 'Progress Report Year' => $isiPublication['progressReport'],
@@ -144,12 +168,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 'Year Published' => $isiPublication['yearPublished'],
                 'Month' => $isiPublication['month'],
                 'Keywords' => $isiPublication['keywords'],
-                'Main Researchers' => $isiPublication['mainResearchers'],
-                'Associative Researchers' => $isiPublication['associativeResearchers'],
-                'Post Doc' => $isiPublication['postDoc'],
-                'Thesis Students' => $isiPublication['thesisStudents'],
-                'National External Researchers' => $isiPublication['nationalExternalResearchers'],
-                'International External Researchers' => $isiPublication['internationalExternalResearchers'],
+                'Participations' => $researchersField,
                 'Comments' => $isiPublication['comments'],
             ];
             array_push($isis, $newisiPublication);
@@ -163,7 +182,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
     public function headings(): array
     {
-        return ['No.','Progress Report Year','User','Researchers Involved','Authors','Article Title','Journal Name','Digital Object Identifier (DOI)','Volume','First Page', 'Last Page','Funding','Year Published','Month','Keywords','Main Researchers','Associative Researchers','Postdoc','Thesis Students','National External Researchers','Internacional External Researchers','Comments'];
+        return ['No.','Progress Report Year','User','Researchers Involved','Authors','Article Title','Journal Name','Digital Object Identifier (DOI)','Volume','First Page', 'Last Page','Funding','Year Published','Month','Keywords','Participations','Comments'];
     }
 
     public function registerEvents(): array
@@ -173,7 +192,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 // Obtiene la hoja activa
                 $sheet = $event->sheet;
                 // Se le aplica autofilter al header
-                $sheet->setAutoFilter('A1:V1');
+                $sheet->setAutoFilter('A1:Q1');
             },
         ];
     }
@@ -181,7 +200,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
     public function columnWidths(): array
     {
         // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
-        $specificWidths = array_fill_keys(range('C', 'V'), 40);
+        $specificWidths = array_fill_keys(range('C', 'Q'), 40);
     
         // Devolver el arreglo de anchos específicos
         return $specificWidths;
@@ -205,7 +224,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
     public function styles(Worksheet $sheet)
     {
         // Establecer estilos para el encabezado
-        $sheet->getStyle('A1:V1')->applyFromArray([
+        $sheet->getStyle('A1:Q1')->applyFromArray([
             'font' => [
                 'Calibri' => true,
                 'bold' => true,
@@ -223,7 +242,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
         ]);
 
         // Establecer estilos para las celdas (excepto el encabezado)
-        $sheet->getStyle('A2:V'.$sheet->getHighestRow())->applyFromArray([
+        $sheet->getStyle('A2:Q'.$sheet->getHighestRow())->applyFromArray([
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => [
@@ -293,12 +312,6 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                         'Funding' => $nonIsiPublication['funding'],
                         'Year Published' => $nonIsiPublication['yearPublished'],
                         'Month' => $nonIsiPublication['month'],
-                        'Main Researchers' => $nonIsiPublication['mainResearchers'],
-                        'Associative Researchers' => $nonIsiPublication['associativeResearchers'],
-                        'Post Doc' => $nonIsiPublication['postDoc'],
-                        'Thesis Students' => $nonIsiPublication['thesisStudents'],
-                        'National External Researchers' => $nonIsiPublication['nationalExternalResearchers'],
-                        'International External Researchers' => $nonIsiPublication['internationalExternalResearchers'],
                         'Comments' => $nonIsiPublication['comments'],
                     ];
                     array_push($nonIsis, $newNonIsiPublication);
@@ -312,7 +325,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report Year','User','Researchers Involved','Authors','Article Title','Journal Name','Volume','First Page','Last Page','Funding','Year Published','Month','Main Researchers','Associative Researchers','Post Doc','Thesis Students','National External Researchers','International External Researchers','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Authors','Article Title','Journal Name','Volume','First Page','Last Page','Funding','Year Published','Month','Comments'];
             }
 
             public function columnWidths(): array
@@ -342,7 +355,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             public function styles(Worksheet $sheet)
             {
                 // Establecer estilos para el encabezado
-                $sheet->getStyle('A1:T1')->applyFromArray([
+                $sheet->getStyle('A1:O1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
@@ -360,7 +373,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 ]);
         
                 // Establecer estilos para las celdas (excepto el encabezado)
-                $sheet->getStyle('A2:T'.$sheet->getHighestRow())->applyFromArray([
+                $sheet->getStyle('A2:O'.$sheet->getHighestRow())->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
@@ -383,7 +396,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:T1');
+                        $sheet->setAutoFilter('A1:O1');
                     },
                 ];
             }
@@ -1113,7 +1126,14 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 }
                 // Ordenar elementos de las facturas:
                 $thesisArray = [];
+                
                 foreach ($theses as $these) {
+                    if($these['thesisStatus'] == 1){
+                        $these['thesisStatus'] = "Finished";
+                    }
+                    if($these['thesisStatus'] == 2){
+                        $these['thesisStatus'] = "In progress";
+                    }
                     $newThesis = [
                         'Id' => $these['id'],
                         'Progress Report Year' => $these['progressReport'],
@@ -1836,13 +1856,25 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 // Ordenar elementos de las facturas:
                 $technologyKnowledgeArray = [];
                 foreach ($technologyKnowledges as $technologyKnowledge) {
+
+                    $transfers = [];
+
+                    if (isset($technologyKnowledge['technologyTransfer']) && $technologyKnowledge['technologyTransfer'] == 1) {
+                        $transfers[] = 'Technology Transfer';
+                    }
+                    if (isset($technologyKnowledge['knowledgeTransfer']) && $technologyKnowledge['knowledgeTransfer'] == 1) {
+                        $transfers[] = 'Knowledge Transfer';
+                    }
+                    
+                    $transfersField = implode(', ', $transfers);
+                    
+
                     $newTechnologyKnowledge = [
                         'Id' => $technologyKnowledge['id'],
                         'Progress Report Year' => $technologyKnowledge['progressReport'],
                         'User' => $technologyKnowledge['idUsuario'],
                         'Researchers Involved' => $technologyKnowledge['researcherInvolved'],
-                        'Technology Transfer' => $technologyKnowledge['technologyTransfer'],
-                        'Knowledge Transfer' => $technologyKnowledge['knowledgeTransfer'],
+                        'Category of Transfer' => $transfersField,
                         'Type of Transfer' => $technologyKnowledge['typeOfTransfer'],
                         'Name of the Institution Involved' => $technologyKnowledge['nameOfInstitutionInvolved'],
                         'Name of Beneficiary Institution' => $technologyKnowledge['nameOfBeneficiary'],
@@ -1864,13 +1896,13 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
 
             public function headings(): array
             {
-                return ['Id', 'Progress Report Year','User','Researchers Involved','Technology Transfer','Knowledge Transfer','Type of Transfer','Name of the Institution Involved','Name of Beneficiary Institution','Description','Country','City','Place/Region','Year','Comments'];
+                return ['Id', 'Progress Report Year','User','Researchers Involved','Category of Transfer','Type of Transfer','Name of the Institution Involved','Name of Beneficiary Institution','Description','Country','City','Place/Region','Year','Comments'];
             }
 
             public function columnWidths(): array
             {
                 // Generar automáticamente un arreglo con todas las letras de la A a la Q y asignarles un ancho de 50 unidades
-                $specificWidths = array_fill_keys(range('C', 'O'), 40);
+                $specificWidths = array_fill_keys(range('C', 'N'), 40);
             
                 // Devolver el arreglo de anchos específicos
                 return $specificWidths;
@@ -1894,7 +1926,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
             public function styles(Worksheet $sheet)
             {
                 // Establecer estilos para el encabezado
-                $sheet->getStyle('A1:O1')->applyFromArray([
+                $sheet->getStyle('A1:N1')->applyFromArray([
                     'font' => [
                         'Calibri' => true,
                         'bold' => true,
@@ -1912,7 +1944,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                 ]);
         
                 // Establecer estilos para las celdas (excepto el encabezado)
-                $sheet->getStyle('A2:O'.$sheet->getHighestRow())->applyFromArray([
+                $sheet->getStyle('A2:N'.$sheet->getHighestRow())->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
@@ -1935,7 +1967,7 @@ class exportIndividual implements WithMultipleSheets, WithDefaultStyles, WithEve
                         // Obtiene la hoja activa
                         $sheet = $event->sheet;
                         // Se le aplica autofilter al header
-                        $sheet->setAutoFilter('A1:O1');
+                        $sheet->setAutoFilter('A1:N1');
                     },
                 ];
             }
