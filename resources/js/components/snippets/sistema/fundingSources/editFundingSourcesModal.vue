@@ -468,8 +468,15 @@ export default {
         async editFunding() {
         this.errors = [];
 
-        for (const item in this.fundingSource){
-          if(this.fundingSource[item] === "" || this.fundingSource[item] === 0 || this.fundingSource[item] == null || this.fundingSource[item] == []){
+        const itemsToSkip = [
+          'comments',
+          'progressReport',
+          'inCash'
+        ];
+
+        for (const item in this.fundingSource) {
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.fundingSource[item] === "" || this.fundingSource[item] === 0 || this.fundingSource[item] == null)) {
                 this.errors.push(item);
             }
         }
@@ -513,7 +520,7 @@ export default {
             }else if(item == 'projectTitle'){
               mensaje =   mensaje + "The field Project title is required" + "\n";
             }else if(item == 'researcherInvolved'){
-              mensaje =   mensaje + "The field Principal researcher is required" + "\n";
+              mensaje =   mensaje + "The field Ac3e Researchers involved is required" + "\n";
             }else if(item == 'startDate'){
               mensaje =   mensaje + "The field Start date is required" + "\n";
             }else if(item == 'finishDate'){

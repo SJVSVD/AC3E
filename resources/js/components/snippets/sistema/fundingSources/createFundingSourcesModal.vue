@@ -444,17 +444,17 @@ export default {
       async createFunding() {
         this.errors = [];
 
+        const itemsToSkip = [
+          'comments',
+          'progressReport',
+          'inCash'
+        ];
+
         for (const item in this.fundingSource) {
-          if (item !== "comments") { // Verificar si el item no es "comments"
-            if (
-              this.fundingSource[item] === "" ||
-              this.fundingSource[item] === 0 ||
-              this.fundingSource[item] == null ||
-              this.fundingSource[item] == []
-            ) {
-              this.errors.push(item);
+            const skipItem = itemsToSkip.includes(item);
+            if (!skipItem && (this.fundingSource[item] === "" || this.fundingSource[item] === 0 || this.fundingSource[item] == null)) {
+                this.errors.push(item);
             }
-          }
         }
 
         var contador = await axios.post('../api/verifyFunding', this.fundingSource).then(function(response) {
@@ -478,7 +478,7 @@ export default {
             }else if(item == 'projectTitle'){
               mensaje =   mensaje + "The field Project title is required" + "\n";
             }else if(item == 'researcherInvolved'){
-              mensaje =   mensaje + "The field Principal researcher is required" + "\n";
+              mensaje =   mensaje + "The field Ac3e Researchers involved is required" + "\n";
             }else if(item == 'startDate'){
               mensaje =   mensaje + "The field Start date is required" + "\n";
             }else if(item == 'finishDate'){

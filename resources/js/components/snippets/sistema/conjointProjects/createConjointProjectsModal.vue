@@ -41,7 +41,7 @@
                         />
                       </div>
 
-                          <div class="col-md-3">
+                          <!-- <div class="col-md-3">
                             <label for="">Collaboration Stay:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="conjointProject.collaborationStay">
@@ -56,7 +56,7 @@
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other2">
-                          </div>
+                          </div> -->
                     </div>
                     <br>
                     <div class="row">
@@ -481,6 +481,7 @@ export default {
       async createCollaboration() {
         this.errors = [];
         const itemsToSkip = [
+          'collaborationStay',
           'comments'
         ];
 
@@ -492,9 +493,9 @@ export default {
         }
 
 
-        if(this.conjointProject.collaborationStay == 'Other' && this.other2 == ''){
-          this.errors.push('other2');
-        }
+        // if(this.conjointProject.collaborationStay == 'Other' && this.other2 == ''){
+        //   this.errors.push('other2');
+        // }
 
         let conjointProject1 = {
           status: 'Finished',

@@ -123,6 +123,7 @@
 import { ref, onMounted } from "vue";
 import * as echarts from "echarts";
 import axios from "axios";
+import { useToast } from "vue-toastification";
 
 export default {
   setup() {
@@ -267,13 +268,16 @@ export default {
         params.module = selectedModule.value;
       }
 
-      try {
-        loading.value = true;
-        errorMessage.value = "";
-        isEmptyData.value = false;
-        hasFiltered.value = true; // Se aplicó un filtro
+      // Limpia el gráfico y resetea las variables antes de hacer la llamada
+      updateChartOptions([], [], []); // Limpiar gráfico antes de obtener nuevos datos
+      filteredUsers.value = [];
+      goalsData.value = {};
+      isEmptyData.value = false;
+      loading.value = true;
+      errorMessage.value = "";
+      hasFiltered.value = false;
 
-        // Llamar a la API que devuelve también los "goals" y el currentProgressReport
+      try {
         const response = await axios.get("/api/getFilteredRecordsByModule", { params });
         const records = response.data.recordsByYear;
         filteredUsers.value = response.data.filteredUsers || [];
@@ -282,9 +286,8 @@ export default {
         // Si no hay datos, mostrar mensaje y ocultar el gráfico
         if (!records || Object.keys(records).length === 0) {
           isEmptyData.value = true;
-          updateChartOptions([], [], []);
           loading.value = false;
-          return;
+          return; // No continuar, ya limpiamos el gráfico
         }
 
         // Utilizar el currentProgressReport de la API (el año actual según extraTables)
@@ -296,17 +299,22 @@ export default {
         const values = allYears.map(year => records[year] || 0);
         const goals = allYears.map(year => goalsData.value[year] || null);
 
+        // Actualizar gráfico con los nuevos datos
         updateChartOptions(labels, values, goals);
         isEmptyData.value = false;
         loading.value = false;
       } catch (error) {
+        const toast = useToast();
+
         console.error("Error fetching filtered data:", error);
+        toast.warning("Error fetching filtered data: Goals not assigned due to an error.");
         errorMessage.value = "An error occurred while retrieving the data. Please try again.";
         loading.value = false;
         isEmptyData.value = false;
         hasFiltered.value = true;
       }
     };
+
 
 
     // Resetear filtros al cambiar de tipo de filtro

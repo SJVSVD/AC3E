@@ -40,7 +40,7 @@
                           :object="true"
                         />
                       </div>
-                          <div class="col-md-3">
+                          <!-- <div class="col-md-3">
                             <label for="">Collaboration Stay:</label>
                             <label for="" style="color: orange;">*</label>
                             <select class="form-select" v-model="conjointProject.collaborationStay">
@@ -55,7 +55,7 @@
                             <label for="" style="color: orange;">*</label>
                             <br>
                             <input type="text" class= "form-control" v-model="other2">
-                          </div>
+                          </div> -->
                     </div>
                     <br>
                     <div class="row">
@@ -517,7 +517,8 @@ export default {
         async editConjoint() {
         this.errors = [];
         const itemsToSkip = [
-          'comments'
+          'comments',
+          'collaborationStay'
         ];
 
         for (const item in this.conjointProject) {
@@ -528,9 +529,9 @@ export default {
         }
 
 
-        if(this.conjointProject.collaborationStay == 'Other' && this.other2 == ''){
-          this.errors.push('other2');
-        }
+        // if(this.conjointProject.collaborationStay == 'Other' && this.other2 == ''){
+        //   this.errors.push('other2');
+        // }
 
         var idUser1 = ''
         if(this.idResearcher != ''){

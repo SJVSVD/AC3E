@@ -20,6 +20,7 @@ use App\Models\scCollaborations;
 use App\Models\technologyKnowledge;
 use App\Models\thesisStudent;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -46,19 +47,24 @@ class indicatorsController extends Controller
                     return response()->json(['error' => 'Research line not found'], 404);
                 }
                 $lineName = strtolower($researchLine->name);
-    
+            
                 // Obtener usuarios de esta línea de investigación
-                $filteredUsers = User::where('idResearchLine', $lineId)->where('estado',1)
-                                    ->select('id', 'name','idRole')
-                                    ->get();
+                $filteredUsers = User::where('idResearchLine', $lineId)
+                                     ->where('estado', 1)
+                                     ->whereIn('idRole', [1, 2, 3])  // Filtrar por idRole 1, 2 o 3
+                                     ->select('id', 'name', 'idRole')
+                                     ->get();
             }
-    
+            
             // Obtener los usuarios por tipo de investigador
             if ($roleUser) {
-                $filteredUsers = User::where('idRole', $roleUser)->where('estado',1)
-                                    ->select('id', 'name')
-                                    ->get();
+                // Si se pasa un valor en roleUser, obtener usuarios con ese idRole
+                $filteredUsers = User::where('idRole', $roleUser)
+                                     ->where('estado', 1)
+                                     ->select('id', 'name','idRole')
+                                     ->get();
             }
+            
     
             // 📌 Obtener los goals correspondientes al filtro seleccionado
             if ($lineId) {
@@ -110,8 +116,13 @@ class indicatorsController extends Controller
                 // Paso 9: Ordenar los goles por año
                 ksort($totalGoals);
 
-                // Guardar los goles sumados y ordenados en el progreso final
-                $progressReport->goals = json_encode($totalGoals);
+
+                // Solo asignar los goles si progressReport no es nulo
+                if ($progressReport && !empty($totalGoals)) {
+                    $progressReport->goals = json_encode($totalGoals);
+                }
+
+                
             }elseif ($personId) {
                 // 1. Obtener el idRole del usuario (personId)
                 $user = User::find($personId);
@@ -262,15 +273,221 @@ class indicatorsController extends Controller
     
             // Ordenar los resultados por año de progressReport
             ksort($recordsByYear);
-    
+
             // Obtener el progressReport actual desde extraTables
             $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+
+            $indicatorsValue = [];
+
+            if ($moduleName) {
+                switch ($moduleName) {
+                    case 'isiPublications':
+                        if ($personId) {
+                            // Obtener el valor del campo de $currentProgressReport
+                            $value = $recordsByYear[$currentProgressReport] ?? null;
+                            
+                            $indicatorsValue = [
+                                'indicator' => 'Progress Report for ' . $currentProgressReport,
+                                'value' => $value
+                            ];
+
+                        }else if($roleUser){
+                            // Filtrar usuarios por el idRole
+                            $usersWithRole = User::where('idRole', $roleUser)->where('estado',1)->get();
+
+                            // Si existen usuarios con ese roleId
+                            if ($usersWithRole->count() > 0) {
+                                $userCount = $usersWithRole->count();
+
+                                $value = floor($recordsByYear[$currentProgressReport]/$userCount) ?? null;
+
+                                // Crear la respuesta con el indicador y el valor promedio
+                                $indicatorsValue = [
+                                    'indicator' => 'Progress Report for ' . $currentProgressReport,
+                                    'value' => $value
+                                ];
+                            } else {
+                                // Si no hay usuarios con el idResearchLine, retornar null
+                                $indicatorsValue = [
+                                    'indicator' => 'Progress Report for ' . $currentProgressReport,
+                                    'value' => null
+                                ];
+                            }
+                         }else if ($lineId) {
+                            // Filtrar usuarios por el idResearchLine
+                            $usersWithResearchLine = User::where('idResearchLine', $lineId)->where('estado',1)->whereIn('idRole', [1, 2, 3]) ->get();
+                        
+                            // Si existen usuarios con ese idResearchLine
+                            if ($usersWithResearchLine->count() > 0) {
+                                $userCount = $usersWithResearchLine->count();
+                        
+                                // Calcular el promedio y truncarlo en el segundo decimal
+                                $value = floor($recordsByYear[$currentProgressReport]/$userCount) ?? null;
+                        
+                                // Crear la respuesta con el indicador y el valor promedio
+                                $indicatorsValue = [
+                                    'indicator' => 'Progress Report for ' . $currentProgressReport,
+                                    'value' => $value
+                                ];
+                            } else {
+                                // Si no hay usuarios con el idResearchLine, retornar null
+                                $indicatorsValue = [
+                                    'indicator' => 'Progress Report for ' . $currentProgressReport,
+                                    'value' => null
+                                ];
+                            }
+                        }
+                    break;
+        
+                    case 'nonIsiPublications':
+                            // Obtener el valor del campo de $currentProgressReport
+                            $value = $recordsByYear[$currentProgressReport] ?? null;
+                            
+                            $indicatorsValue = [
+                                'indicator' => 'Progress Report for ' . $currentProgressReport,
+                                'value' => $value
+                            ];
+
+                        break;
+        
+                    case 'books':
+                        // Obtener el valor del campo de $currentProgressReport
+                        $value = $recordsByYear[$currentProgressReport] ?? null;
+                        
+                        $indicatorsValue = [
+                            'indicator' => 'Progress Report for ' . $currentProgressReport,
+                            'value' => $value
+                        ];
+                    break;
+        
+                    case 'awards':
+                        // Obtener el valor del campo de $currentProgressReport
+                        $value = $recordsByYear[$currentProgressReport] ?? null;
+                        
+                        $indicatorsValue = [
+                            'indicator' => 'Progress Report for ' . $currentProgressReport,
+                            'value' => $value
+                        ];
+                    break;
+        
+                    case 'organizationsScEvents':
+                        // Obtener el valor del campo de $currentProgressReport
+                        $value = $recordsByYear[$currentProgressReport] ?? null;
+                        
+                        $indicatorsValue = [
+                            'indicator' => 'Progress Report for ' . $currentProgressReport,
+                            'value' => $value
+                        ];
+                    break;
+        
+                    case 'participationScEvents':
+                        // Obtener el valor del campo de $currentProgressReport
+                        $value = $recordsByYear[$currentProgressReport] ?? null;
+                        
+                        $indicatorsValue = [
+                            'indicator' => 'Progress Report for ' . $currentProgressReport,
+                            'value' => $value
+                        ];
+                    break;
+
+                    case 'scCollaborations':
+                        // Obtener el valor del campo de $currentProgressReport
+                        $value = $recordsByYear[$currentProgressReport] ?? null;
+                        
+                        $indicatorsValue = [
+                            'indicator' => 'Progress Report for ' . $currentProgressReport,
+                            'value' => $value
+                        ];
+                    break;
+
+                    case 'thesisStudents':
+                        // Obtener registros de eventos SC por organización
+                        $recordsByYear = organizationsScEvents::groupBy('year')
+                                                ->selectRaw('year, COUNT(*) as total')
+                                                ->get();
+                        $moduleOptions = [
+                            ['label' => 'Filter by Organization', 'value' => 'organization'],
+                            ['label' => 'Filter by Event Type', 'value' => 'eventType']
+                        ];
+                        break;
+
+                    case 'postDocs':
+                        // Obtener registros de eventos SC por organización
+                        $recordsByYear = organizationsScEvents::groupBy('year')
+                                                ->selectRaw('year, COUNT(*) as total')
+                                                ->get();
+                        $moduleOptions = [
+                            ['label' => 'Filter by Organization', 'value' => 'organization'],
+                            ['label' => 'Filter by Event Type', 'value' => 'eventType']
+                        ];
+                        break;
+
+                    case 'outreachActivities':
+                        // Obtener registros de eventos SC por organización
+                        $recordsByYear = organizationsScEvents::groupBy('year')
+                                                ->selectRaw('year, COUNT(*) as total')
+                                                ->get();
+                        $moduleOptions = [
+                            ['label' => 'Filter by Organization', 'value' => 'organization'],
+                            ['label' => 'Filter by Event Type', 'value' => 'eventType']
+                        ];
+                        break;
+                    
+                    case 'patents':
+                        // Obtener registros de eventos SC por organización
+                        $recordsByYear = organizationsScEvents::groupBy('year')
+                                                ->selectRaw('year, COUNT(*) as total')
+                                                ->get();
+                        $moduleOptions = [
+                            ['label' => 'Filter by Organization', 'value' => 'organization'],
+                            ['label' => 'Filter by Event Type', 'value' => 'eventType']
+                        ];
+                        break;
+                    
+                    case 'publicPrivate':
+                        // Obtener registros de eventos SC por organización
+                        $recordsByYear = organizationsScEvents::groupBy('year')
+                                                ->selectRaw('year, COUNT(*) as total')
+                                                ->get();
+                        $moduleOptions = [
+                            ['label' => 'Filter by Organization', 'value' => 'organization'],
+                            ['label' => 'Filter by Event Type', 'value' => 'eventType']
+                        ];
+                        break;
+
+                    case 'technologyKnowledge':
+                        // Obtener registros de eventos SC por organización
+                        $recordsByYear = organizationsScEvents::groupBy('year')
+                                                ->selectRaw('year, COUNT(*) as total')
+                                                ->get();
+                        $moduleOptions = [
+                            ['label' => 'Filter by Organization', 'value' => 'organization'],
+                            ['label' => 'Filter by Event Type', 'value' => 'eventType']
+                        ];
+                        break;
+
+                    case 'fundingSources':
+                        // Obtener registros de eventos SC por organización
+                        $recordsByYear = organizationsScEvents::groupBy('year')
+                                                ->selectRaw('year, COUNT(*) as total')
+                                                ->get();
+                        $moduleOptions = [
+                            ['label' => 'Filter by Organization', 'value' => 'organization'],
+                            ['label' => 'Filter by Event Type', 'value' => 'eventType']
+                        ];
+                        break;                        
+                    default:
+                        $moduleOptions = [];
+                        break;
+                }
+            }
     
             return response()->json([
                 'currentProgressReport' => $currentProgressReport,
                 'recordsByYear' => $recordsByYear,
                 'filteredUsers' => $filteredUsers, // Lista de usuarios filtrados
-                'goals' => $goals, // 📌 Metas obtenidas
+                'goals' => $goals ?? [],
+                'indicators' => $indicatorsValue,
             ]);
         } catch (\Exception $e) {
             return response()->json([
