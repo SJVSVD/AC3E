@@ -192,7 +192,8 @@ class thesisStudentController extends Controller
             $input['is_link'] = 1;
         } else {
             // Si no se proporciona ni archivo ni link
-            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
+            return $input;
+            // return response()->json(['error' => 'You must provide either a file or a link.'], 400);
         }
     
         // Actualizar la tesis
