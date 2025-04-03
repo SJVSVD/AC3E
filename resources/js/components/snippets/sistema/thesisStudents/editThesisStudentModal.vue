@@ -1242,6 +1242,7 @@ export default {
                 icon: true,
                 rtl: false
               });
+              console.log(this.file);
               if(this.file != null || this.link != '') {
                 const formData = new FormData();
                 formData.append('id', this.id);
