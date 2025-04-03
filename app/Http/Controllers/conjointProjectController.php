@@ -42,6 +42,8 @@ class conjointProjectController extends Controller
         $query = scCollaborations::where('moduleType', 1)
             ->where('nameOfExternalResearcher', $request['nameOfExternalResearcher'])
             ->where('beginningDate', $request['beginningDate'])
+            ->where('endingDate', $request['endingDate'])
+            ->whereNotNull('endingDate')
             ->whereNotNull('beginningDate')
             ->whereNotNull('nameOfExternalResearcher');
     

@@ -1129,6 +1129,8 @@ export default {
               mensaje =   mensaje + "The field Resources provided is required" + "\n";
             }else if(item == 'posteriorArea'){
               mensaje =   mensaje + "The field Posterior working area is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researchers involved is required" + "\n";
             }else if(item == 'invalidLink'){
               mensaje =   mensaje + "The link provided is not valid" + "\n";
             }else if(item == 'institutionPosteriorArea'){
