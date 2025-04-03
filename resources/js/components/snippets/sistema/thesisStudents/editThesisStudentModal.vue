@@ -1249,64 +1249,70 @@ export default {
 
                 if(this.file != null) {
                   // Si el archivo es proporcionado
-                  formData.append('file', this.file);
+                  formData.append('file', this.file, this.file.name);
                   let isLinkFlag = this.isLink ? 1 : 0;
                   formData.append('is_link', isLinkFlag);
-                  axios.post('api/thesisStudents/addFile', formData, {
-                    headers: { 'Content-Type' : 'multipart/form-data' }
-                  }).then(response => {
-                    console.log(response.data);
-                    this.toast.success("File added successfully!", {
-                      position: "top-right",
-                      timeout: 3000,
-                      closeOnClick: true,
-                      pauseOnFocusLoss: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      draggablePercent: 0.6,
-                      showCloseButtonOnHover: false,
-                      hideProgressBar: true,
-                      closeButton: "button",
-                      icon: true,
-                      rtl: false
-                    });
-                    setTimeout(() => {this.cerrarModal();}, 1500);
-                  }).catch(error => {
-                    if (error.response && error.response.status === 400) {
-                      this.toast.error(error.response.data.error, {
-                        position: "top-right",
-                        timeout: 3000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                      });
-                    } else if (error.response && error.response.status === 422) {
-                      this.errors = error.response.data.errors;
-                      this.toast.warning('There is an invalid value.', {
-                        position: "top-right",
-                        timeout: 3000,
-                        closeOnClick: true,
-                        pauseOnFocusLoss: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        draggablePercent: 0.6,
-                        showCloseButtonOnHover: false,
-                        hideProgressBar: true,
-                        closeButton: "button",
-                        icon: true,
-                        rtl: false
-                      });
-                    }
-                    this.buttonDisable = false;
-                    this.buttonText = 'Edit Thesis';
-                  });
+                  fetch('api/thesisStudents/addFile', {
+                    method: 'POST',
+                    body: formData
+                  }).then(response => response.json())
+                    .then(data => console.log("Respuesta del backend:", data))
+                    .catch(error => console.error("Error en fetch:", error));
+                  // axios.post('api/thesisStudents/addFile', formData, {
+                  //   headers: { 'Content-Type' : 'multipart/form-data' }
+                  // }).then(response => {
+                  //   console.log(response.data);
+                  //   this.toast.success("File added successfully!", {
+                  //     position: "top-right",
+                  //     timeout: 3000,
+                  //     closeOnClick: true,
+                  //     pauseOnFocusLoss: true,
+                  //     pauseOnHover: true,
+                  //     draggable: true,
+                  //     draggablePercent: 0.6,
+                  //     showCloseButtonOnHover: false,
+                  //     hideProgressBar: true,
+                  //     closeButton: "button",
+                  //     icon: true,
+                  //     rtl: false
+                  //   });
+                  //   setTimeout(() => {this.cerrarModal();}, 1500);
+                  // }).catch(error => {
+                  //   if (error.response && error.response.status === 400) {
+                  //     this.toast.error(error.response.data.error, {
+                  //       position: "top-right",
+                  //       timeout: 3000,
+                  //       closeOnClick: true,
+                  //       pauseOnFocusLoss: true,
+                  //       pauseOnHover: true,
+                  //       draggable: true,
+                  //       draggablePercent: 0.6,
+                  //       showCloseButtonOnHover: false,
+                  //       hideProgressBar: true,
+                  //       closeButton: "button",
+                  //       icon: true,
+                  //       rtl: false
+                  //     });
+                  //   } else if (error.response && error.response.status === 422) {
+                  //     this.errors = error.response.data.errors;
+                  //     this.toast.warning('There is an invalid value.', {
+                  //       position: "top-right",
+                  //       timeout: 3000,
+                  //       closeOnClick: true,
+                  //       pauseOnFocusLoss: true,
+                  //       pauseOnHover: true,
+                  //       draggable: true,
+                  //       draggablePercent: 0.6,
+                  //       showCloseButtonOnHover: false,
+                  //       hideProgressBar: true,
+                  //       closeButton: "button",
+                  //       icon: true,
+                  //       rtl: false
+                  //     });
+                  //   }
+                  //   this.buttonDisable = false;
+                  //   this.buttonText = 'Edit Thesis';
+                  // });
                 } else if(this.link != '') {
                   // Si solo el link es proporcionado
                   formData.append('file', this.link);
