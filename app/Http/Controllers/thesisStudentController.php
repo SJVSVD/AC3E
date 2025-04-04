@@ -170,32 +170,29 @@ class thesisStudentController extends Controller
     {
         $input = $request->all();
     
+        // Log::info('Petición recibida en addFile', [
+        //     'method' => $request->method(),
+        //     'headers' => $request->headers->all(),
+        //     'ip' => $request->ip()
+        // ]);
 
-        // Debug 1: Verificar si la petición llega
-        Log::info('Petición recibida en addFile', [
-            'method' => $request->method(),
-            'headers' => $request->headers->all(),
-            'ip' => $request->ip()
-        ]);
 
-        // Debug 2: Ver contenido crudo del request
-        Log::debug('Contenido del request:', [
-            'input' => $request->except(['file']),
-            'files' => $request->allFiles(),
-            'php_input' => file_get_contents('php://input')
-        ]);
+        // Log::debug('Contenido del request:', [
+        //     'input' => $request->except(['file']),
+        //     'files' => $request->allFiles(),
+        //     'php_input' => file_get_contents('php://input')
+        // ]);
 
-        // Debug 3: Verificar archivos (método alternativo)
-        $hasFile = $request->hasFile('file');
-        $fileReceived = isset($_FILES['file']);
-        $fileValid = $hasFile ? $request->file('file')->isValid() : false;
+        // $hasFile = $request->hasFile('file');
+        // $fileReceived = isset($_FILES['file']);
+        // $fileValid = $hasFile ? $request->file('file')->isValid() : false;
 
-        Log::info('Estado del archivo:', [
-            'hasFile' => $hasFile,
-            'fileReceived' => $fileReceived,
-            'fileValid' => $fileValid,
-            'php_files' => $_FILES
-        ]);
+        // Log::info('Estado del archivo:', [
+        //     'hasFile' => $hasFile,
+        //     'fileReceived' => $fileReceived,
+        //     'fileValid' => $fileValid,
+        //     'php_files' => $_FILES
+        // ]);
 
         // Buscar la tesis correspondiente
         $thesis = thesisStudent::where('id', $input['id'])->first();
