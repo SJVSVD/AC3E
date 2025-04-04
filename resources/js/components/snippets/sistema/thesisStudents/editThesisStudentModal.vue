@@ -1252,7 +1252,10 @@ export default {
                   formData.append('file', this.file);
                   let isLinkFlag = this.isLink ? 1 : 0;
                   formData.append('is_link', isLinkFlag);
-                  console.log(formData);
+                  // 🔍 Verificar que se está enviando correctamente
+                  for (let [key, value] of formData.entries()) {
+                    console.log(`${key}:`, value);
+                  }
                   fetch('api/thesisStudents/addFile', {
                     method: 'POST',
                     body: formData,
