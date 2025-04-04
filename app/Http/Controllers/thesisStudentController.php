@@ -197,13 +197,6 @@ class thesisStudentController extends Controller
             'php_files' => $_FILES
         ]);
 
-
-        return response()->json([
-            'all_data' => $input,
-            'file' => $request->file('file'),
-            'has_file' => $request->hasFile('file')
-        ]);
-
         // Buscar la tesis correspondiente
         $thesis = thesisStudent::where('id', $input['id'])->first();
         
