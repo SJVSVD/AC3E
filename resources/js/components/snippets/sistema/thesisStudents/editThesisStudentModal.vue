@@ -1249,9 +1249,10 @@ export default {
 
                 if(this.file != null) {
                   // Si el archivo es proporcionado
-                  formData.append('file', this.file, this.file.name);
+                  formData.append('file', this.file);
                   let isLinkFlag = this.isLink ? 1 : 0;
                   formData.append('is_link', isLinkFlag);
+                  console.log(formData);
                   fetch('api/thesisStudents/addFile', {
                     method: 'POST',
                     body: formData,
