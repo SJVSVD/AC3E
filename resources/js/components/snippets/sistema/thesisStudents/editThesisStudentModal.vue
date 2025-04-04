@@ -1248,21 +1248,40 @@ export default {
                 formData.append('id', this.id);
 
                 if(this.file != null) {
-                  // Si el archivo es proporcionado
+                  const formData = new FormData();
                   formData.append('file', this.file);
                   let isLinkFlag = this.isLink ? 1 : 0;
                   formData.append('is_link', isLinkFlag);
-                  // 🔍 Verificar que se está enviando correctamente
+                  
+                  // 🔍 Verificación del FormData (correcto)
                   for (let [key, value] of formData.entries()) {
-                    console.log(`${key}:`, value);
+                      console.log(`${key}:`, value);
                   }
+
                   fetch('api/thesisStudents/addFile', {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                  }).then(response => response.json())
-                    .then(data => console.log("Respuesta del backend:", data))
-                    .catch(error => console.error("Error en fetch:", error));
+                      method: 'POST',
+                      body: formData,
+                      headers: {
+                          'Accept': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                          'X-Requested-With': 'XMLHttpRequest'
+                      },
+                      credentials: 'include' // Importante para autenticación/cookies
+                  })
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error(`HTTP error! status: ${response.status}`);
+                      }
+                      return response.json();
+                  })
+                  .then(data => {
+                      console.log("Respuesta del backend:", data);
+                      // Agrega aquí cualquier lógica de éxito
+                  })
+                  .catch(error => {
+                      console.error("Error en fetch:", error);
+                      // Manejo de errores más detallado
+                  });
                   // axios.post('api/thesisStudents/addFile', formData, {
                   //   headers: { 'Content-Type' : 'multipart/form-data' }
                   // }).then(response => {
