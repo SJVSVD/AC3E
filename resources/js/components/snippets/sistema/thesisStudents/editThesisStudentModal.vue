@@ -1263,7 +1263,6 @@ export default {
                       body: formData,
                       headers: {
                           'Accept': 'application/json',
-                          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                           'X-Requested-With': 'XMLHttpRequest'
                       },
                       credentials: 'include' // Importante para autenticación/cookies
