@@ -1246,9 +1246,7 @@ export default {
               if(this.file != null || this.link != '') {
                 const formData = new FormData();
                 formData.append('id', this.id);
-
                 if(this.file != null) {
-                  const formData = new FormData();
                   formData.append('file', this.file);
                   let isLinkFlag = this.isLink ? 1 : 0;
                   formData.append('is_link', isLinkFlag);
