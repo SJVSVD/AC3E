@@ -1254,7 +1254,8 @@ export default {
                   formData.append('is_link', isLinkFlag);
                   fetch('api/thesisStudents/addFile', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    headers: { 'Content-Type': 'multipart/form-data' }
                   }).then(response => response.json())
                     .then(data => console.log("Respuesta del backend:", data))
                     .catch(error => console.error("Error en fetch:", error));
