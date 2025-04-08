@@ -517,16 +517,16 @@ export default {
               if (data.status === 'error') {
                 this.toast.warning(data.message, { position: "top-right", timeout: 3000 });
               } else {
-                const register = data.wosData;
+                const register = data.Data[0];
                 const scopus = data.scopusData;
-
+                console.log(register);
                 this.isiPublication.authors = register.Author.Authors.join('; ') + '.';
                 this.isiPublication.articleTitle = register.Title.Title[0];
                 this.isiPublication.journalName = register.Source.SourceTitle[0];
                 this.isiPublication.volume = register.Source.Volume[0];
                 this.isiPublication.yearPublished = register.Source['Published.BiblioYear'][0];
-                this.isiPublication.impactFactor = scopus.impactFactor;
-                this.isiPublication.quartile = scopus.quartile;
+                // this.isiPublication.impactFactor = scopus.impactFactor;
+                // this.isiPublication.quartile = scopus.quartile;
 
                 this.toast.success("Data loaded successfully!", { position: "top-right", timeout: 3000 });
               }
