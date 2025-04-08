@@ -176,7 +176,6 @@ class thesisStudentController extends Controller
         //     'ip' => $request->ip()
         // ]);
 
-
         // Log::debug('Contenido del request:', [
         //     'input' => $request->except(['file']),
         //     'files' => $request->allFiles(),

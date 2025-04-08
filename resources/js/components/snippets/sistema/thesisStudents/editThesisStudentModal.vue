@@ -1243,7 +1243,8 @@ export default {
                 rtl: false
               });
               console.log(this.file);
-              if(this.file != null || this.link != '') {
+              if ((this.file != null || this.link != '') && this.thesisStudent.thesisStatus != "2"){
+                console.log('entra');
                 const formData = new FormData();
                 formData.append('id', this.id);
                 if(this.file != null) {
@@ -1372,7 +1373,7 @@ export default {
                     this.buttonText = 'Edit Thesis';
                   });
                 }
-              } else if(this.thesisStudent1.file == null) {
+              } else if(this.thesisStudent1.file == null && this.thesisStudent.thesisStatus == "1") {
                 // Si ni archivo ni link fueron proporcionados
                 this.toast.error('Please upload a file or provide a link.', {
                   position: "top-right",
