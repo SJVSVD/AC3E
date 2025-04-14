@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\extraTables;
 use App\Models\scCollaborations;
 use App\Models\SessionLog;
 use App\Models\User;
@@ -234,6 +236,8 @@ class conjointProjectController extends Controller
             // Asignar las líneas de investigación al campo antes de guardar
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
+        $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+        $input['progressReport'] = $currentProgressReport;
         $scCollaborations->update($input);
         
         // Registra el evento en el log

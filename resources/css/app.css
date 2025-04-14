@@ -429,8 +429,7 @@
 .sidebar .nav-links {
     height: 100%;
     padding: 30px 0 150px 0;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scroll para el contenedor de enlaces */
+
 }
 .sidebar.close .nav-links {
     overflow: visible;
@@ -494,9 +493,6 @@
     margin-top: -10px;
     background: #595959;
     display: none;
-    overflow-x: hidden;
-    max-height: 300px; /* Altura máxima para el submenú */
-    overflow-y: auto;  /* Scroll vertical */
 }
 .sidebar .nav-links li.showMenu .sub-menu {
     display: block;

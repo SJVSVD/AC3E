@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\extraTables;
 use App\Models\scCollaborations;
 use App\Models\SessionLog;
 use App\Models\User;
@@ -349,6 +351,8 @@ class scCollaborationsController extends Controller
     {
         $scCollaborations = scCollaborations::find($id);
         $input = $request->all();
+        $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+        $input['progressReport'] = $currentProgressReport;
         $scCollaborations->update($input);
 
         // Registra el evento en el log

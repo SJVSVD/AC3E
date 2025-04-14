@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\awards;
+use App\Models\extraTables;
 use App\Models\SessionLog;
 use App\Models\User;
 use Carbon\Carbon;
@@ -195,6 +196,9 @@ class awardsController extends Controller
             // Asignar las líneas de investigación al campo antes de guardar
             $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
         }
+
+        $currentProgressReport = extraTables::where('name', 'progressReport')->value('value');
+        $input['progressReport'] = $currentProgressReport;
         $awards->update($input);
 
         // Registra el evento en el log
