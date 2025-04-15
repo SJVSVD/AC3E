@@ -19,26 +19,30 @@ class publicPrivateController extends Controller
         $input = $request->all();
 
         // Manejar carga de archivo si se envía un archivo
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-    
-            // Verificar el tamaño del archivo (máximo 20 MB)
-            if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
-                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+        if (!empty($input['participationPublicPolicies'])) {
+            // Solo entra si participationPublicPolicies está en true
+        
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+        
+                // Verificar el tamaño del archivo (máximo 20 MB)
+                if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
+                    return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
+                }
+        
+                // Guardar el archivo con su nombre original en la carpeta publicPrivate
+                $filename = $file->getClientOriginalName();
+                $input['file'] = $file->storeAs('publicPrivate', $filename, 'public');
+        
+                // Establecer is_link en 0 ya que se está subiendo un archivo
+                $input['is_link'] = 0;
+            } elseif (!empty($input['file'])) {
+                // Si se proporciona un link en lugar de un archivo
+                $input['is_link'] = 1;
+            } else {
+                // Si no se proporciona ni archivo ni link
+                return response()->json(['error' => 'You must provide either a file or a link.'], 400);
             }
-    
-            // Guardar el archivo con su nombre original en la carpeta participationScEvents
-            $filename = $file->getClientOriginalName();
-            $input['file'] = $file->storeAs('publicPrivate', $filename, 'public');
-    
-            // Establecer is_link en 0 ya que se está subiendo un archivo
-            $input['is_link'] = 0;
-        } elseif (!empty($input['file'])) {
-            // Si se proporciona un link en lugar de un archivo
-            $input['is_link'] = 1;
-        } else {
-            // Si no se proporciona ni archivo ni link
-            return response()->json(['error' => 'You must provide either a file or a link.'], 400);
         }
 
         // Obtener los nombres de los investigadores relacionados

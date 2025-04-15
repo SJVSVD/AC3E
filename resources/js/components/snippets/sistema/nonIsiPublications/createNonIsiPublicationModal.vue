@@ -1086,7 +1086,7 @@ export default {
               idUser1 = this.userID;
             }
 
-            let fileOrLink = this.isLink ? this.link : this.participationSc.file;
+            let fileOrLink = this.isLink ? this.link : this.nonIsiPublication.file;
             let isLinkFlag = this.isLink ? 1 : 0;
 
             let publication = {

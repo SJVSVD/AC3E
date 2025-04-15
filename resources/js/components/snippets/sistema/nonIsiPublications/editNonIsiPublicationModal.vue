@@ -970,9 +970,6 @@ export default {
               idUser1 = this.userID;
             }
 
-            let fileOrLink = this.isLink ? this.link : this.participationSc.file;
-            let isLinkFlag = this.isLink ? 1 : 0;
-
             let publication = {
               idUsuario: idUser1,
               status: 'Finished',
@@ -988,8 +985,6 @@ export default {
               month: this.nonIsiPublication.month,
               funding: fundingsName1,
               comments: this.nonIsiPublication.comments,
-              file: fileOrLink,         // Enviar archivo o link
-              isLink: isLinkFlag,   
               progressReport: this.nonIsiPublication.progressReport,
             };
             await axios.put(`api/nonIsiPublications/${this.id}`, publication).then((result) => {
