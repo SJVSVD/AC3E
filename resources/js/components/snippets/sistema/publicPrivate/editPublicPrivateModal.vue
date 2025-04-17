@@ -556,6 +556,7 @@ export default {
                   formData.append('file', this.link);
                   let isLinkFlag = this.isLink ? 1 : 0;
                   formData.append('is_link', isLinkFlag);
+                  formData.append('participationPublicPolicies', this.publicPrivate.participationPublicPolicies);
                   axios.post('api/publicPrivate/addFile', formData, {
                     headers: { 'Content-Type' : 'multipart/form-data' }
                   }).then(response => {
@@ -993,6 +994,7 @@ export default {
                   let isLinkFlag = this.isLink ? 1 : 0;
                   formData.append('is_link', isLinkFlag);
                   console.log("aaa");
+                  formData.append('participationPublicPolicies', this.publicPrivate.participationPublicPolicies);
                   axios.post('api/publicPrivate/addFile', formData, {
                     headers: { 'Content-Type' : 'multipart/form-data' }
                   }).then(response => {
