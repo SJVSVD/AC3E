@@ -106,7 +106,7 @@
                   class="col-md-6 col-lg-4 mb-2"
                 >
                   <div class="list-group-item">
-                    {{ user.name }} - {{ user.idRole }}
+                    {{ user.name }} 
                   </div>
                 </div>
               </div>
