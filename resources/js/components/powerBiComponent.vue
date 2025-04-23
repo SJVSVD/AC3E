@@ -7,7 +7,7 @@
             <iframe
               class="w-100"
               style="max-width: 100%; height: 800px;"
-              src="https://app.powerbi.com/view?r=eyJrIjoiZTk5NzliNjMtNGYzMS00YTFjLTgzZDItZDkwZWUzNzk5ZWJkIiwidCI6IjAyNjI1Njc2LTMyMjctNDQwYS05YzY4LWJiNmQyOWRlNDIwNiIsImMiOjR9"
+              src="http://app.powerbi.com/view?r=eyJrIjoiZTk5NzliNjMtNGYzMS00YTFjLTgzZDItZDkwZWUzNzk5ZWJkIiwidCI6IjAyNjI1Njc2LTMyMjctNDQwYS05YzY4LWJiNmQyOWRlNDIwNiIsImMiOjR9"
               frameborder="0"
               allowFullScreen="true"
             ></iframe>
