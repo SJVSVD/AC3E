@@ -10,7 +10,6 @@
             src="https://app.powerbi.com/view?r=eyJrIjoiZTk5NzliNjMtNGYzMS00YTFjLTgzZDItZDkwZWUzNzk5ZWJkIiwidCI6IjAyNjI1Njc2LTMyMjctNDQwYS05YzY4LWJiNmQyOWRlNDIwNiIsImMiOjR9"
             frameborder="0"
             allowFullScreen="true"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; allow-same-origin"
           ></iframe>
           </div>
         </div>
