@@ -13,6 +13,7 @@
                 allowFullScreen="true"
               ></iframe>
             </div>
+            <!-- Aquí podrías agregar un botón o funcionalidad relacionada al portapapeles si fuera necesario -->
           </div>
         </div>
       </div>
@@ -28,11 +29,19 @@ export default {
     };
   },
   mounted() {
+    // Comprobación si ClipboardItem está definido
     if (typeof window.ClipboardItem === "undefined") {
       console.warn("ClipboardItem no está definido en este navegador.");
       this.clipboardSupported = false;
+
+      // Solución alternativa si ClipboardItem no está disponible
+      if (typeof ClipboardItem === 'undefined') {
+        // eslint-disable-next-line no-undef
+        window.ClipboardItem = function(items) {
+          return items; // Simulando el comportamiento de ClipboardItem
+        };
+      }
     }
   },
 };
 </script>
-
