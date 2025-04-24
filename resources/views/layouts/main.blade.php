@@ -123,7 +123,8 @@
                 </div>
                 <ul class="sub-menu">
                     <li><a class="link_name" href="#">Power BI</a></li>
-                    <li><a href="/power-bi">Power BI</a></li>
+                    <!-- <li><a href="/power-bi">Power BI</a></li> -->
+                    <li><a href="https://app.powerbi.com/view?r=eyJrIjoiZTk5NzliNjMtNGYzMS00YTFjLTgzZDItZDkwZWUzNzk5ZWJkIiwidCI6IjAyNjI1Njc2LTMyMjctNDQwYS05YzY4LWJiNmQyOWRlNDIwNiIsImMiOjR9">Power BI</a></li>
                     @role('Administrator')
                     <li><a href="/performance-results">Performance Results</a></li>
                     @endrole
