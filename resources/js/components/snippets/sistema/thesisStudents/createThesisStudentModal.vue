@@ -725,43 +725,170 @@ export default {
       },
 
       async crearTesis() {
+        // Función para editar una tesis
         this.errors = [];
-
-        // Validaciones
-        const fieldsToExclude = [
-          'yearThesisEnd', 
-          'posteriorArea',
-          'institutionPosteriorArea',
-          'comments', 
-          'monthEnd',
-          'run',
-          'passport',
-          'tutorName', 
-          'tutorInstitution',
-          'cotutorName',
-          'cotutorInstitution',
-          'otherName', 
-          'otherInstitution', 
-          'monthStart'
-        ]; 
+        const fieldsToExclude = ['yearThesisEnd', 'posteriorArea','institutionPosteriorArea','comments', 'monthEnd','run','passport','tutorName', 'tutorInstitution','cotutorName','cotutorInstitution','otherName','otherInstitution','monthStart']; // Arreglo de campos a excluir
 
         for (const item in this.thesisStudent) {
-          if (!fieldsToExclude.includes(item) && (this.thesisStudent[item] === "" || this.thesisStudent[item] == null || this.thesisStudent[item] === 0 || this.thesisStudent[item] == [])) {
-            this.errors.push(item);
+          if (!fieldsToExclude.includes(item)) { // Verifica si el campo no está en la lista de campos a excluir
+            if (this.thesisStudent[item] === "" || this.thesisStudent[item] === 0 ||this.thesisStudent[item] == null || this.thesisStudent[item] == []){
+              this.errors.push(item);
+            } 
           }
         }
 
-        // Validaciones adicionales para campos específicos
-        if (this.thesisStudent.identification === 'Run' && this.thesisStudent.run === "") {
+        if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run == ""){
           this.errors.push('run');
-        } else if (this.thesisStudent.identification === 'Passport' && this.thesisStudent.passport === "") {
+        }else if(this.thesisStudent.identification == 'Passport' && this.thesisStudent.passport == ""){
           this.errors.push('passport');
         }
 
-        // Validación de tutor, cotutor, otro participante
-        const hasAtLeastOneTutor = [this.tutor1, this.cotutor1, this.other1].some(({ name, institution }) => name && institution);
-        if (!hasAtLeastOneTutor) {
+        // Validar que al menos uno de los conjuntos tenga ambos campos rellenados
+        let isValid = false;
+
+        if (this.tutor1.name !== '' && this.tutor1.institution !== '') {
+          isValid = true;
+        }
+
+        if (this.cotutor1.name !== '' && this.cotutor1.institution !== '') {
+          isValid = true;
+        }
+
+        if (this.other1.name !== '' && this.other1.institution !== '') {
+          isValid = true;
+        }
+
+        if (!isValid) {
           this.errors.push('noTutors');
+        }
+
+        if(this.thesisStudent.identification == 'Run' && this.thesisStudent.run != ""){
+          var validacion = this.validarRut(this.thesisStudent.run);
+          if(validacion == false){
+            this.errors.push('invalidRut');
+            }
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && (this.file == null && this.thesisStudent1.file == null) && this.isLink == false){
+            this.errors.push('thesisExtract');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.link == '' && this.isLink == true){
+            this.errors.push('link');
+        }
+
+        if(this.link && this.isLink && !this.isValidURL(this.link)){
+            this.errors.push('invalidLink');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.yearThesisEnd == ""){
+            this.errors.push('yearThesisEnd');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.posteriorArea == ""){
+            this.errors.push('posteriorArea');
+        }
+
+        if(this.thesisStudent.thesisStatus == 1 && this.thesisStudent.institutionPosteriorArea == ""){
+            this.errors.push('institutionPosteriorArea');
+        }
+
+        console.log(this.errors);
+        var runOrPassport1 = '';
+          if(this.thesisStudent.identification == 'Run'){
+            runOrPassport1 = this.formatoRut(this.thesisStudent.run);
+          }else{
+            runOrPassport1 = this.thesisStudent.passport;
+          }
+          
+        let thesisStudent1 = {
+          id: this.id,
+          runOrPassport: runOrPassport1,
+          degreeDenomination: this.thesisStudent.degreeDenomination,
+        };
+
+        var contador = await axios.post('../api/verifyThesis', thesisStudent1).then(function(response) {
+          return response.data;
+        }.bind(this)).catch(function(e) {
+          console.log(e);
+        });
+        if (contador > 0){
+          this.errors.push('duplicated');
+        }
+
+        var mensaje = ""
+        if (this.errors.length != 0){
+          this.errors.forEach(item => {
+            if(item == 'studentName'){
+              mensaje =   mensaje + "The field Student Name is required" + "\n";
+            }else if(item == 'thesisExtract'){
+              mensaje =   mensaje + "The field Thesis Extract is required" + "\n";
+            }else if(item == 'invalidRut'){
+              mensaje =   mensaje + "The entered run is invalid" + "\n";
+            }else if(item == 'studentMail'){
+              mensaje =   mensaje + "The field Student Mail is required" + "\n";
+            }else if(item == 'thesisStatus'){
+              mensaje =   mensaje + "The field Thesis Status is required" + "\n";
+            }else if(item == 'thesisTitle'){
+              mensaje =   mensaje + "The field Thesis Title is required" + "\n";
+            }else if(item == 'academicDegree'){
+              mensaje =   mensaje + "The field Academic Degree is required" + "\n";
+            }else if(item == 'degreeDenomination'){
+              mensaje =   mensaje + "The field Degree Denomination is required" + "\n";
+            }else if(item == 'tutorName'){
+              mensaje =   mensaje + "The field Tutor Name is required" + "\n";
+            }else if(item == 'tutorInstitution'){
+              mensaje =   mensaje + "The field Tutor Institution is required" + "\n";
+            }else if(item == 'cotutorName'){
+              mensaje =   mensaje + "The field Cotutor Name is required" + "\n";
+            }else if(item == 'cotutorInstitution'){
+              mensaje =   mensaje + "The field Cotutor Institution is required" + "\n";
+            }else if(item == 'otherName'){
+              mensaje =   mensaje + "The field Other Name is required" + "\n";
+            }else if(item == 'otherInstitution'){
+              mensaje =   mensaje + "The field Other Institution is required" + "\n";
+            }else if(item == 'academicDegree'){
+              mensaje =   mensaje + "The field Academic Degree is required" + "\n";
+            }else if(item == 'yearStart'){
+              mensaje =   mensaje + "The field Year in which student thesis starts is required" + "\n";
+            }else if(item == 'monthStart'){
+              mensaje =   mensaje + "The field Month in which student thesis starts is required" + "\n";
+            }else if(item == 'yearThesisEnd'){
+              mensaje =   mensaje + "The field Year which thesis ends is required" + "\n";
+            }else if(item == 'monthEnd'){
+              mensaje =   mensaje + "The field Month which thesis ends is required" + "\n";
+            }else if(item == 'resourcesCenter'){
+              mensaje =   mensaje + "The field Resources provided is required" + "\n";
+            }else if(item == 'posteriorArea'){
+              mensaje =   mensaje + "The field Posterior working area is required" + "\n";
+            }else if(item == 'researcherInvolved'){
+              mensaje =   mensaje + "The field Researchers involved is required" + "\n";
+            }else if(item == 'invalidLink'){
+              mensaje =   mensaje + "The link provided is not valid" + "\n";
+            }else if(item == 'institutionPosteriorArea'){
+              mensaje =   mensaje + "The field Institution posterior working area is required" + "\n";
+            }else if(item == 'noTutors'){
+              mensaje =   mensaje + "A minimum of one tutor, co-tutor or other must enter" + "\n";
+            }else if(item == 'duplicated'){
+              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
+            }else{
+              mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
+            }
+          });
+          this.toast.warning( mensaje, {
+            position: "top-right",
+            timeout: 5000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
         }
 
         if (this.errors.length === 0) {
