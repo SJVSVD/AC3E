@@ -769,7 +769,7 @@ export default {
             }
         }
 
-        if(this.thesisStudent.thesisStatus == 1 && (this.file == null && this.thesisStudent1.file == null) && this.isLink == false){
+        if(this.thesisStudent.thesisStatus == 1 && (this.file == null && this.thesisStudent.file == null) && this.isLink == false){
             this.errors.push('thesisExtract');
         }
 
