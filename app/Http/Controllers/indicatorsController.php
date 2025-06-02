@@ -295,13 +295,17 @@ class indicatorsController extends Controller
 
                                  $value = floor($recordsByYear[10]/$userCount) ?? null;
                                  $indicatorsValue = [
-                                     'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
-                                     'value' => $value
+                                    [
+                                        'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
+                                        'value' => $value
+                                    ]
                                  ];
                              } else {
                                  $indicatorsValue = [
-                                     'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
-                                     'value' => null
+                                    [
+                                        'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
+                                        'value' => null
+                                    ]
                                  ];
                              }
                           }else if ($lineId) {
@@ -313,13 +317,17 @@ class indicatorsController extends Controller
                                  $value = floor($recordsByYear[10]/$userCount) ?? null;
                         
                                  $indicatorsValue = [
-                                     'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
-                                     'value' => $value
+                                    [
+                                        'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
+                                        'value' => $value
+                                    ]
                                  ];
                              } else {
                                  $indicatorsValue = [
-                                     'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
-                                     'value' => null
+                                    [
+                                        'indicator' => 'Average WoS Publications per Person on Year ' . $currentProgressReport,
+                                        'value' => null
+                                    ]
                                  ];
                              }
                          }
@@ -329,8 +337,10 @@ class indicatorsController extends Controller
                              $value = $recordsByYear[$currentProgressReport] ?? null;
                             
                             $indicatorsValue = [
-                                'indicator' => 'Total Non-WoS Publications on Year ' . $currentProgressReport,
-                                'value' => $value
+                                [
+                                    'indicator' => 'Total Non-WoS Publications on Year ' . $currentProgressReport,
+                                    'value' => $value
+                                ]
                             ];
 
                          break;
@@ -339,8 +349,10 @@ class indicatorsController extends Controller
                          $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
-                             'indicator' => 'Total Books Publications on Year ' . $currentProgressReport,
-                             'value' => $value
+                            [
+                                'indicator' => 'Total Books Publications on Year ' . $currentProgressReport,
+                                'value' => $value
+                            ]
                          ];
                      break;
         
@@ -348,8 +360,10 @@ class indicatorsController extends Controller
                          $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
-                             'indicator' => 'Total Awards Publications on Year ' . $currentProgressReport,
-                             'value' => $value
+                            [
+                                'indicator' => 'Total Awards Publications on Year ' . $currentProgressReport,
+                                'value' => $value
+                            ]
                          ];
                      break;
         
@@ -357,8 +371,10 @@ class indicatorsController extends Controller
                          $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
-                             'indicator' => 'Total Organization Sc Events Publications on Year  ' . $currentProgressReport,
-                             'value' => $value
+                            [
+                                'indicator' => 'Total Organization Sc Events Publications on Year  ' . $currentProgressReport,
+                                'value' => $value
+                            ]
                          ];
                      break;
         
@@ -366,8 +382,10 @@ class indicatorsController extends Controller
                          $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
-                             'indicator' => 'Total Participation Sc Events Publications on Year  ' . $currentProgressReport,
-                             'value' => $value
+                            [
+                                'indicator' => 'Total Participation Sc Events Publications on Year  ' . $currentProgressReport,
+                                'value' => $value
+                            ]
                          ];
                      break;
 
@@ -375,8 +393,10 @@ class indicatorsController extends Controller
                          $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
-                             'indicator' => 'Total Scientific Collaborations Publications on Year ' . $currentProgressReport,
-                             'value' => $value
+                            [
+                                'indicator' => 'Total Scientific Collaborations Publications on Year ' . $currentProgressReport,
+                                'value' => $value
+                            ]
                          ];
                      break;
 
@@ -424,8 +444,10 @@ class indicatorsController extends Controller
                          $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
-                             'indicator' => 'Total Postdoctoral Fellows Publications on Year ' . $currentProgressReport,
-                             'value' => $value
+                            [
+                                'indicator' => 'Total Postdoctoral Fellows Publications on Year ' . $currentProgressReport,
+                                'value' => $value
+                            ]
                          ];
                          break;
 
