@@ -326,7 +326,7 @@ class indicatorsController extends Controller
                      break;
         
                      case 'nonIsiPublications':
-                             $value = $recordsByYear[9] ?? null;
+                             $value = $recordsByYear[$currentProgressReport] ?? null;
                             
                             $indicatorsValue = [
                                 'indicator' => 'Total Non-WoS Publications on Year ' . $currentProgressReport,
@@ -345,7 +345,7 @@ class indicatorsController extends Controller
                      break;
         
                      case 'awards':
-                         $value = $recordsByYear[9] ?? null;
+                         $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
                              'indicator' => 'Total Awards Publications on Year ' . $currentProgressReport,
@@ -354,7 +354,7 @@ class indicatorsController extends Controller
                      break;
         
                      case 'organizationsScEvents':
-                         $value = $recordsByYear[10] ?? null;
+                         $value = $recordsByYear[$currentProgressReport] ?? null;
                         
                          $indicatorsValue = [
                              'indicator' => 'Total Organization Sc Events Publications on Year  ' . $currentProgressReport,
@@ -381,7 +381,7 @@ class indicatorsController extends Controller
                      break;
 
                      case 'thesisStudents':
-                        $query = thesisStudent::query()->where('progressReport', 9)->where('thesisStatus',1);
+                        $query = thesisStudent::query()->where('progressReport', $currentProgressReport)->where('thesisStatus',1);
 
                         if ($personId) {
                             $query->where('idUsuario', $personId);
@@ -486,7 +486,7 @@ class indicatorsController extends Controller
 
                     
                         case 'publicPrivate':
-                            $query = publicPrivate::where('progressReport', 7);
+                            $query = publicPrivate::where('progressReport', $currentProgressReport);
 
                             if ($personId) {
                                 $query->where('idUsuario', $personId);
