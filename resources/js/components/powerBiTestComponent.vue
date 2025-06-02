@@ -94,6 +94,27 @@
             </div>
 
           </div>
+          <div class="card mt-3" v-if="indicators && indicators.length > 0">
+            <div class="card-header text-white">
+              <h5 class="card-title text-center">Indicators</h5>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Indicator</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(indicator, index) in indicators" :key="index">
+                    <td>{{ indicator.indicator }}</td>
+                    <td>{{ indicator.value }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
           <div class="card mt-3" v-if="filteredUsers.length > 0">
             <div class="card-header text-white">
               <h5 class="card-title text-center">{{ headerTitle }}</h5>
@@ -138,6 +159,7 @@ export default {
     const allResearchers = ref([]);
     const researcherTypes = ref([]);
     const goalsData = ref([]); // 📌 Almacenar los goals
+    const indicators = ref([]);
 
     const modules = ref([
       { name: 'isiPublications', displayName: 'WoS Publications' },
@@ -280,6 +302,7 @@ export default {
       try {
         const response = await axios.get("/api/getFilteredRecordsByModule", { params });
         const records = response.data.recordsByYear;
+        indicators.value = response.data.indicators;
         filteredUsers.value = response.data.filteredUsers || [];
         goalsData.value = response.data.goals || {};
 
@@ -370,6 +393,7 @@ export default {
     });
 
     return {
+      indicators,
       headerTitle,
       selectedFilterType,
       selectedResearchLine,
