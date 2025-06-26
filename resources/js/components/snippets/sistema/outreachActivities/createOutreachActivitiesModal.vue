@@ -496,14 +496,21 @@ export default {
           'comments'
         ];
 
+        for (const item in this.outreachActivity) {
+          const value = this.outreachActivity[item];
 
-        for (const item in this.outreachActivity){
-          if(this.outreachActivity[item] === "" || this.outreachActivity[item] === 0 || this.outreachActivity[item] == null || this.outreachActivity[item] == []){
-            if (itemsToCheck.includes(item)) {
-              } else {
-                this.errors.push(item);
-              }
+          // Caso especial para attendantsAmount
+          if (item === 'attendantsAmount') {
+            if (value < 0 || value === null || value === "") {
+              this.errors.push(item);
             }
+            continue;
+          }
+
+          // Validación general
+          if ((value === "" || value === 0 || value == null || Array.isArray(value) && value.length === 0) && !itemsToCheck.includes(item)) {
+            this.errors.push(item);
+          }
         }
 
         if(this.outreachActivity.activityType == 'Other' && this.other == ''){
