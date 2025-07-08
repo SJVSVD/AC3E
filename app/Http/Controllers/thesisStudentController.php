@@ -32,54 +32,66 @@ class thesisStudentController extends Controller
         return response()->json($thesisStudent);
     }
 
-    // Función para almacenar un nuevo registro.
-    public function store(Request $request)
-    {
-        $input = $request->all();
+public function store(Request $request)
+{
+    $input = $request->all();
 
-        // Manejar carga de archivo si se envía un archivo
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
 
-            // Verificar el tamaño del archivo
-            if ($file->getSize() > 20480 * 1024) { // 20480 KB = 20 MB
-                return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
-            }
-
-            // Guardar el archivo con su nombre original
-            $filename = $file->getClientOriginalName();
-            $input['file'] = $file->storeAs('thesisExtracts', $filename, 'public');
-
-            // Establecer is_link en 0 ya que se está subiendo un archivo
-            $input['is_link'] = 0;
-        } elseif (!empty($input['file'])) {
-            // Si se proporciona un link en lugar de un archivo
-            $input['is_link'] = 1;
+        // Validar tamaño máximo (20MB)
+        if ($file->getSize() > 20480 * 1024) {
+            return response()->json(['error' => 'The file was not saved because it exceeds 20 MB.'], 400);
         }
 
-        // Obtener los nombres de los investigadores relacionados
-        if (isset($input['researcherInvolved'])) {
-            $researcherNames = explode(',', $input['researcherInvolved']);
+        // Limpiar y renombrar archivo para evitar problemas
+        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
 
-            // Limpiar y normalizar los nombres
-            $normalizedNames = array_map('trim', $researcherNames);
+        // Intentar guardar el archivo
+        $path = $file->storeAs('thesisExtracts', $filename, 'public');
 
-            // Obtener las líneas de investigación para cada investigador
-            $researchLines = [];
-            foreach ($normalizedNames as $name) {
-                $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
-                if ($user && $user->researchLine) {
-                    $researchLines[] = $user->researchLine->name;
-                }
-            }
-
-            // Asignar las líneas de investigación al campo antes de guardar
-            $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+        // Verificar si storeAs falló
+        if (!$path) {
+            \Log::error('Error al guardar el archivo.');
+            return response()->json(['error' => 'Error al guardar el archivo.'], 500);
         }
 
-        $thesisStudent = thesisStudent::create($input);
-        return response()->json("Thesis Creada!");
+        \Log::info('Archivo guardado en: ' . $path);
+
+        $input['file'] = $path;
+        $input['is_link'] = 0;
+    } elseif (!empty($input['file'])) {
+        $input['is_link'] = 1;
+    } else {
+        \Log::warning('No se proporcionó archivo ni link.');
+        $input['file'] = null; // O lo que corresponda según tu DB
     }
+
+    // Procesar investigadores involucrados
+    if (isset($input['researcherInvolved'])) {
+        $researcherNames = explode(',', $input['researcherInvolved']);
+        $normalizedNames = array_map('trim', $researcherNames);
+        $researchLines = [];
+        foreach ($normalizedNames as $name) {
+            $user = User::where('name', 'LIKE', '%' . $name . '%')->first();
+            if ($user && $user->researchLine) {
+                $researchLines[] = $user->researchLine->name;
+            }
+        }
+        $input['researchLinesInvolved'] = implode(', ', array_unique($researchLines));
+    }
+
+    // Validar que el archivo NO sea "0" o falso antes de crear
+    if (isset($input['file']) && ($input['file'] === false || $input['file'] === '0')) {
+        \Log::error('Valor inválido en file: ' . $input['file']);
+        return response()->json(['error' => 'El archivo tiene un valor inválido.'], 400);
+    }
+
+    $thesisStudent = thesisStudent::create($input);
+
+    return response()->json("Thesis Creada!");
+}
+
 
 
     // Función para detectar registros duplicados
