@@ -72,26 +72,37 @@ export default {
           this.headers = jsonData[0];
           // Verificar si las cabeceras coinciden con las esperadas
           const expectedHeaders = [
-          'idUsuario',
-          'Status',
-          'Progress Report',
-          'Type of Activity',
-          'Event Title',
-          'Activity Description',
-          'Date',	
-          'Attendant Amount',
-          'Duration [days]',
-          'Country',
-          'Place Region',
-          'City',
-          'Target Audience',
-          'Research Line',
-          'Name of the main responsible',
-          'Researchers Involved',
-          'Responsibility',
-          'Comentarios',
-          'State',
-          'Participación de otras instituciones'
+            'idUsuario',
+            'Status',
+            'Progress Report',
+            'Type of Activity',
+            'Event Title',
+            'Activity Description',
+            'Date',
+            'Attendant Amount',
+            'Duration [days]',
+            'Country',
+            'Place Region',
+            'City',
+            'Target Audience',
+            'Research Line',
+            'Name of the main responsible',
+            'Researcher Involved',
+            'Responsibility',
+            'Comentarios',
+            'State',
+            'Participacion de otras instituciones',
+
+            // 👇 Nuevos campos Outreach Material
+            'Material Type',
+            'Material Name',
+            'Publication Date',
+            'Publication Mean',
+            'Publication Other',
+            'Downloads',
+            'Twitter Mentions',
+            'Facebook Mentions',
+            'Other Mentions'
           ];
           const missingHeaders = expectedHeaders.filter(header => !this.headers.includes(header));
           if (missingHeaders.length > 0) {

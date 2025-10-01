@@ -22,23 +22,24 @@
               </div>
               <div class="modal-body">
                 <slot name="body">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <label for="">AC3E Researchers Involved:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <Multiselect
-                          placeholder="Select the researchers"
-                          v-model="outreachActivity.researcherInvolved"
-                          :searchable="true"
-                          :close-on-select="false"
-                          :createTag="true"
-                          :options="researchers"
-                          mode="tags"
-                          label="name"
-                          trackBy="id"
-                          :object="true"
-                        />
-                      </div>
+                    <div v-if="outreachActivity.activityType !== 'Outreach Material'">
+                      <div class="row">
+                          <div class="col-md-6">
+                            <label for="">AC3E Researchers Involved:</label>
+                            <label for="" style="color: orange;">*</label>
+                            <Multiselect
+                              placeholder="Select the researchers"
+                              v-model="outreachActivity.researcherInvolved"
+                              :searchable="true"
+                              :close-on-select="false"
+                              :createTag="true"
+                              :options="researchers"
+                              mode="tags"
+                              label="name"
+                              trackBy="id"
+                              :object="true"
+                            />
+                          </div>
 
                           <div class="col-md-3">
                             <label for="">Activity Name:</label>
@@ -52,145 +53,318 @@
                             <br>
                             <input type="text" class= "form-control" v-model="outreachActivity.activityDescription">
                           </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                        <div class="col-md-3">
+                              <label for="">Type of Activity:</label>
+                              <label for="" style="color: orange;">*</label>
+                              <select class="form-select" v-model="outreachActivity.activityType">
+                                <option disabled value="">Select a type</option>
+                                <option value="Conference">Conference</option>
+                                <option value="Seminar">Seminar</option>
+                                <option value="Forum">Forum</option>
+                                <option value="Exhibition">Exhibition</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Competition">Competition</option>
+                                <option value="Course">Course</option>
+                                <option value="Outreach Material">Outreach Material</option>
+                                <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div v-if="outreachActivity.activityType == 'Other'" class="col-md-3">
+                              <label for="">Other:</label>
+                              <label for="" style="color: orange;">*</label>
+                              <br>
+                              <input type="text" class= "form-control" v-model="other">
+                            </div>
+                        <div class="col-md-3">
+                          <label for="">Duration (Days):</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="number" class= "form-control" v-model="outreachActivity.duration">
+                        </div>
+                        <div class="col-md-3">
+                          <label for="">Country:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="outreachActivity.country">
+                        </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                        <div class="col-md-3">
+                          <label for="">Date:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="date" class= "form-control" v-model="outreachActivity.date">
+                        </div>
+                        <div class="col-md-3">
+                          <label for="">Attendants Amount:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <label title="It must be a numeric." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
+                          <br>
+                          <input type="number" class= "form-control" v-model="outreachActivity.attendantsAmount">
+                        </div>
+                        <div class="col-md-3">
+                          <label for="">Place/Region:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="outreachActivity.placeRegion">
+                        </div>
+                        <div class="col-md-3">
+                          <label for="">City:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="outreachActivity.city">
+                        </div>
+                      </div>
+                      <br>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <label for="">Responsability:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="outreachActivity.responsability">
+                        </div>
+                        <div class="col-md-6">
+                          <label for="">Comments:</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="outreachActivity.comments">
+                        </div>
+                      </div>
+                      <br>
+                      <hr size="3" class="separador">
+                      <div class="row">
+                        <div class="text-uppercase pb-2">Target Audiences:<label for="" style="color: orange;">*</label></div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.undergraduateStudents"> Undergraduate students</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.primaryEducationStudents"> Primary education students</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.secondaryEducationStudents"> Secondary education students</label>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.generalCommunity"> General community</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.companiesIndustriesServices"> Companies,industries,services </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.schoolTeachers"> School teachers </label>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.governmentOfficial"> Government official </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.other"> Other </label>
+                            </div>
+                        </div>
+                      </div>
                     </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-md-3">
-                            <label for="">Type of Activity:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <select class="form-select" v-model="outreachActivity.activityType">
-                              <option disabled value="">Select a type</option>
-                              <option value="Conference">Conference</option>
-                              <option value="Seminar">Seminar</option>
-                              <option value="Forum">Forum</option>
-                              <option value="Exhibition">Exhibition</option>
-                              <option value="Workshop">Workshop</option>
-                              <option value="Competition">Competition</option>
-                              <option value="Course">Course</option>
-                              <option value="Outreach Material">Outreach Material</option>
-                              <option value="Other">Other</option>
-                              </select>
-                          </div>
-                          <div v-if="outreachActivity.activityType == 'Other'" class="col-md-3">
-                            <label for="">Other:</label>
-                            <label for="" style="color: orange;">*</label>
-                            <br>
-                            <input type="text" class= "form-control" v-model="other">
-                          </div>
-                      <div class="col-md-3">
-                        <label for="">Duration (Days):</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="number" class= "form-control" v-model="outreachActivity.duration">
+                    <div v-if="outreachActivity.activityType === 'Outreach Material'">
+                      <div class="row mt-3">
+                        <div class="col-md-6">
+                          <label for="">AC3E Researchers Involved:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <Multiselect
+                            placeholder="Select the researchers"
+                            v-model="outreachActivity.researcherInvolved"
+                            :searchable="true"
+                            :close-on-select="false"
+                            :createTag="true"
+                            :options="researchers"
+                            mode="tags"
+                            label="name"
+                            trackBy="id"
+                            :object="true"
+                          />
+                        </div>
+                        <div class="col-md-3">
+                          <label for="">Type of Activity:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <select class="form-select" v-model="outreachActivity.activityType">
+                            <option disabled value="">Select a type</option>
+                            <option value="Conference">Conference</option>
+                            <option value="Seminar">Seminar</option>
+                            <option value="Forum">Forum</option>
+                            <option value="Exhibition">Exhibition</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Competition">Competition</option>
+                            <option value="Course">Course</option>
+                            <option value="Outreach Material">Outreach Material</option>
+                            <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div v-if="outreachActivity.activityType == 'Other'" class="col-md-3">
+                          <label for="">Other:</label>
+                          <label for="" style="color: orange;">*</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="other">
+                        </div>
                       </div>
-                      <div class="col-md-3">
-                        <label for="">Country:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="outreachActivity.country">
+                      <div class="row mt-3">
+                        <div class="col-md-4">
+                          <label>Type of Material</label>
+                          <label for="" style="color: orange;">*</label>
+                          <select v-model="outreachActivity.materialType" class="form-select">
+                            <option disabled value="">Select a type</option>
+                            <option value="Audiovisual">Audiovisual</option>
+                            <option value="Printed(Article,book,brochure,bulletin,etc.)">Printed(Article,book,brochure,bulletin,etc.)</option>
+                            <option value="Electronic">Electronic</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label>Name of Outreach Material</label>
+                          <label for="" style="color: orange;">*</label>
+                          <input type="text" class="form-control" v-model="outreachActivity.materialName">
+                        </div>
+
+                        <div class="col-md-4">
+                          <label>Date of Publication</label>
+                          <label for="" style="color: orange;">*</label>
+                          <input type="date" class="form-control" v-model="outreachActivity.publicationDate">
+                        </div>
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-md-3">
-                        <label for="">Date:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="date" class= "form-control" v-model="outreachActivity.date">
+
+                      <div class="row mt-3">
+                        <div class="col-md-4">
+                          <label>Mean of Publication</label>
+                          <label for="" style="color: orange;">*</label>
+                          <select class="form-select" v-model="outreachActivity.publicationMean">
+                            <option disabled value="">Select</option>
+                            <option value="Daily">Daily</option>
+                            <option value="Magazine">Magazine</option>
+                            <option value="Center Web Page">Center Web Page</option>
+                            <option value="Other">Other</option>
+                          </select>
+
+                        </div>
+                        <!-- Solo aparece si se elige "Other" -->
+                        <div v-if="outreachActivity.publicationMean === 'Other'" class="col-md-4">
+                          <label>Other Mean (if not found above)</label>
+                          <label for="" style="color: orange;">*</label>
+                          <input type="text" class="form-control" v-model="outreachActivity.publicationOther">
+                        </div>
+                        <div class="col-md-4">
+                          <label>Downloads</label>
+                          <input type="number" class="form-control" v-model="outreachActivity.downloads">
+                        </div>
                       </div>
-                      <div class="col-md-3">
-                        <label for="">Attendants Amount:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <label title="It must be a numeric." style="color: #0A95FF;"><i class="fa-solid fa-circle-info"></i></label>
-                        <br>
-                        <input type="number" class= "form-control" v-model="outreachActivity.attendantsAmount">
+
+
+                      <div class="row mt-3">
+                        <div class="col-md-4">
+                          <label>Mentions Twitter</label>
+                          <input type="number" class="form-control" v-model="outreachActivity.twitterMentions">
+                        </div>
+                        <div class="col-md-4">
+                          <label>Mentions Facebook</label>
+                          <input type="number" class="form-control" v-model="outreachActivity.facebookMentions">
+                        </div>
+                        <div class="col-md-4">
+                          <label>Mentions Other</label>
+                          <input type="number" class="form-control" v-model="outreachActivity.otherMentions">
+                        </div>
                       </div>
-                      <div class="col-md-3">
-                        <label for="">Place/Region:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="outreachActivity.placeRegion">
+                      <div class="row mt-3">
+                        <div class="col-md-6">
+                          <label for="">Comments:</label>
+                          <br>
+                          <input type="text" class= "form-control" v-model="outreachActivity.comments">
+                        </div>
                       </div>
-                      <div class="col-md-3">
-                        <label for="">City:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="outreachActivity.city">
+                      <br>
+                      <hr size="3" class="separador">
+                      <div class="row">
+                        <div class="text-uppercase pb-2">Target Audiences:<label for="" style="color: orange;">*</label></div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.undergraduateStudents"> Undergraduate students</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.primaryEducationStudents"> Primary education students</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.secondaryEducationStudents"> Secondary education students</label>
+                            </div>
+                        </div>
                       </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <label for="">Responsability:</label>
-                        <label for="" style="color: orange;">*</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="outreachActivity.responsability">
+                      <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.generalCommunity"> General community</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.companiesIndustriesServices"> Companies,industries,services </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.schoolTeachers"> School teachers </label>
+                            </div>
+                        </div>
                       </div>
-                      <div class="col-md-6">
-                        <label for="">Comments:</label>
-                        <br>
-                        <input type="text" class= "form-control" v-model="outreachActivity.comments">
-                      </div>
-                    </div>
-                    <br>
-                    <hr size="3" class="separador">
-                    <div class="row">
-                      <div class="text-uppercase pb-2">Target Audiences:<label for="" style="color: orange;">*</label></div>
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.undergraduateStudents"> Undergraduate students</label>
-                          </div>
-                      </div>
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.primaryEducationStudents"> Primary education students</label>
-                          </div>
-                      </div>
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.secondaryEducationStudents"> Secondary education students</label>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.generalCommunity"> General community</label>
-                          </div>
-                      </div>
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.companiesIndustriesServices"> Companies,industries,services </label>
-                          </div>
-                      </div>
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.schoolTeachers"> School teachers </label>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.governmentOfficial"> Government official </label>
-                          </div>
-                      </div>
-                      <div class="col-md-4">
-                          <div class="form-check pt-2 ">
-                            <label class="form-check-label"><input type="checkbox" class="form-check-input"
-                                  v-model="outreachActivity.other"> Other </label>
-                          </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.governmentOfficial"> Government official </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check pt-2 ">
+                              <label class="form-check-label"><input type="checkbox" class="form-check-input"
+                                    v-model="outreachActivity.other"> Other </label>
+                            </div>
+                        </div>
                       </div>
                     </div>
                   </slot>
                 </div>
+                
                 <div class="modal-footer">
                   <slot name="footer">
                     <label class="form-check-label"><input type="checkbox" class="form-check-"
@@ -247,6 +421,16 @@ export default {
         responsability: '',
         comments: '',
         progressReport: '',
+        /// Nuevos
+        materialType: '',
+        materialName: '',
+        publicationDate: '',
+        publicationMean: '',
+        publicationOther: '',
+        downloads: '',
+        twitterMentions: '',
+        facebookMentions: '',
+        otherMentions: '',
       },
       other: '',
       draft: false,
@@ -364,6 +548,16 @@ export default {
               responsability: this.outreachActivity.responsability,
               comments: this.outreachActivity.comments,
               progressReport: this.outreachActivity.progressReport,
+
+              materialType: this.outreachActivity.materialType,
+              materialName: this.outreachActivity.materialName,
+              publicationDate: this.outreachActivity.publicationDate,
+              publicationMean: this.outreachActivity.publicationMean,
+              publicationOther: this.outreachActivity.publicationOther,
+              downloads: this.outreachActivity.downloads,
+              twitterMentions: this.outreachActivity.twitterMentions,
+              facebookMentions: this.outreachActivity.facebookMentions,
+              otherMentions: this.outreachActivity.otherMentions,
             };
             axios.post("api/outreachActivities", outreachActivity, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.toast.success("Draft saved successfully!", {
@@ -484,39 +678,46 @@ export default {
       async createActivity() {
         this.errors = [];
 
-        const itemsToCheck = [
-          'undergraduateStudents',
-          'primaryEducationStudents',
-          'secondaryEducationStudents',
-          'generalCommunity',
-          'companiesIndustriesServices',
-          'schoolTeachers',
-          'governmentOfficial',
-          'other',
-          'comments'
-        ];
-
-        for (const item in this.outreachActivity) {
-          const value = this.outreachActivity[item];
-
-          // Caso especial para attendantsAmount
-          if (item === 'attendantsAmount') {
-            if (value < 0 || value === null || value === "") {
-              this.errors.push(item);
-            }
-            continue;
+        // === Validaciones según tipo de actividad ===
+        if (this.outreachActivity.activityType === 'Outreach Material') {
+          if (!this.outreachActivity.researcherInvolved || this.outreachActivity.researcherInvolved.length === 0) {
+            this.errors.push('researcherInvolved');
+          }
+          if (!this.outreachActivity.activityType) this.errors.push('activityType');
+          if (this.outreachActivity.activityType === 'Other' && !this.other) {
+            this.errors.push('other');
+          }
+          if (!this.outreachActivity.materialType) this.errors.push('materialType');
+          if (!this.outreachActivity.materialName) this.errors.push('materialName');
+          if (!this.outreachActivity.publicationDate) this.errors.push('publicationDate');
+          if (!this.outreachActivity.publicationMean) this.errors.push('publicationMean');
+          if (this.outreachActivity.publicationMean === 'Other' && !this.outreachActivity.publicationOther) {
+            this.errors.push('publicationOther');
           }
 
-          // Validación general
-          if ((value === "" || value === 0 || value == null || Array.isArray(value) && value.length === 0) && !itemsToCheck.includes(item)) {
-            this.errors.push(item);
+        } else {
+          // Caso general
+          if (!this.outreachActivity.researcherInvolved || this.outreachActivity.researcherInvolved.length === 0) {
+            this.errors.push('researcherInvolved');
           }
+          if (!this.outreachActivity.activityName) this.errors.push('activityName');
+          if (!this.outreachActivity.activityDescription) this.errors.push('activityDescription');
+          if (!this.outreachActivity.activityType) this.errors.push('activityType');
+          if (this.outreachActivity.activityType === 'Other' && !this.other) {
+            this.errors.push('other');
+          }
+          if (!this.outreachActivity.duration) this.errors.push('duration');
+          if (!this.outreachActivity.country) this.errors.push('country');
+          if (!this.outreachActivity.date) this.errors.push('date');
+          if (this.outreachActivity.attendantsAmount === null || this.outreachActivity.attendantsAmount === "") {
+            this.errors.push('attendantsAmount');
+          }
+          if (!this.outreachActivity.placeRegion) this.errors.push('placeRegion');
+          if (!this.outreachActivity.city) this.errors.push('city');
+          if (!this.outreachActivity.responsability) this.errors.push('responsability');
         }
 
-        if(this.outreachActivity.activityType == 'Other' && this.other == ''){
-          this.errors.push('other');
-        }
-
+        // === Target Audiences ===
         const checkboxFields = [
           'undergraduateStudents',
           'primaryEducationStudents',
@@ -525,60 +726,58 @@ export default {
           'companiesIndustriesServices',
           'schoolTeachers',
           'governmentOfficial',
-          'other',
+          'other'
         ];
-
         const isChecked = checkboxFields.some(field => this.outreachActivity[field]);
-
         if (!isChecked) {
           this.errors.push('target audiencies');
         }
 
-        var contador = await axios.post('../api/verifyOutreach', this.outreachActivity).then(function(response) {
-          return response.data;
-        }.bind(this)).catch(function(e) {
-          console.log(e);
-        });
-        if (contador > 0){
-          this.errors.push('duplicated');
-        }
+        // === Duplicados ===
+        var contador = await axios.post('../api/verifyOutreach', this.outreachActivity)
+          .then(res => res.data)
+          .catch(e => { console.log(e); });
+        if (contador > 0) this.errors.push('duplicated');
 
-        var mensaje = ""
-        if (this.errors.length != 0){
+        // === Mensajes de error ===
+        if (this.errors.length > 0) {
+          let mensaje = "";
           this.errors.forEach(item => {
             if(item == 'activityType'){
-              mensaje =   mensaje + "The field Activity Type is required" + "\n";
+              mensaje += "The field Activity Type is required\n";
             }else if(item == 'activityName'){
-              mensaje =   mensaje + "The field Activity Name is required" + "\n";
+              mensaje += "The field Activity Name is required\n";
             }else if(item == 'activityDescription'){
-              mensaje =   mensaje + "The field Activity Description is required" + "\n";
+              mensaje += "The field Activity Description is required\n";
             }else if(item == 'attendantsAmount'){
-              mensaje =   mensaje + "The field Attendants Amount is required" + "\n";
+              mensaje += "The field Attendants Amount is required\n";
             }else if(item == 'placeRegion'){
-              mensaje =   mensaje + "The field Place/Region is required" + "\n";
+              mensaje += "The field Place/Region is required\n";
             }else if(item == 'researcherInvolved'){
-              mensaje =   mensaje + "The field Researchers Involved is required" + "\n";
+              mensaje += "The field Researchers Involved is required\n";
             }else if(item == 'duplicated'){
-              mensaje =   mensaje + "There is already a post with the same data, please try again." + "\n";
+              mensaje += "There is already a post with the same data, please try again.\n";
+            }else if(item == 'materialType'){
+              mensaje += "The field Material Type is required\n";
+            }else if(item == 'materialName'){
+              mensaje += "The field Material Name is required\n";
+            }else if(item == 'publicationDate'){
+              mensaje += "The field Publication Date is required\n";
+            }else if(item == 'publicationMean'){
+              mensaje += "The field Publication Mean is required\n";
+            }else if(item == 'publicationOther'){
+              mensaje += "The field Other Mean is required\n";
+            }else if(item == 'downloads'){
+              mensaje += "The field Downloads is required\n";
             }else{
-              mensaje =   mensaje + "The field " + this.capitalizeFirstLetter(item) + " is required" + "\n" 
+              mensaje += "The field " + this.capitalizeFirstLetter(item) + " is required\n";
             }
           });
-          this.toast.warning( mensaje, {
-            position: "top-right",
-            timeout: 5000,
-            closeOnClick: true,
-            pauseOnFocusLoss: true,
-            pauseOnHover: true,
-            draggable: true,
-            draggablePercent: 0.6,
-            showCloseButtonOnHover: false,
-            hideProgressBar: true,
-            closeButton: "button",
-            icon: true,
-            rtl: false
-          });
+
+          this.toast.warning(mensaje, { position: "top-right", timeout: 5000 });
+          return; // detener ejecución si hay errores
         }
+
         if (this.errors.length === 0){
           const ok = await this.$refs.confirmation.show({
             title: 'Save Outreach Activity',
@@ -587,7 +786,7 @@ export default {
             cancelButton: 'Return'
           })
           if (ok) {
-
+            // researcherInvolved
             var researcherInvolved1 = "";
             if (this.outreachActivity.researcherInvolved !== null){
               if (this.outreachActivity.researcherInvolved.length !== 0) {
@@ -619,6 +818,7 @@ export default {
               idUser1 = this.userID;
             }
 
+            // 👇 Ahora incluye Outreach Material
             let outreachActivity = {
               status: 'Finished',
               idUsuario: idUser1,
@@ -644,6 +844,17 @@ export default {
               responsability: this.outreachActivity.responsability,
               comments: this.outreachActivity.comments,
               progressReport: this.outreachActivity.progressReport,
+
+              // Nuevos campos Outreach Material
+              materialType: this.outreachActivity.materialType,
+              materialName: this.outreachActivity.materialName,
+              publicationDate: this.outreachActivity.publicationDate,
+              publicationMean: this.outreachActivity.publicationMean,
+              publicationOther: this.outreachActivity.publicationOther,
+              downloads: this.outreachActivity.downloads,
+              twitterMentions: this.outreachActivity.twitterMentions,
+              facebookMentions: this.outreachActivity.facebookMentions,
+              otherMentions: this.outreachActivity.otherMentions,
             };
             axios.post("api/outreachActivities", outreachActivity, {headers: { 'Content-Type' : 'multipart/form-data' }} ).then((result) => {
               this.toast.success("Outreach activity saved successfully!", {

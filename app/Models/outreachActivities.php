@@ -37,6 +37,16 @@ class outreachActivities extends Model
         'researcherInvolved',
         'responsability',
         'comments',
+
+        'materialType',
+        'materialName',
+        'publicationDate',
+        'publicationMean',
+        'publicationOther',
+        'downloads',
+        'twitterMentions',
+        'facebookMentions',
+        'otherMentions',
     ];
 
     public function usuario(){

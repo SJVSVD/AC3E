@@ -177,34 +177,26 @@ class outreachActivitiesController extends Controller
             '8' => 'Other (specify)',
             '9' => 'Outreach Material',
         ];
-    
+
         $data = $request->input('data');
         foreach ($data as $rowData) {
-            // Obtén el valor de 'attendantsAmount' del $rowData
-            $attendantsAmount = $rowData['Attendant Amount'];
-    
-            // Verifica si el valor es un entero
-            if (!is_numeric($attendantsAmount)) {
-                // Si no es un número, establece 'attendantsAmount' en 0
-                $attendantsAmount = 0;
-            }
-    
-            // Obtén el valor de 'duration' del $rowData
-            $duration = $rowData['Duration [days]'];
-    
-            // Verifica si el valor es un entero
-            if (!is_numeric($duration)) {
-                // Si no es un número, establece 'duration' en 0
-                $duration = 0;
-            }
-    
+
+            // Normalizar attendantsAmount
+            $attendantsAmount = is_numeric($rowData['Attendant Amount']) ? $rowData['Attendant Amount'] : 0;
+
+            // Normalizar duration
+            $duration = is_numeric($rowData['Duration [days]']) ? $rowData['Duration [days]'] : 0;
+
             // Mapear el tipo de actividad
-            $activityType = isset($activityTypeMapping[$rowData['Type of Activity']]) ? $activityTypeMapping[$rowData['Type of Activity']] : '';
-    
+            $activityType = isset($activityTypeMapping[$rowData['Type of Activity']]) 
+                ? $activityTypeMapping[$rowData['Type of Activity']] 
+                : '';
+
             $outreachActivities = outreachActivities::create([
                 'idUsuario' => $rowData['idUsuario'],
                 'status' => $rowData['Status'],
-                'activityType' => $activityType, // Asignar el tipo de actividad mapeado
+                'progressReport' => $rowData['Progress Report'],
+                'activityType' => $activityType,
                 'activityName' => $rowData['Event Title'],
                 'activityDescription' => $rowData['Activity Description'],
                 'date' => $rowData['Date'],
@@ -213,17 +205,31 @@ class outreachActivitiesController extends Controller
                 'country' => $rowData['Country'],
                 'placeRegion' => $rowData['Place Region'],
                 'city' => $rowData['City'],
-                // 'undergraduateStudents' => $rowData[''],
-                // 'primaryEducationStudents' => $rowData[''],
-                // 'secondaryEducationStudents' => $rowData[''],
-                // 'generalCommunity' => $rowData[''],
-                // 'companiesIndustriesServices' => $rowData[''],
-                // 'schoolTeachers' => $rowData[''],
-                // 'governmentOfficial' => $rowData[''],
-                // 'other' => $rowData[''],
+
+                // Audiencias (checkboxes, asumiendo que vendrán como 1 o 0 en el Excel)
+                'undergraduateStudents' => $rowData['Undergraduate Students'] ?? 0,
+                'primaryEducationStudents' => $rowData['Primary Education Students'] ?? 0,
+                'secondaryEducationStudents' => $rowData['Secondary Education Students'] ?? 0,
+                'generalCommunity' => $rowData['General Community'] ?? 0,
+                'companiesIndustriesServices' => $rowData['Companies, Industries, Services'] ?? 0,
+                'schoolTeachers' => $rowData['School Teachers'] ?? 0,
+                'governmentOfficial' => $rowData['Government Official'] ?? 0,
+                'other' => $rowData['Other Audience'] ?? 0,
+
+                // Outreach Material (nuevos campos)
+                'materialType' => $rowData['Material Type'] ?? null,
+                'materialName' => $rowData['Material Name'] ?? null,
+                'publicationDate' => $rowData['Publication Date'] ?? null,
+                'publicationMean' => $rowData['Publication Mean'] ?? null,
+                'publicationOther' => $rowData['Publication Other'] ?? null,
+                'downloads' => is_numeric($rowData['Downloads'] ?? null) ? $rowData['Downloads'] : 0,
+                'twitterMentions' => is_numeric($rowData['TwitterMentions'] ?? null) ? $rowData['TwitterMentions'] : 0,
+                'facebookMentions' => is_numeric($rowData['FacebookMentions'] ?? null) ? $rowData['FacebookMentions'] : 0,
+                'otherMentions' => is_numeric($rowData['OtherMentions'] ?? null) ? $rowData['OtherMentions'] : 0,
+
+                // Otros datos
                 'nameOfTheMainResponsible' => $rowData['Name of the main responsible'],
-                'progressReport' => $rowData['Progress Report'],
-                'researcherInvolved' => $rowData['Researchers Involved'],
+                'researcherInvolved' => $rowData['Researcher Involved'],
                 'responsibility' => $rowData['Responsibility'],
                 'comments' => $rowData['Comentarios'],
             ]);
@@ -231,6 +237,7 @@ class outreachActivitiesController extends Controller
         
         return response()->json("Publicaciones importadas");
     }
+
     
 
      // Función para eliminar un registro
